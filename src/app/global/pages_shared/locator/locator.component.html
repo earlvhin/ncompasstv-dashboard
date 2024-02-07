@@ -1,52 +1,52 @@
 <div class="theme-container">
-	<div class="title-section">
-		<div class="d-flex">
-			<div class="flex-even">
-				<h1 class="page-title">{{ title }}</h1>
-			</div>
-		</div>
-		<hr class="my-4" />
-	</div>
-	<div>
-		<div class="row m-0 p-0">
-			<div class="col-lg-12 custom-mat-tab p-0">
-				<mat-tab-group dynamicHeight #tabGroup>
-					<!-- DEALERS TAB -->
-					<mat-tab id="dealers-view-tab" label="Dealers View" *ngIf="!is_dealer">
-						<div class="col-lg-12 pl-0 pr-0 pb-4">
-							<app-dealer-view></app-dealer-view>
-						</div>
-					</mat-tab>
+    <div class="title-section">
+        <div class="d-flex">
+            <div class="flex-even">
+                <h1 class="page-title">{{ title }}</h1>
+            </div>
+        </div>
+        <hr class="my-4" />
+    </div>
+    <div>
+        <div class="row m-0 p-0">
+            <div class="col-lg-12 custom-mat-tab p-0">
+                <mat-tab-group dynamicHeight #tabGroup>
+                    <!-- DEALERS TAB -->
+                    <mat-tab id="dealers-view-tab" label="Dealers View" *ngIf="!is_dealer">
+                        <div class="col-lg-12 pl-0 pr-0 pb-4">
+                            <app-dealer-view></app-dealer-view>
+                        </div>
+                    </mat-tab>
 
-					<!-- LICENSE TAB -->
-					<mat-tab id="license-view-tab" label="Licenses View" *ngIf="is_dealer">
-						<div class="col-lg-12 pl-0 pr-0 pb-4">
-							<app-license-view></app-license-view>
-						</div>
-					</mat-tab>
+                    <!-- LICENSE TAB -->
+                    <mat-tab id="license-view-tab" label="Licenses View" *ngIf="is_dealer">
+                        <div class="col-lg-12 pl-0 pr-0 pb-4">
+                            <app-license-view></app-license-view>
+                        </div>
+                    </mat-tab>
 
-					<!-- HOSTS TAB -->
-					<mat-tab id="hosts-view-tab" label="Hosts View">
-						<div class="col-lg-12 pl-0 pr-0 pb-4">
-							<app-host-view></app-host-view>
-						</div>
-					</mat-tab>
+                    <!-- HOSTS TAB -->
+                    <mat-tab id="hosts-view-tab" label="Hosts View">
+                        <div class="col-lg-12 pl-0 pr-0 pb-4">
+                            <app-host-view></app-host-view>
+                        </div>
+                    </mat-tab>
 
-					<!-- DMA TAB -->
-					<mat-tab id="dma-tab" label="DMA View" *ngIf="!is_dealer">
-						<div class="col-lg-12 pl-0 pr-0 pb-4">
-							<app-dma-tab></app-dma-tab>
-						</div>
-					</mat-tab>
+                    <!-- DMA TAB -->
+                    <mat-tab id="dma-tab" label="DMA View" *ngIf="!is_dealer">
+                        <div class="col-lg-12 pl-0 pr-0 pb-4">
+                            <app-dma-tab></app-dma-tab>
+                        </div>
+                    </mat-tab>
 
-					<!-- ADVERTISERS TAB -->
-					<mat-tab id="advertisers-view-tab" label="Advertisers View" *ngIf="is_dealer">
-						<div class="col-lg-12 pl-0 pr-0 pb-4">
-							<app-advertiser-view></app-advertiser-view>
-						</div>
-					</mat-tab>
-				</mat-tab-group>
-			</div>
-		</div>
-	</div>
+                    <!-- ADVERTISERS TAB -->
+                    <mat-tab id="advertisers-view-tab" label="Advertisers View" *ngIf="is_dealer">
+                        <div class="col-lg-12 pl-0 pr-0 pb-4">
+                            <app-advertiser-view></app-advertiser-view>
+                        </div>
+                    </mat-tab>
+                </mat-tab-group>
+            </div>
+        </div>
+    </div>
 </div>

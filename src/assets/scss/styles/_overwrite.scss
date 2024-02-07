@@ -178,11 +178,11 @@ breadcrumb {
             }
             li {
                 &:before {
-                    content: ">";
+                    content: '>';
                 }
                 &:first-child {
                     &:before {
-                        content: "\f015";
+                        content: '\f015';
                         font-family: FontAwesome;
                         margin-right: 5px;
                     }
@@ -207,7 +207,7 @@ breadcrumb {
         vertical-align: middle;
         line-height: 35px;
     }
-    .mat-expansion-panel-header:not([aria-disabled="true"]) {
+    .mat-expansion-panel-header:not([aria-disabled='true']) {
         cursor: context-menu;
     }
 }
@@ -228,7 +228,7 @@ breadcrumb {
             border-radius: 5px;
             transform: perspective(5px) rotateX(2deg);
             transform-origin: left;
-            content: "";
+            content: '';
             position: absolute;
             z-index: -1;
             left: 0;

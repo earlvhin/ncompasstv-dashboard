@@ -10,7 +10,7 @@
             li {
                 border-bottom: 1px solid $autocomplete_border;
                 font-size: 13px;
-                transition:  0.2s linear;
+                transition: 0.2s linear;
                 &:hover {
                     background-color: $lighten_white;
                 }
@@ -21,7 +21,7 @@
 
 .no-screen {
     border: 1px solid $silver;
-    opacity: .4;
+    opacity: 0.4;
     border-radius: 3px;
     background: $silver;
     .fa {
@@ -35,10 +35,10 @@
 
 #generate-feed-page,
 #single-template-page {
-	.color-picker.open {
-		left: 30% !important;
-		top: 10% !important; 
-	}
+    .color-picker.open {
+        left: 30% !important;
+        top: 10% !important;
+    }
 }
 
 .color-showcase {

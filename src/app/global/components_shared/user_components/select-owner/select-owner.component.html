@@ -1,120 +1,131 @@
 <div class="p-4">
-	<div *ngIf="!no_dealers; else no_data">
-		<div class="sort-by-dealer" *ngIf="dealers; else loader_sm">
-			<h3 class="mb-1">Select Owner For Reassignment</h3>
+    <div *ngIf="!no_dealers; else no_data">
+        <div class="sort-by-dealer" *ngIf="dealers; else loader_sm">
+            <h3 class="mb-1">Select Owner For Reassignment</h3>
 
-			<div class="type-selection">
-				<span>Owner Type:</span>
-				<mat-radio-group name="opList" fxLayout="column" [(ngModel)]="owner_type">
-					<mat-radio-button name="onwer_type_list" class="mr-2 md-text text-gray" 
-						*ngFor="let option of owner_types"
-						 [value]="option.type"
-						 (change)="onSelectOwnerType($event)"
-						 >{{ option.name }}
-					</mat-radio-button>
-				</mat-radio-group>
-			</div>
+            <div class="type-selection">
+                <span>Owner Type:</span>
+                <mat-radio-group name="opList" fxLayout="column" [(ngModel)]="owner_type">
+                    <mat-radio-button
+                        name="onwer_type_list"
+                        class="mr-2 md-text text-gray"
+                        *ngFor="let option of owner_types"
+                        [value]="option.type"
+                        (change)="onSelectOwnerType($event)"
+                        >{{ option.name }}
+                    </mat-radio-button>
+                </mat-radio-group>
+            </div>
 
-			<div class="dealer-field">
-				<app-autocomplete-field
-					(data_value)="dealerSelected($event)"
-					[key_of_value]="'dealerId'"
-					[placeholder]="'Search Dealers...'"
-					[label]="'Current Dealer:'"
-					[data_reference]="dealers_data"
-					[search_keyword]="'businessName'"
-					[primary_keyword]="'businessName'"
-					[paging]="paging"
-					(call_next_page)="searchBoxTrigger($event)"
-					(searched)="searchData($event)"
-					[new_value]="dealer_name"
-					[initial_value]="dealer_name"
-					[disabled]="is_dealer"
-					[loading_data]="loading_data"
-					[loading_search]="loading_search"
-					[type]="'dealer'"
-					[disabled]="true">
-				</app-autocomplete-field>
+            <div class="dealer-field">
+                <app-autocomplete-field
+                    (data_value)="dealerSelected($event)"
+                    [key_of_value]="'dealerId'"
+                    [placeholder]="'Search Dealers...'"
+                    [label]="'Current Dealer:'"
+                    [data_reference]="dealers_data"
+                    [search_keyword]="'businessName'"
+                    [primary_keyword]="'businessName'"
+                    [paging]="paging"
+                    (call_next_page)="searchBoxTrigger($event)"
+                    (searched)="searchData($event)"
+                    [new_value]="dealer_name"
+                    [initial_value]="dealer_name"
+                    [disabled]="is_dealer"
+                    [loading_data]="loading_data"
+                    [loading_search]="loading_search"
+                    [type]="'dealer'"
+                    [disabled]="true">
+                </app-autocomplete-field>
+            </div>
 
-			</div>
+            <div class="host-field">
+                <app-autocomplete-field
+                    *ngIf="hosts.length > 0; else no_dealer_host"
+                    (data_value)="hostSelected($event)"
+                    [data_reference]="hosts_data"
+                    [key_of_value]="'hostId'"
+                    [label]="'Select Host'"
+                    [placeholder]="'Search Hosts...'"
+                    [new_value]="filter_data.host.name"
+                    [search_keyword]="'name'"
+                    [primary_keyword]="'name'"
+                    [paging]="paging_host"
+                    (call_next_page)="hostSearchBoxTrigger($event)"
+                    (searched)="searchHostData($event)"
+                    [loading_data]="loading_data_host"
+                    [loading_search]="loading_search_host"
+                    [initial_load]="initial_load"
+                    [type]="'host'"
+                    [disabled]="!is_host_field_selected || is_floating_selected">
+                </app-autocomplete-field>
 
-			<div class="host-field">
-				<app-autocomplete-field
-					*ngIf="hosts.length > 0; else no_dealer_host"
-					(data_value)="hostSelected($event)"
-					[data_reference]="hosts_data"
-					[key_of_value]="'hostId'"
-					[label]="'Select Host'"
-					[placeholder]="'Search Hosts...'"
-					[new_value]="filter_data.host.name"
-					[search_keyword]="'name'"
-					[primary_keyword]="'name'"
-					[paging]="paging_host"
-					(call_next_page)="hostSearchBoxTrigger($event)"
-					(searched)="searchHostData($event)"
-					[loading_data]="loading_data_host"
-					[loading_search]="loading_search_host"
-					[initial_load]="initial_load"
-					[type]="'host'"
-					[disabled]="!is_host_field_selected || is_floating_selected">
-				</app-autocomplete-field>
+                <ng-template #no_dealer_host>
+                    <p class="bg-info text-white p-2 mb-3 sm-text">
+                        Host field will appear if Dealer has available hosts
+                    </p>
+                </ng-template>
+            </div>
 
-				<ng-template #no_dealer_host>
-					<p class="bg-info text-white p-2 mb-3 sm-text">Host field will appear if Dealer has available hosts</p>
-				</ng-template>
-			</div>
+            <div class="advertiser-field">
+                <app-autocomplete-field
+                    *ngIf="advertisers.length > 0; else no_dealer_adv"
+                    (data_value)="advertiserSelected($event)"
+                    [key_of_value]="'id'"
+                    [placeholder]="'Select Advertiser'"
+                    [label]="'Select Advertiser'"
+                    [data_reference]="advertisers_data"
+                    [search_keyword]="'name'"
+                    [primary_keyword]="'name'"
+                    [paging]="paging_advertiser"
+                    (call_next_page)="advertiserSearchBoxTrigger($event)"
+                    (searched)="searchAdvertiserData($event)"
+                    [loading_data]="loading_data_advertiser"
+                    [loading_search]="loading_search_advertiser"
+                    [initial_load]="initial_load_advertiser"
+                    [type]="'advertiser'"
+                    [disabled]="!is_advertiser_field_selected || is_floating_selected">
+                </app-autocomplete-field>
 
-			<div class="advertiser-field">
-				<app-autocomplete-field
-					*ngIf="advertisers.length > 0; else no_dealer_adv"
-					(data_value)="advertiserSelected($event)"
-					[key_of_value]="'id'"
-					[placeholder]="'Select Advertiser'"
-					[label]="'Select Advertiser'"
-					[data_reference]="advertisers_data"
-					[search_keyword]="'name'"
-					[primary_keyword]="'name'"
-					[paging]="paging_advertiser"
-					(call_next_page)="advertiserSearchBoxTrigger($event)"
-					(searched)="searchAdvertiserData($event)"
-					[loading_data]="loading_data_advertiser"
-					[loading_search]="loading_search_advertiser"
-					[initial_load]="initial_load_advertiser"
-					[type]="'advertiser'"
-					[disabled]="!is_advertiser_field_selected || is_floating_selected">
-				</app-autocomplete-field>
+                <ng-template #no_dealer_adv>
+                    <p class="bg-info text-white p-2 mb-0 sm-text">
+                        Advertiser field will appear if Dealer has available advertisers
+                    </p>
+                </ng-template>
+            </div>
 
-				<ng-template #no_dealer_adv>
-					<p class="bg-info text-white p-2 mb-0 sm-text">Advertiser field will appear if Dealer has available advertisers</p>
-				</ng-template>
-			</div>
+            <button
+                mat-button
+                mat-raised-button
+                [mat-dialog-close]="filter_data"
+                class="theme-btn mt-4 mr-2"
+                [disabled]="!isValidForm">
+                Submit
+            </button>
 
-			<button mat-button mat-raised-button 
-				[mat-dialog-close]="filter_data" class="theme-btn mt-4 mr-2" 
-				[disabled]="!isValidForm">Submit
-			</button>
-			
-			<button mat-button mat-raised-button mat-dialog-close class="theme-btn mt-4 bg-danger">
-				Close
-			</button>
-		</div>
+            <button mat-button mat-raised-button mat-dialog-close class="theme-btn mt-4 bg-danger">
+                Close
+            </button>
+        </div>
 
-		<ng-template #loader_sm>
-			<div class="text-center py-4">
-				<app-spinner [diameter]="65"></app-spinner>
-				<h5 class="mt-3">Getting Users. Please Wait.</h5>
-			</div>
-		</ng-template>
-	</div>
-	
-	<ng-template #no_data>
-		<h3>What the!?</h3>
-		<p class="sm-text mb-4">
-			There are no dealers at the moment.
-		</p>
-		<button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/administrator/users/create-user/dealer']">
-			Add Dealer
-			<span class="fas fa-plus ml-2 sm-text"></span>
-		</button>
-	</ng-template>
+        <ng-template #loader_sm>
+            <div class="text-center py-4">
+                <app-spinner [diameter]="65"></app-spinner>
+                <h5 class="mt-3">Getting Users. Please Wait.</h5>
+            </div>
+        </ng-template>
+    </div>
+
+    <ng-template #no_data>
+        <h3>What the!?</h3>
+        <p class="sm-text mb-4">There are no dealers at the moment.</p>
+        <button
+            mat-button
+            mat-raised-button
+            class="theme-btn mr-2"
+            [routerLink]="['/administrator/users/create-user/dealer']">
+            Add Dealer
+            <span class="fas fa-plus ml-2 sm-text"></span>
+        </button>
+    </ng-template>
 </div>

@@ -1,31 +1,38 @@
 <mat-expansion-panel hideToggle [expanded]="false">
-	<mat-expansion-panel-header class="align-items-center" [attr.title]="host_licenses.host.name">
-		<div class="flex-even align-middle">
-			<mat-slide-toggle
-			class="align-middle"
-			[checked]="hasActiveLicenses() || remove_in_blocklist.length > 0"
-			(click)="$event.stopPropagation()"
-			(change)="blocklistingAllLicenses($event, host_licenses.host.hostId)"
-			[disabled]="is_child_frequency">
-				<h5 class="mb-0 ml-2">{{ cutString(host_licenses.host.name) }}</h5>
-			</mat-slide-toggle>
-		</div>
-		<div class="xsm-text">
-			<strong>{{ host_licenses.licenses.length }}</strong> License<span *ngIf="host_licenses.licenses.length > 1">s</span>
-			<span class="fas fa-arrow-down ml-2"></span>
-		</div>
-	</mat-expansion-panel-header>
+    <mat-expansion-panel-header class="align-items-center" [attr.title]="host_licenses.host.name">
+        <div class="flex-even align-middle">
+            <mat-slide-toggle
+                class="align-middle"
+                [checked]="hasActiveLicenses() || remove_in_blocklist.length > 0"
+                (click)="$event.stopPropagation()"
+                (change)="blocklistingAllLicenses($event, host_licenses.host.hostId)"
+                [disabled]="is_child_frequency">
+                <h5 class="mb-0 ml-2">{{ cutString(host_licenses.host.name) }}</h5>
+            </mat-slide-toggle>
+        </div>
+        <div class="xsm-text">
+            <strong>{{ host_licenses.licenses.length }}</strong> License<span
+                *ngIf="host_licenses.licenses.length > 1"
+                >s</span
+            >
+            <span class="fas fa-arrow-down ml-2"></span>
+        </div>
+    </mat-expansion-panel-header>
 
-	<div class="p-3 border-top w-100">
-		<div *ngFor="let l of host_licenses.licenses" class="option-license-list w-100">
-			<div class="flex-even align-middle">
-				<mat-slide-toggle class="align-middle"
-				(change)="blocklisting($event, l.licenseId)"
-				[disabled]="is_child_frequency"
-				[checked]="!incoming_blocklist.includes(l.licenseId) || remove_in_blocklist.includes(l.licenseId)">
-					<h5 class="mb-0 ml-2">{{ l.alias || l.licenseKey }}</h5>
-				</mat-slide-toggle>
-			</div>
-		</div>
-	</div>
+    <div class="p-3 border-top w-100">
+        <div *ngFor="let l of host_licenses.licenses" class="option-license-list w-100">
+            <div class="flex-even align-middle">
+                <mat-slide-toggle
+                    class="align-middle"
+                    (change)="blocklisting($event, l.licenseId)"
+                    [disabled]="is_child_frequency"
+                    [checked]="
+                        !incoming_blocklist.includes(l.licenseId) ||
+                        remove_in_blocklist.includes(l.licenseId)
+                    ">
+                    <h5 class="mb-0 ml-2">{{ l.alias || l.licenseKey }}</h5>
+                </mat-slide-toggle>
+            </div>
+        </div>
+    </div>
 </mat-expansion-panel>

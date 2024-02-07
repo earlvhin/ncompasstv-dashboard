@@ -1,52 +1,80 @@
 <div class="unassign-host-license-modal">
-	<div class="no-warning" *ngIf="!show_warning; else warning">
-		<h3 class="mb-1">Unassign License</h3>
-		<p class="sm-text mb-4">Check the licenses you wish to unassign from this host.</p>
-		
-		<ul class="list-unstyled text-left license-list">
-			<li *ngFor="let l of licenses" class="mb-2">
-				<mat-checkbox [checked]="unassigning_licenses.includes(l.licenseId)" *ngIf="l.piStatus == 0 || l.piStatus == null" (change)="addToUnassigningLicenses(l.licenseId)" >
-					<strong class="sm-text">
-						{{ l.alias || l.licenseKey }}
-					</strong>
-				</mat-checkbox>
-			</li>
-		</ul>
-	
-		<button mat-button mat-raised-button (click)="checkIfAssignedToLicense()" [disabled]="unassigning_licenses.length == 0" class="theme-btn mr-2 _danger">
-			Unassign Licenses
-			<span class="fas fa-times ml-2"></span>
-		</button>
-	
-		<button mat-button mat-raised-button mat-dialog-close class="theme-btn">
-			Cancel
-		</button>
-	</div>
+    <div class="no-warning" *ngIf="!show_warning; else warning">
+        <h3 class="mb-1">Unassign License</h3>
+        <p class="sm-text mb-4">Check the licenses you wish to unassign from this host.</p>
 
+        <ul class="list-unstyled text-left license-list">
+            <li *ngFor="let l of licenses" class="mb-2">
+                <mat-checkbox
+                    [checked]="unassigning_licenses.includes(l.licenseId)"
+                    *ngIf="l.piStatus == 0 || l.piStatus == null"
+                    (change)="addToUnassigningLicenses(l.licenseId)">
+                    <strong class="sm-text">
+                        {{ l.alias || l.licenseKey }}
+                    </strong>
+                </mat-checkbox>
+            </li>
+        </ul>
 
-	<ng-template #warning>
-		<div class="text-center p-4" *ngIf="!show_success">
-			<ng-container *ngIf="!unassigning">
-				<app-warning-animation></app-warning-animation>
-				<h3 class="mb-1 mt-2">Unassigning {{ unassigning_licenses.length }} License<span *ngIf="unassigning_licenses.length > 1">s</span> </h3>
-				<p class="mb-4 sm-text font-weight-md text-warning">
-					<span *ngIf="show_license_warning" class="sm-text font-weight-md text-warning"> One of the license you want to unassign is assigned to a screen.</span>
-					Are you sure you want to unassign licenses from this host?
-				</p>
-				<button mat-button mat-raised-button class="theme-btn mr-2" (click)="show_warning=false">Cancel</button>
-				<button mat-button mat-raised-button class="theme-btn _primary" (click)="unassignLicenses()">Continue</button>
-			</ng-container>
+        <button
+            mat-button
+            mat-raised-button
+            (click)="checkIfAssignedToLicense()"
+            [disabled]="unassigning_licenses.length == 0"
+            class="theme-btn mr-2 _danger">
+            Unassign Licenses
+            <span class="fas fa-times ml-2"></span>
+        </button>
 
-			<div class="py-5" *ngIf="unassigning">
-				<app-spinner></app-spinner>
-			</div>
-		</div>
+        <button mat-button mat-raised-button mat-dialog-close class="theme-btn">Cancel</button>
+    </div>
 
-		<div class="text-center py-4" *ngIf="show_success">
-			<app-success-animation></app-success-animation>
-			<h3 class="mb-1">Unassign Successful!</h3>
-			<p class="mb-0 sm-text font-weight-md">{{ unassigning_licenses.length }} license(s) successfully unassigned from this host.</p>
-			<button mat-button mat-raised-button [mat-dialog-close]="true" class="mt-4 theme-btn">OK</button>
-		</div>
-	</ng-template>
+    <ng-template #warning>
+        <div class="text-center p-4" *ngIf="!show_success">
+            <ng-container *ngIf="!unassigning">
+                <app-warning-animation></app-warning-animation>
+                <h3 class="mb-1 mt-2">
+                    Unassigning {{ unassigning_licenses.length }} License<span
+                        *ngIf="unassigning_licenses.length > 1"
+                        >s</span
+                    >
+                </h3>
+                <p class="mb-4 sm-text font-weight-md text-warning">
+                    <span *ngIf="show_license_warning" class="sm-text font-weight-md text-warning">
+                        One of the license you want to unassign is assigned to a screen.</span
+                    >
+                    Are you sure you want to unassign licenses from this host?
+                </p>
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn mr-2"
+                    (click)="show_warning = false">
+                    Cancel
+                </button>
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn _primary"
+                    (click)="unassignLicenses()">
+                    Continue
+                </button>
+            </ng-container>
+
+            <div class="py-5" *ngIf="unassigning">
+                <app-spinner></app-spinner>
+            </div>
+        </div>
+
+        <div class="text-center py-4" *ngIf="show_success">
+            <app-success-animation></app-success-animation>
+            <h3 class="mb-1">Unassign Successful!</h3>
+            <p class="mb-0 sm-text font-weight-md">
+                {{ unassigning_licenses.length }} license(s) successfully unassigned from this host.
+            </p>
+            <button mat-button mat-raised-button [mat-dialog-close]="true" class="mt-4 theme-btn">
+                OK
+            </button>
+        </div>
+    </ng-template>
 </div>

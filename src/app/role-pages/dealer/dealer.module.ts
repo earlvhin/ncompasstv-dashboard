@@ -1,7 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule, MatAutocompleteModule, MatInputModule, MatSelectModule, MatExpansionModule } from '@angular/material';
+import {
+    MatButtonModule,
+    MatAutocompleteModule,
+    MatInputModule,
+    MatSelectModule,
+    MatExpansionModule,
+} from '@angular/material';
 import { MatMenuModule } from '@angular/material/menu';
 import { RouterModule } from '@angular/router';
 
@@ -24,38 +30,35 @@ import { UsersComponent } from './pages/users/users.component';
 import { AuthGuard } from 'src/app/global/guards';
 
 @NgModule({
-	declarations: [
-		DealerLayoutComponent, 
-		DashboardComponent, 
-		AdvertisersComponent, 
-		HostsComponent, 
-		LicensesComponent, 
-		LocatorComponent, 
-		PlaylistsComponent, 
-		ScreensComponent, 
-		ReportsComponent, 
-		UsersComponent, 
-	],
-	imports: [
-		CommonModule,
-		GlobalModule,
-		MatCardModule,
-		MatButtonModule,
-		MatAutocompleteModule,
-		MatInputModule,
-		MatInputModule,
-		MatMenuModule,
-		MatSelectModule,
-		MatExpansionModule,
-		FeedsModule,
-		FormsModule,
-		ReactiveFormsModule,
+    declarations: [
+        DealerLayoutComponent,
+        DashboardComponent,
+        AdvertisersComponent,
+        HostsComponent,
+        LicensesComponent,
+        LocatorComponent,
+        PlaylistsComponent,
+        ScreensComponent,
+        ReportsComponent,
+        UsersComponent,
+    ],
+    imports: [
+        CommonModule,
+        GlobalModule,
+        MatCardModule,
+        MatButtonModule,
+        MatAutocompleteModule,
+        MatInputModule,
+        MatInputModule,
+        MatMenuModule,
+        MatSelectModule,
+        MatExpansionModule,
+        FeedsModule,
+        FormsModule,
+        ReactiveFormsModule,
         BreadcrumbsModule,
-		RouterModule.forChild(DEALER_ROUTES),
-	],
-	providers: [
-		AuthGuard,
-	]
+        RouterModule.forChild(DEALER_ROUTES),
+    ],
+    providers: [AuthGuard],
 })
-
-export class DealerModule { }
+export class DealerModule {}

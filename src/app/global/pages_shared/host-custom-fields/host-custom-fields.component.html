@@ -6,7 +6,7 @@
             </div>
         </div>
 
-        <hr class="my-4">
+        <hr class="my-4" />
     </div>
 
     <div class="row">
@@ -17,23 +17,40 @@
                 <form class="text-left">
                     <mat-form-field class="full-width mb-3" appearance="fill">
                         <mat-label>Enter Field Group Name</mat-label>
-                        <input matInput type="text" [(ngModel)]="field_group_name" [ngModelOptions]="{standalone: true}" placeholder="Enter Field Group Name">
+                        <input
+                            matInput
+                            type="text"
+                            [(ngModel)]="field_group_name"
+                            [ngModelOptions]="{ standalone: true }"
+                            placeholder="Enter Field Group Name" />
                     </mat-form-field>
 
                     <div class="custom-fields-area mb-3">
                         <h3>Custom Fields</h3>
-                        <p class="sm-text mb-3">Click the plus (+) button to add a field for this field group</p>
+                        <p class="sm-text mb-3">
+                            Click the plus (+) button to add a field for this field group
+                        </p>
 
                         <div class="bg-gray p-4 text-center">
-                            <div class="d-flex" *ngFor="let chf of custom_host_fields; let i = index">
+                            <div
+                                class="d-flex"
+                                *ngFor="let chf of custom_host_fields; let i = index">
                                 <mat-form-field class="flex-even mr-2" appearance="fill">
                                     <mat-label>Field Name</mat-label>
-                                    <input matInput type="text" [(ngModel)]="custom_host_fields[i].fieldName" [ngModelOptions]="{standalone: true}">
+                                    <input
+                                        matInput
+                                        type="text"
+                                        [(ngModel)]="custom_host_fields[i].fieldName"
+                                        [ngModelOptions]="{ standalone: true }" />
                                 </mat-form-field>
 
                                 <mat-form-field class="mr-2" appearance="fill">
                                     <mat-label>Type</mat-label>
-                                    <select matNativeControl required [(ngModel)]="custom_host_fields[i].fieldType" [ngModelOptions]="{standalone: true}">
+                                    <select
+                                        matNativeControl
+                                        required
+                                        [(ngModel)]="custom_host_fields[i].fieldType"
+                                        [ngModelOptions]="{ standalone: true }">
                                         <option value="text">Text</option>
                                         <option value="number">Number</option>
                                     </select>
@@ -41,7 +58,12 @@
 
                                 <mat-form-field appearance="fill">
                                     <mat-label>Character Length</mat-label>
-                                    <input matInput type="number" [(ngModel)]="custom_host_fields[i].fieldLength" [ngModelOptions]="{standalone: true}" placeholder="Default is 128">
+                                    <input
+                                        matInput
+                                        type="number"
+                                        [(ngModel)]="custom_host_fields[i].fieldLength"
+                                        [ngModelOptions]="{ standalone: true }"
+                                        placeholder="Default is 128" />
                                 </mat-form-field>
                             </div>
 
@@ -52,12 +74,23 @@
                         </div>
                     </div>
 
-                    <button type="submit" mat-button mat-raised-button class="theme-btn mr-2" (click)="createCustomField()" *ngIf="!edit_mode; else editMode">
+                    <button
+                        type="submit"
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn mr-2"
+                        (click)="createCustomField()"
+                        *ngIf="!edit_mode; else editMode">
                         Create Custom Host Field
                     </button>
-                    
+
                     <ng-template #editMode>
-                        <button type="submit" mat-button mat-raised-button class="theme-btn mr-2" (click)="saveCustomFieldChanges()">
+                        <button
+                            type="submit"
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn mr-2"
+                            (click)="saveCustomFieldChanges()">
                             Save Changes
                         </button>
                     </ng-template>
@@ -66,7 +99,9 @@
         </div>
 
         <div class="col-lg-4">
-            <mat-card class="field-group-item d-flex p-3 mb-2" *ngFor="let c of custom_fields; let i = index">
+            <mat-card
+                class="field-group-item d-flex p-3 mb-2"
+                *ngFor="let c of custom_fields; let i = index">
                 <div class="flex-even">
                     <h4>{{ c.fieldGroupName }}</h4>
                     <p class="sm-text">Created {{ c.createdDate | date }}</p>

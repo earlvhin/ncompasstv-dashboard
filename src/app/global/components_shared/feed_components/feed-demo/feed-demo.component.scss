@@ -1,5 +1,5 @@
 .generated-feed-preview {
-	overflow: hidden;
+    overflow: hidden;
     background: #121212;
     height: 455px;
     padding-top: 56.25%;
@@ -17,7 +17,7 @@
     // }
 
     .context {
-        background: rgba(0,0,0,0.3);
+        background: rgba(0, 0, 0, 0.3);
         bottom: 0;
         color: #fff;
         left: 0;
@@ -61,7 +61,7 @@
     left: 0;
 
     .banner-image {
-        top:  20px;
+        top: 20px;
         left: 0;
         right: 0;
         margin: auto;
@@ -71,7 +71,9 @@
     }
 
     .headline {
-        box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+        box-shadow:
+            0 14px 28px rgba(0, 0, 0, 0.25),
+            0 10px 10px rgba(0, 0, 0, 0.22);
         border-top-right-radius: 999px;
         border-bottom-right-radius: 999px;
         position: absolute;
@@ -94,7 +96,9 @@
         margin: 0;
         max-width: 1620px;
         transition: 1s linear;
-        text-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+        text-shadow:
+            0 14px 28px rgba(0, 0, 0, 0.25),
+            0 10px 10px rgba(0, 0, 0, 0.22);
     }
 
     .item-text {
@@ -104,7 +108,7 @@
         justify-content: center;
         position: absolute;
         padding: 40px 40px 30px 40px;
-        transition: all 1s cubic-bezier(.25,.8,.25,1);
+        transition: all 1s cubic-bezier(0.25, 0.8, 0.25, 1);
         width: 100%;
         z-index: 8;
     }

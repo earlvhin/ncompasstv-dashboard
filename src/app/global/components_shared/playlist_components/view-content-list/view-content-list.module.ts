@@ -7,13 +7,8 @@ import { ViewContentListComponent } from './view-content-list.component';
 import { DataTableComponent } from './data-table/data-table.component';
 
 @NgModule({
-	declarations: [ ViewContentListComponent, DataTableComponent ],
-	entryComponents: [ ViewContentListComponent ],
-	imports: [
-		AdministratorModule,
-		GlobalModule,
-		CommonModule,
-		RouterModule,
-	]
+    declarations: [ViewContentListComponent, DataTableComponent],
+    entryComponents: [ViewContentListComponent],
+    imports: [AdministratorModule, GlobalModule, CommonModule, RouterModule],
 })
-export class ViewContentListModule { }
+export class ViewContentListModule {}

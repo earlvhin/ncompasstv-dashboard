@@ -1,14 +1,15 @@
 <div class="screen-demo-container">
-    <app-demo-zone *ngFor="let s of screen_data"
-    [zone_name]="s.screen_template.name"
-    [zone_background]="'#000'"
-    [zone_width]="(s.screen_template.width / 1920) * 100"
-    [zone_height]="(s.screen_template.height / 1080) * 100"
-    [zone_pos_x]="(s.screen_template.x_pos / 1920) * 100"
-    [zone_pos_y]="(s.screen_template.y_pos / 1080) * 100"
-    [zone_playlist_id]="s.screen_template.playlist_id"
-    [zone_playlist_type]="s.screen_template.playlist_type"
-	[zone_playlist_content]="s.contents"
-	[zone_order]="s.screen_template.order">
+    <app-demo-zone
+        *ngFor="let s of screen_data"
+        [zone_name]="s.screen_template.name"
+        [zone_background]="'#000'"
+        [zone_width]="(s.screen_template.width / 1920) * 100"
+        [zone_height]="(s.screen_template.height / 1080) * 100"
+        [zone_pos_x]="(s.screen_template.x_pos / 1920) * 100"
+        [zone_pos_y]="(s.screen_template.y_pos / 1080) * 100"
+        [zone_playlist_id]="s.screen_template.playlist_id"
+        [zone_playlist_type]="s.screen_template.playlist_type"
+        [zone_playlist_content]="s.contents"
+        [zone_order]="s.screen_template.order">
     </app-demo-zone>
 </div>

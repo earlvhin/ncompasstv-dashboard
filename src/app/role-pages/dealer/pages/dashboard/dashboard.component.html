@@ -15,9 +15,14 @@
             <h6 class="md-text">
                 <i class="fa fa-exclamation-triangle mr-3"></i>
                 <span class="md-text"
-                    >Warning! You have <span class="text-dark font-weight-bold">{{ contents_total }}</span> unused contents.</span
+                    >Warning! You have
+                    <span class="text-dark font-weight-bold">{{ contents_total }}</span> unused
+                    contents.</span
                 >
-                <a class="md-text clickable ml-2 sort" [routerLink]="['/dealer/media-library/expired-contents']" target="_blank">
+                <a
+                    class="md-text clickable ml-2 sort"
+                    [routerLink]="['/dealer/media-library/expired-contents']"
+                    target="_blank">
                     <span>Click here to manage <i class="ml-2 fa fa-angle-double-right"></i></span>
                 </a>
             </h6>
@@ -37,11 +42,20 @@
                     </div>
                     <div class="welcome-message">
                         <p class="text-gray">
-                            <a class="clickable text-primary font-weight-medium" href="https://n-compass.tv/" target="_blank"> N-Compass TV's </a>
-                            dealers are in <span class="normal-text text-primary font-weight-medium">33</span> states and
-                            <span class="normal-text text-primary font-weight-medium">90</span> markets with over
-                            <span class="normal-text text-primary font-weight-medium">1,700</span> locations and growing. Our commitment is to serving our dealers with this
-                            unsurpassed business opportunity.
+                            <a
+                                class="clickable text-primary font-weight-medium"
+                                href="https://n-compass.tv/"
+                                target="_blank">
+                                N-Compass TV's
+                            </a>
+                            dealers are in
+                            <span class="normal-text text-primary font-weight-medium">33</span>
+                            states and
+                            <span class="normal-text text-primary font-weight-medium">90</span>
+                            markets with over
+                            <span class="normal-text text-primary font-weight-medium">1,700</span>
+                            locations and growing. Our commitment is to serving our dealers with
+                            this unsurpassed business opportunity.
                         </p>
                     </div>
                 </div>
@@ -49,7 +63,12 @@
         </div>
         <div class="col-lg-3">
             <mat-card class="h-100" *ngIf="licenses_details; else spinner">
-                <app-data-graph-compare [id]="'status'" [title]="'License Status'" [label_array]="status_graph_label" [value_array]="status_graph_value"> </app-data-graph-compare>
+                <app-data-graph-compare
+                    [id]="'status'"
+                    [title]="'License Status'"
+                    [label_array]="status_graph_label"
+                    [value_array]="status_graph_value">
+                </app-data-graph-compare>
             </mat-card>
         </div>
         <div class="col-lg-6">
@@ -79,8 +98,7 @@
                         [breakdown5_value]="licenses_details.breakdown5_value"
                         [breakdown5_label]="licenses_details.breakdown5_label"
                         [third_value]="licenses_details.third_value"
-                        [third_value_label]="licenses_details.third_value_label"
-                    >
+                        [third_value_label]="licenses_details.third_value_label">
                     </app-data-card-graph>
                 </ng-container>
             </mat-card>
@@ -89,7 +107,11 @@
                 <mat-card class="p-5">
                     <h3>Ugh! Sorry.</h3>
                     <p class="sm-text mb-3">There are no available licenses at the moment.</p>
-                    <button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/dealer/licenses']">
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn mr-2"
+                        [routerLink]="['/dealer/licenses']">
                         Generate Licenses
                         <span class="fas fa-plus ml-2 sm-text"></span>
                     </button>
@@ -101,7 +123,12 @@
     <div class="row">
         <div class="col-lg-3">
             <mat-card class="h-100" *ngIf="hosts_details; else spinner">
-                <app-data-graph-compare [id]="'host-status'" [title]="'Hosts'" [label_array]="host_label" [value_array]="host_array"> </app-data-graph-compare>
+                <app-data-graph-compare
+                    [id]="'host-status'"
+                    [title]="'Hosts'"
+                    [label_array]="host_label"
+                    [value_array]="host_array">
+                </app-data-graph-compare>
             </mat-card>
         </div>
         <div class="col-lg-2">
@@ -119,8 +146,12 @@
                 <div class="col-lg-12 p-3">
                     <h4 class="mb-2 text-center">
                         <span class="cursor-pointer text-primary font-weight-medium">
-                            <a [routerLink]="['/dealer/advertisers/']" target="_blank" class="text-primary"
-                                ><i class="fas fa-ad mr-3 f-35"></i><span class="f-35">{{ advertiser_stats.basis }}</span></a
+                            <a
+                                [routerLink]="['/dealer/advertisers/']"
+                                target="_blank"
+                                class="text-primary"
+                                ><i class="fas fa-ad mr-3 f-35"></i
+                                ><span class="f-35">{{ advertiser_stats.basis }}</span></a
                             >
                         </span>
                     </h4>
@@ -136,8 +167,7 @@
                         [compare_basis_label]="ad_licenses_details.basis_label"
                         [compare_basis_sub_label]="ad_licenses_details.basis_sub_label"
                         [label_array]="ad_license_label"
-                        [value_array]="ad_license_array"
-                    >
+                        [value_array]="ad_license_array">
                     </app-data-card-graph>
                 </ng-container>
             </mat-card>

@@ -1,37 +1,39 @@
 <div class="reassign-dealer-page">
-	<div class="d-flex">
-		<div class="flex-even">
-			<h3 class="p-0 col-lg-12">{{ title }}</h3>
-			<p class="p-0 sm-text mb-4">{{ description }}</p>
-		</div>
-		<div>
-			<button class="modal-close-btn no-border no-background" [mat-dialog-close]="true"><span class="fas fa-times"></span></button>
-		</div>
-	</div>
+    <div class="d-flex">
+        <div class="flex-even">
+            <h3 class="p-0 col-lg-12">{{ title }}</h3>
+            <p class="p-0 sm-text mb-4">{{ description }}</p>
+        </div>
+        <div>
+            <button class="modal-close-btn no-border no-background" [mat-dialog-close]="true">
+                <span class="fas fa-times"></span>
+            </button>
+        </div>
+    </div>
 
-	<div *ngIf="is_data_ready; else loading">
-		<app-autocomplete-field
-			[data_reference]="dealers"
-			[primary_keyword]="'businessName'"
-			[key_of_value]="'dealerId'"
-			[data_reference]="dealers"
-			(data_value)="selectedDealer($event)"
-			[required]="true"
-			[label]="'Type in a Dealer Business Name'"
-			[new_value]="''"
-			[initial_value]="''"
-			[paging]="page"
-			(call_next_page)="searchBoxTrigger($event)"
-			(searched)="searchDealer($event)"
-			[initial_load]="false"
-			[loading_data]="loading_data"
-			[loading_search]="loading_search">
-		</app-autocomplete-field>
-	
-		<div class="assets-selection">
-			<!-- TEMPORARILY HIDDEN FOR OUR OWN GOOD -->
-			<!-- PLS DO NOT DELETE -->
-			<!-- <div class="selection hosts">
+    <div *ngIf="is_data_ready; else loading">
+        <app-autocomplete-field
+            [data_reference]="dealers"
+            [primary_keyword]="'businessName'"
+            [key_of_value]="'dealerId'"
+            [data_reference]="dealers"
+            (data_value)="selectedDealer($event)"
+            [required]="true"
+            [label]="'Type in a Dealer Business Name'"
+            [new_value]="''"
+            [initial_value]="''"
+            [paging]="page"
+            (call_next_page)="searchBoxTrigger($event)"
+            (searched)="searchDealer($event)"
+            [initial_load]="false"
+            [loading_data]="loading_data"
+            [loading_search]="loading_search">
+        </app-autocomplete-field>
+
+        <div class="assets-selection">
+            <!-- TEMPORARILY HIDDEN FOR OUR OWN GOOD -->
+            <!-- PLS DO NOT DELETE -->
+            <!-- <div class="selection hosts">
 				<h4>Hosts</h4>
 				<mat-slide-toggle 
 					[checked]="assets_selected.hosts"
@@ -78,34 +80,42 @@
 					(click)="onSelectAsset($event, 'screens')">
 				</mat-slide-toggle>
 			</div> -->
-			<!-- TEMPORARILY HIDDEN FOR OUR OWN GOOD -->
-			<!-- PLS DO NOT DELETE -->
+            <!-- TEMPORARILY HIDDEN FOR OUR OWN GOOD -->
+            <!-- PLS DO NOT DELETE -->
 
-			<p>The following data will be transferred:</p>
-			<ul>
-				<li>Hosts</li>
-				<li>Advertisers</li>
-				<li>Licenses</li>
-				<li>Media Files</li>
-				<li>Playlists</li>
-				<li>Screens</li>
-			</ul>
-		</div>
+            <p>The following data will be transferred:</p>
+            <ul>
+                <li>Hosts</li>
+                <li>Advertisers</li>
+                <li>Licenses</li>
+                <li>Media Files</li>
+                <li>Playlists</li>
+                <li>Screens</li>
+            </ul>
+        </div>
 
-		<button mat-button mat-raised-button class="theme-btn mt-4" (click)="onSubmit()" [disabled]="!can_assign">
-			Assign
-		</button>
+        <button
+            mat-button
+            mat-raised-button
+            class="theme-btn mt-4"
+            (click)="onSubmit()"
+            [disabled]="!can_assign">
+            Assign
+        </button>
 
-		<button mat-button mat-raised-button class="theme-btn mt-4 bg-danger" [mat-dialog-close]="true">
-			Cancel
-		</button>
-
-	</div>
+        <button
+            mat-button
+            mat-raised-button
+            class="theme-btn mt-4 bg-danger"
+            [mat-dialog-close]="true">
+            Cancel
+        </button>
+    </div>
 </div>
 
 <ng-template #loading>
-	<div class="d-flex align-items-center justify-content-center spinner">
-		<app-spinner></app-spinner>
-		<p *ngIf="is_reassigning">{{ reassigning_dealer_text }}</p>
-	</div>
+    <div class="d-flex align-items-center justify-content-center spinner">
+        <app-spinner></app-spinner>
+        <p *ngIf="is_reassigning">{{ reassigning_dealer_text }}</p>
+    </div>
 </ng-template>

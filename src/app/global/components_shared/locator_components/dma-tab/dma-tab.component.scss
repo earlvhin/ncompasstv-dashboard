@@ -1,77 +1,75 @@
 #dma-tab-view {
-	.content {
+    .content {
+        .content-container {
+            .map-overlay {
+                position: relative;
+            }
 
-		.content-container	{
-			.map-overlay {
-				position: relative;
-			}
-
-			.search-container {
-				position: absolute;
-				height: 600px;
-				top: 10px;
-				left: 10px;
-				z-index: 99;
-				width: 400px;
-				padding-bottom: 10px;
+            .search-container {
+                position: absolute;
+                height: 600px;
+                top: 10px;
+                left: 10px;
+                z-index: 99;
+                width: 400px;
+                padding-bottom: 10px;
                 overflow: visible;
-                transition: width .5s;
+                transition: width 0.5s;
 
-				.search-box {
-					background-color: rgba(255,255,255, 0.8);
-				}
+                .search-box {
+                    background-color: rgba(255, 255, 255, 0.8);
+                }
 
-				.selected-dma {
-					background-color: white;
+                .selected-dma {
+                    background-color: white;
 
-					.dma {
-						margin-right: 5px;
-						margin-bottom: 5px;
-						padding: 1px 5px 1px 7px;
-						font-size: 12px;
-						border-radius: 5px;
-						color: white;
-						border: 1px solid gray;
-						background-color: #8ec641;
+                    .dma {
+                        margin-right: 5px;
+                        margin-bottom: 5px;
+                        padding: 1px 5px 1px 7px;
+                        font-size: 12px;
+                        border-radius: 5px;
+                        color: white;
+                        border: 1px solid gray;
+                        background-color: #8ec641;
 
-						.remove-btn {
-							text-align: center;
-					
-							mat-icon {
-								font-size: 12px;
-								line-height: 25px;
-							}
-						}
-					}
-				}
+                        .remove-btn {
+                            text-align: center;
 
-				.selected-dma-info {
-					background-color: rgba(255,255,255, 0.5);
+                            mat-icon {
+                                font-size: 12px;
+                                line-height: 25px;
+                            }
+                        }
+                    }
+                }
+
+                .selected-dma-info {
+                    background-color: rgba(255, 255, 255, 0.5);
                     max-height: 425px;
                     overflow: auto;
 
-					.total-hosts {
-						margin-left: auto;
-					}
+                    .total-hosts {
+                        margin-left: auto;
+                    }
 
-					.dma-host-list {
-						.name {
-							cursor: pointer;
+                    .dma-host-list {
+                        .name {
+                            cursor: pointer;
 
-							&:hover {
-								color: #8ec641;
-							}
-						}
-					}
-				}
-			}
+                            &:hover {
+                                color: #8ec641;
+                            }
+                        }
+                    }
+                }
+            }
 
             .minimize-overlay {
                 width: 0px !important;
-                transition: width .5s;
+                transition: width 0.5s;
                 overflow: hidden !important;
             }
-
-		}
-	}
+        }
+    }
 }

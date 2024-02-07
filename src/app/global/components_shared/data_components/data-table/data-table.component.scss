@@ -1,100 +1,104 @@
 .clickable {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 .fa-caret-up,
 .fa-caret-down {
-	font-size: 14px !important;
+    font-size: 14px !important;
 }
 
 .w-110px {
-	width: 110px;
+    width: 110px;
 }
 
 .cursor-pointer {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 .hoverable {
-	cursor: pointer;
+    cursor: pointer;
 
-	&:hover {
-		background-color: #ececec;
-	}
+    &:hover {
+        background-color: #ececec;
+    }
 }
 
 .color-danger {
-	color: #ee5454;
+    color: #ee5454;
 }
 
 .name-and-permission {
-	align-items: center;
+    align-items: center;
 
-	.permission-container {
-		background-color: #8ec641;
-		padding: 0.5px 5px;
-		border-radius: 25px;
-		color: white;
-		font-size: 9px;
-		margin-left: 5px;
-	}
+    .permission-container {
+        background-color: #8ec641;
+        padding: 0.5px 5px;
+        border-radius: 25px;
+        color: white;
+        font-size: 9px;
+        margin-left: 5px;
+    }
 }
 
 .disabled {
-	color: grey !important;
-	cursor: not-allowed;
+    color: grey !important;
+    cursor: not-allowed;
 }
 
 a:hover {
-	color: #8ec641 !important;
+    color: #8ec641 !important;
 }
 
 .tags {
-	.tag {
-		margin-right: 5px;
-		margin-bottom: 5px;
-		padding: 1px 5px;
-		font-size: 10px;
-		text-shadow: black -1px 0px, black 0px 1px, black 1px 0px, black 0px -1px;
-		color: white;
-		border: 1px solid gray;
+    .tag {
+        margin-right: 5px;
+        margin-bottom: 5px;
+        padding: 1px 5px;
+        font-size: 10px;
+        text-shadow:
+            black -1px 0px,
+            black 0px 1px,
+            black 1px 0px,
+            black 0px -1px;
+        color: white;
+        border: 1px solid gray;
 
-		&.dealer {
-			border-radius: 5px;
-		}
-	}
+        &.dealer {
+            border-radius: 5px;
+        }
+    }
 }
 
 .global-value {
-	max-width: 400px;
+    max-width: 400px;
 }
 
 .with-link-support {
-	word-wrap: break-word;
-	white-space: pre-wrap;
+    word-wrap: break-word;
+    white-space: pre-wrap;
 }
 
 .no-link-support {
-	word-wrap: break-word;
-	white-space: pre-wrap;
+    word-wrap: break-word;
+    white-space: pre-wrap;
 }
 
 .justify-content-evenly {
-	justify-content: space-evenly;
+    justify-content: space-evenly;
 }
 
 .text-center {
-	text-align: center;
+    text-align: center;
 }
 
 .default-value-with-url {
-	gap: 10px;
+    gap: 10px;
 }
 
 .text-primary-important {
-	color: #8ec641 !important;
+    color: #8ec641 !important;
 }
 
 .text-gray-important {
-	color: #696969 !important;
+    color: #696969 !important;
 }

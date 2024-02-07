@@ -2,55 +2,88 @@
     class="p-0 thumbnail-card rounded-0 position-relative overflow-hidden"
     data-placement="top"
     [attr.title]="filename"
-    [class.is-protected]="is_dealer && is_protected && multiple_delete"
->
+    [class.is-protected]="is_dealer && is_protected && multiple_delete">
     <div class="icon-overlay">
         <div class="sm-text ml-1 mr-1 mt-1">
             <div class="d-flex">
-                <i class="far fa-image mr-1" 
-                [ngClass]="classification === 'filler-v2' ? 'text-warning' : 'text-primary'" 
-                *ngIf="filetype != 'webm' && filetype != 'feed' && filetype != 'mp4'" title="Image"
-                ></i>
-                <i class="fas fa-video text-primary mr-1" 
-                [ngClass]="classification === 'filler-v2' ? 'text-warning' : 'text-primary'" 
-                *ngIf="filetype == 'webm' || filetype == 'mp4'" title="Video"></i>
-                <i class="fas fa-rss-square text-primary mr-1" *ngIf="filetype == 'feed'" title="Feed"></i>
+                <i
+                    class="far fa-image mr-1"
+                    [ngClass]="classification === 'filler-v2' ? 'text-warning' : 'text-primary'"
+                    *ngIf="filetype != 'webm' && filetype != 'feed' && filetype != 'mp4'"
+                    title="Image"></i>
+                <i
+                    class="fas fa-video text-primary mr-1"
+                    [ngClass]="classification === 'filler-v2' ? 'text-warning' : 'text-primary'"
+                    *ngIf="filetype == 'webm' || filetype == 'mp4'"
+                    title="Video"></i>
+                <i
+                    class="fas fa-rss-square text-primary mr-1"
+                    *ngIf="filetype == 'feed'"
+                    title="Feed"></i>
                 <i
                     class="fas fa-user-circle mr-1"
                     [ngClass]="dealer === '' || dealer === null ? 'text-gray' : 'text-primary'"
                     [title]="dealer === '' || dealer === null ? 'Unassigned' : 'Assigned'"
-                    *ngIf="!is_filler"
-                ></i>
-                <i class="fas fa-expand text-primary" *ngIf="is_fullscreen == 1" title="Fullscreen"></i>
+                    *ngIf="!is_filler"></i>
+                <i
+                    class="fas fa-expand text-primary"
+                    *ngIf="is_fullscreen == 1"
+                    title="Fullscreen"></i>
                 <ng-container *ngIf="is_scheduled_content">
                     <i class="fas fa-clock text-primary mr-1 float-right" title="Is scheduled"></i>
                 </ng-container>
             </div>
         </div>
 
-        <div class="type-icon trash-icon sm-text" *ngIf="!zone_content && !multiple_delete && !is_view_only && ((is_protected === 0 && is_dealer) || is_admin) && !is_filler">
-            <i class="fas fa-times text-danger" (click)="deleteMedia($event)" title="Delete Content"></i>
+        <div
+            class="type-icon trash-icon sm-text"
+            *ngIf="
+                !zone_content &&
+                !multiple_delete &&
+                !is_view_only &&
+                ((is_protected === 0 && is_dealer) || is_admin) &&
+                !is_filler
+            ">
+            <i
+                class="fas fa-times text-danger"
+                (click)="deleteMedia($event)"
+                title="Delete Content"></i>
         </div>
 
         <div class="type-icon trash-icon sm-text" *ngIf="is_filler">
             <i class="fas fa-times text-danger" (click)="deleteFiller()" title="Delete Filler"></i>
         </div>
 
-        <div class="type-icon select-icon text-right sm-text" *ngIf="!zone_content && multiple_delete">
-            <mat-checkbox (change)="deleteContentArray($event, content_id)" [checked]="is_checked" (click)="$event.stopPropagation()"> </mat-checkbox>
+        <div
+            class="type-icon select-icon text-right sm-text"
+            *ngIf="!zone_content && multiple_delete">
+            <mat-checkbox
+                (change)="deleteContentArray($event, content_id)"
+                [checked]="is_checked"
+                (click)="$event.stopPropagation()">
+            </mat-checkbox>
         </div>
     </div>
 
     <img [src]="image_uri" *ngIf="(filetype | isimage) && file_url" alt="thumbnail" />
 
     <!-- is converting -->
-    <img *ngIf="(filetype | isvideo) && is_converted == 0" src="assets/media-files/placeholder.png" alt="placeholder" />
+    <img
+        *ngIf="(filetype | isvideo) && is_converted == 0"
+        src="assets/media-files/placeholder.png"
+        alt="placeholder" />
 
     <!-- mp4 -->
-    <img [src]="mp4_thumb || 'assets/media-files/placeholder.png'" *ngIf="filetype === 'mp4' && is_converted == 1" alt="thumbnail" />
+    <img
+        [src]="mp4_thumb || 'assets/media-files/placeholder.png'"
+        *ngIf="filetype === 'mp4' && is_converted == 1"
+        alt="thumbnail" />
 
     <!-- converted -->
-    <img [src]="image_uri" *ngIf="filetype === 'webm' && file_url && is_converted == 1" alt="thumbnail" />
+    <img
+        [src]="image_uri"
+        *ngIf="filetype === 'webm' && file_url && is_converted == 1"
+        alt="thumbnail" />
 
     <!-- alternate preview -->
     <img [src]="image_uri | sanitize" *ngIf="filetype | isFeed" alt="thumbnail" />
@@ -58,17 +91,25 @@
     <div class="thumbnail-title">
         <div class="d-flex">
             <span class="sequence">{{ sequence }}</span>
-            <a (click)="routeToMedia(!is_filler ? filename : file_url)" class="flex-even text-center" target="_blank">
+            <a
+                (click)="routeToMedia(!is_filler ? filename : file_url)"
+                class="flex-even text-center"
+                target="_blank">
                 <span>{{ filename | filename }}</span>
             </a>
         </div>
     </div>
 
     <ng-template #video_placeholder>
-        <img *ngIf="filetype | isvideo" src="assets/media-files/placeholder.png" alt="placeholder" />
+        <img
+            *ngIf="filetype | isvideo"
+            src="assets/media-files/placeholder.png"
+            alt="placeholder" />
     </ng-template>
 
-    <div class="is_converting d-flex align-items-center justify-content-center px-2" *ngIf="(filetype | isvideo) && is_converted == 0">
+    <div
+        class="is_converting d-flex align-items-center justify-content-center px-2"
+        *ngIf="(filetype | isvideo) && is_converted == 0">
         <div>
             <mat-progress-bar mode="indeterminate"></mat-progress-bar>
             <p class="xsm-text text-white mt-1">Preparing Video</p>

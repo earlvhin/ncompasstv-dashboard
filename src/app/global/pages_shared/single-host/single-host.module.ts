@@ -14,29 +14,20 @@ import { UploadDocumentDialogComponent } from './components/upload-document-dial
 import { SupportTabComponent } from './components/support-tab/support-tab.component';
 import { ActivityTabComponent } from './components/activity-tab/activity-tab.component';
 
-const DIALOGS = [
-	UploadImageDialogComponent,
-	UploadDocumentDialogComponent,
-];
+const DIALOGS = [UploadImageDialogComponent, UploadDocumentDialogComponent];
 @NgModule({
-	declarations: [
-		SingleHostComponent,
-		ContentsTabComponent,
-		LicensesTabComponent,
-		MapTabComponent,
-		ImagesTabComponent,
-		DocumentsTabComponent,
-		DIALOGS,
-		SupportTabComponent,
-		ActivityTabComponent,
-	],
-	entryComponents: [
-		DIALOGS
-	],
-	imports: [
-		CommonModule,
-		GlobalModule,
-		RouterModule,
-	]
+    declarations: [
+        SingleHostComponent,
+        ContentsTabComponent,
+        LicensesTabComponent,
+        MapTabComponent,
+        ImagesTabComponent,
+        DocumentsTabComponent,
+        DIALOGS,
+        SupportTabComponent,
+        ActivityTabComponent,
+    ],
+    entryComponents: [DIALOGS],
+    imports: [CommonModule, GlobalModule, RouterModule],
 })
-export class SingleHostModule { }
+export class SingleHostModule {}

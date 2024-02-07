@@ -6,13 +6,21 @@
             </div>
             <div class="flex-even text-right">
                 <a [routerLink]="['/administrator/users/create-user/advertiser']" target="_blank">
-                    <button mat-button mat-raised-button class="theme-btn pi-control _info sm-text mr-2" title="Add Advertiser User">
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn pi-control _info sm-text mr-2"
+                        title="Add Advertiser User">
                         <span class="fas fa-plus"></span>
                         <span class="ml-2 button_text_animation">Add Advertiser User</span>
                     </button>
                 </a>
                 <a [routerLink]="['/administrator/create-advertiser']" target="_blank">
-                    <button mat-button mat-raised-button class="theme-btn pi-control _cool sm-text mr-2" title="Add Advertiser Profile">
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn pi-control _cool sm-text mr-2"
+                        title="Add Advertiser Profile">
                         <span class="fas fa-user"></span>
                         <span class="ml-2 button_text_animation">Add Advertiser Profile</span>
                     </button>
@@ -35,8 +43,7 @@
                         [bad_value]="advertiser_stats.bad_value"
                         [bad_value_label]="advertiser_stats.bad_value_label"
                         [page]="'advertisers'"
-                        [has_status_filter]="true"
-                    >
+                        [has_status_filter]="true">
                     </app-data-card-compare>
                 </mat-card>
             </div>
@@ -46,8 +53,7 @@
                         *ngIf="advertiser_stats; else small_loader"
                         [data_value]="advertiser_stats.new_this_week_value"
                         [data_label]="advertiser_stats.new_this_week_label"
-                        [data_description]="advertiser_stats.new_this_week_description"
-                    >
+                        [data_description]="advertiser_stats.new_this_week_description">
                     </app-data-card-count>
                 </mat-card>
             </div>
@@ -57,8 +63,7 @@
                         *ngIf="advertiser_stats; else small_loader"
                         [data_value]="advertiser_stats.new_last_week_value"
                         [data_label]="advertiser_stats.new_last_week_label"
-                        [data_description]="advertiser_stats.new_last_week_description"
-                    >
+                        [data_description]="advertiser_stats.new_last_week_description">
                     </app-data-card-count>
                 </mat-card>
             </div>
@@ -74,14 +79,20 @@
                             class="theme-btn pi-control sm-text _primary mr-2"
                             (click)="exportTable()"
                             [disabled]="workbook_generation"
-                            title="Export to CSV"
-                        >
+                            title="Export to CSV">
                             <span
-                                class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
-                                [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"
-                            ></span>
-                            <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">
-                                {{ !workbook_generation ? "Export" : "Generating CSV" }}
+                                class="{{
+                                    !workbook_generation
+                                        ? 'fas fa-file-excel'
+                                        : 'fas fa-spinner fa-spin'
+                                }}"
+                                [ngStyle]="{
+                                    color: workbook_generation ? '#222' : 'white'
+                                }"></span>
+                            <span
+                                class="ml-2 button_text_animation"
+                                [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">
+                                {{ !workbook_generation ? 'Export' : 'Generating CSV' }}
                             </span>
                         </button>
                         <button
@@ -90,14 +101,26 @@
                             class="theme-btn pi-control sm-text _teal mr-2"
                             (click)="exportAdvertisersTable('All Advertisers')"
                             [disabled]="export_all_workbook_generation"
-                            title="Export to CSV"
-                        >
+                            title="Export to CSV">
                             <span
-                                class="{{ !export_all_workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
-                                [ngStyle]="{ color: export_all_workbook_generation ? '#222' : 'white' }"
-                            ></span>
-                            <span class="ml-2 button_text_animation" [ngStyle]="{ color: export_all_workbook_generation ? '#222' : 'white' }">
-                                {{ !export_all_workbook_generation ? "Export All Advetisers" : "Generating CSV" }}
+                                class="{{
+                                    !export_all_workbook_generation
+                                        ? 'fas fa-file-excel'
+                                        : 'fas fa-spinner fa-spin'
+                                }}"
+                                [ngStyle]="{
+                                    color: export_all_workbook_generation ? '#222' : 'white'
+                                }"></span>
+                            <span
+                                class="ml-2 button_text_animation"
+                                [ngStyle]="{
+                                    color: export_all_workbook_generation ? '#222' : 'white'
+                                }">
+                                {{
+                                    !export_all_workbook_generation
+                                        ? 'Export All Advetisers'
+                                        : 'Generating CSV'
+                                }}
                             </span>
                         </button>
                     </div>
@@ -110,8 +133,7 @@
                             [primary_keyword]="'name'"
                             [secondary_keyword]="'dealer_alias'"
                             (searched)="filterData($event)"
-                            [api_search]="true"
-                        >
+                            [api_search]="true">
                         </app-search-field>
                     </div>
                 </div>
@@ -129,8 +151,7 @@
                                     [active_tab]="sort_column"
                                     [sort_order]="sort_order"
                                     (page_triggered)="pageRequested($event)"
-                                    (to_sort_column)="getColumnsAndOrder($event)"
-                                >
+                                    (to_sort_column)="getColumnsAndOrder($event)">
                                 </app-data-table>
                             </mat-card>
                         </ng-container>
@@ -154,7 +175,9 @@
                     <i class="text-gray fa-5x far fa-file-alt"></i>
                 </div>
                 <h3 class="text-gray col-lg-12">No Results Found.</h3>
-                <span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
+                <span class="text-gray col-lg-12"
+                    >Try adjusting your search to find what you're looking for.</span
+                >
             </mat-card>
         </div>
     </ng-template>

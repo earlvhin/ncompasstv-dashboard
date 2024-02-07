@@ -48,7 +48,11 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
         { name: 'Contents', key: 'contentsFormatted' },
     ];
 
-    constructor(private _advertiser: AdvertiserService, private _auth: AuthService, private _export: ExportService) {}
+    constructor(
+        private _advertiser: AdvertiserService,
+        private _auth: AuthService,
+        private _export: ExportService,
+    ) {}
 
     ngOnInit() {
         this.table.columns = [
@@ -102,7 +106,8 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
     modifyItem(item, data) {
         item.contentsCount = item.contentCount;
 
-        if (item.contents && item.contents.length > 0) item.contentsFormatted = item.contents.join(', ');
+        if (item.contents && item.contents.length > 0)
+            item.contentsFormatted = item.contents.join(', ');
     }
 
     private getAdvertiserDataForExportDealer(data): void {
@@ -124,7 +129,8 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
     }
 
     exportProcess() {
-        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        const EXCEL_TYPE =
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
         this.advertisers_to_export.forEach((item) => {
             this.worksheet.addRow(item).font = { bold: false };
         });
@@ -132,7 +138,11 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
         let rowIndex = 1;
 
         for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
-            this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+            this.worksheet.getRow(rowIndex).alignment = {
+                vertical: 'middle',
+                horizontal: 'center',
+                wrapText: true,
+            };
         }
 
         this.workbook.xlsx.writeBuffer().then((file: any) => {
@@ -246,11 +256,26 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
             return {
                 advertiserId: { value: advertiser.id, link: null, editable: false, hidden: true },
                 index: { value: count++, link: null, editable: false, hidden: false },
-                name: { value: advertiser.name, link: `${this.base_url}/${advertiser.id}`, editable: false, hidden: false },
+                name: {
+                    value: advertiser.name,
+                    link: `${this.base_url}/${advertiser.id}`,
+                    editable: false,
+                    hidden: false,
+                },
                 totalAssets: { value: advertiser.totalAssets },
                 address: { value: advertiser.address },
-                city: { value: advertiser.city ? advertiser.city : '--', link: null, editable: false, hidden: false },
-                state: { value: advertiser.state ? advertiser.state : '--', link: null, editable: false, hidden: false },
+                city: {
+                    value: advertiser.city ? advertiser.city : '--',
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                },
+                state: {
+                    value: advertiser.state ? advertiser.state : '--',
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                },
                 status: { value: advertiser.status, link: null, editable: false, hidden: false },
                 postalCode: { value: advertiser.postalCode },
             };

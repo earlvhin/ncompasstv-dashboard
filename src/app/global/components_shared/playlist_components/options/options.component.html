@@ -7,10 +7,20 @@
         </div>
         <div>
             <button class="naked-btn" (click)="prev()" [disabled]="c_index == 1">
-                <span class="xlg-text fas fa-chevron-left text-gray" [ngClass]="c_index == 1 ? 'text-light-gray drop-cursor' : 'text-gray'" title="Prev"></span>
+                <span
+                    class="xlg-text fas fa-chevron-left text-gray"
+                    [ngClass]="c_index == 1 ? 'text-light-gray drop-cursor' : 'text-gray'"
+                    title="Prev"></span>
             </button>
             <button class="naked-btn" (click)="next()" [disabled]="c_index == contents_list.length">
-                <span class="xlg-text fas fa-chevron-right" [ngClass]="c_index == contents_list.length ? 'text-light-gray drop-cursor' : 'text-gray'" title="Next"></span>
+                <span
+                    class="xlg-text fas fa-chevron-right"
+                    [ngClass]="
+                        c_index == contents_list.length
+                            ? 'text-light-gray drop-cursor'
+                            : 'text-gray'
+                    "
+                    title="Next"></span>
             </button>
             <button class="naked-btn" (click)="undoChanges()">
                 <span class="xlg-text fas fa-times text-danger" title="Close"></span>
@@ -19,20 +29,32 @@
     </div>
     <div class="row mb-2 pl-3 pr-3">
         <div class="col-lg-12">
-            <p class="sm-text">Here you can set duration, display mode, and choose where host and licenses this content should play.</p>
+            <p class="sm-text">
+                Here you can set duration, display mode, and choose where host and licenses this
+                content should play.
+            </p>
         </div>
     </div>
     <div class="row pl-3 pr-3">
         <div class="col-lg-6">
-            <div class="content-holder mb-3" *ngIf="content_data.classification == null; else fillerPreview">
+            <div
+                class="content-holder mb-3"
+                *ngIf="content_data.classification == null; else fillerPreview">
                 <ng-container *ngIf="content_data.fileType | isvideo">
-                    <video muted [src]="content_data.url + content_data.fileName" controls class="w-100"></video>
+                    <video
+                        muted
+                        [src]="content_data.url + content_data.fileName"
+                        controls
+                        class="w-100"></video>
                 </ng-container>
                 <ng-container *ngIf="content_data.fileType | isimage">
                     <img [src]="content_data.url + content_data.fileName" />
                 </ng-container>
                 <ng-container *ngIf="content_data.fileType == 'feed'">
-                    <img class="full-width height-100 p-absolute" [src]="feed_demo_url + content_data.url | sanitize" frameborder="0" />
+                    <img
+                        class="full-width height-100 p-absolute"
+                        [src]="feed_demo_url + content_data.url | sanitize"
+                        frameborder="0" />
                 </ng-container>
             </div>
 
@@ -45,7 +67,10 @@
                         <img [src]="content_data.url" />
                     </ng-container>
                     <ng-container *ngIf="content_data.fileType == 'feed'">
-                        <img class="full-width height-100 p-absolute" [src]="content_data.url" frameborder="0" />
+                        <img
+                            class="full-width height-100 p-absolute"
+                            [src]="content_data.url"
+                            frameborder="0" />
                     </ng-container>
                 </div>
             </ng-template>
@@ -53,25 +78,42 @@
             <div class="mb-4">
                 <h4 class="word-break mb-1">
                     <span *ngIf="content_data.fileType != 'feed'; else feed">
-                        <a [routerLink]="[media_content_base_url, content_data.contentId]" target="_blank">{{ content_data.title }}</a>
+                        <a
+                            [routerLink]="[media_content_base_url, content_data.contentId]"
+                            target="_blank"
+                            >{{ content_data.title }}</a
+                        >
                     </span>
 
                     <ng-template #feed>
                         <span>{{ content_data.title }}</span
                         ><br />
-                        <a class="feed-url" href="{{ content_data.url }}" matTooltip="{{ content_data.url }}" matTooltipClass="prevent-tooltip-truncate" target="_blank">{{
-                            feed_url
-                        }}</a>
+                        <a
+                            class="feed-url"
+                            href="{{ content_data.url }}"
+                            matTooltip="{{ content_data.url }}"
+                            matTooltipClass="prevent-tooltip-truncate"
+                            target="_blank"
+                            >{{ feed_url }}</a
+                        >
                     </ng-template>
                 </h4>
-                <p class="sm-text">Uploaded by {{ content_data.createdByName }} on {{ content_data.dateCreated | date }}</p>
+                <p class="sm-text">
+                    Uploaded by {{ content_data.createdByName }} on
+                    {{ content_data.dateCreated | date }}
+                </p>
                 <hr />
                 <div class="d-flex align-items-center">
-                    <mat-slide-toggle (change)="toggleFullscreen($event)" [checked]="content_data.isFullScreen == 1 ? true : false" [disabled]="is_child_frequency">
+                    <mat-slide-toggle
+                        (change)="toggleFullscreen($event)"
+                        [checked]="content_data.isFullScreen == 1 ? true : false"
+                        [disabled]="is_child_frequency">
                         <h5 class="mb-0 ml-2">Set to Fullscreen</h5>
                     </mat-slide-toggle>
 
-                    <p class="md-text ml-5 font-bold" *ngIf="content_data.filesize">File Size: {{ content_data.filesize | filesize }}</p>
+                    <p class="md-text ml-5 font-bold" *ngIf="content_data.filesize">
+                        File Size: {{ content_data.filesize | filesize }}
+                    </p>
                 </div>
             </div>
 
@@ -87,13 +129,22 @@
                         (change)="setDuration()"
                         min="5"
                         max="100"
-                        [disabled]="is_child_frequency || (content_data.fileType | isvideo) || content_data.classification == 'filler-v2'"
-                    />
-                    <mat-hint align="start" *ngIf="content_data.classification != 'filler-v2'; else forFillers"
+                        [disabled]="
+                            is_child_frequency ||
+                            (content_data.fileType | isvideo) ||
+                            content_data.classification == 'filler-v2'
+                        " />
+                    <mat-hint
+                        align="start"
+                        *ngIf="content_data.classification != 'filler-v2'; else forFillers"
                         ><strong>Applicable to feeds and images only. Min of 5 seconds.</strong>
                     </mat-hint>
                     <ng-template #forFillers>
-                        <mat-hint align="start"><strong>Image Fillers Duration is set to Filler Feeds Duration.</strong> </mat-hint>
+                        <mat-hint align="start"
+                            ><strong
+                                >Image Fillers Duration is set to Filler Feeds Duration.</strong
+                            >
+                        </mat-hint>
                     </ng-template>
                 </mat-form-field>
             </div>
@@ -111,7 +162,9 @@
 
             <hr *ngIf="!is_livestream && content_data.classification == null" />
             <!-- FREQUENCY SETTINGS -->
-            <div class="frequency-settings d-flex flex-column" *ngIf="!is_livestream && content_data.classification == null">
+            <div
+                class="frequency-settings d-flex flex-column"
+                *ngIf="!is_livestream && content_data.classification == null">
                 <div class="d-flex">
                     <mat-label class="md-text">Frequency: </mat-label>
 
@@ -120,16 +173,21 @@
                         fxLayout="column"
                         [(ngModel)]="content_frequency"
                         (change)="onSelectFrequency()"
-                        [disabled]="total_contents <= 5 || is_child_frequency"
-                    >
-                        <mat-radio-button class="mr-3 md-text text-gray" name="frequencyList" *ngFor="let frequency of frequencyList" [value]="frequency.value"
+                        [disabled]="total_contents <= 5 || is_child_frequency">
+                        <mat-radio-button
+                            class="mr-3 md-text text-gray"
+                            name="frequencyList"
+                            *ngFor="let frequency of frequencyList"
+                            [value]="frequency.value"
                             >{{ frequency.label }}
                         </mat-radio-button>
                     </mat-radio-group>
                 </div>
 
                 <div class="total-contents-notice" *ngIf="total_contents <= 5">
-                    <p class="text-danger">* You need at least 6 contents in the playlist to start setting frequencies</p>
+                    <p class="text-danger">
+                        * You need at least 6 contents in the playlist to start setting frequencies
+                    </p>
                 </div>
             </div>
 
@@ -195,12 +253,19 @@
                             <div class="flex-even">
                                 <h4>Play Where</h4>
                                 <!-- <p class="sm-text mb-4">Choose which host and license you want this content displayed.</p> -->
-                                <p class="sm-text mb-4" *ngIf="host_license && host_license.length > 0">
-                                    Content is currently playing on {{ total_whitelist }} out of {{ total_licenses }} licenses.
+                                <p
+                                    class="sm-text mb-4"
+                                    *ngIf="host_license && host_license.length > 0">
+                                    Content is currently playing on {{ total_whitelist }} out of
+                                    {{ total_licenses }} licenses.
                                 </p>
                             </div>
                             <div class="ml-2" *ngIf="host_license && host_license.length > 0">
-                                <mat-slide-toggle class="sm-text" (change)="toggleAll($event)" [checked]="total_licenses === total_whitelist" [disabled]="is_child_frequency">
+                                <mat-slide-toggle
+                                    class="sm-text"
+                                    (change)="toggleAll($event)"
+                                    [checked]="total_licenses === total_whitelist"
+                                    [disabled]="is_child_frequency">
                                     <strong class="ml-2">Toggle All</strong>
                                 </mat-slide-toggle>
                             </div>
@@ -212,8 +277,7 @@
                             (blocklist_changes_saved)="saveBlocklistChanges($event)"
                             (blacklist_data_ready)="blackListDataLoaded($event)"
                             (blacklist_count)="getCount($event)"
-                            [is_child_frequency]="is_child_frequency"
-                        >
+                            [is_child_frequency]="is_child_frequency">
                         </app-play-where>
                     </div>
                 </div>
@@ -226,7 +290,12 @@
     </div>
 
     <div class="col-lg-12 pl-3 pr-3">
-        <button mat-button mat-raised-button class="theme-btn" [disabled]="unchanged_playlist" [mat-dialog-close]="onSave()">
+        <button
+            mat-button
+            mat-raised-button
+            class="theme-btn"
+            [disabled]="unchanged_playlist"
+            [mat-dialog-close]="onSave()">
             Save Options
             <span class="fas fa-save ml-2"></span>
         </button>

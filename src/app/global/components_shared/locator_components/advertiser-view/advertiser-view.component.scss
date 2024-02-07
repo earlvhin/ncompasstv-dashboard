@@ -1,47 +1,47 @@
 .coordinates {
-  color: #777;
+    color: #777;
 }
 
 .float-container {
-  padding: 20px;
-  float: right;
+    padding: 20px;
+    float: right;
 }
 .map-status {
-  height: 18px;
+    height: 18px;
 }
 
 .map-header-status {
-  height: 30px;
+    height: 30px;
 }
 
 #wrapper {
-  position: relative;
+    position: relative;
 }
 #over_map {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 8;
-  width: 400px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 8;
+    width: 400px;
 }
 
 .search-button {
-  background-color: #8ec641;
-  color: #ffffff;
+    background-color: #8ec641;
+    color: #ffffff;
 }
 
 .search-input {
-  width: 300px;
+    width: 300px;
 }
 
 .search-bar {
-  background-color: white;
+    background-color: white;
 }
 
 .search-result {
-  background-color: #fafafa;
-  max-height: 46vh;
-  overflow-y: auto;
-  padding: 15px;
-  margin-top: 8px;
+    background-color: #fafafa;
+    max-height: 46vh;
+    overflow-y: auto;
+    padding: 15px;
+    margin-top: 8px;
 }

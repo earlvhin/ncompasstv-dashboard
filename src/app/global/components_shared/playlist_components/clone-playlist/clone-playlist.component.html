@@ -7,18 +7,26 @@
             <div *ngFor="let f of form_fields_view">
                 <mat-form-field class="full-width">
                     <mat-label>{{ f.label }}</mat-label>
-                    <input 
-                    formControlName="{{ f.control }}" 
-                    type="{{ f.type }}" 
-                    matInput
-                    placeholder="{{ f.placeholder }}">
+                    <input
+                        formControlName="{{ f.control }}"
+                        type="{{ f.type }}"
+                        matInput
+                        placeholder="{{ f.placeholder }}" />
                 </mat-form-field>
             </div>
 
-            <button mat-button mat-raised-button class="theme-btn mt-4 mr-2" [disabled]="form_valid">
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn mt-4 mr-2"
+                [disabled]="form_valid">
                 Submit
             </button>
-            <button mat-button mat-raised-button class="theme-btn mt-4 bg-danger" [mat-dialog-close]="true">
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn mt-4 bg-danger"
+                [mat-dialog-close]="true">
                 Cancel
             </button>
         </form>
@@ -37,9 +45,8 @@
             <h3 class="mb-1">Playlist Cloned Successfully!</h3>
             <p class="mb-0 sm-text font-weight-md">Click the button below to continue</p>
             <button mat-button mat-raised-button class="theme-btn mt-4" mat-dialog-close>
-				Continue
+                Continue
             </button>
         </div>
     </ng-container>
-
 </ng-container>

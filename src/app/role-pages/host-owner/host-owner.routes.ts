@@ -13,6 +13,6 @@ export const HOST_ROUTES: Routes = [
         children: [
             { path: '', component: DashboardComponent },
             { path: 'dashboard', component: DashboardComponent },
-        ]
-    }
+        ],
+    },
 ];

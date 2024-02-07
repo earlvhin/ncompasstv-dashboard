@@ -1,118 +1,134 @@
 <div>
-	<div class="media-component" *ngIf="!no_content; else no_data">
-		<div class="row mb-3">
-			<div class="col-lg-12">
-				<app-media-library-options
-					*ngIf="fillers | async as f"
-					(filetype)="sortByFiletype($event)"
-					(sortAscend)="sortAscendingOrder($event)"
-					(sortDescend)="sortDescendingOrder($event)"
-					(sortUser)="filterByUser($event)"
-					(searchKeyword)="searchContent($event)"
-					(filterByFiller)="filterByFiller($event)"
-					[empty_s]="empty_search"
-					[fillers]="f"
-				>
-				</app-media-library-options>
-			</div>
-		</div>
+    <div class="media-component" *ngIf="!no_content; else no_data">
+        <div class="row mb-3">
+            <div class="col-lg-12">
+                <app-media-library-options
+                    *ngIf="fillers | async as f"
+                    (filetype)="sortByFiletype($event)"
+                    (sortAscend)="sortAscendingOrder($event)"
+                    (sortDescend)="sortDescendingOrder($event)"
+                    (sortUser)="filterByUser($event)"
+                    (searchKeyword)="searchContent($event)"
+                    (filterByFiller)="filterByFiller($event)"
+                    [empty_s]="empty_search"
+                    [fillers]="f">
+                </app-media-library-options>
+            </div>
+        </div>
 
-		<div class="row mb-3">
-			<div class="col-lg-12">
-				<app-filter-labels [filters]="filters" (clear_filter)="clearFilter($event)"></app-filter-labels>
-			</div>
-		</div>
+        <div class="row mb-3">
+            <div class="col-lg-12">
+                <app-filter-labels
+                    [filters]="filters"
+                    (clear_filter)="clearFilter($event)"></app-filter-labels>
+            </div>
+        </div>
 
-		<div class="col-lg-12 p-0">
-			<div class="flex-even text-right ml-3 p-0">
-				<mat-slide-toggle *ngIf="!no_content" (change)="controlToggle($event)" [checked]="is_bulk_select ? 'checked' : 'false'">
-				</mat-slide-toggle>
+        <div class="col-lg-12 p-0">
+            <div class="flex-even text-right ml-3 p-0">
+                <mat-slide-toggle
+                    *ngIf="!no_content"
+                    (change)="controlToggle($event)"
+                    [checked]="is_bulk_select ? 'checked' : 'false'">
+                </mat-slide-toggle>
 
-				<span class="ml-3 text-gray">Bulk Select</span>
+                <span class="ml-3 text-gray">Bulk Select</span>
 
-				<button
-					mat-button
-					mat-raised-button
-					class="theme-btn ml-3 danger"
-					(click)="deleteMultiple()"
-					[disabled]="selected_content_ids.length === 0 || is_view_only"
-				>
-					Delete
-				</button>
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn ml-3 danger"
+                    (click)="deleteMultiple()"
+                    [disabled]="selected_content_ids.length === 0 || is_view_only">
+                    Delete
+                </button>
 
-				<button
-					mat-button
-					mat-raised-button
-					class="theme-btn ml-3"
-					[disabled]="!can_reassign || selected_content_ids.length === 0"
-					(click)="onSelectReassign()"
-				>
-					Reassign
-				</button>
-			</div>
-		</div>
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn ml-3"
+                    [disabled]="!can_reassign || selected_content_ids.length === 0"
+                    (click)="onSelectReassign()">
+                    Reassign
+                </button>
+            </div>
+        </div>
 
-		<div class="media-container mb-4" *ngIf="!no_search_result; else nodata">
-			<div class="no-gutters" *ngIf="!searching; else loading">
-				<div class="row flex no-gutters" *ngIf="filtered_content_data.length != 0; else nodata">
-					<div class="p-2" *ngFor="let content of filtered_content_data; let i = index" [ngClass]="sm_view ? 'col-lg-2' : 'col-lg-1'">
-						<div (click)="onSelectContent(content, i)" [class.selected]="selected_content_ids.includes(content.content_id)">
-							<app-thumbnail-card
-								[classification]="content.classification"
-								[content_id]="content.content_id"
-								[dealer]="content.dealer_id"
-								[file_url]="content.thumbnail"
-								[filename]="content.title"
-								[filetype]="content.file_type"
-								[handle]="content.handler_id"
-								[image_uri]="content.thumbnail"
-								[is_converted]="content.is_converted"
-								[is_protected]="content.is_protected"
-								[is_view_only]="is_view_only"
-								[multiple_delete]="is_bulk_select"
-								[uuid]="content.uuid"
-								[zone_content]="is_zone_content"
-								(deleted)="isDeleted($event)"
-								(content_to_delete)="multipleDelete($event)"
-							>
-							</app-thumbnail-card>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+        <div class="media-container mb-4" *ngIf="!no_search_result; else nodata">
+            <div class="no-gutters" *ngIf="!searching; else loading">
+                <div
+                    class="row flex no-gutters"
+                    *ngIf="filtered_content_data.length != 0; else nodata">
+                    <div
+                        class="p-2"
+                        *ngFor="let content of filtered_content_data; let i = index"
+                        [ngClass]="sm_view ? 'col-lg-2' : 'col-lg-1'">
+                        <div
+                            (click)="onSelectContent(content, i)"
+                            [class.selected]="selected_content_ids.includes(content.content_id)">
+                            <app-thumbnail-card
+                                [classification]="content.classification"
+                                [content_id]="content.content_id"
+                                [dealer]="content.dealer_id"
+                                [file_url]="content.thumbnail"
+                                [filename]="content.title"
+                                [filetype]="content.file_type"
+                                [handle]="content.handler_id"
+                                [image_uri]="content.thumbnail"
+                                [is_converted]="content.is_converted"
+                                [is_protected]="content.is_protected"
+                                [is_view_only]="is_view_only"
+                                [multiple_delete]="is_bulk_select"
+                                [uuid]="content.uuid"
+                                [zone_content]="is_zone_content"
+                                (deleted)="isDeleted($event)"
+                                (content_to_delete)="multipleDelete($event)">
+                            </app-thumbnail-card>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-		<ng-container *ngIf="!no_search_result">
-			<app-pagination-field [paging_data]="paging_data" (get_page)="pageRequested($event, false)" [media_lib]="true"> </app-pagination-field>
-		</ng-container>
+        <ng-container *ngIf="!no_search_result">
+            <app-pagination-field
+                [paging_data]="paging_data"
+                (get_page)="pageRequested($event, false)"
+                [media_lib]="true">
+            </app-pagination-field>
+        </ng-container>
 
-		<ng-template #loading>
-			<div class="d-flex align-items-center justify-content-center vh-50">
-				<app-spinner></app-spinner>
-			</div>
-		</ng-template>
-	</div>
+        <ng-template #loading>
+            <div class="d-flex align-items-center justify-content-center vh-50">
+                <app-spinner></app-spinner>
+            </div>
+        </ng-template>
+    </div>
 
-	<ng-template #no_data>
-		<div class="row">
-			<div class="col-lg-12">
-				<mat-card class="p-5">
-					<h3>Nothing here.</h3>
-					<p class="sm-text mb-0">There are no uploaded content. Click Upload Media to get started.</p>
-				</mat-card>
-			</div>
-		</div>
-	</ng-template>
+    <ng-template #no_data>
+        <div class="row">
+            <div class="col-lg-12">
+                <mat-card class="p-5">
+                    <h3>Nothing here.</h3>
+                    <p class="sm-text mb-0">
+                        There are no uploaded content. Click Upload Media to get started.
+                    </p>
+                </mat-card>
+            </div>
+        </div>
+    </ng-template>
 
-	<ng-template #nodata>
-		<div class="col-lg-12 pl-0 pr-0">
-			<mat-card class="pt-5 pb-5 col-lg-12 text-center">
-				<div class="mb-4">
-					<i class="text-gray fa-5x far fa-file-alt"></i>
-				</div>
-				<h3 class="text-gray col-lg-12">No Results Found.</h3>
-				<span class="text-gray col-lg-12">Try adjusting your search or filter to find what you're looking for.</span>
-			</mat-card>
-		</div>
-	</ng-template>
+    <ng-template #nodata>
+        <div class="col-lg-12 pl-0 pr-0">
+            <mat-card class="pt-5 pb-5 col-lg-12 text-center">
+                <div class="mb-4">
+                    <i class="text-gray fa-5x far fa-file-alt"></i>
+                </div>
+                <h3 class="text-gray col-lg-12">No Results Found.</h3>
+                <span class="text-gray col-lg-12"
+                    >Try adjusting your search or filter to find what you're looking for.</span
+                >
+            </mat-card>
+        </div>
+    </ng-template>
 </div>

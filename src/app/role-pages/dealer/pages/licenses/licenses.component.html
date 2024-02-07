@@ -33,8 +33,7 @@
                         [third_value]="licenses_count.third_value"
                         [third_value_label]="licenses_count.third_value_label"
                         [fourth_value]="licenses_count.fourth_value"
-                        [fourth_value_label]="licenses_count.fourth_value_label"
-                    >
+                        [fourth_value_label]="licenses_count.fourth_value_label">
                     </app-data-card-graph>
                 </mat-card>
             </div>
@@ -46,8 +45,7 @@
                             [compare_basis]="licenses_count.new_this_week_value"
                             [compare_basis_label]="licenses_count.new_this_week_value_description"
                             [label_array]="temp_label_this_week"
-                            [value_array]="temp_array_this_week"
-                        >
+                            [value_array]="temp_array_this_week">
                         </app-data-card-graph>
                     </ng-container>
                 </mat-card>
@@ -60,8 +58,7 @@
                             [compare_basis]="licenses_count.new_last_week_value"
                             [compare_basis_label]="licenses_count.new_last_week_value_description"
                             [label_array]="temp_label_last_week"
-                            [value_array]="temp_array_last_week"
-                        >
+                            [value_array]="temp_array_last_week">
                         </app-data-card-graph>
                     </ng-container>
                 </mat-card>
@@ -72,55 +69,121 @@
 
         <div class="flex pt-2">
             <div class="flex-2 d-inline-flex">
-                <button mat-button mat-raised-button class="theme-btn sm-text mr-2 h-45" [matMenuTriggerFor]="licenseStatus">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn sm-text mr-2 h-45"
+                    [matMenuTriggerFor]="licenseStatus">
                     <span class="button-label">License Status</span>
                     <span class="fas fa-circle xsm-text"></span>
                 </button>
                 <mat-menu #licenseStatus="matMenu">
-                    <button class="md-text" mat-menu-item (click)="filterTable('assigned', 'true')" [matMenuTriggerFor]="assignedSubMenu">
+                    <button
+                        class="md-text"
+                        mat-menu-item
+                        (click)="filterTable('assigned', 'true')"
+                        [matMenuTriggerFor]="assignedSubMenu">
                         <span class="fas fa-user text-primary mr-3"></span>Assigned
                     </button>
-                    <button class="md-text" mat-menu-item (click)="filterTable('assigned', 'false')"><span class="fas fa-user-slash text-gray mr-3"></span>Unassigned</button>
-                    <button class="md-text" mat-menu-item (click)="filterTable('activated', '0')"><span class="fas fa-user text-light-gray mr-3"></span>Inactive</button>
-                    <button class="md-text" mat-menu-item (click)="filterTable('recent', '7')"><span class="far fa-clock text-gray mr-3"></span>Recent Installs</button>
+                    <button
+                        class="md-text"
+                        mat-menu-item
+                        (click)="filterTable('assigned', 'false')">
+                        <span class="fas fa-user-slash text-gray mr-3"></span>Unassigned
+                    </button>
+                    <button class="md-text" mat-menu-item (click)="filterTable('activated', '0')">
+                        <span class="fas fa-user text-light-gray mr-3"></span>Inactive
+                    </button>
+                    <button class="md-text" mat-menu-item (click)="filterTable('recent', '7')">
+                        <span class="far fa-clock text-gray mr-3"></span>Recent Installs
+                    </button>
                 </mat-menu>
 
                 <mat-menu #assignedSubMenu="matMenu">
-                    <button class="md-text" mat-menu-item (click)="filterTable('status', '1')"><span class="fas fa-circle text-primary mr-3"></span>Online</button>
-                    <button class="md-text" mat-menu-item (click)="filterTable('status', '0')" [matMenuTriggerFor]="offlineSubMenu">
+                    <button class="md-text" mat-menu-item (click)="filterTable('status', '1')">
+                        <span class="fas fa-circle text-primary mr-3"></span>Online
+                    </button>
+                    <button
+                        class="md-text"
+                        mat-menu-item
+                        (click)="filterTable('status', '0')"
+                        [matMenuTriggerFor]="offlineSubMenu">
                         <span class="fas fa-circle text-danger mr-3"></span>Offline
                     </button>
-                    <button class="md-text" mat-menu-item (click)="filterTable('pending', 'true')"><span class="fas fa-circle text-gray mr-3"></span>Pending</button>
+                    <button class="md-text" mat-menu-item (click)="filterTable('pending', 'true')">
+                        <span class="fas fa-circle text-gray mr-3"></span>Pending
+                    </button>
                 </mat-menu>
 
                 <mat-menu #offlineSubMenu="matMenu">
-                    <button class="md-text" mat-menu-item (click)="filterTable('days_offline', '0', '5', '5 days')">5 Days</button>
-                    <button class="md-text" mat-menu-item (click)="filterTable('days_offline', '6', '30', '30 days')">6 - 30 Days</button>
-                    <button class="md-text" mat-menu-item (click)="filterTable('days_offline', '31', '365', 'Long Time')">> 30 Days</button>
+                    <button
+                        class="md-text"
+                        mat-menu-item
+                        (click)="filterTable('days_offline', '0', '5', '5 days')">
+                        5 Days
+                    </button>
+                    <button
+                        class="md-text"
+                        mat-menu-item
+                        (click)="filterTable('days_offline', '6', '30', '30 days')">
+                        6 - 30 Days
+                    </button>
+                    <button
+                        class="md-text"
+                        mat-menu-item
+                        (click)="filterTable('days_offline', '31', '365', 'Long Time')">
+                        > 30 Days
+                    </button>
                 </mat-menu>
 
-                <button mat-button mat-raised-button class="theme-btn sm-text mr-2 h-45" [matMenuTriggerFor]="timezone">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn sm-text mr-2 h-45"
+                    [matMenuTriggerFor]="timezone">
                     <span class="button-label">Timezone</span>
                     <span class="fas fa-sort xsm-text"></span>
                 </button>
                 <mat-menu #timezone="matMenu">
-                    <button class="md-text" mat-menu-item (click)="filterTable('zone', 'Central')">Central</button>
-                    <button class="md-text" mat-menu-item (click)="filterTable('zone', 'Eastern')">Eastern</button>
-                    <button class="md-text" mat-menu-item (click)="filterTable('zone', 'Mountain')">Mountain</button>
-                    <button class="md-text" mat-menu-item (click)="filterTable('zone', 'Pacific')">Pacific</button>
+                    <button class="md-text" mat-menu-item (click)="filterTable('zone', 'Central')">
+                        Central
+                    </button>
+                    <button class="md-text" mat-menu-item (click)="filterTable('zone', 'Eastern')">
+                        Eastern
+                    </button>
+                    <button class="md-text" mat-menu-item (click)="filterTable('zone', 'Mountain')">
+                        Mountain
+                    </button>
+                    <button class="md-text" mat-menu-item (click)="filterTable('zone', 'Pacific')">
+                        Pacific
+                    </button>
                 </mat-menu>
 
-                <button mat-button mat-raised-button class="theme-btn sm-text mr-2 h-45" (click)="sortByUser()">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn sm-text mr-2 h-45"
+                    (click)="sortByUser()">
                     <span class="button-label">User</span>
                     <span class="fas fa-user xsm-text"></span>
                 </button>
 
-                <button mat-button mat-raised-button class="theme-btn pi-control _teal sm-text mr-2" (click)="reloadLicense()" title="Reload">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn pi-control _teal sm-text mr-2"
+                    (click)="reloadLicense()"
+                    title="Reload">
                     <span class="fas fa-sync-alt"></span>
                     <span class="ml-2 button_text_animation">Reload</span>
                 </button>
 
-                <button mat-button mat-raised-button class="theme-btn pi-control _cool sm-text mr-2" [matMenuTriggerFor]="orderSort" title="Order by License Status">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn pi-control _cool sm-text mr-2"
+                    [matMenuTriggerFor]="orderSort"
+                    title="Order by License Status">
                     <span class="fas fa-sort"></span>
                     <span class="ml-2 button_text_animation">Order by License Status</span>
                 </button>
@@ -128,8 +191,12 @@
                 <mat-menu #orderSort="matMenu">
                     <button class="md-text" mat-menu-item (click)="sortList('desc')">Online</button>
                     <button class="md-text" mat-menu-item (click)="sortList('asc')">Offline</button>
-                    <button class="md-text" mat-menu-item (click)="sortDisplay('desc')">Display On</button>
-                    <button class="md-text" mat-menu-item (click)="sortDisplay('asc')">Display Off</button>
+                    <button class="md-text" mat-menu-item (click)="sortDisplay('desc')">
+                        Display On
+                    </button>
+                    <button class="md-text" mat-menu-item (click)="sortDisplay('asc')">
+                        Display Off
+                    </button>
                 </mat-menu>
 
                 <button
@@ -138,12 +205,17 @@
                     class="theme-btn pi-control sm-text _primary mr-2"
                     (click)="exportTable()"
                     [disabled]="workbook_generation"
-                    title="Export to CSV"
-                >
-                    <span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
-                    <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">{{
-                        !workbook_generation ? "Export" : "Generating CSV"
-                    }}</span>
+                    title="Export to CSV">
+                    <span
+                        class="{{
+                            !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin'
+                        }}"
+                        [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
+                    <span
+                        class="ml-2 button_text_animation"
+                        [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"
+                        >{{ !workbook_generation ? 'Export' : 'Generating CSV' }}</span
+                    >
                 </button>
 
                 <button
@@ -152,14 +224,17 @@
                     class="theme-btn pi-control sm-text _caution mr-2"
                     [matMenuTriggerFor]="favoriteOption"
                     title="Favorite Licenses"
-                    *ngIf="active_view === 'grid'"
-                >
+                    *ngIf="active_view === 'grid'">
                     <span class="fas fa-star"></span>
                     <span class="ml-2 button_text_animation">Show/Hide Favorites</span>
                 </button>
                 <mat-menu #favoriteOption="matMenu">
-                    <button class="md-text" mat-menu-item (click)="toggleFavorites('true')">Show</button>
-                    <button class="md-text" mat-menu-item (click)="toggleFavorites('false')">Hide</button>
+                    <button class="md-text" mat-menu-item (click)="toggleFavorites('true')">
+                        Show
+                    </button>
+                    <button class="md-text" mat-menu-item (click)="toggleFavorites('false')">
+                        Hide
+                    </button>
                 </mat-menu>
             </div>
 
@@ -170,8 +245,7 @@
                     class="theme-btn sm-text h-45 mr-2"
                     [ngClass]="active_view === 'list' ? 'active-button' : ''"
                     title="List View"
-                    (click)="changeView('list')"
-                >
+                    (click)="changeView('list')">
                     <span class="button-label mr-0"><i class="fas fa-list"></i></span>
                 </button>
                 <button
@@ -180,12 +254,10 @@
                     class="theme-btn sm-text h-45"
                     [ngClass]="active_view === 'grid' ? 'active-button' : ''"
                     title="Grid View"
-                    (click)="changeView('grid')"
-                >
+                    (click)="changeView('grid')">
                     <span class="button-label mr-0"><i class="fas fa-th"></i></span>
                 </button>
             </div>
-
 
             <div class="flex-even">
                 <app-search-field
@@ -196,13 +268,20 @@
                     [primary_keyword]="'alias'"
                     [secondary_keyword]="'host_name'"
                     (searched)="licenseFilterData($event)"
-                    [api_search]="true"
-                >
+                    [api_search]="true">
                 </app-search-field>
             </div>
         </div>
 
-        <div class="row no-gutters" *ngIf="filters.label_status || filters.label_zone || filters.label_dealer || filters.label_host; else showResults">
+        <div
+            class="row no-gutters"
+            *ngIf="
+                filters.label_status ||
+                    filters.label_zone ||
+                    filters.label_dealer ||
+                    filters.label_host;
+                else showResults
+            ">
             <div class="col-lg-12">
                 <div class="d-flex align-items-center p-2 bg-gray-2">
                     <div class="d-flex align-items-center">
@@ -222,13 +301,20 @@
 
                         <div class="pl-2" *ngIf="!searching_license">
                             <div class="sm-text">
-                                Showing <span class="text-danger">{{ getTotalShownLicenses() }}</span> out of <span class="text-danger">{{ getTotalLicenses() }}</span> licenses
+                                Showing
+                                <span class="text-danger">{{ getTotalShownLicenses() }}</span> out
+                                of
+                                <span class="text-danger">{{ getTotalLicenses() }}</span> licenses
                                 result.
                             </div>
                         </div>
                     </div>
                     <div class="control flex-even text-right">
-                        <button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn"
+                            (click)="clearFilter()">
                             <span class="button-label"> Clear Filter </span>
                             <span class="fas fa-times ml-2 sm-text"></span>
                         </button>
@@ -241,7 +327,9 @@
             <div class="row no-gutters mb-2">
                 <div class="col-lg-12" *ngIf="!searching_license && getTotalLicenses() !== 0">
                     <div class="pl-3 sm-text bg-gray full-width">
-                        Showing <span class="text-danger">{{ getTotalShownLicenses() }}</span> out of <span class="text-danger">{{ getTotalLicenses() }}</span> licenses result.
+                        Showing <span class="text-danger">{{ getTotalShownLicenses() }}</span> out
+                        of <span class="text-danger">{{ getTotalLicenses() }}</span> licenses
+                        result.
                     </div>
                 </div>
             </div>
@@ -264,8 +352,7 @@
                                 [active_tab]="sort_column"
                                 [sort_column]="sort_column"
                                 [sort_order]="sort_order"
-                                [is_view_only]="is_view_only"
-                            >
+                                [is_view_only]="is_view_only">
                             </app-data-table>
                         </mat-card>
                     </div>
@@ -281,8 +368,7 @@
                         (show_more)="showMore($event)"
                         [no_favorites]="no_favorites"
                         [favorite_view]="favorite_view"
-                        [dealers_name]="dealers_name"
-                    >
+                        [dealers_name]="dealers_name">
                     </app-grid-view-license>
                 </ng-template>
             </div>

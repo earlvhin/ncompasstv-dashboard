@@ -1,169 +1,173 @@
 <div class="theme-container">
-	<div class="row mt-5">
-		<div class="col-lg-12">
-			<h1 class="page-title">{{ title }}</h1>
-		</div>
-	</div>
-	<hr class="my-4" />
+    <div class="row mt-5">
+        <div class="col-lg-12">
+            <h1 class="page-title">{{ title }}</h1>
+        </div>
+    </div>
+    <hr class="my-4" />
 
-	<div>
-		<div class="row">
-			<div class="col-lg-4" *ngIf="is_dealer">
-				<mat-card class="h-100 dealer-card">
-					<app-data-card-count
-						*ngIf="fillers_count; else small_loader"
-						[data_value]="fillers_count.dealer_count"
-						[data_label]="'My Fillers'"
-						[is_filler]="true"
-						[filler_data]="fillers_count.dealer_data">
-					</app-data-card-count>
-				</mat-card>
-			</div>
-			<div class="col-lg-4">
-				<mat-card class="h-100 dealer-card">
-					<app-data-card-count
-						*ngIf="fillers_count; else small_loader"
-						[data_value]="fillers_count.admin_count"
-						[data_label]="fillers_count.admin_label"
-						[is_filler]="true"
-						[filler_data]="fillers_count.admin_data">
-					</app-data-card-count>
-				</mat-card>
-			</div>
-			<div class="col-lg-4">
-				<mat-card class="h-100 dealer-card">
-					<app-data-card-count
-						*ngIf="fillers_count; else small_loader"
-						[data_value]="fillers_count.dealer_admin_count"
-						[data_label]="fillers_count.dealer_admin_label"
-						[is_filler]="true"
-						[filler_data]="fillers_count.dealer_admin_data">
-					</app-data-card-count>
-				</mat-card>
-			</div>
-			<div class="col-lg-4">
-				<mat-card class="h-100 dealer-card" *ngIf="!is_dealer">
-					<app-data-card-count
-						*ngIf="fillers_count; else small_loader"
-						[data_value]="fillers_count.dealer_count"
-						[data_label]="fillers_count.dealer_label"
-						[is_filler]="true"
-						[filler_data]="fillers_count.dealer_data">
-					</app-data-card-count>
-				</mat-card>
-			</div>
-		</div>
+    <div>
+        <div class="row">
+            <div class="col-lg-4" *ngIf="is_dealer">
+                <mat-card class="h-100 dealer-card">
+                    <app-data-card-count
+                        *ngIf="fillers_count; else small_loader"
+                        [data_value]="fillers_count.dealer_count"
+                        [data_label]="'My Fillers'"
+                        [is_filler]="true"
+                        [filler_data]="fillers_count.dealer_data">
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+            <div class="col-lg-4">
+                <mat-card class="h-100 dealer-card">
+                    <app-data-card-count
+                        *ngIf="fillers_count; else small_loader"
+                        [data_value]="fillers_count.admin_count"
+                        [data_label]="fillers_count.admin_label"
+                        [is_filler]="true"
+                        [filler_data]="fillers_count.admin_data">
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+            <div class="col-lg-4">
+                <mat-card class="h-100 dealer-card">
+                    <app-data-card-count
+                        *ngIf="fillers_count; else small_loader"
+                        [data_value]="fillers_count.dealer_admin_count"
+                        [data_label]="fillers_count.dealer_admin_label"
+                        [is_filler]="true"
+                        [filler_data]="fillers_count.dealer_admin_data">
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+            <div class="col-lg-4">
+                <mat-card class="h-100 dealer-card" *ngIf="!is_dealer">
+                    <app-data-card-count
+                        *ngIf="fillers_count; else small_loader"
+                        [data_value]="fillers_count.dealer_count"
+                        [data_label]="fillers_count.dealer_label"
+                        [is_filler]="true"
+                        [filler_data]="fillers_count.dealer_data">
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+        </div>
 
-		<hr class="my-4" />
+        <hr class="my-4" />
 
-		<div class="row no-gutters">
-			<div class="col-lg-12">
-				<mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event)" class="custom-mat-tab">
-					<mat-tab [label]="is_dealer || is_dealer_admin ? 'My Fillers' : 'Admin'">
-						<div *ngIf="tabGroup.selectedIndex === 0">
-							<app-filler-main-view
-								[filler_data]="filler_group_cache"
-								[filler_group]="filler_group"
-								[is_loading]="is_loading"
-								[no_search_result]="no_search_result"
-								[current_user_id]="current_user_id"
-								(get_fillers)="setFilters($event)"
-								(refresh)="ngOnInit()"
-								[restricted]="false"></app-filler-main-view>
-						</div>
-					</mat-tab>
+        <div class="row no-gutters">
+            <div class="col-lg-12">
+                <mat-tab-group
+                    dynamicHeight
+                    #tabGroup
+                    (selectedTabChange)="onTabChanged($event)"
+                    class="custom-mat-tab">
+                    <mat-tab [label]="is_dealer || is_dealer_admin ? 'My Fillers' : 'Admin'">
+                        <div *ngIf="tabGroup.selectedIndex === 0">
+                            <app-filler-main-view
+                                [filler_data]="filler_group_cache"
+                                [filler_group]="filler_group"
+                                [is_loading]="is_loading"
+                                [no_search_result]="no_search_result"
+                                [current_user_id]="current_user_id"
+                                (get_fillers)="setFilters($event)"
+                                (refresh)="ngOnInit()"
+                                [restricted]="false"></app-filler-main-view>
+                        </div>
+                    </mat-tab>
 
-					<mat-tab label="Admin" *ngIf="is_dealer || is_dealer_admin">
-						<div *ngIf="tabGroup.selectedIndex === 1">
-							<app-filler-main-view
-								[filler_data]="filler_group_cache"
-								[filler_group]="filler_group"
-								[is_loading]="is_loading"
-								[no_search_result]="no_search_result"
-								[current_user_id]="current_user_id"
-								(get_fillers)="setFilters($event)"
-								(refresh)="ngOnInit()"
-								[restricted]="true"></app-filler-main-view>
-						</div>
-					</mat-tab>
+                    <mat-tab label="Admin" *ngIf="is_dealer || is_dealer_admin">
+                        <div *ngIf="tabGroup.selectedIndex === 1">
+                            <app-filler-main-view
+                                [filler_data]="filler_group_cache"
+                                [filler_group]="filler_group"
+                                [is_loading]="is_loading"
+                                [no_search_result]="no_search_result"
+                                [current_user_id]="current_user_id"
+                                (get_fillers)="setFilters($event)"
+                                (refresh)="ngOnInit()"
+                                [restricted]="true"></app-filler-main-view>
+                        </div>
+                    </mat-tab>
 
-					<mat-tab label="Dealer Admin" *ngIf="!is_dealer_admin">
-						<div *ngIf="tabGroup.selectedIndex === (is_dealer ? 2 : 1)">
-							<app-filler-main-view
-								[filler_data]="filler_group_cache"
-								[filler_group]="filler_group"
-								[is_loading]="is_loading"
-								[no_search_result]="no_search_result"
-								[current_user_id]="current_user_id"
-								(get_fillers)="setFilters($event)"
-								(refresh)="ngOnInit()"
-								[restricted]="true"></app-filler-main-view>
-						</div>
-					</mat-tab>
+                    <mat-tab label="Dealer Admin" *ngIf="!is_dealer_admin">
+                        <div *ngIf="tabGroup.selectedIndex === (is_dealer ? 2 : 1)">
+                            <app-filler-main-view
+                                [filler_data]="filler_group_cache"
+                                [filler_group]="filler_group"
+                                [is_loading]="is_loading"
+                                [no_search_result]="no_search_result"
+                                [current_user_id]="current_user_id"
+                                (get_fillers)="setFilters($event)"
+                                (refresh)="ngOnInit()"
+                                [restricted]="true"></app-filler-main-view>
+                        </div>
+                    </mat-tab>
 
-					<!-- For Admin's Dealer View -->
-					<mat-tab label="Dealers" *ngIf="is_admin">
-						<div class="min-height-30" *ngIf="tabGroup.selectedIndex === 2">
-							<div class="row mb-3 mt-3" *ngIf="!dealer_initial_load; else loader">
-								<div class="col-lg-4">
-									<app-autocomplete-field
-										(data_value)="setToDealer($event)"
-										(call_next_page)="searchBoxTrigger($event)"
-										(searched)="searchDealer($event)"
-										[data_reference]="dealers_data"
-										[primary_keyword]="'businessName'"
-										[key_of_value]="'dealerId'"
-										[required]="true"
-										[label]="'Type in a Dealer Business Name'"
-										[disabled]="is_dealer"
-										[paging]="paging"
-										[loading_data]="loading_data"
-										[loading_search]="loading_search">
-									</app-autocomplete-field>
-								</div>
-								<div class="col-lg-12">
-									<app-filler-main-view
-										[filler_data]="filler_group_cache"
-										[filler_group]="filler_group"
-										[is_loading]="is_loading"
-										[no_search_result]="no_search_result"
-										[current_user_id]="current_user_id"
-										(get_fillers)="setFilters($event)"
-										[restricted]="true"
-										(refresh)="ngOnInit()"></app-filler-main-view>
-								</div>
-							</div>
-						</div>
-					</mat-tab>
+                    <!-- For Admin's Dealer View -->
+                    <mat-tab label="Dealers" *ngIf="is_admin">
+                        <div class="min-height-30" *ngIf="tabGroup.selectedIndex === 2">
+                            <div class="row mb-3 mt-3" *ngIf="!dealer_initial_load; else loader">
+                                <div class="col-lg-4">
+                                    <app-autocomplete-field
+                                        (data_value)="setToDealer($event)"
+                                        (call_next_page)="searchBoxTrigger($event)"
+                                        (searched)="searchDealer($event)"
+                                        [data_reference]="dealers_data"
+                                        [primary_keyword]="'businessName'"
+                                        [key_of_value]="'dealerId'"
+                                        [required]="true"
+                                        [label]="'Type in a Dealer Business Name'"
+                                        [disabled]="is_dealer"
+                                        [paging]="paging"
+                                        [loading_data]="loading_data"
+                                        [loading_search]="loading_search">
+                                    </app-autocomplete-field>
+                                </div>
+                                <div class="col-lg-12">
+                                    <app-filler-main-view
+                                        [filler_data]="filler_group_cache"
+                                        [filler_group]="filler_group"
+                                        [is_loading]="is_loading"
+                                        [no_search_result]="no_search_result"
+                                        [current_user_id]="current_user_id"
+                                        (get_fillers)="setFilters($event)"
+                                        [restricted]="true"
+                                        (refresh)="ngOnInit()"></app-filler-main-view>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-tab>
 
-					<!-- For Dealer Admin's Dealer View -->
-					<mat-tab label="Dealers" *ngIf="is_dealer_admin">
-						<div *ngIf="tabGroup.selectedIndex === 2">
-							<app-filler-main-view
-								[filler_data]="filler_group_cache"
-								[filler_group]="filler_group"
-								[is_loading]="is_loading"
-								[no_search_result]="no_search_result"
-								[current_user_id]="current_user_id"
-								(get_fillers)="setFilters($event)"
-								[restricted]="true"
-								(refresh)="ngOnInit()"></app-filler-main-view>
-						</div>
-					</mat-tab>
-				</mat-tab-group>
-			</div>
-		</div>
-	</div>
+                    <!-- For Dealer Admin's Dealer View -->
+                    <mat-tab label="Dealers" *ngIf="is_dealer_admin">
+                        <div *ngIf="tabGroup.selectedIndex === 2">
+                            <app-filler-main-view
+                                [filler_data]="filler_group_cache"
+                                [filler_group]="filler_group"
+                                [is_loading]="is_loading"
+                                [no_search_result]="no_search_result"
+                                [current_user_id]="current_user_id"
+                                (get_fillers)="setFilters($event)"
+                                [restricted]="true"
+                                (refresh)="ngOnInit()"></app-filler-main-view>
+                        </div>
+                    </mat-tab>
+                </mat-tab-group>
+            </div>
+        </div>
+    </div>
 </div>
 
 <ng-template #small_loader>
-	<div class="py-4 white-bg">
-		<app-spinner [diameter]="60"></app-spinner>
-	</div>
+    <div class="py-4 white-bg">
+        <app-spinner [diameter]="60"></app-spinner>
+    </div>
 </ng-template>
 
 <ng-template #loader>
-	<div class="vh-50 d-flex align-items-center justify-content-center">
-		<app-spinner></app-spinner>
-	</div>
+    <div class="vh-50 d-flex align-items-center justify-content-center">
+        <app-spinner></app-spinner>
+    </div>
 </ng-template>

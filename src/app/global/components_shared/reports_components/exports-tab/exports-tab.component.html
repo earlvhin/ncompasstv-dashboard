@@ -1,14 +1,16 @@
 <div class="col-lg-12 p-0 flex">
-    <button mat-button mat-raised-button 
+    <button
+        mat-button
+        mat-raised-button
         class="theme-btn _teal md-text mr-2"
         (click)="exportHostsTable('licenses')"
         [disabled]="workbook_generation">
         <span *ngIf="!workbook_generation; else exporting">
-            <span class="fas fa-map"></span> 
+            <span class="fas fa-map"></span>
             <span class="ml-2">Hosts Table</span>
         </span>
         <ng-template #exporting>
-            <span class="fas fa-spinner"></span> 
+            <span class="fas fa-spinner"></span>
             <span class="ml-2">Generating Hosts Table</span>
         </ng-template>
     </button>

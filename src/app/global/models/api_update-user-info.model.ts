@@ -7,7 +7,15 @@ export class API_UPDATE_USER_INFO {
     password: string;
     allowEmail: number;
 
-    constructor(userId: string, fname: string, mname: string, lname: string, email: string, password: string, allowEmail = 0) {
+    constructor(
+        userId: string,
+        fname: string,
+        mname: string,
+        lname: string,
+        email: string,
+        password: string,
+        allowEmail = 0,
+    ) {
         this.userId = userId;
         this.firstName = fname;
         this.middleName = mname;
@@ -40,7 +48,14 @@ export class API_UPDATE_DEALER_PROFILE {
     updatedBy: string;
     contactNumber: string;
 
-    constructor(userId: string, dealerId: string, contactPerson: string, businessName: string, updatedBy: string, contactNumber: string) {
+    constructor(
+        userId: string,
+        dealerId: string,
+        contactPerson: string,
+        businessName: string,
+        updatedBy: string,
+        contactNumber: string,
+    ) {
         this.userId = userId;
         this.dealerId = dealerId;
         this.contactPerson = contactPerson;
@@ -80,7 +95,7 @@ export class API_UPDATE_DEALER_PROFILE_BY_ADMIN {
         city: string,
         state: string,
         startDate: Date,
-        updatedBy: string
+        updatedBy: string,
     ) {
         this.userId = userId;
         this.dealerId = dealerId;
@@ -120,7 +135,13 @@ export class API_UPDATE_DEALER_USER_PROFILE_BY_ADMIN {
     lastName: string;
     email: string;
 
-    constructor(userId: string, dealerId: string, firstName: string, lastName: string, email: string) {
+    constructor(
+        userId: string,
+        dealerId: string,
+        firstName: string,
+        lastName: string,
+        email: string,
+    ) {
         this.userId = userId;
         this.dealerId = dealerId;
         this.firstName = firstName;

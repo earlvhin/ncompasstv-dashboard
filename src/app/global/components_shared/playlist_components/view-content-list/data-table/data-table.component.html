@@ -1,28 +1,38 @@
 <mat-card class="theme-table">
-	<table class="full-width">
-		<thead align="left" class="text-center">
-			<tr>
-				<th class="border-right border-bottom p-3" scope="col" rowspan="2" *ngFor="let column of table_data.columns">{{ column.name }}</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr *ngFor="let row of table_data.rows; let i = index">
-				<td class="xsm-text border-right text-center p-3">{{ i + 1 }}</td>
-				<td class="xsm-text border-right text-center p-3" *ngIf="row.type !== 'feed'; else feed">{{ row.title ? row.title : '--' }}</td>
-				<td class="xsm-text border-right text-center p-3">{{ row.type }}</td>
-				<td class="xsm-text border-right text-center p-3">{{ row.duration }} secs</td>
-				<td class="xsm-text border-right text-center p-3"><i class="fas fa-expand" *ngIf="row.isFullScreen === 1; else notFullScreen"></i></td>
-				
-				<ng-template #notFullScreen> -- </ng-template>
+    <table class="full-width">
+        <thead align="left" class="text-center">
+            <tr>
+                <th
+                    class="border-right border-bottom p-3"
+                    scope="col"
+                    rowspan="2"
+                    *ngFor="let column of table_data.columns">
+                    {{ column.name }}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let row of table_data.rows; let i = index">
+                <td class="xsm-text border-right text-center p-3">{{ i + 1 }}</td>
+                <td
+                    class="xsm-text border-right text-center p-3"
+                    *ngIf="row.type !== 'feed'; else feed">
+                    {{ row.title ? row.title : '--' }}
+                </td>
+                <td class="xsm-text border-right text-center p-3">{{ row.type }}</td>
+                <td class="xsm-text border-right text-center p-3">{{ row.duration }} secs</td>
+                <td class="xsm-text border-right text-center p-3">
+                    <i class="fas fa-expand" *ngIf="row.isFullScreen === 1; else notFullScreen"></i>
+                </td>
 
-				<ng-template #feed>
-					<td class="xsm-text border-right text-center p-3">
-						<a [href]="row.url" target="_blank">{{ row.title ? row.title : '--' }}</a>
-					</td>
-				</ng-template>
-			</tr>
-		</tbody>
-	</table>
+                <ng-template #notFullScreen> -- </ng-template>
+
+                <ng-template #feed>
+                    <td class="xsm-text border-right text-center p-3">
+                        <a [href]="row.url" target="_blank">{{ row.title ? row.title : '--' }}</a>
+                    </td>
+                </ng-template>
+            </tr>
+        </tbody>
+    </table>
 </mat-card>
-
-

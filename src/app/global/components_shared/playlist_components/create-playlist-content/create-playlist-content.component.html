@@ -1,40 +1,59 @@
-<div class="playlist-expansion-panel playlist-content material-shadow example-box p-0"  
-data-placement="top" [attr.title]="removeFilenameHandle(content.content_data.file_name, content.content_data.file_type)">
+<div
+    class="playlist-expansion-panel playlist-content material-shadow example-box p-0"
+    data-placement="top"
+    [attr.title]="
+        removeFilenameHandle(content.content_data.file_name, content.content_data.file_type)
+    ">
     <div class="bg-light playlist-expansion-header p-0">
         <div class="d-flex align-items-center h-100 w-100 pr-4">
             <div class="create-playlist-content-thumbnail inline-block mr-3 h-100">
+                <img
+                    [src]="content.content_data.thumbnail"
+                    class="full-width height-100"
+                    *ngIf="content.content_data.file_type | isimage"
+                    alt="thumbnail" />
 
-                <img [src]="content.content_data.thumbnail" class="full-width height-100" *ngIf="(content.content_data.file_type | isimage)" alt="thumbnail">
+                <img
+                    [src]="content.content_data.thumbnail"
+                    class="full-width height-100"
+                    *ngIf="content.content_data.file_type | isvideo"
+                    alt="thumbnail" />
 
-                <img [src]="content.content_data.thumbnail" class="full-width height-100" *ngIf="(content.content_data.file_type | isvideo)" alt="thumbnail">
-            
-                <img [src]="fs_screenshot + '/' + content.content_data.file_url | sanitize" class="full-width height-100" *ngIf="(content.content_data.file_type | isFeed)" alt="thumbnail">
-            
-<!-- 
+                <img
+                    [src]="fs_screenshot + '/' + content.content_data.file_url | sanitize"
+                    class="full-width height-100"
+                    *ngIf="content.content_data.file_type | isFeed"
+                    alt="thumbnail" />
+
+                <!-- 
                 <img src="{{ content.content_data.thumbnail }}" *ngIf="content.content_data.file_type !== 'feed'; else feed_thumb" alt="thumbnail" class="full-width height-100">
                 
                 <ng-template #feed_thumb>
                     <img [src]=" fs_screenshot + '/' + content.content_data.file_url | sanitize"  class="full-width height-100">
                 </ng-template> -->
-
             </div>
             <div class="flex-even py-3">
-				<h5 data-toggle="tooltip">
+                <h5 data-toggle="tooltip">
                     <span *ngIf="content.content_data.file_type !== 'feed'; else feed">
-                        {{ (content.content_data.file_name | nohandle) | substring:20 }}
+                        {{ content.content_data.file_name | nohandle | substring: 20 }}
                     </span>
 
                     <ng-template #feed>
                         <span>{{ content.content_data.title }}</span>
                     </ng-template>
-				</h5>
-				<p class="xsm-text">{{ array_index }} - {{ content.content_data.file_type }}</p>
+                </h5>
+                <p class="xsm-text">{{ array_index }} - {{ content.content_data.file_type }}</p>
             </div>
             <div class="ml-4 text-right">
-                <mat-checkbox class="mr-3 pr-3 border-right" [(ngModel)]="checked" (click)="isFullScreen($event); $event.stopPropagation();">
+                <mat-checkbox
+                    class="mr-3 pr-3 border-right"
+                    [(ngModel)]="checked"
+                    (click)="isFullScreen($event); $event.stopPropagation()">
                     <h6 class="font-weight-bold">Fullscreen</h6>
                 </mat-checkbox>
-                <button class="remove-content no-border" (click)="removeContent(array_index); $event.stopPropagation();">
+                <button
+                    class="remove-content no-border"
+                    (click)="removeContent(array_index); $event.stopPropagation()">
                     <span class="fas fa-times"></span>
                 </button>
             </div>

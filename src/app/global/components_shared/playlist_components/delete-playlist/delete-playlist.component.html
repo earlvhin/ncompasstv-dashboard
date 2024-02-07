@@ -3,18 +3,41 @@
     <div class="text-center">
         <app-warning-animation></app-warning-animation>
         <h3 class="my-2 text-danger">You're deleting an active playlist!</h3>
-        <p class="mb-4 sm-text font-weight-md text-gray">You can either unassign the playlist from screens or delete it permanently by clicking "Continue Delete".</p>
+        <p class="mb-4 sm-text font-weight-md text-gray">
+            You can either unassign the playlist from screens or delete it permanently by clicking
+            "Continue Delete".
+        </p>
         <div class="list-container">
-            <div class="text-center md-text text-gray hover-primary cursor-pointer" *ngFor="let list of screens; let i = index">
-                <a *ngIf="!is_dealer" [routerLink]="['/administrator/screens/', list.screenId]" [queryParams]="{ pid: _dialog_data.playlist_id }" target="_blank">
-                    <span class="mr-1 sm-text">{{ i + 1 }} -</span> <b>{{ list.screenName }} </b> <i>({{ list.templateZoneName }} Zone)</i>
+            <div
+                class="text-center md-text text-gray hover-primary cursor-pointer"
+                *ngFor="let list of screens; let i = index">
+                <a
+                    *ngIf="!is_dealer"
+                    [routerLink]="['/administrator/screens/', list.screenId]"
+                    [queryParams]="{ pid: _dialog_data.playlist_id }"
+                    target="_blank">
+                    <span class="mr-1 sm-text">{{ i + 1 }} -</span> <b>{{ list.screenName }} </b>
+                    <i>({{ list.templateZoneName }} Zone)</i>
                 </a>
-                <a *ngIf="is_dealer" [routerLink]="['/dealer/screens/', list.screenId]" [queryParams]="{ pid: _dialog_data.playlist_id }" target="_blank">
-                    <span class="mr-1 sm-text">{{ i + 1 }} -</span> <b>{{ list.screenName }} </b> <i>({{ list.templateZoneName }} Zone)</i>
+                <a
+                    *ngIf="is_dealer"
+                    [routerLink]="['/dealer/screens/', list.screenId]"
+                    [queryParams]="{ pid: _dialog_data.playlist_id }"
+                    target="_blank">
+                    <span class="mr-1 sm-text">{{ i + 1 }} -</span> <b>{{ list.screenName }} </b>
+                    <i>({{ list.templateZoneName }} Zone)</i>
                 </a>
             </div>
         </div>
-        <button mat-button mat-raised-button class="mt-3 theme-btn mr-2 bg-danger" [mat-dialog-close]="false">Cancel</button>
-        <button mat-button mat-raised-button class="mt-3 theme-btn" (click)="forceDelete()">Continue Delete</button>
+        <button
+            mat-button
+            mat-raised-button
+            class="mt-3 theme-btn mr-2 bg-danger"
+            [mat-dialog-close]="false">
+            Cancel
+        </button>
+        <button mat-button mat-raised-button class="mt-3 theme-btn" (click)="forceDelete()">
+            Continue Delete
+        </button>
     </div>
 </div>

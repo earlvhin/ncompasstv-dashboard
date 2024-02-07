@@ -7,13 +7,8 @@ import { RouterModule } from '@angular/router';
 import { ReassignDealerComponent } from './reassign-dealer.component';
 
 @NgModule({
-	declarations: [ ReassignDealerComponent ],
-	entryComponents: [ ReassignDealerComponent ],
-	imports: [
-		AdministratorModule,
-		GlobalModule,
-		CommonModule,
-		RouterModule
-	]
+    declarations: [ReassignDealerComponent],
+    entryComponents: [ReassignDealerComponent],
+    imports: [AdministratorModule, GlobalModule, CommonModule, RouterModule],
 })
-export class ReassignDealerModule { }
+export class ReassignDealerModule {}

@@ -3,14 +3,21 @@
         <div class="col-lg-9">
             <div class="d-inline-flex">
                 <h3>Edit Host</h3>
-                <span class="sm-text ml-3" [ngClass]="host.status === 'A' ? 'text-primary' : 'text-white'">
+                <span
+                    class="sm-text ml-3"
+                    [ngClass]="host.status === 'A' ? 'text-primary' : 'text-white'">
                     <span class="fas fa-circle"></span>
                 </span>
             </div>
         </div>
         <div class="col-lg-2 text-right">
-            <mat-slide-toggle (change)="onToggleStatus($event)" labelPosition="before" [(ngModel)]="is_active_host">
-                <span class="sm-text font-weight-bold">{{ is_active_host ? "Active" : "Inactive" }}</span>
+            <mat-slide-toggle
+                (change)="onToggleStatus($event)"
+                labelPosition="before"
+                [(ngModel)]="is_active_host">
+                <span class="sm-text font-weight-bold">{{
+                    is_active_host ? 'Active' : 'Inactive'
+                }}</span>
             </mat-slide-toggle>
         </div>
         <div class="col-lg-1 text-right">
@@ -30,9 +37,15 @@
                                 <div class="flex my-2">
                                     <div class="margin-left-auto sm-text">
                                         <span class="text-gray font-weight-bold">CREATED BY :</span>
-                                        <span class="ml-2 text-primary"> {{ created_by.firstName }}</span>
-                                        <span class="ml-1 text-primary">{{ created_by.lastName }}</span>
-                                        <span class="ml-2 font-italic text-gray">({{ created_by.roleName }})</span>
+                                        <span class="ml-2 text-primary">
+                                            {{ created_by.firstName }}</span
+                                        >
+                                        <span class="ml-1 text-primary">{{
+                                            created_by.lastName
+                                        }}</span>
+                                        <span class="ml-2 font-italic text-gray"
+                                            >({{ created_by.roleName }})</span
+                                        >
                                     </div>
                                 </div>
                                 <div class="flex">
@@ -46,21 +59,23 @@
                                         [label]="'Type in a Dealer Business Name'"
                                         [new_value]="dealer.businessName"
                                         [initial_value]="dealer.businessName"
-                                        [disabled]="!is_current_user_admin || is_dealer_change_disabled"
+                                        [disabled]="
+                                            !is_current_user_admin || is_dealer_change_disabled
+                                        "
                                         [paging]="paging"
                                         (call_next_page)="getDealers($event)"
                                         (searched)="searchDealer($event)"
-                                        [no_edit]="closed_without_edit"
-                                    >
+                                        [no_edit]="closed_without_edit">
                                     </app-autocomplete-field>
 
                                     <ng-container *ngIf="is_current_user_admin">
                                         <mat-icon
                                             class="clickable position-absolute mt-2 r-15 text-gray"
-                                            [ngClass]="{ 'text-danger': !is_dealer_change_disabled }"
-                                            (click)="changeHostDealer(!is_dealer_change_disabled)"
-                                        >
-                                            {{ is_dealer_change_disabled ? "mode_edit" : "close" }}
+                                            [ngClass]="{
+                                                'text-danger': !is_dealer_change_disabled
+                                            }"
+                                            (click)="changeHostDealer(!is_dealer_change_disabled)">
+                                            {{ is_dealer_change_disabled ? 'mode_edit' : 'close' }}
                                         </mat-icon>
                                     </ng-container>
                                 </div>
@@ -68,7 +83,11 @@
                                     <div class="flex-even pr-3">
                                         <mat-form-field class="full-width">
                                             <mat-label>Host Business Name</mat-label>
-                                            <input matInput type="text" formControlName="businessName" placeholder="Ex. Angel's Burger" />
+                                            <input
+                                                matInput
+                                                type="text"
+                                                formControlName="businessName"
+                                                placeholder="Ex. Angel's Burger" />
                                         </mat-form-field>
                                     </div>
                                     <div class="flex-even">
@@ -81,8 +100,7 @@
                                                 [required]="true"
                                                 [label]="'Choose Category'"
                                                 [new_value]="category_selected"
-                                                [initial_value]="category_selected"
-                                            >
+                                                [initial_value]="category_selected">
                                             </app-autocomplete-field>
                                         </div>
                                     </div>
@@ -92,20 +110,34 @@
                                     <div class="flex-even pr-3">
                                         <mat-form-field class="full-width">
                                             <mat-label>Latitude</mat-label>
-                                            <input matInput type="number" step="any" formControlName="lat" placeholder="Ex. 58.933" />
+                                            <input
+                                                matInput
+                                                type="number"
+                                                step="any"
+                                                formControlName="lat"
+                                                placeholder="Ex. 58.933" />
                                         </mat-form-field>
                                     </div>
 
                                     <div class="flex-even pr-3">
                                         <mat-form-field class="full-width">
                                             <mat-label>Longitude</mat-label>
-                                            <input matInput type="number" step="any" formControlName="long" placeholder="Ex. 58.933" />
+                                            <input
+                                                matInput
+                                                type="number"
+                                                step="any"
+                                                formControlName="long"
+                                                placeholder="Ex. 58.933" />
                                         </mat-form-field>
                                     </div>
                                 </div>
 
                                 <div class="flex">
-                                    <mat-checkbox [(ngModel)]="canada_selected" [ngModelOptions]="{ standalone: true }" (change)="getCanadaAddress($event)" class="sm-text">
+                                    <mat-checkbox
+                                        [(ngModel)]="canada_selected"
+                                        [ngModelOptions]="{ standalone: true }"
+                                        (change)="getCanadaAddress($event)"
+                                        class="sm-text">
                                         Canada Address
                                     </mat-checkbox>
                                 </div>
@@ -114,7 +146,11 @@
                                     <div class="flex-even pr-3">
                                         <mat-form-field class="full-width">
                                             <mat-label>Address</mat-label>
-                                            <input matInput type="text" formControlName="address" placeholder="Ex. 21st Drive Fifth Avenue Place" />
+                                            <input
+                                                matInput
+                                                type="text"
+                                                formControlName="address"
+                                                placeholder="Ex. 21st Drive Fifth Avenue Place" />
                                         </mat-form-field>
                                     </div>
                                     <div class="flex-even pr-3">
@@ -129,15 +165,18 @@
                                                 [primary_keyword]="'city_state'"
                                                 [new_value]="city_selected"
                                                 [initial_value]="city_selected"
-                                                [is_city]="true"
-                                            >
+                                                [is_city]="true">
                                             </app-autocomplete-field>
                                         </div>
                                     </div>
                                     <div class="state-container">
                                         <mat-form-field>
                                             <mat-label>State</mat-label>
-                                            <input matInput type="text" formControlName="state" placeholder="Ex. IL" />
+                                            <input
+                                                matInput
+                                                type="text"
+                                                formControlName="state"
+                                                placeholder="Ex. IL" />
                                         </mat-form-field>
                                     </div>
                                 </div>
@@ -146,14 +185,22 @@
                                     <div class="region-container pr-3">
                                         <mat-form-field>
                                             <mat-label>Region</mat-label>
-                                            <input matInput type="text" formControlName="region" placeholder="Ex. SW" />
+                                            <input
+                                                matInput
+                                                type="text"
+                                                formControlName="region"
+                                                placeholder="Ex. SW" />
                                         </mat-form-field>
                                     </div>
 
                                     <div class="zip-container pr-3">
                                         <mat-form-field>
                                             <mat-label>Zip Code</mat-label>
-                                            <input matInput type="text" formControlName="zip" placeholder="Ex. 54001" />
+                                            <input
+                                                matInput
+                                                type="text"
+                                                formControlName="zip"
+                                                placeholder="Ex. 54001" />
                                         </mat-form-field>
                                     </div>
 
@@ -166,8 +213,7 @@
                                                 (data_value)="setTimezone($event)"
                                                 [required]="true"
                                                 [label]="'Timezone'"
-                                                [initial_value]="host.timeZoneData.name"
-                                            >
+                                                [initial_value]="host.timeZoneData.name">
                                             </app-autocomplete-field>
                                         </div>
                                     </div>
@@ -175,7 +221,11 @@
                                     <div class="flex-even">
                                         <mat-form-field class="full-width">
                                             <mat-label>Vistar Venue ID</mat-label>
-                                            <input matInput type="text" formControlName="vistar_venue_id" placeholder="Venue ID for Vistar" />
+                                            <input
+                                                matInput
+                                                type="text"
+                                                formControlName="vistar_venue_id"
+                                                placeholder="Venue ID for Vistar" />
                                         </mat-form-field>
                                     </div>
                                 </div>
@@ -184,14 +234,24 @@
                                     <div class="flex-even pr-3" *ngIf="!is_current_user_dealer">
                                         <mat-form-field class="full-width">
                                             <mat-label>Notes</mat-label>
-                                            <textarea matInput maxLength="500" formControlName="notes" placeholder="Enter your notes here.."> </textarea>
+                                            <textarea
+                                                matInput
+                                                maxLength="500"
+                                                formControlName="notes"
+                                                placeholder="Enter your notes here..">
+                                            </textarea>
                                         </mat-form-field>
                                     </div>
 
                                     <div class="flex-even">
                                         <mat-form-field class="full-width">
                                             <mat-label>Others</mat-label>
-                                            <textarea matInput maxLength="500" formControlName="others" placeholder="Other stuff here..."> </textarea>
+                                            <textarea
+                                                matInput
+                                                maxLength="500"
+                                                formControlName="others"
+                                                placeholder="Other stuff here...">
+                                            </textarea>
                                         </mat-form-field>
                                     </div>
                                 </div>
@@ -203,79 +263,145 @@
                             <div class="h-500 overflow-y-auto overflow-x-hidden">
                                 <div class="flex">
                                     <div class="margin-left-auto my-2">
-                                        <button mat-button mat-raised-button class="theme-btn bulk-edit" type="button" (click)="onBulkEditHours()">Bulk Edit</button>
+                                        <button
+                                            mat-button
+                                            mat-raised-button
+                                            class="theme-btn bulk-edit"
+                                            type="button"
+                                            (click)="onBulkEditHours()">
+                                            Bulk Edit
+                                        </button>
                                     </div>
                                 </div>
 
-                                <div *ngFor="let h of business_hours; let business_hour_index = index">
+                                <div
+                                    *ngFor="
+                                        let h of business_hours;
+                                        let business_hour_index = index
+                                    ">
                                     <div class="flex mb-2">
                                         <div class="day-container mr-3">
                                             <div
                                                 class="round-label mt-4"
                                                 (click)="selectDay(h)"
                                                 [ngClass]="h.status ? 'active' : ''"
-                                                matTooltip="Click to set {{ h.day }} as {{ h.status ? 'closed' : 'open' }}"
-                                            >
+                                                matTooltip="Click to set {{ h.day }} as {{
+                                                    h.status ? 'closed' : 'open'
+                                                }}">
                                                 <span class="font-weight-bold">{{ h.label }}</span>
                                             </div>
                                         </div>
 
                                         <div class="flex-even">
                                             <div *ngIf="h.status; else closed">
-                                                <div *ngFor="let period of h.periods; let period_index = index">
-                                                    <div class="flex" *ngIf="isOpenButNotAllDay(period); else openAllDay">
+                                                <div
+                                                    *ngFor="
+                                                        let period of h.periods;
+                                                        let period_index = index
+                                                    ">
+                                                    <div
+                                                        class="flex"
+                                                        *ngIf="
+                                                            isOpenButNotAllDay(period);
+                                                            else openAllDay
+                                                        ">
                                                         <div class="opening-container mr-3">
-                                                            <mat-label class="sm-text">Opening Hours</mat-label>
+                                                            <mat-label class="sm-text"
+                                                                >Opening Hours</mat-label
+                                                            >
                                                             <ngb-timepicker
                                                                 class="full-width"
                                                                 [(ngModel)]="period.openingHourData"
-                                                                (change)="checkBusinessHoursFields()"
+                                                                (change)="
+                                                                    checkBusinessHoursFields()
+                                                                "
                                                                 [spinners]="false"
                                                                 [meridian]="true"
-                                                                [ngModelOptions]="{ standalone: true }"
-                                                            >
+                                                                [ngModelOptions]="{
+                                                                    standalone: true
+                                                                }">
                                                             </ngb-timepicker>
                                                         </div>
 
-                                                        <div class="separator-container mx-3 mt-4 pt-2">
+                                                        <div
+                                                            class="separator-container mx-3 mt-4 pt-2">
                                                             <span> - </span>
                                                         </div>
 
                                                         <div class="closing-container mr-3 ml-3">
-                                                            <mat-label class="sm-text">Closing Hours</mat-label>
+                                                            <mat-label class="sm-text"
+                                                                >Closing Hours</mat-label
+                                                            >
                                                             <ngb-timepicker
                                                                 [(ngModel)]="period.closingHourData"
-                                                                (change)="checkBusinessHoursFields()"
+                                                                (change)="
+                                                                    checkBusinessHoursFields()
+                                                                "
                                                                 [spinners]="false"
                                                                 [meridian]="true"
-                                                                [ngModelOptions]="{ standalone: true }"
-                                                            >
+                                                                [ngModelOptions]="{
+                                                                    standalone: true
+                                                                }">
                                                             </ngb-timepicker>
                                                         </div>
 
                                                         <div class="flex-even pt-4">
                                                             <div class="flex">
-                                                                <div class="wholeday-container mr-3">
+                                                                <div
+                                                                    class="wholeday-container mr-3">
                                                                     <button
                                                                         class="btn btn-outline-primary"
                                                                         type="button"
-                                                                        matTooltip="{{ 'Set to open for 24 hours on ' + h.day }}"
-                                                                        (click)="setToOpenAllDay(business_hour_index, period_index)"
-                                                                    >
+                                                                        matTooltip="{{
+                                                                            'Set to open for 24 hours on ' +
+                                                                                h.day
+                                                                        }}"
+                                                                        (click)="
+                                                                            setToOpenAllDay(
+                                                                                business_hour_index,
+                                                                                period_index
+                                                                            )
+                                                                        ">
                                                                         24h
                                                                     </button>
                                                                 </div>
                                                                 <div class="flex-even mr-3">
-                                                                    <div *ngIf="isOpenButNotAllDay(period)">
-                                                                        <i class="add-hours-btn fas fa-plus ml-2 f-20" (click)="addHours(h)" title="Add Period"> </i>
+                                                                    <div
+                                                                        *ngIf="
+                                                                            isOpenButNotAllDay(
+                                                                                period
+                                                                            )
+                                                                        ">
                                                                         <i
-                                                                            *ngIf="h.periods.length > 1"
+                                                                            class="add-hours-btn fas fa-plus ml-2 f-20"
+                                                                            (click)="addHours(h)"
+                                                                            title="Add Period">
+                                                                        </i>
+                                                                        <i
+                                                                            *ngIf="
+                                                                                h.periods.length > 1
+                                                                            "
                                                                             class="remove-hours-btn fas fa-times f-20"
                                                                             title="Remove Period"
-                                                                            (click)="removeHours(h, period_index)"
-                                                                        ></i>
-                                                                        <mat-icon class="float-right p-1 text-primary" [ngClass]="checkSchedule(h.day)" title="Valid time">
-                                                                            {{ checkSchedule(h.day) === "valid" ? "check_circle text-primary" : "cancel" }}
+                                                                            (click)="
+                                                                                removeHours(
+                                                                                    h,
+                                                                                    period_index
+                                                                                )
+                                                                            "></i>
+                                                                        <mat-icon
+                                                                            class="float-right p-1 text-primary"
+                                                                            [ngClass]="
+                                                                                checkSchedule(h.day)
+                                                                            "
+                                                                            title="Valid time">
+                                                                            {{
+                                                                                checkSchedule(
+                                                                                    h.day
+                                                                                ) === 'valid'
+                                                                                    ? 'check_circle text-primary'
+                                                                                    : 'cancel'
+                                                                            }}
                                                                         </mat-icon>
                                                                     </div>
                                                                 </div>
@@ -286,7 +412,12 @@
                                                         <h5 class="pt-4 mt-2">
                                                             <span
                                                                 class="text-primary clickable"
-                                                                (click)="removeOpenAllDay(business_hour_index, period_index)"
+                                                                (click)="
+                                                                    removeOpenAllDay(
+                                                                        business_hour_index,
+                                                                        period_index
+                                                                    )
+                                                                "
                                                                 matTooltip="Click to change"
                                                                 >Open 24 hours</span
                                                             >
@@ -295,7 +426,9 @@
                                                 </div>
                                             </div>
                                             <ng-template #closed>
-                                                <h5 class="pt-4 mt-2 text-danger">Closed on {{ getFullDayName(h.label) }}</h5>
+                                                <h5 class="pt-4 mt-2 text-danger">
+                                                    Closed on {{ getFullDayName(h.label) }}
+                                                </h5>
                                             </ng-template>
                                         </div>
                                     </div>
@@ -318,14 +451,25 @@
                                 edit_host_form.invalid ||
                                 (canada_selected && edit_host_form.get('zip').value.length !== 6) ||
                                 (!canada_selected && edit_host_form.get('zip').value.length !== 5)
-                            "
-                        >
+                            ">
                             Update
                         </button>
-                        <button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="false">Cancel</button>
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn mt-4"
+                            [mat-dialog-close]="false">
+                            Cancel
+                        </button>
                     </div>
                     <div class="delete-host-container text-right">
-                        <button *ngIf="is_current_user_admin" mat-button mat-raised-button class="theme-btn mt-4 delete bg-danger" type="button" (click)="onDeleteHost()">
+                        <button
+                            *ngIf="is_current_user_admin"
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn mt-4 delete bg-danger"
+                            type="button"
+                            (click)="onDeleteHost()">
                             Delete Host
                         </button>
                     </div>

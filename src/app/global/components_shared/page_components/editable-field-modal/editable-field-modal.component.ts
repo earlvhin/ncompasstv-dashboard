@@ -27,7 +27,7 @@ export class EditableFieldModalComponent implements OnInit {
     constructor(
         @Inject(MAT_DIALOG_DATA) public _dialog_data: any,
         public dialogRef: MatDialogRef<EditableFieldModalComponent>,
-        private _screen: ScreenService
+        private _screen: ScreenService,
     ) {}
 
     ngOnInit() {
@@ -76,13 +76,13 @@ export class EditableFieldModalComponent implements OnInit {
                 this.screen_types = data;
                 this.screen_init = this.status.value;
                 this.setScreenType(this.status.id);
-            })
+            }),
         );
     }
 
     prepareHostAssignForm(hostsData: any[]) {
         const hostId = this._dialog_data.status.additional_params.hostId || '';
-        const hostItem = hostsData.find(item => item.id === hostId);
+        const hostItem = hostsData.find((item) => item.id === hostId);
         const initialValueHostWithAddress = hostItem ? hostItem.value : '';
 
         setTimeout(() => {
@@ -92,9 +92,8 @@ export class EditableFieldModalComponent implements OnInit {
                 data: hostsData,
                 initialValue: hostId ? [{ id: hostId, value: initialValueHostWithAddress }] : [],
             };
-        }, 100)
+        }, 100);
     }
-
 
     setHost(host) {
         this.host_selected = host.id;

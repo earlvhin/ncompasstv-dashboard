@@ -1,55 +1,65 @@
 <ng-container>
-	<div class="title-section d-flex">
-		<div class="flex-even">
-			<h4 class="font-weight-bold">Bulk Play Where</h4>
-			<p class="sm-text mb-3">This will overwrite the current blocklisting properties of the marked contents.</p>
-		</div>
-		<div class="text-right pl-3">
-			<div *ngIf="host_licenses.length > 0">
-				<mat-slide-toggle
-				[checked]="allHostLicenseInBlacklist()"
-				(change)="toggleAll($event)">
-					<strong class="sm-text">Toggle All</strong>
-				</mat-slide-toggle>
-			</div>
-		</div>
-	</div>
+    <div class="title-section d-flex">
+        <div class="flex-even">
+            <h4 class="font-weight-bold">Bulk Play Where</h4>
+            <p class="sm-text mb-3">
+                This will overwrite the current blocklisting properties of the marked contents.
+            </p>
+        </div>
+        <div class="text-right pl-3">
+            <div *ngIf="host_licenses.length > 0">
+                <mat-slide-toggle
+                    [checked]="allHostLicenseInBlacklist()"
+                    (change)="toggleAll($event)">
+                    <strong class="sm-text">Toggle All</strong>
+                </mat-slide-toggle>
+            </div>
+        </div>
+    </div>
 
-	<div class="media-play-where-expand bg-gray p-2 mb-3" [@.disabled]="disable_animation">
-		<mat-accordion>
-			<mat-expansion-panel hideToggle [expanded]="false" *ngFor="let h of host_licenses">
-				<mat-expansion-panel-header>
-					<div class="d-flex w-100">
-						<div class="flex-even">
-							<mat-slide-toggle
-							(change)="hostToggle($event, h)"
-							(click)="$event.stopPropagation()"
-							[checked]="allLicenseInBlacklist(h)">
-							</mat-slide-toggle>
-							<span class="font-weight-bold mb-0 ml-3 sm-text">{{ cutString(h.host.name) }}</span>
-						</div>
-						<div class="sm-text">
-							{{ h.licenses.length }} License<span *ngIf="h.licenses.length > 1">s</span>
-							<span class="fas fa-arrow-down ml-2"></span>
-						</div>
-					</div>
-				</mat-expansion-panel-header>
-	
-				<div class="px-3 py-3 border-top">
-					<div *ngFor="let l of h.licenses" class="option-license-list w-100 mb-1">
-						<mat-slide-toggle 
-						class="sm-text"
-						[checked]="!blocklist_licenses.includes(l.licenseId)" 
-						(change)="addToBlocklistLicense($event, l.licenseId)">
-							<strong>{{ l.alias || l.licenseKey }}</strong>
-						</mat-slide-toggle>
-					</div>
-				</div>
-			</mat-expansion-panel>
-		</mat-accordion>
-	</div>
+    <div class="media-play-where-expand bg-gray p-2 mb-3" [@.disabled]="disable_animation">
+        <mat-accordion>
+            <mat-expansion-panel hideToggle [expanded]="false" *ngFor="let h of host_licenses">
+                <mat-expansion-panel-header>
+                    <div class="d-flex w-100">
+                        <div class="flex-even">
+                            <mat-slide-toggle
+                                (change)="hostToggle($event, h)"
+                                (click)="$event.stopPropagation()"
+                                [checked]="allLicenseInBlacklist(h)">
+                            </mat-slide-toggle>
+                            <span class="font-weight-bold mb-0 ml-3 sm-text">{{
+                                cutString(h.host.name)
+                            }}</span>
+                        </div>
+                        <div class="sm-text">
+                            {{ h.licenses.length }} License<span *ngIf="h.licenses.length > 1"
+                                >s</span
+                            >
+                            <span class="fas fa-arrow-down ml-2"></span>
+                        </div>
+                    </div>
+                </mat-expansion-panel-header>
 
-	<button mat-button mat-raised-button class="theme-btn position-bottom" (click)="cancelBlacklisting()">
-		Cancel Blacklisting
-	</button>
+                <div class="px-3 py-3 border-top">
+                    <div *ngFor="let l of h.licenses" class="option-license-list w-100 mb-1">
+                        <mat-slide-toggle
+                            class="sm-text"
+                            [checked]="!blocklist_licenses.includes(l.licenseId)"
+                            (change)="addToBlocklistLicense($event, l.licenseId)">
+                            <strong>{{ l.alias || l.licenseKey }}</strong>
+                        </mat-slide-toggle>
+                    </div>
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </div>
+
+    <button
+        mat-button
+        mat-raised-button
+        class="theme-btn position-bottom"
+        (click)="cancelBlacklisting()">
+        Cancel Blacklisting
+    </button>
 </ng-container>

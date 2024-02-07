@@ -5,9 +5,19 @@
                 <div class="placer-date-range-filter mr-3">
                     <mat-form-field class="mx-2">
                         <mat-label>Filter Start date</mat-label>
-                        <input matInput readonly [matDatepicker]="pickerfrom" [(ngModel)]="pickerDateFrom" [disabled]="searching_placer_data" [max]="today" />
+                        <input
+                            matInput
+                            readonly
+                            [matDatepicker]="pickerfrom"
+                            [(ngModel)]="pickerDateFrom"
+                            [disabled]="searching_placer_data"
+                            [max]="today" />
                         <mat-datepicker-toggle matSuffix [for]="pickerfrom"></mat-datepicker-toggle>
-                        <mat-datepicker #pickerfrom startView="multi-year" [startAt]="pickerDateFrom" (monthSelected)="closeDatePickerFrom($event)"></mat-datepicker>
+                        <mat-datepicker
+                            #pickerfrom
+                            startView="multi-year"
+                            [startAt]="pickerDateFrom"
+                            (monthSelected)="closeDatePickerFrom($event)"></mat-datepicker>
                     </mat-form-field>
                     <mat-form-field class="mx-2">
                         <mat-label>Filter End date</mat-label>
@@ -18,32 +28,69 @@
                             [(ngModel)]="pickerDateTo"
                             [disabled]="!pickerDateFrom || searching_placer_data"
                             [min]="pickerDateFrom"
-                            [max]="today"
-                        />
+                            [max]="today" />
                         <mat-datepicker-toggle matSuffix [for]="pickerto"></mat-datepicker-toggle>
-                        <mat-datepicker #pickerto startView="multi-year" [startAt]="pickerDateTo" (monthSelected)="closeDatePickerTo($event)"></mat-datepicker>
+                        <mat-datepicker
+                            #pickerto
+                            startView="multi-year"
+                            [startAt]="pickerDateTo"
+                            (monthSelected)="closeDatePickerTo($event)"></mat-datepicker>
                     </mat-form-field>
                 </div>
 
                 <div class="placer-button-controls">
-                    <button mat-button mat-raised-button class="theme-btn pi-control sm-text _primary mr-2" (click)="exportTable()" [disabled]="workbook_generation" title="Export to CSV">
-                        <span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
-                        <span class="ml-2 button_text_animation">{{ !workbook_generation ? "Export" : "Generating CSV" }}</span>
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn pi-control sm-text _primary mr-2"
+                        (click)="exportTable()"
+                        [disabled]="workbook_generation"
+                        title="Export to CSV">
+                        <span
+                            class="{{
+                                !workbook_generation
+                                    ? 'fas fa-file-excel'
+                                    : 'fas fa-spinner fa-spin'
+                            }}"
+                            [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
+                        <span class="ml-2 button_text_animation">{{
+                            !workbook_generation ? 'Export' : 'Generating CSV'
+                        }}</span>
                     </button>
-                    <button mat-button mat-raised-button class="theme-btn pi-control sm-text _cool mr-2" (click)="uploadPlacer()" title="Upload Placer Data" *ngIf="!host_id">
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn pi-control sm-text _cool mr-2"
+                        (click)="uploadPlacer()"
+                        title="Upload Placer Data"
+                        *ngIf="!host_id">
                         <span class="fa fa-upload text-white"></span>
                         <span class="ml-2 button_text_animation">Upload Placer Data</span>
                     </button>
                 </div>
 
                 <div class="placer-data-filter" *ngIf="!host_id">
-                    <button mat-button mat-raised-button class="theme-btn sm-text mr-2 h-45" [matMenuTriggerFor]="assignee">
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn sm-text mr-2 h-45"
+                        [matMenuTriggerFor]="assignee">
                         <span class="button-label">Status</span>
                         <span class="fas fa-chevron-down xsm-text"></span>
                     </button>
                     <mat-menu #assignee="matMenu">
-                        <button class="md-text" mat-menu-item (click)="filterTable('1', 'Assigned')"><span class="fas fa-user text-gray mr-3"></span>Assigned</button>
-                        <button class="md-text" mat-menu-item (click)="filterTable('2', 'Unassigned')"><span class="fas fa-user-slash text-gray mr-3"></span>Unassigned</button>
+                        <button
+                            class="md-text"
+                            mat-menu-item
+                            (click)="filterTable('1', 'Assigned')">
+                            <span class="fas fa-user text-gray mr-3"></span>Assigned
+                        </button>
+                        <button
+                            class="md-text"
+                            mat-menu-item
+                            (click)="filterTable('2', 'Unassigned')">
+                            <span class="fas fa-user-slash text-gray mr-3"></span>Unassigned
+                        </button>
                     </mat-menu>
                 </div>
             </div>
@@ -55,8 +102,7 @@
                     [primary_keyword]="'placerName'"
                     [secondary_keyword]="'placerId'"
                     (searched)="filterData($event)"
-                    [api_search]="true"
-                ></app-search-field>
+                    [api_search]="true"></app-search-field>
             </div>
         </div>
 
@@ -64,17 +110,30 @@
             <div class="d-flex p-2 mb-3 bg-gray-2">
                 <div class="d-flex flex-even align-items-center">
                     <div class="pt-2 pill" *ngIf="filter.assignee_label">
-                        <p class="m-0">Status: <strong>{{ filter.assignee_label }}</strong></p>
+                        <p class="m-0">
+                            Status: <strong>{{ filter.assignee_label }}</strong>
+                        </p>
                     </div>
                     <div class="pt-2 pill" *ngIf="filter.date_to_label">
                         <p class="m-0">
-                            Date Selected: <strong>{{ filter.date_from_label }} - {{ filter.date_to_label }}</strong>
+                            Date Selected:
+                            <strong
+                                >{{ filter.date_from_label }} - {{ filter.date_to_label }}</strong
+                            >
                         </p>
                     </div>
                     <div class="p-2" *ngIf="paging_data">
                         <p class="md-text">
-                            Showing <strong class="text-danger">{{ paging_data.pageSize ? (paging_data.pageSize > total_placer ? total_placer : paging_data.pageSize) : 0 }}</strong> out of
-                            <strong class="text-danger">{{ total_placer }}</strong> placer records.
+                            Showing
+                            <strong class="text-danger">{{
+                                paging_data.pageSize
+                                    ? paging_data.pageSize > total_placer
+                                        ? total_placer
+                                        : paging_data.pageSize
+                                    : 0
+                            }}</strong>
+                            out of <strong class="text-danger">{{ total_placer }}</strong> placer
+                            records.
                         </p>
                     </div>
                 </div>
@@ -103,8 +162,7 @@
                             [sort_column]="sort_column"
                             [sort_order]="sort_order"
                             (update_info)="reloadPage($event)"
-                            [placer_delete]="true"
-                        >
+                            [placer_delete]="true">
                         </app-data-table>
                     </mat-card>
                 </ng-container>

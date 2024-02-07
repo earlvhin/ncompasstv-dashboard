@@ -1,7 +1,7 @@
 <div class="theme-container">
     <div class="title-section">
         <h1 class="page-title">{{ title }}</h1>
-        <hr class="my-4">
+        <hr class="my-4" />
     </div>
     <div class="content-section">
         <div class="row">
@@ -11,30 +11,45 @@
                         <div class="flex-even">
                             <h3 class="mb-0">Template Information</h3>
                         </div>
-                    </div>                        
+                    </div>
                     <div class="template-information mb-4">
                         <form [formGroup]="new_template_form">
                             <mat-form-field class="full-width">
                                 <mat-label>Template Name</mat-label>
-                                <input 
-                                matInput 
-                                type="text" 
-                                formControlName="template_name"
-                                placeholder="Enter Template Name">
+                                <input
+                                    matInput
+                                    type="text"
+                                    formControlName="template_name"
+                                    placeholder="Enter Template Name" />
                             </mat-form-field>
                         </form>
                     </div>
                     <div class="template-zone-information">
-                        <h3 class="mb-4" *ngIf="zone_property_form.get('zones')['controls'].length > 0">Zones</h3>
+                        <h3
+                            class="mb-4"
+                            *ngIf="zone_property_form.get('zones')['controls'].length > 0">
+                            Zones
+                        </h3>
                         <form [formGroup]="zone_property_form" class="mb-4">
                             <ng-container formArrayName="zones">
                                 <mat-accordion>
-                                    <mat-expansion-panel *ngFor="let z of zone_property_form.get('zones')['controls']; let i = index" class="mb-3" [formGroupName]="i">
-                                        <mat-expansion-panel-header [ngStyle]="{'background': z.controls.background.value}">
-                                            <mat-panel-title [ngStyle]="{'text-shadow': '0 0 2px #000', 'color': '#fff'}">
+                                    <mat-expansion-panel
+                                        *ngFor="
+                                            let z of zone_property_form.get('zones')['controls'];
+                                            let i = index
+                                        "
+                                        class="mb-3"
+                                        [formGroupName]="i">
+                                        <mat-expansion-panel-header
+                                            [ngStyle]="{ background: z.controls.background.value }">
+                                            <mat-panel-title
+                                                [ngStyle]="{
+                                                    'text-shadow': '0 0 2px #000',
+                                                    color: '#fff'
+                                                }">
                                                 <div class="d-flex">
                                                     <h5 class="zone-name font-weight-md sm-text">
-                                                        {{ z.controls.name.value || 'Zone_'+i }}
+                                                        {{ z.controls.name.value || 'Zone_' + i }}
                                                     </h5>
                                                 </div>
                                             </mat-panel-title>
@@ -44,72 +59,78 @@
                                                 <div class="col-lg-12">
                                                     <mat-form-field class="full-width">
                                                         <mat-label>Zone Name</mat-label>
-                                                        <input 
-                                                        matInput type="text"
-                                                        formControlName="name" 
-                                                        placeholder="Ex: Main">
+                                                        <input
+                                                            matInput
+                                                            type="text"
+                                                            formControlName="name"
+                                                            placeholder="Ex: Main" />
                                                     </mat-form-field>
                                                 </div>
                                                 <div class="col-lg-6">
                                                     <mat-form-field class="full-width">
                                                         <mat-label>Width</mat-label>
-                                                        <input 
-                                                        matInput
-                                                        formControlName="width"
-                                                        type="number"
-                                                        min="0"
-                                                        placeholder="Ex: 200">
+                                                        <input
+                                                            matInput
+                                                            formControlName="width"
+                                                            type="number"
+                                                            min="0"
+                                                            placeholder="Ex: 200" />
                                                     </mat-form-field>
                                                 </div>
                                                 <div class="col-lg-6">
                                                     <mat-form-field class="full-width">
                                                         <mat-label>Height</mat-label>
-                                                        <input matInput
-                                                        formControlName="height"
-                                                        type="number" 
-                                                        min="0"
-                                                        placeholder="Ex: 200">
+                                                        <input
+                                                            matInput
+                                                            formControlName="height"
+                                                            type="number"
+                                                            min="0"
+                                                            placeholder="Ex: 200" />
                                                     </mat-form-field>
                                                 </div>
                                                 <div class="col-lg-6">
                                                     <mat-form-field class="full-width">
                                                         <mat-label>X Position</mat-label>
-                                                        <input 
-                                                        matInput 
-                                                        formControlName="xpos"
-                                                        type="number" 
-                                                        min="0"
-                                                        max="1920"
-                                                        placeholder="Ex: 200">
+                                                        <input
+                                                            matInput
+                                                            formControlName="xpos"
+                                                            type="number"
+                                                            min="0"
+                                                            max="1920"
+                                                            placeholder="Ex: 200" />
                                                     </mat-form-field>
                                                 </div>
                                                 <div class="col-lg-6">
                                                     <mat-form-field class="full-width">
                                                         <mat-label>Y Position</mat-label>
-                                                        <input 
-                                                        matInput 
-                                                        formControlName="ypos"
-                                                        type="number" 
-                                                        min="0"
-                                                        max="1080"
-                                                        placeholder="Ex: 200">
+                                                        <input
+                                                            matInput
+                                                            formControlName="ypos"
+                                                            type="number"
+                                                            min="0"
+                                                            max="1080"
+                                                            placeholder="Ex: 200" />
                                                     </mat-form-field>
                                                 </div>
                                                 <div class="col-lg-12">
                                                     <mat-form-field class="full-width">
                                                         <mat-label>Background Color</mat-label>
                                                         <input
-                                                        formControlName="background"
-                                                        [(colorPicker)]="color"
-                                                        [cpAlphaChannel]="'disabled'"
-                                                        [cpDisableInput]="true"
-                                                        [cpWidth]="478"
-                                                        [cpToggle]="true"
-                                                        (colorPickerChange)="colorPicker(color, i)"
-                                                        matInput type="text" 
-                                                        [value]="z.controls.background.value"
-                                                        [style.background]="z.controls.background.value"
-                                                        />
+                                                            formControlName="background"
+                                                            [(colorPicker)]="color"
+                                                            [cpAlphaChannel]="'disabled'"
+                                                            [cpDisableInput]="true"
+                                                            [cpWidth]="478"
+                                                            [cpToggle]="true"
+                                                            (colorPickerChange)="
+                                                                colorPicker(color, i)
+                                                            "
+                                                            matInput
+                                                            type="text"
+                                                            [value]="z.controls.background.value"
+                                                            [style.background]="
+                                                                z.controls.background.value
+                                                            " />
                                                     </mat-form-field>
                                                 </div>
                                             </div>
@@ -118,32 +139,37 @@
                                 </mat-accordion>
                             </ng-container>
                         </form>
-                        <button mat-button mat-raised-button class="theme-btn mr-3" (click)="openNewZoneModal()">
-                            <span class="button-label">
-                                Add Zone
-                            </span>
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn mr-3"
+                            (click)="openNewZoneModal()">
+                            <span class="button-label"> Add Zone </span>
                             <span class="fas fa-plus sm-text"></span>
-                        </button>                
-                        <button mat-button mat-raised-button class="theme-btn" [disabled]="disable_submit" (click)="confirmTemplateCreation()">
-                            <span class="button-label">
-                                Save
-                            </span>
+                        </button>
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn"
+                            [disabled]="disable_submit"
+                            (click)="confirmTemplateCreation()">
+                            <span class="button-label"> Save </span>
                             <span class="fas fa-save"></span>
                         </button>
                     </div>
                 </mat-card>
             </div>
-            <div class="col-lg-7"> 
+            <div class="col-lg-7">
                 <div class="ng-form-field">
                     <div class="template-drawing-board">
-                        <app-new-zone 
-                        *ngFor="let z of zone_property_form.get('zones')['controls']"
-                        [zone_name]="z.controls.name.value"
-                        [zone_background]="z.controls.background.value"
-                        [zone_height]="(z.controls.height.value/screen_height)*100"
-                        [zone_width]="(z.controls.width.value/screen_width)*100"
-                        [zone_pos_x]="(z.controls.xpos.value/screen_width)*100"
-                        [zone_pos_y]="(z.controls.ypos.value/screen_height)*100">
+                        <app-new-zone
+                            *ngFor="let z of zone_property_form.get('zones')['controls']"
+                            [zone_name]="z.controls.name.value"
+                            [zone_background]="z.controls.background.value"
+                            [zone_height]="(z.controls.height.value / screen_height) * 100"
+                            [zone_width]="(z.controls.width.value / screen_width) * 100"
+                            [zone_pos_x]="(z.controls.xpos.value / screen_width) * 100"
+                            [zone_pos_y]="(z.controls.ypos.value / screen_height) * 100">
                         </app-new-zone>
                     </div>
                 </div>

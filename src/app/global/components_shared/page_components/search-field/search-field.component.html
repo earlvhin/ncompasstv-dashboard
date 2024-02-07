@@ -3,19 +3,21 @@
         <span class="fas fa-search sm-text mr-2"></span>
         {{ form_title }}
     </mat-label>
-    <input matInput 
-    [placeholder]="placeholder" 
-    [(ngModel)]="search_keyword"
-    (keyup)="search()" *ngIf="!this.api_search">
-	
-	<input 
-	matInput 
-	id="search-input"
-	*ngIf="this.api_search"
-	[formControl]="search_control"
-	[placeholder]="placeholder">
+    <input
+        matInput
+        [placeholder]="placeholder"
+        [(ngModel)]="search_keyword"
+        (keyup)="search()"
+        *ngIf="!this.api_search" />
 
-	<span *ngIf="search_form_invalid" class="invalidator text-danger font-weight-bold xsm-text">
-		Type in at least 3 characters
-	</span>
+    <input
+        matInput
+        id="search-input"
+        *ngIf="this.api_search"
+        [formControl]="search_control"
+        [placeholder]="placeholder" />
+
+    <span *ngIf="search_form_invalid" class="invalidator text-danger font-weight-bold xsm-text">
+        Type in at least 3 characters
+    </span>
 </mat-form-field>

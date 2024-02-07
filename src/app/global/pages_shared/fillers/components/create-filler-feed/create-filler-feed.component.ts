@@ -36,7 +36,7 @@ export class CreateFillerFeedComponent implements OnInit {
         private _filler: FillerService,
         private _dialog: MatDialog,
         private _route: Router,
-        private _auth: AuthService
+        private _auth: AuthService,
     ) {}
 
     ngOnInit() {
@@ -63,7 +63,9 @@ export class CreateFillerFeedComponent implements OnInit {
 
         setTimeout(() => {
             data.fillerGroups.map((groups) => {
-                const existing_list = this.filler_groups.filter((list) => list.fillerGroupId == groups.fillerGroupId);
+                const existing_list = this.filler_groups.filter(
+                    (list) => list.fillerGroupId == groups.fillerGroupId,
+                );
                 groups.count = existing_list[0].count;
             });
 
@@ -130,11 +132,15 @@ export class CreateFillerFeedComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (data: any) => {
-                    this.openConfirmationModal('success', 'Filler Feed' + type_of_activity + '!', 'Hurray! You successfully' + type_of_activity + 'a Filler Feed');
+                    this.openConfirmationModal(
+                        'success',
+                        'Filler Feed' + type_of_activity + '!',
+                        'Hurray! You successfully' + type_of_activity + 'a Filler Feed',
+                    );
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -215,7 +221,8 @@ export class CreateFillerFeedComponent implements OnInit {
     }
 
     disableSelectionField() {
-        if ((this.filler_groups.length == 0 && this.groups_loaded) || this.filler_name != '') return true;
+        if ((this.filler_groups.length == 0 && this.groups_loaded) || this.filler_name != '')
+            return true;
         else return false;
     }
 
@@ -230,8 +237,10 @@ export class CreateFillerFeedComponent implements OnInit {
 
     enforceMinMax(el) {
         if (el.target.value != '') {
-            if (parseInt(el.target.value) < parseInt(el.target.min)) el.target.value = el.target.min;
-            if (parseInt(el.target.value) > parseInt(el.target.max)) el.target.value = el.target.max;
+            if (parseInt(el.target.value) < parseInt(el.target.min))
+                el.target.value = el.target.min;
+            if (parseInt(el.target.value) > parseInt(el.target.max))
+                el.target.value = el.target.max;
         }
     }
 
@@ -241,7 +250,9 @@ export class CreateFillerFeedComponent implements OnInit {
     }
 
     routeToFillerGroup(id) {
-        const url = this._route.serializeUrl(this._route.createUrlTree([`/${this.roleRoute}/fillers/view-fillers-group/${id}`], {}));
+        const url = this._route.serializeUrl(
+            this._route.createUrlTree([`/${this.roleRoute}/fillers/view-fillers-group/${id}`], {}),
+        );
         window.open(url, '_blank');
     }
 

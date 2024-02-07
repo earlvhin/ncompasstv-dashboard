@@ -1,4 +1,4 @@
-import { NgbTimeStruct } from "@ng-bootstrap/ng-bootstrap";
+import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 
 /**
  * SAMPLE DATA FROM API:
@@ -16,18 +16,18 @@ import { NgbTimeStruct } from "@ng-bootstrap/ng-bootstrap";
 }
  */
 export interface PlaylistContentSchedule {
-	alternateWeek?: number;
-	dateCreated?: string;
-	days: string;
-	from: string;
-	playTimeEnd: string;
-	playTimeStart: string;
-	playlistContentId?: string;
-	playlistContentsScheduleId?: string;
-	status?: string;
-	to: string;
-	type: number;
+    alternateWeek?: number;
+    dateCreated?: string;
+    days: string;
+    from: string;
+    playTimeEnd: string;
+    playTimeStart: string;
+    playlistContentId?: string;
+    playlistContentsScheduleId?: string;
+    status?: string;
+    to: string;
+    type: number;
     livestream?: number;
-	playTimeStartData?: NgbTimeStruct;
-	playTimeEndData?: NgbTimeStruct;
+    playTimeStartData?: NgbTimeStruct;
+    playTimeEndData?: NgbTimeStruct;
 }

@@ -37,7 +37,11 @@ import { ViewContentListModule } from './global/components_shared/playlist_compo
         ReassignDealerModule,
         ViewContentListModule,
     ],
-    providers: [{ provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }, AuthService, AuthGuard],
+    providers: [
+        { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
+        AuthService,
+        AuthGuard,
+    ],
     bootstrap: [AppComponent],
 })
 export class AppModule {}

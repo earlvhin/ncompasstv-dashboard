@@ -3,21 +3,21 @@ import { FormArray, FormGroup } from '@angular/forms';
 
 @Injectable()
 export class FormService {
-	private formArray: FormArray = new FormArray([]);
+    private formArray: FormArray = new FormArray([]);
 
-	addForm(formGroup: FormGroup) {
-		this.formArray.push(formGroup);
-	}
+    addForm(formGroup: FormGroup) {
+        this.formArray.push(formGroup);
+    }
 
-	allValid(): boolean {
-		return this.formArray.valid;
-	}
+    allValid(): boolean {
+        return this.formArray.valid;
+    }
 
-	anyDirty(): boolean {
-		return this.formArray.dirty;
-	}
+    anyDirty(): boolean {
+        return this.formArray.dirty;
+    }
 
-	formValue() {
-		return this.formArray.value;
-	}
+    formValue() {
+        return this.formArray.value;
+    }
 }

@@ -1,7 +1,7 @@
 export class API_EDIT_SCREEN {
     screen: EDIT_SCREEN_INFO;
     screenZonePlaylists: EDIT_SCREEN_ZONE_PLAYLIST[];
-    
+
     constructor(screen: EDIT_SCREEN_INFO, screen_zone: EDIT_SCREEN_ZONE_PLAYLIST[]) {
         this.screen = screen;
         this.screenZonePlaylists = screen_zone;
@@ -15,8 +15,15 @@ export class EDIT_SCREEN_INFO {
     screenTypeId: string;
     hostId: string;
     templateId: string;
-    
-    constructor(id: string, name: string, desc: string, screenTypeId: string, host: string, template: string) {
+
+    constructor(
+        id: string,
+        name: string,
+        desc: string,
+        screenTypeId: string,
+        host: string,
+        template: string,
+    ) {
         this.screenId = id;
         this.screenName = name;
         this.description = desc;

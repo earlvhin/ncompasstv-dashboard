@@ -1,54 +1,66 @@
 <div
-	class="bg-white border m-1 position-relative overflow-hidden cursor-pointer"
-	data-toggle="tooltip"
-	data-placement="top"
-	[attr.title]="content.fileType !== 'feed' ? removeFilenameHandle(content.fileName) : content.title"
->
-	<div class="h-100 w-100">
-		<div class="content-thumbnail inline-block">
-			<img
-				[src]="content.fileType !== 'feed' ? content.thumbnail : (fs_screenshot + '/' + content.url | sanitize)"
-				alt="thumbnail"
-				class="full-width height-100 border-bottom"
-			/>
+    class="bg-white border m-1 position-relative overflow-hidden cursor-pointer"
+    data-toggle="tooltip"
+    data-placement="top"
+    [attr.title]="
+        content.fileType !== 'feed' ? removeFilenameHandle(content.fileName) : content.title
+    ">
+    <div class="h-100 w-100">
+        <div class="content-thumbnail inline-block">
+            <img
+                [src]="
+                    content.fileType !== 'feed'
+                        ? content.thumbnail
+                        : (fs_screenshot + '/' + content.url | sanitize)
+                "
+                alt="thumbnail"
+                class="full-width height-100 border-bottom" />
 
-			<p class="number-overlay mb-0 xsm-text font-weight-bold text-center">
-				<span *ngIf="content.fileType !== 'feed'; else feed">
-					{{ content.fileName | nohandle | substring: 15 }}
-				</span>
-				<ng-template #feed>
-					<strong>{{ content.title }}</strong>
-				</ng-template>
-			</p>
-		</div>
-		<div class="px-2 pb-2">
-			<div class="d-flex align-items-center">
-				<p class="xsm-text flex-even">
-					<span>{{ content.fileType }}</span>
-				</p>
+            <p class="number-overlay mb-0 xsm-text font-weight-bold text-center">
+                <span *ngIf="content.fileType !== 'feed'; else feed">
+                    {{ content.fileName | nohandle | substring: 15 }}
+                </span>
+                <ng-template #feed>
+                    <strong>{{ content.title }}</strong>
+                </ng-template>
+            </p>
+        </div>
+        <div class="px-2 pb-2">
+            <div class="d-flex align-items-center">
+                <p class="xsm-text flex-even">
+                    <span>{{ content.fileType }}</span>
+                </p>
 
-				<p class="sm-text mb-0 cursor-pointer">
-					<i
-						class="fas fa-user-circle"
-						[ngClass]="content.dealerId == null || content.dealerId == '' ? 'text-gray' : 'text-primary'"
-						[title]="content.dealerId == null || content.dealerId == '' ? 'Unassigned' : 'Assigned'"
-					></i>
-				</p>
+                <p class="sm-text mb-0 cursor-pointer">
+                    <i
+                        class="fas fa-user-circle"
+                        [ngClass]="
+                            content.dealerId == null || content.dealerId == ''
+                                ? 'text-gray'
+                                : 'text-primary'
+                        "
+                        [title]="
+                            content.dealerId == null || content.dealerId == ''
+                                ? 'Unassigned'
+                                : 'Assigned'
+                        "></i>
+                </p>
 
-				<p class="sm-text mb-0 cursor-pointer ml-2" *ngIf="show_fullscreen_status && content.isFullScreen == 1">
-					<i class="fas fa-expand text-primary"></i>
-				</p>
-			</div>
-		</div>
-	</div>
+                <p
+                    class="sm-text mb-0 cursor-pointer ml-2"
+                    *ngIf="show_fullscreen_status && content.isFullScreen == 1">
+                    <i class="fas fa-expand text-primary"></i>
+                </p>
+            </div>
+        </div>
+    </div>
 
-	<div
-		class="is_converting d-flex align-items-center justify-content-center px-2"
-		*ngIf="content.fileType == 'webm' && is_converted == 0 && content.isConverted == 0"
-	>
-		<div>
-			<mat-progress-bar mode="indeterminate"></mat-progress-bar>
-			<p class="xsm-text text-white mt-1">Preparing Video</p>
-		</div>
-	</div>
+    <div
+        class="is_converting d-flex align-items-center justify-content-center px-2"
+        *ngIf="content.fileType == 'webm' && is_converted == 0 && content.isConverted == 0">
+        <div>
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <p class="xsm-text text-white mt-1">Preparing Video</p>
+        </div>
+    </div>
 </div>

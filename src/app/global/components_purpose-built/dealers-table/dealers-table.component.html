@@ -1,432 +1,740 @@
 <div class="dealer-table">
-	<div *ngIf="!initial_load; else loading">
-		<div class="row">
-			<div class="col-lg-9">
-				<button mat-button mat-raised-button class="theme-btn sm-text mr-2 h-45" [matMenuTriggerFor]="age">
-					<span class="button-label">Age</span>
-					<span class="fas fa-angle-down"></span>
-				</button>
-				<mat-menu #age="matMenu">
-					<button mat-menu-item (click)="filterTable('monthAsDealer', '0', '3', '0-3 months')">0-3 months</button>
-					<button mat-menu-item (click)="filterTable('monthAsDealer', '4', '9', '4-9 months')">4-9 months</button>
-					<button mat-menu-item (click)="filterTable('monthAsDealer', '10', '', 'Above 10 months')">Above 10 months</button>
-				</mat-menu>
-				<button mat-button mat-raised-button class="theme-btn sm-text mr-2 h-45" [matMenuTriggerFor]="unassigned" [disabled]="offline_filter">
-					<span class="button-label">Unassigned</span>
-					<span class="fas fa-circle text-gray"></span>
-				</button>
-				<mat-menu #unassigned="matMenu">
-					<button mat-menu-item (click)="filterTable('unassignedLicensesPercent', '0', '20', 'less than 20%')">less than 20%</button>
-					<button mat-menu-item (click)="filterTable('unassignedLicensesPercent', '10', '', 'greater than 10%')">greater than 10%</button>
-					<button mat-menu-item (click)="filterTable('unassignedLicensesPercent', '20', '', 'greater than 20%')">greater than 20%</button>
-				</mat-menu>
-				<button mat-button mat-raised-button class="theme-btn sm-text mr-2 h-45" [matMenuTriggerFor]="offline" [disabled]="unassigned_filter">
-					<span class="button-label">Offline</span>
-					<span class="fas fa-circle text-danger"></span>
-				</button>
-				<mat-menu #offline="matMenu">
-					<button mat-menu-item (click)="filterTable('offlineLicensesPercent', '20', '', 'greater than 20%')">greater than 20%</button>
-				</mat-menu>
-			</div>
-			<div class="col-lg-3">
-				<app-search-field
-					id="dealerFieldSearch"
-					*ngIf="!initial_load"
-					[form_title]="role_label"
-					[placeholder]="'Example: N-Compass'"
-					[data_reference]="dealers_data"
-					[primary_keyword]="'business_name'"
-					[secondary_keyword]="'dealer_id_alias'"
-					(searched)="filterData($event)"
-					[api_search]="true"
-					(reset_search)="getDealers()"></app-search-field>
-			</div>
+    <div *ngIf="!initial_load; else loading">
+        <div class="row">
+            <div class="col-lg-9">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn sm-text mr-2 h-45"
+                    [matMenuTriggerFor]="age">
+                    <span class="button-label">Age</span>
+                    <span class="fas fa-angle-down"></span>
+                </button>
+                <mat-menu #age="matMenu">
+                    <button
+                        mat-menu-item
+                        (click)="filterTable('monthAsDealer', '0', '3', '0-3 months')">
+                        0-3 months
+                    </button>
+                    <button
+                        mat-menu-item
+                        (click)="filterTable('monthAsDealer', '4', '9', '4-9 months')">
+                        4-9 months
+                    </button>
+                    <button
+                        mat-menu-item
+                        (click)="filterTable('monthAsDealer', '10', '', 'Above 10 months')">
+                        Above 10 months
+                    </button>
+                </mat-menu>
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn sm-text mr-2 h-45"
+                    [matMenuTriggerFor]="unassigned"
+                    [disabled]="offline_filter">
+                    <span class="button-label">Unassigned</span>
+                    <span class="fas fa-circle text-gray"></span>
+                </button>
+                <mat-menu #unassigned="matMenu">
+                    <button
+                        mat-menu-item
+                        (click)="
+                            filterTable('unassignedLicensesPercent', '0', '20', 'less than 20%')
+                        ">
+                        less than 20%
+                    </button>
+                    <button
+                        mat-menu-item
+                        (click)="
+                            filterTable('unassignedLicensesPercent', '10', '', 'greater than 10%')
+                        ">
+                        greater than 10%
+                    </button>
+                    <button
+                        mat-menu-item
+                        (click)="
+                            filterTable('unassignedLicensesPercent', '20', '', 'greater than 20%')
+                        ">
+                        greater than 20%
+                    </button>
+                </mat-menu>
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn sm-text mr-2 h-45"
+                    [matMenuTriggerFor]="offline"
+                    [disabled]="unassigned_filter">
+                    <span class="button-label">Offline</span>
+                    <span class="fas fa-circle text-danger"></span>
+                </button>
+                <mat-menu #offline="matMenu">
+                    <button
+                        mat-menu-item
+                        (click)="
+                            filterTable('offlineLicensesPercent', '20', '', 'greater than 20%')
+                        ">
+                        greater than 20%
+                    </button>
+                </mat-menu>
+            </div>
+            <div class="col-lg-3">
+                <app-search-field
+                    id="dealerFieldSearch"
+                    *ngIf="!initial_load"
+                    [form_title]="role_label"
+                    [placeholder]="'Example: N-Compass'"
+                    [data_reference]="dealers_data"
+                    [primary_keyword]="'business_name'"
+                    [secondary_keyword]="'dealer_id_alias'"
+                    (searched)="filterData($event)"
+                    [api_search]="true"
+                    (reset_search)="getDealers()"></app-search-field>
+            </div>
 
-			<div class="row full-width m-0" *ngIf="filters.label_age || filters.label_unassigned || filters.label_offline">
-				<div class="col-lg-12">
-					<div class="d-flex align-items-center p-2 bg-gray-2">
-						<div class="d-flex align-items-center">
-							<div class="filter-pills">
-								<div class="filetype-pill pill" *ngIf="filters.label_age">
-									Age: <strong>{{ filters.label_age }}</strong>
-								</div>
+            <div
+                class="row full-width m-0"
+                *ngIf="filters.label_age || filters.label_unassigned || filters.label_offline">
+                <div class="col-lg-12">
+                    <div class="d-flex align-items-center p-2 bg-gray-2">
+                        <div class="d-flex align-items-center">
+                            <div class="filter-pills">
+                                <div class="filetype-pill pill" *ngIf="filters.label_age">
+                                    Age: <strong>{{ filters.label_age }}</strong>
+                                </div>
 
-								<div class="order-pill pill" *ngIf="filters.label_unassigned">
-									Unassigned: <strong>{{ filters.label_unassigned }}</strong>
-								</div>
+                                <div class="order-pill pill" *ngIf="filters.label_unassigned">
+                                    Unassigned: <strong>{{ filters.label_unassigned }}</strong>
+                                </div>
 
-								<div class="dealer-pill pill" *ngIf="filters.label_offline">
-									Offline: <strong>{{ filters.label_offline }}</strong>
-								</div>
-							</div>
-							<div class="pl-2" *ngIf="!searching">
-								<p class="sm-text py-2 m-0">
-									Showing <span class="text-danger">{{ paging_data.entities.length }}</span> out of
-									<span class="text-danger">{{ paging_data.totalEntities }}</span> dealers result.
-								</p>
-							</div>
-						</div>
-						<div class="control flex-even text-right">
-							<button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
-								<span class="button-label"> Clear Filter </span>
-								<span class="fas fa-times ml-2 sm-text"></span>
-							</button>
-						</div>
-					</div>
-				</div>
-			</div>
+                                <div class="dealer-pill pill" *ngIf="filters.label_offline">
+                                    Offline: <strong>{{ filters.label_offline }}</strong>
+                                </div>
+                            </div>
+                            <div class="pl-2" *ngIf="!searching">
+                                <p class="sm-text py-2 m-0">
+                                    Showing
+                                    <span class="text-danger">{{
+                                        paging_data.entities.length
+                                    }}</span>
+                                    out of
+                                    <span class="text-danger">{{ paging_data.totalEntities }}</span>
+                                    dealers result.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="control flex-even text-right">
+                            <button
+                                mat-button
+                                mat-raised-button
+                                class="theme-btn"
+                                (click)="clearFilter()">
+                                <span class="button-label"> Clear Filter </span>
+                                <span class="fas fa-times ml-2 sm-text"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-			<div class="col-lg-12">
-				<ng-container *ngIf="!searching; else loading">
-					<div *ngIf="!no_dealer; else no_data">
-						<mat-card class="theme-table with-page-dealer" *ngIf="filtered_data.length > 0; else nodata">
-							<ng-container>
-								<table class="full-width">
-									<thead align="left" class="text-center">
-										<!-- Needs Optimization -->
-										<tr>
-											<th class="border-right border-bottom p-3" scope="col" rowspan="2">#</th>
+            <div class="col-lg-12">
+                <ng-container *ngIf="!searching; else loading">
+                    <div *ngIf="!no_dealer; else no_data">
+                        <mat-card
+                            class="theme-table with-page-dealer"
+                            *ngIf="filtered_data.length > 0; else nodata">
+                            <ng-container>
+                                <table class="full-width">
+                                    <thead align="left" class="text-center">
+                                        <!-- Needs Optimization -->
+                                        <tr>
+                                            <th
+                                                class="border-right border-bottom p-3"
+                                                scope="col"
+                                                rowspan="2">
+                                                #
+                                            </th>
 
-											<th class="border-right border-bottom p-3" scope="col" rowspan="2" [attr.data-column]="'dealerIdAlias'">
-												Dealer Alias
-											</th>
+                                            <th
+                                                class="border-right border-bottom p-3"
+                                                scope="col"
+                                                rowspan="2"
+                                                [attr.data-column]="'dealerIdAlias'">
+                                                Dealer Alias
+                                            </th>
 
-											<th class="border-right border-bottom p-3" scope="col" rowspan="2" [attr.data-column]="'businessName'">
-												Business Name
-											</th>
+                                            <th
+                                                class="border-right border-bottom p-3"
+                                                scope="col"
+                                                rowspan="2"
+                                                [attr.data-column]="'businessName'">
+                                                Business Name
+                                            </th>
 
-											<th class="border-right border-bottom p-3" scope="col" rowspan="2" [attr.data-column]="'contactPerson'">
-												Contact Person
-											</th>
+                                            <th
+                                                class="border-right border-bottom p-3"
+                                                scope="col"
+                                                rowspan="2"
+                                                [attr.data-column]="'contactPerson'">
+                                                Contact Person
+                                            </th>
 
-											<th
-												class="border-right border-bottom p-3"
-												[ngClass]="active_tab == 'DateCreated' ? 'tab-active' : ''"
-												scope="col"
-												rowspan="2"
-												[attr.data-column]="'monthAsDealer'">
-												Age
-												<i
-													class="sort cursor-pointer ml-2 fas fa-angle-{{ sortOrder == 'desc' ? 'down' : 'up' }}"
-													(click)="sortByColumnName('DateCreated', sortOrder == 'desc' ? 'asc' : 'desc')"
-													data-toggle="tooltip"
-													title="Sorted by {{ sortOrder == 'desc' ? 'Descending' : 'Ascending' }} Order"></i>
-											</th>
+                                            <th
+                                                class="border-right border-bottom p-3"
+                                                [ngClass]="
+                                                    active_tab == 'DateCreated' ? 'tab-active' : ''
+                                                "
+                                                scope="col"
+                                                rowspan="2"
+                                                [attr.data-column]="'monthAsDealer'">
+                                                Age
+                                                <i
+                                                    class="sort cursor-pointer ml-2 fas fa-angle-{{
+                                                        sortOrder == 'desc' ? 'down' : 'up'
+                                                    }}"
+                                                    (click)="
+                                                        sortByColumnName(
+                                                            'DateCreated',
+                                                            sortOrder == 'desc' ? 'asc' : 'desc'
+                                                        )
+                                                    "
+                                                    data-toggle="tooltip"
+                                                    title="Sorted by {{
+                                                        sortOrder == 'desc'
+                                                            ? 'Descending'
+                                                            : 'Ascending'
+                                                    }} Order"></i>
+                                            </th>
 
-											<th
-												class="border-right border-bottom p-3"
-												[ngClass]="active_tab == 'PlayerCount' ? 'tab-active' : ''"
-												scope="col"
-												rowspan="2"
-												[attr.data-column]="'playerCount'">
-												Player Count
-												<i
-													class="sort cursor-pointer ml-2 fas fa-angle-{{ sortOrder == 'desc' ? 'down' : 'up' }}"
-													(click)="sortByColumnName('PlayerCount', sortOrder == 'desc' ? 'asc' : 'desc')"
-													data-toggle="tooltip"
-													title="Sorted by {{ sortOrder == 'desc' ? 'Descending' : 'Ascending' }} Order"></i>
-											</th>
+                                            <th
+                                                class="border-right border-bottom p-3"
+                                                [ngClass]="
+                                                    active_tab == 'PlayerCount' ? 'tab-active' : ''
+                                                "
+                                                scope="col"
+                                                rowspan="2"
+                                                [attr.data-column]="'playerCount'">
+                                                Player Count
+                                                <i
+                                                    class="sort cursor-pointer ml-2 fas fa-angle-{{
+                                                        sortOrder == 'desc' ? 'down' : 'up'
+                                                    }}"
+                                                    (click)="
+                                                        sortByColumnName(
+                                                            'PlayerCount',
+                                                            sortOrder == 'desc' ? 'asc' : 'desc'
+                                                        )
+                                                    "
+                                                    data-toggle="tooltip"
+                                                    title="Sorted by {{
+                                                        sortOrder == 'desc'
+                                                            ? 'Descending'
+                                                            : 'Ascending'
+                                                    }} Order"></i>
+                                            </th>
 
-											<th
-												class="border-right border-bottom p-3"
-												colspan="4"
-												scope="col"
-												[ngClass]="active_filter_tab == 'totalLicenses' ? 'tab-active' : ''">
-												Licenses
-												<div ngbDropdown class="float-right d-inline-block">
-													<button class="hidden-button" id="dropdownMenu1" ngbDropdownToggle>
-														<i
-															class="float-right cursor-pointer text-right fas fa-filter"
-															data-toggle="tooltip"
-															title="{{
-																selected_filter.filter_column == 'totalLicenses'
-																	? tooltip
-																	: 'Click to Filter Licenses'
-															}}"></i>
-													</button>
-													<div class="dropdown-menu" aria-labelledby="dropdownMenu1" ngbDropdownMenu>
-														<button
-															class="dropdown-item md-text"
-															*ngFor="let count of filter"
-															(click)="filterByColumnName('totalLicenses', count.min_value, count.max_value)">
-															{{ count.viewValue }} Licenses
-														</button>
-													</div>
-												</div>
-											</th>
+                                            <th
+                                                class="border-right border-bottom p-3"
+                                                colspan="4"
+                                                scope="col"
+                                                [ngClass]="
+                                                    active_filter_tab == 'totalLicenses'
+                                                        ? 'tab-active'
+                                                        : ''
+                                                ">
+                                                Licenses
+                                                <div ngbDropdown class="float-right d-inline-block">
+                                                    <button
+                                                        class="hidden-button"
+                                                        id="dropdownMenu1"
+                                                        ngbDropdownToggle>
+                                                        <i
+                                                            class="float-right cursor-pointer text-right fas fa-filter"
+                                                            data-toggle="tooltip"
+                                                            title="{{
+                                                                selected_filter.filter_column ==
+                                                                'totalLicenses'
+                                                                    ? tooltip
+                                                                    : 'Click to Filter Licenses'
+                                                            }}"></i>
+                                                    </button>
+                                                    <div
+                                                        class="dropdown-menu"
+                                                        aria-labelledby="dropdownMenu1"
+                                                        ngbDropdownMenu>
+                                                        <button
+                                                            class="dropdown-item md-text"
+                                                            *ngFor="let count of filter"
+                                                            (click)="
+                                                                filterByColumnName(
+                                                                    'totalLicenses',
+                                                                    count.min_value,
+                                                                    count.max_value
+                                                                )
+                                                            ">
+                                                            {{ count.viewValue }} Licenses
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </th>
 
-											<th
-												class="border-right border-bottom p-3"
-												colspan="3"
-												scope="col"
-												[ngClass]="active_filter_tab == 'totalHosts' ? 'tab-active' : ''">
-												Hosts
-												<div ngbDropdown class="float-right d-inline-block">
-													<button class="hidden-button" id="dropdownMenu2" ngbDropdownToggle>
-														<i
-															class="float-right cursor-pointer text-right fas fa-filter"
-															data-toggle="tooltip"
-															title="{{
-																selected_filter.filter_column == 'totalHosts' ? tooltip : 'Click to Filter Hosts'
-															}}"></i>
-													</button>
-													<div class="dropdown-menu" aria-labelledby="dropdownMenu2" ngbDropdownMenu>
-														<button
-															class="dropdown-item md-text"
-															*ngFor="let count of filter; let last = last"
-															(click)="filterByColumnName('totalHosts', count.min_value, count.max_value)"
-															[ngClass]="{ 'last-child': last }">
-															{{ count.viewValue }} Hosts
-														</button>
-													</div>
-												</div>
-											</th>
-											<th class="border-bottom p-3" colspan="2" scope="col">Advertisers</th>
-										</tr>
-										<!--Upper Row End-->
+                                            <th
+                                                class="border-right border-bottom p-3"
+                                                colspan="3"
+                                                scope="col"
+                                                [ngClass]="
+                                                    active_filter_tab == 'totalHosts'
+                                                        ? 'tab-active'
+                                                        : ''
+                                                ">
+                                                Hosts
+                                                <div ngbDropdown class="float-right d-inline-block">
+                                                    <button
+                                                        class="hidden-button"
+                                                        id="dropdownMenu2"
+                                                        ngbDropdownToggle>
+                                                        <i
+                                                            class="float-right cursor-pointer text-right fas fa-filter"
+                                                            data-toggle="tooltip"
+                                                            title="{{
+                                                                selected_filter.filter_column ==
+                                                                'totalHosts'
+                                                                    ? tooltip
+                                                                    : 'Click to Filter Hosts'
+                                                            }}"></i>
+                                                    </button>
+                                                    <div
+                                                        class="dropdown-menu"
+                                                        aria-labelledby="dropdownMenu2"
+                                                        ngbDropdownMenu>
+                                                        <button
+                                                            class="dropdown-item md-text"
+                                                            *ngFor="
+                                                                let count of filter;
+                                                                let last = last
+                                                            "
+                                                            (click)="
+                                                                filterByColumnName(
+                                                                    'totalHosts',
+                                                                    count.min_value,
+                                                                    count.max_value
+                                                                )
+                                                            "
+                                                            [ngClass]="{ 'last-child': last }">
+                                                            {{ count.viewValue }} Hosts
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th class="border-bottom p-3" colspan="2" scope="col">
+                                                Advertisers
+                                            </th>
+                                        </tr>
+                                        <!--Upper Row End-->
 
-										<tr>
-											<!-- Licenses -->
-											<th
-												class="border-right border-bottom p-3"
-												[ngClass]="active_tab == 'totalLicenses' ? 'tab-active' : ''"
-												valign="middle"
-												[attr.data-column]="'licenses'"
-												[attr.data-column-child]="'quantity'"
-												[attr.data-number]="true">
-												Total
-												<i
-													class="sort cursor-pointer ml-2 fas fa-angle-{{ sortOrder == 'desc' ? 'down' : 'up' }}"
-													(click)="sortByColumnName('totalLicenses', sortOrder == 'desc' ? 'asc' : 'desc')"
-													data-toggle="tooltip"
-													title="Sorted by {{ sortOrder == 'desc' ? 'Descending' : 'Ascending' }} Order"></i>
-											</th>
+                                        <tr>
+                                            <!-- Licenses -->
+                                            <th
+                                                class="border-right border-bottom p-3"
+                                                [ngClass]="
+                                                    active_tab == 'totalLicenses'
+                                                        ? 'tab-active'
+                                                        : ''
+                                                "
+                                                valign="middle"
+                                                [attr.data-column]="'licenses'"
+                                                [attr.data-column-child]="'quantity'"
+                                                [attr.data-number]="true">
+                                                Total
+                                                <i
+                                                    class="sort cursor-pointer ml-2 fas fa-angle-{{
+                                                        sortOrder == 'desc' ? 'down' : 'up'
+                                                    }}"
+                                                    (click)="
+                                                        sortByColumnName(
+                                                            'totalLicenses',
+                                                            sortOrder == 'desc' ? 'asc' : 'desc'
+                                                        )
+                                                    "
+                                                    data-toggle="tooltip"
+                                                    title="Sorted by {{
+                                                        sortOrder == 'desc'
+                                                            ? 'Descending'
+                                                            : 'Ascending'
+                                                    }} Order"></i>
+                                            </th>
 
-											<!-- NO DATA AVAILABLE -->
-											<th
-												class="border-right border-bottom p-3"
-												[ngClass]="active_tab == 'totalLicensesUnassigned' ? 'tab-active' : ''"
-												rowspan="2"
-												valign="middle">
-												Unassigned
-												<i
-													class="sort cursor-pointer ml-2 fas fa-angle-{{ sortOrder == 'desc' ? 'down' : 'up' }}"
-													(click)="sortByColumnName('totalLicensesUnassigned', sortOrder == 'desc' ? 'asc' : 'desc')"
-													data-toggle="tooltip"
-													title="Sorted by {{ sortOrder == 'desc' ? 'Descending' : 'Ascending' }} Order"></i>
-											</th>
-											<!-- NO DATA AVAILABLE -->
+                                            <!-- NO DATA AVAILABLE -->
+                                            <th
+                                                class="border-right border-bottom p-3"
+                                                [ngClass]="
+                                                    active_tab == 'totalLicensesUnassigned'
+                                                        ? 'tab-active'
+                                                        : ''
+                                                "
+                                                rowspan="2"
+                                                valign="middle">
+                                                Unassigned
+                                                <i
+                                                    class="sort cursor-pointer ml-2 fas fa-angle-{{
+                                                        sortOrder == 'desc' ? 'down' : 'up'
+                                                    }}"
+                                                    (click)="
+                                                        sortByColumnName(
+                                                            'totalLicensesUnassigned',
+                                                            sortOrder == 'desc' ? 'asc' : 'desc'
+                                                        )
+                                                    "
+                                                    data-toggle="tooltip"
+                                                    title="Sorted by {{
+                                                        sortOrder == 'desc'
+                                                            ? 'Descending'
+                                                            : 'Ascending'
+                                                    }} Order"></i>
+                                            </th>
+                                            <!-- NO DATA AVAILABLE -->
 
-											<th
-												class="border-right border-bottom p-3"
-												[ngClass]="active_tab == 'totalLicensesOnline' ? 'tab-active' : ''"
-												rowspan="2"
-												[attr.data-column]="'licenses'"
-												[attr.data-column-child]="'online'"
-												[attr.data-number]="true"
-												valign="middle">
-												Online
-												<i
-													class="sort cursor-pointer ml-2 fas fa-angle-{{ sortOrder == 'desc' ? 'down' : 'up' }}"
-													(click)="sortByColumnName('totalLicensesOnline', sortOrder == 'desc' ? 'asc' : 'desc')"
-													data-toggle="tooltip"
-													title="Sorted by {{ sortOrder == 'desc' ? 'Descending' : 'Ascending' }} Order"></i>
-											</th>
+                                            <th
+                                                class="border-right border-bottom p-3"
+                                                [ngClass]="
+                                                    active_tab == 'totalLicensesOnline'
+                                                        ? 'tab-active'
+                                                        : ''
+                                                "
+                                                rowspan="2"
+                                                [attr.data-column]="'licenses'"
+                                                [attr.data-column-child]="'online'"
+                                                [attr.data-number]="true"
+                                                valign="middle">
+                                                Online
+                                                <i
+                                                    class="sort cursor-pointer ml-2 fas fa-angle-{{
+                                                        sortOrder == 'desc' ? 'down' : 'up'
+                                                    }}"
+                                                    (click)="
+                                                        sortByColumnName(
+                                                            'totalLicensesOnline',
+                                                            sortOrder == 'desc' ? 'asc' : 'desc'
+                                                        )
+                                                    "
+                                                    data-toggle="tooltip"
+                                                    title="Sorted by {{
+                                                        sortOrder == 'desc'
+                                                            ? 'Descending'
+                                                            : 'Ascending'
+                                                    }} Order"></i>
+                                            </th>
 
-											<th
-												class="border-right border-bottom p-3"
-												[ngClass]="active_tab == 'totalLicensesOffline' ? 'tab-active' : ''"
-												rowspan="2"
-												[attr.data-column]="'licenses'"
-												[attr.data-column-child]="'offline'"
-												[attr.data-number]="true"
-												valign="middle">
-												Offline
-												<i
-													class="sort cursor-pointer ml-2 fas fa-angle-{{ sortOrder == 'desc' ? 'down' : 'up' }}"
-													(click)="sortByColumnName('totalLicensesOffline', sortOrder == 'desc' ? 'asc' : 'desc')"
-													data-toggle="tooltip"
-													title="Sorted by {{ sortOrder == 'desc' ? 'Descending' : 'Ascending' }} Order"></i>
-											</th>
-											<!-- Licenses -->
+                                            <th
+                                                class="border-right border-bottom p-3"
+                                                [ngClass]="
+                                                    active_tab == 'totalLicensesOffline'
+                                                        ? 'tab-active'
+                                                        : ''
+                                                "
+                                                rowspan="2"
+                                                [attr.data-column]="'licenses'"
+                                                [attr.data-column-child]="'offline'"
+                                                [attr.data-number]="true"
+                                                valign="middle">
+                                                Offline
+                                                <i
+                                                    class="sort cursor-pointer ml-2 fas fa-angle-{{
+                                                        sortOrder == 'desc' ? 'down' : 'up'
+                                                    }}"
+                                                    (click)="
+                                                        sortByColumnName(
+                                                            'totalLicensesOffline',
+                                                            sortOrder == 'desc' ? 'asc' : 'desc'
+                                                        )
+                                                    "
+                                                    data-toggle="tooltip"
+                                                    title="Sorted by {{
+                                                        sortOrder == 'desc'
+                                                            ? 'Descending'
+                                                            : 'Ascending'
+                                                    }} Order"></i>
+                                            </th>
+                                            <!-- Licenses -->
 
-											<!-- Hosts -->
-											<th
-												class="border-right border-bottom p-3"
-												[ngClass]="active_tab == 'forInstallationHost' ? 'tab-active' : ''"
-												rowspan="2"
-												valign="middle"
-												[attr.data-column]="'forInstallationHost'"
-												[attr.data-number]="true">
-												Scheduled
-												<i
-													class="sort cursor-pointer ml-2 fas fa-angle-{{ sortOrder == 'desc' ? 'down' : 'up' }}"
-													(click)="sortByColumnName('forInstallationHost', sortOrder == 'desc' ? 'asc' : 'desc')"
-													data-toggle="tooltip"
-													title="Sorted by {{ sortOrder == 'desc' ? 'Descending' : 'Ascending' }} Order"></i>
-											</th>
+                                            <!-- Hosts -->
+                                            <th
+                                                class="border-right border-bottom p-3"
+                                                [ngClass]="
+                                                    active_tab == 'forInstallationHost'
+                                                        ? 'tab-active'
+                                                        : ''
+                                                "
+                                                rowspan="2"
+                                                valign="middle"
+                                                [attr.data-column]="'forInstallationHost'"
+                                                [attr.data-number]="true">
+                                                Scheduled
+                                                <i
+                                                    class="sort cursor-pointer ml-2 fas fa-angle-{{
+                                                        sortOrder == 'desc' ? 'down' : 'up'
+                                                    }}"
+                                                    (click)="
+                                                        sortByColumnName(
+                                                            'forInstallationHost',
+                                                            sortOrder == 'desc' ? 'asc' : 'desc'
+                                                        )
+                                                    "
+                                                    data-toggle="tooltip"
+                                                    title="Sorted by {{
+                                                        sortOrder == 'desc'
+                                                            ? 'Descending'
+                                                            : 'Ascending'
+                                                    }} Order"></i>
+                                            </th>
 
-											<th
-												class="border-right border-bottom p-3"
-												[ngClass]="active_tab == 'totalHosts' ? 'tab-active' : ''"
-												rowspan="2"
-												align="left"
-												valign="middle"
-												[attr.data-column]="'totalHost'"
-												[attr.data-number]="true">
-												Total
-												<i
-													class="sort cursor-pointer ml-2 fas fa-angle-{{ sortOrder == 'desc' ? 'down' : 'up' }}"
-													(click)="sortByColumnName('totalHosts', sortOrder == 'desc' ? 'asc' : 'desc')"
-													data-toggle="tooltip"
-													title="Sorted by {{ sortOrder == 'desc' ? 'Descending' : 'Ascending' }} Order"></i>
-											</th>
+                                            <th
+                                                class="border-right border-bottom p-3"
+                                                [ngClass]="
+                                                    active_tab == 'totalHosts' ? 'tab-active' : ''
+                                                "
+                                                rowspan="2"
+                                                align="left"
+                                                valign="middle"
+                                                [attr.data-column]="'totalHost'"
+                                                [attr.data-number]="true">
+                                                Total
+                                                <i
+                                                    class="sort cursor-pointer ml-2 fas fa-angle-{{
+                                                        sortOrder == 'desc' ? 'down' : 'up'
+                                                    }}"
+                                                    (click)="
+                                                        sortByColumnName(
+                                                            'totalHosts',
+                                                            sortOrder == 'desc' ? 'asc' : 'desc'
+                                                        )
+                                                    "
+                                                    data-toggle="tooltip"
+                                                    title="Sorted by {{
+                                                        sortOrder == 'desc'
+                                                            ? 'Descending'
+                                                            : 'Ascending'
+                                                    }} Order"></i>
+                                            </th>
 
-											<th
-												class="border-right border-bottom p-3"
-												[ngClass]="active_tab == 'totalHostsActive' ? 'tab-active' : ''"
-												rowspan="2"
-												valign="middle"
-												[attr.data-column]="'activeHost'"
-												[attr.data-number]="true">
-												Active
-												<i
-													class="sort cursor-pointer ml-2 fas fa-angle-{{ sortOrder == 'desc' ? 'down' : 'up' }}"
-													(click)="sortByColumnName('totalHostsActive', sortOrder == 'desc' ? 'asc' : 'desc')"
-													data-toggle="tooltip"
-													title="Sorted by {{ sortOrder == 'desc' ? 'Descending' : 'Ascending' }} Order"></i>
-											</th>
-											<!-- Hosts -->
+                                            <th
+                                                class="border-right border-bottom p-3"
+                                                [ngClass]="
+                                                    active_tab == 'totalHostsActive'
+                                                        ? 'tab-active'
+                                                        : ''
+                                                "
+                                                rowspan="2"
+                                                valign="middle"
+                                                [attr.data-column]="'activeHost'"
+                                                [attr.data-number]="true">
+                                                Active
+                                                <i
+                                                    class="sort cursor-pointer ml-2 fas fa-angle-{{
+                                                        sortOrder == 'desc' ? 'down' : 'up'
+                                                    }}"
+                                                    (click)="
+                                                        sortByColumnName(
+                                                            'totalHostsActive',
+                                                            sortOrder == 'desc' ? 'asc' : 'desc'
+                                                        )
+                                                    "
+                                                    data-toggle="tooltip"
+                                                    title="Sorted by {{
+                                                        sortOrder == 'desc'
+                                                            ? 'Descending'
+                                                            : 'Ascending'
+                                                    }} Order"></i>
+                                            </th>
+                                            <!-- Hosts -->
 
-											<!-- Advertisers NO DATA AVAILABLE -->
-											<th
-												class="border-right border-bottom p-3"
-												[ngClass]="active_tab == 'totalAdvertisers' ? 'tab-active' : ''"
-												rowspan="2"
-												valign="middle">
-												Total
-												<i
-													class="sort cursor-pointer ml-2 fas fa-angle-{{ sortOrder == 'desc' ? 'down' : 'up' }}"
-													(click)="sortByColumnName('totalAdvertisers', sortOrder == 'desc' ? 'asc' : 'desc')"
-													data-toggle="tooltip"
-													title="Sorted by {{ sortOrder == 'desc' ? 'Descending' : 'Ascending' }} Order"></i>
-											</th>
+                                            <!-- Advertisers NO DATA AVAILABLE -->
+                                            <th
+                                                class="border-right border-bottom p-3"
+                                                [ngClass]="
+                                                    active_tab == 'totalAdvertisers'
+                                                        ? 'tab-active'
+                                                        : ''
+                                                "
+                                                rowspan="2"
+                                                valign="middle">
+                                                Total
+                                                <i
+                                                    class="sort cursor-pointer ml-2 fas fa-angle-{{
+                                                        sortOrder == 'desc' ? 'down' : 'up'
+                                                    }}"
+                                                    (click)="
+                                                        sortByColumnName(
+                                                            'totalAdvertisers',
+                                                            sortOrder == 'desc' ? 'asc' : 'desc'
+                                                        )
+                                                    "
+                                                    data-toggle="tooltip"
+                                                    title="Sorted by {{
+                                                        sortOrder == 'desc'
+                                                            ? 'Descending'
+                                                            : 'Ascending'
+                                                    }} Order"></i>
+                                            </th>
 
-											<th
-												class="border-bottom"
-												[ngClass]="active_tab == 'totalAdvertisersActive' ? 'tab-active' : ''"
-												rowspan="2"
-												valign="middle">
-												Active
-												<i
-													class="sort cursor-pointer ml-2 fas fa-angle-{{ sortOrder == 'desc' ? 'down' : 'up' }}"
-													(click)="sortByColumnName('totalAdvertisersActive', sortOrder == 'desc' ? 'asc' : 'desc')"
-													data-toggle="tooltip"
-													title="Sorted by {{ sortOrder == 'desc' ? 'Descending' : 'Ascending' }} Order"></i>
-											</th>
-											<!-- Advertisers -->
-										</tr>
-										<!--Lower Row End-->
-									</thead>
-									<tbody>
-										<tr
-											class="route-table-row"
-											*ngFor="
-												let i = index;
-												let d;
-												of: filtered_data | paginate : { itemsPerPage: items_per_page, currentPage: pagination }
-											">
-											<td class="xsm-text border-right text-center p-3">
-												{{ d.index }}
-											</td>
-											<td class="xsm-text border-right p-3">
-												<a [routerLink]="[d.dealer_id, d.business_name]" target="_blank">{{ d.dealer_id_alias }}</a>
-											</td>
-											<td class="xsm-text border-right p-3">
-												<a [routerLink]="[d.dealer_id]" target="_blank">{{ d.business_name | titlecase }}</a>
-											</td>
-											<td class="xsm-text border-right p-3">
-												{{ d.contact_person }}
-											</td>
-											<td class="xsm-text border-right text-center p-3">{{ d.months_as_dealer }} month(s)</td>
-											<td class="xsm-text border-right text-center p-3">
-												{{ d.player_count }}
-											</td>
-											<td class="xsm-text border-right text-center p-3">
-												{{ d.l_total }}
-											</td>
-											<td class="xsm-text border-right text-center p-3 text-danger font-weight-bold">
-												{{ d.l_unassigned }}
-											</td>
-											<td class="xsm-text border-right text-center p-3 text-primary font-weight-bold">
-												{{ d.l_online }}
-											</td>
-											<td class="xsm-text border-right text-center p-3 text-danger font-weight-bold">
-												{{ d.l_offline }}
-											</td>
-											<td class="xsm-text border-right text-center p-3">
-												{{ d.h_scheduled }}
-											</td>
-											<td class="xsm-text border-right text-center p-3">
-												{{ d.h_total }}
-											</td>
-											<td class="xsm-text border-right text-center p-3">
-												{{ d.h_active }}
-											</td>
-											<td class="xsm-text border-right text-center p-3">
-												{{ d.a_total }}
-											</td>
-											<td class="xsm-text text-center p-3">
-												{{ d.a_active }}
-											</td>
-										</tr>
-									</tbody>
-								</table>
+                                            <th
+                                                class="border-bottom"
+                                                [ngClass]="
+                                                    active_tab == 'totalAdvertisersActive'
+                                                        ? 'tab-active'
+                                                        : ''
+                                                "
+                                                rowspan="2"
+                                                valign="middle">
+                                                Active
+                                                <i
+                                                    class="sort cursor-pointer ml-2 fas fa-angle-{{
+                                                        sortOrder == 'desc' ? 'down' : 'up'
+                                                    }}"
+                                                    (click)="
+                                                        sortByColumnName(
+                                                            'totalAdvertisersActive',
+                                                            sortOrder == 'desc' ? 'asc' : 'desc'
+                                                        )
+                                                    "
+                                                    data-toggle="tooltip"
+                                                    title="Sorted by {{
+                                                        sortOrder == 'desc'
+                                                            ? 'Descending'
+                                                            : 'Ascending'
+                                                    }} Order"></i>
+                                            </th>
+                                            <!-- Advertisers -->
+                                        </tr>
+                                        <!--Lower Row End-->
+                                    </thead>
+                                    <tbody>
+                                        <tr
+                                            class="route-table-row"
+                                            *ngFor="
+                                                let i = index;
+                                                let d;
+                                                of: filtered_data
+                                                    | paginate
+                                                        : {
+                                                              itemsPerPage: items_per_page,
+                                                              currentPage: pagination
+                                                          }
+                                            ">
+                                            <td class="xsm-text border-right text-center p-3">
+                                                {{ d.index }}
+                                            </td>
+                                            <td class="xsm-text border-right p-3">
+                                                <a
+                                                    [routerLink]="[d.dealer_id, d.business_name]"
+                                                    target="_blank"
+                                                    >{{ d.dealer_id_alias }}</a
+                                                >
+                                            </td>
+                                            <td class="xsm-text border-right p-3">
+                                                <a [routerLink]="[d.dealer_id]" target="_blank">{{
+                                                    d.business_name | titlecase
+                                                }}</a>
+                                            </td>
+                                            <td class="xsm-text border-right p-3">
+                                                {{ d.contact_person }}
+                                            </td>
+                                            <td class="xsm-text border-right text-center p-3">
+                                                {{ d.months_as_dealer }} month(s)
+                                            </td>
+                                            <td class="xsm-text border-right text-center p-3">
+                                                {{ d.player_count }}
+                                            </td>
+                                            <td class="xsm-text border-right text-center p-3">
+                                                {{ d.l_total }}
+                                            </td>
+                                            <td
+                                                class="xsm-text border-right text-center p-3 text-danger font-weight-bold">
+                                                {{ d.l_unassigned }}
+                                            </td>
+                                            <td
+                                                class="xsm-text border-right text-center p-3 text-primary font-weight-bold">
+                                                {{ d.l_online }}
+                                            </td>
+                                            <td
+                                                class="xsm-text border-right text-center p-3 text-danger font-weight-bold">
+                                                {{ d.l_offline }}
+                                            </td>
+                                            <td class="xsm-text border-right text-center p-3">
+                                                {{ d.h_scheduled }}
+                                            </td>
+                                            <td class="xsm-text border-right text-center p-3">
+                                                {{ d.h_total }}
+                                            </td>
+                                            <td class="xsm-text border-right text-center p-3">
+                                                {{ d.h_active }}
+                                            </td>
+                                            <td class="xsm-text border-right text-center p-3">
+                                                {{ d.a_total }}
+                                            </td>
+                                            <td class="xsm-text text-center p-3">
+                                                {{ d.a_active }}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
 
-								<app-pagination-field [paging_data]="paging_data" (get_page)="pageRequested($event)"> </app-pagination-field>
-							</ng-container>
-						</mat-card>
-					</div>
-				</ng-container>
-			</div>
-		</div>
-	</div>
+                                <app-pagination-field
+                                    [paging_data]="paging_data"
+                                    (get_page)="pageRequested($event)">
+                                </app-pagination-field>
+                            </ng-container>
+                        </mat-card>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
 
-	<ng-template #loading>
-		<div class="vh-50 white-bg">
-			<div class="row">
-				<div class="col-lg-12 p-0 text-center text-gray pt-5" *ngIf="ongoing_filter">
-					<strong>P R O C E S S I N G</strong>
-					<br />
-					<span class="sm-text">Please wait while we filter our database for you. Filtering may take up to 60seconds.</span>
-				</div>
-			</div>
-			<app-spinner></app-spinner>
-		</div>
-	</ng-template>
+    <ng-template #loading>
+        <div class="vh-50 white-bg">
+            <div class="row">
+                <div class="col-lg-12 p-0 text-center text-gray pt-5" *ngIf="ongoing_filter">
+                    <strong>P R O C E S S I N G</strong>
+                    <br />
+                    <span class="sm-text"
+                        >Please wait while we filter our database for you. Filtering may take up to
+                        60seconds.</span
+                    >
+                </div>
+            </div>
+            <app-spinner></app-spinner>
+        </div>
+    </ng-template>
 
-	<ng-template #no_data>
-		<mat-card class="p-5">
-			<h3>This is sad.</h3>
-			<p class="sm-text mb-3">There are no available dealers at the moment.</p>
-			<button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/administrator/users/create-user/dealer']">
-				Add Dealer
-				<span class="fas fa-plus ml-2 sm-text"></span>
-			</button>
-		</mat-card>
-	</ng-template>
+    <ng-template #no_data>
+        <mat-card class="p-5">
+            <h3>This is sad.</h3>
+            <p class="sm-text mb-3">There are no available dealers at the moment.</p>
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn mr-2"
+                [routerLink]="['/administrator/users/create-user/dealer']">
+                Add Dealer
+                <span class="fas fa-plus ml-2 sm-text"></span>
+            </button>
+        </mat-card>
+    </ng-template>
 
-	<ng-template #nodata>
-		<div class="row">
-			<div class="col-lg-12 pl-0 pr-0">
-				<mat-card class="pt-5 pb-5 col-lg-12 text-center">
-					<div class="mb-4">
-						<i class="text-gray fa-5x far fa-file-alt"></i>
-					</div>
-					<h3 class="text-gray col-lg-12">No Results Found.</h3>
-					<span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
-				</mat-card>
-			</div>
-		</div>
-	</ng-template>
+    <ng-template #nodata>
+        <div class="row">
+            <div class="col-lg-12 pl-0 pr-0">
+                <mat-card class="pt-5 pb-5 col-lg-12 text-center">
+                    <div class="mb-4">
+                        <i class="text-gray fa-5x far fa-file-alt"></i>
+                    </div>
+                    <h3 class="text-gray col-lg-12">No Results Found.</h3>
+                    <span class="text-gray col-lg-12"
+                        >Try adjusting your search to find what you're looking for.</span
+                    >
+                </mat-card>
+            </div>
+        </div>
+    </ng-template>
 </div>

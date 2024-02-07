@@ -1,31 +1,31 @@
 <div class="pt-4">
-	<div class="row">
-		<div class="col-lg-12">
-			<mat-card>
-				<ng-container *ngIf="contents && contents.length > 0; else loading">
-					<app-data-table
-						[table_columns]="tableColumns"
-						[media_array]="contentsForDialog"
-						[table_data]="tableData"
-						[paging_details]="pagingData"
-						[new_table]="true"
-						[preview_column]="true"
-						(page_triggered)="getContents($event)">
-					</app-data-table>
-				</ng-container>
-			</mat-card>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-lg-12">
+            <mat-card>
+                <ng-container *ngIf="contents && contents.length > 0; else loading">
+                    <app-data-table
+                        [table_columns]="tableColumns"
+                        [media_array]="contentsForDialog"
+                        [table_data]="tableData"
+                        [paging_details]="pagingData"
+                        [new_table]="true"
+                        [preview_column]="true"
+                        (page_triggered)="getContents($event)">
+                    </app-data-table>
+                </ng-container>
+            </mat-card>
+        </div>
+    </div>
 </div>
 
 <ng-template #loading>
-	<ng-container *ngIf="!hasNoData; else no_data">
-		<div class="loading-wrapper">
-			<app-spinner></app-spinner>
-		</div>
-	</ng-container>
+    <ng-container *ngIf="!hasNoData; else no_data">
+        <div class="loading-wrapper">
+            <app-spinner></app-spinner>
+        </div>
+    </ng-container>
 </ng-template>
 
 <ng-template #no_data>
-	<app-error-message></app-error-message>
+    <app-error-message></app-error-message>
 </ng-template>

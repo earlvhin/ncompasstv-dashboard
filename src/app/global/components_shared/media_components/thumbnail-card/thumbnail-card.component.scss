@@ -1,36 +1,36 @@
 .icon-overlay {
-	position: absolute;
-	background: rgba(#000, 0.8);
-	width: 100%;
-	left: 0;
-	height: 20px;
-	width: 100%;
-	z-index: 8;
+    position: absolute;
+    background: rgba(#000, 0.8);
+    width: 100%;
+    left: 0;
+    height: 20px;
+    width: 100%;
+    z-index: 8;
 }
 
 iframe {
-	height: 100px;
+    height: 100px;
 }
 
 .iframe-thumb-holder {
-	height: 100px;
+    height: 100px;
 }
 
 .iframe-overlay {
-	position: absolute;
-	width: 100%;
-	height: 80%;
-	z-index: 5;
+    position: absolute;
+    width: 100%;
+    height: 80%;
+    z-index: 5;
 }
 
 .is-protected {
-	opacity: 0.5;
+    opacity: 0.5;
 
-	&:hover {
-		cursor: not-allowed;
-	}
+    &:hover {
+        cursor: not-allowed;
+    }
 }
 
 .float-right {
-	margin-left: auto;
+    margin-left: auto;
 }

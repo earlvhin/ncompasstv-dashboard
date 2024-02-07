@@ -5,45 +5,55 @@
                 <h1 class="page-title">{{ title }}</h1>
             </div>
         </div>
-        <hr class="my-4">
+        <hr class="my-4" />
     </div>
 
     <div class="content-section">
         <div class="row">
             <div class="col-12 col-lg">
                 <mat-card class="h-100">
-                    <app-data-card-compare [compare_basis]="compare.basis" [compare_basis_label]="compare.basis_label"
-                    [good_value]="compare.good_value" [good_value_label]="compare.good_value_label"
-                    [bad_value]="compare.bad_value" [bad_value_label]="compare.bad_value_label">
+                    <app-data-card-compare
+                        [compare_basis]="compare.basis"
+                        [compare_basis_label]="compare.basis_label"
+                        [good_value]="compare.good_value"
+                        [good_value_label]="compare.good_value_label"
+                        [bad_value]="compare.bad_value"
+                        [bad_value_label]="compare.bad_value_label">
                     </app-data-card-compare>
                 </mat-card>
             </div>
             <div class="col-12 col-lg">
-                <app-data-card-count [data_value]="count_1.data_value" [data_label]="count_1.data_label"
+                <app-data-card-count
+                    [data_value]="count_1.data_value"
+                    [data_label]="count_1.data_label"
                     [data_description]="count_1.data_description">
                 </app-data-card-count>
             </div>
             <div class="col-12 col-lg">
-                <app-data-card-count [data_value]="count_2.data_value" [data_label]="count_2.data_label"
+                <app-data-card-count
+                    [data_value]="count_2.data_value"
+                    [data_label]="count_2.data_label"
                     [data_description]="count_2.data_description">
                 </app-data-card-count>
             </div>
             <div class="col-12 col-lg">
-                <app-data-card-count [data_value]="count_3.data_value" [data_label]="count_3.data_label"
+                <app-data-card-count
+                    [data_value]="count_3.data_value"
+                    [data_label]="count_3.data_label"
                     [data_description]="count_3.data_description">
                 </app-data-card-count>
             </div>
             <div class="col-12 col-lg">
-                <app-data-card-count [data_value]="count_4.data_value" [data_label]="count_4.data_label"
+                <app-data-card-count
+                    [data_value]="count_4.data_value"
+                    [data_label]="count_4.data_label"
                     [data_description]="count_4.data_description">
                 </app-data-card-count>
             </div>
         </div>
-        <hr class="my-4">
+        <hr class="my-4" />
         <mat-card>
-            <app-data-table 
-            [table_data]="roles_array"
-            [table_columns]="roles_table_column">
+            <app-data-table [table_data]="roles_array" [table_columns]="roles_table_column">
             </app-data-table>
         </mat-card>
     </div>

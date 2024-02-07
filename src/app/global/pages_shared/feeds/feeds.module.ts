@@ -7,12 +7,8 @@ import { GlobalModule } from 'src/app/global/global.module';
 import { FillerFeedsTableComponent } from './components/filler-feeds-table/filler-feeds-table.component';
 
 @NgModule({
-	declarations: [ FeedsComponent, FillerFeedsTableComponent ],
-	imports: [
-		GlobalModule,
-		CommonModule,
-		RouterModule
-	],
-	providers: [ DatePipe ]
+    declarations: [FeedsComponent, FillerFeedsTableComponent],
+    imports: [GlobalModule, CommonModule, RouterModule],
+    providers: [DatePipe],
 })
-export class FeedsModule { }
+export class FeedsModule {}

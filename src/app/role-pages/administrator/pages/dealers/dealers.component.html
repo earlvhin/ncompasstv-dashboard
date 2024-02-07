@@ -5,15 +5,28 @@
                 <h1 class="page-title">{{ title }}</h1>
             </div>
             <div class="flex-even text-right">
-                <a [routerLink]="['/administrator/users/create-user/dealer']" target="_blank" *ngIf="!is_dealer_admin">
-                    <button mat-button mat-raised-button class="theme-btn pi-control _cool sm-text mr-2" title="Add Dealer" *ngIf="current_tab === 'Dealer'">
+                <a
+                    [routerLink]="['/administrator/users/create-user/dealer']"
+                    target="_blank"
+                    *ngIf="!is_dealer_admin">
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn pi-control _cool sm-text mr-2"
+                        title="Add Dealer"
+                        *ngIf="current_tab === 'Dealer'">
                         <span class="fas fa-suitcase"></span>
                         <span class="ml-2 button_text_animation">Add Dealer</span>
                     </button>
                 </a>
 
                 <a [routerLink]="['/administrator/hosts/create-host']" target="_blank">
-                    <button mat-button mat-raised-button class="theme-btn pi-control _teal sm-text mr-2" title="Add Host Place" *ngIf="current_tab === 'Dealer'">
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn pi-control _teal sm-text mr-2"
+                        title="Add Host Place"
+                        *ngIf="current_tab === 'Dealer'">
                         <span class="fas fa-map-marker"></span>
                         <span class="ml-2 button_text_animation">Add Host Place</span>
                     </button>
@@ -25,8 +38,7 @@
                     class="theme-btn pi-control _info sm-text mr-2"
                     (click)="openGenerateLicenseModal()"
                     title="Generate License"
-                    *ngIf="current_tab === 'Dealer' && !is_dealer_admin"
-                >
+                    *ngIf="current_tab === 'Dealer' && !is_dealer_admin">
                     <span class="fas fa-barcode"></span>
                     <span class="ml-2 button_text_animation">Generate License</span>
                 </button>
@@ -38,12 +50,17 @@
                     (click)="exportTable()"
                     [disabled]="workbook_generation"
                     title="Export Table to CSV"
-                    *ngIf="current_tab === 'Dealer'"
-                >
-                    <span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
-                    <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">{{
-                        !workbook_generation ? "Export" : "Generating CSV"
-                    }}</span>
+                    *ngIf="current_tab === 'Dealer'">
+                    <span
+                        class="{{
+                            !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin'
+                        }}"
+                        [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
+                    <span
+                        class="ml-2 button_text_animation"
+                        [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"
+                        >{{ !workbook_generation ? 'Export' : 'Generating CSV' }}</span
+                    >
                 </button>
             </div>
         </div>
@@ -63,8 +80,7 @@
                         [bad_value]="dealer_stats.bad_value || 0"
                         [bad_value_label]="dealer_stats.bad_value_label"
                         [has_status_filter]="true"
-                        [page]="'dealers'"
-                    >
+                        [page]="'dealers'">
                     </app-data-card-compare>
                 </mat-card>
             </div>
@@ -74,8 +90,7 @@
                         *ngIf="dealer_stats; else loader"
                         [data_value]="dealer_stats.this_week_value"
                         [data_label]="dealer_stats.this_week_value_label"
-                        [data_description]="dealer_stats.this_week_value_description"
-                    >
+                        [data_description]="dealer_stats.this_week_value_description">
                     </app-data-card-count>
                 </mat-card>
             </div>
@@ -85,8 +100,7 @@
                         *ngIf="dealer_stats; else loader"
                         [data_value]="dealer_stats.last_week_value"
                         [data_label]="dealer_stats.last_week_value_label"
-                        [data_description]="dealer_stats.last_week_value_description"
-                    >
+                        [data_description]="dealer_stats.last_week_value_description">
                     </app-data-card-count>
                 </mat-card>
             </div>

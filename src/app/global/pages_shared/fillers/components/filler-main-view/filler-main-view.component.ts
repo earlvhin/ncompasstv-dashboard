@@ -42,7 +42,12 @@ export class FillerMainViewComponent implements OnInit {
 
     protected _unsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(private _filler: FillerService, private _dialog: MatDialog, private _router: Router, private _auth: AuthService) {}
+    constructor(
+        private _filler: FillerService,
+        private _dialog: MatDialog,
+        private _router: Router,
+        private _auth: AuthService,
+    ) {}
 
     ngOnInit() {}
 
@@ -66,7 +71,10 @@ export class FillerMainViewComponent implements OnInit {
     onSearchFiller(keyword) {
         this.is_loading = true;
 
-        this.grid_data = this.active_view === 'grid' && keyword ? this.original_grid_data.filter((d) => d.name.includes(keyword.toLowerCase())) : this.original_grid_data;
+        this.grid_data =
+            this.active_view === 'grid' && keyword
+                ? this.original_grid_data.filter((d) => d.name.includes(keyword.toLowerCase()))
+                : this.original_grid_data;
         if (keyword) this.search_keyword = keyword;
         else this.search_keyword = '';
         this.get_fillers.emit({ page: 1, keyword: keyword });
@@ -76,7 +84,11 @@ export class FillerMainViewComponent implements OnInit {
     sortFillerGroup(col, order) {
         this.sorting_column = col;
         this.sorting_order = order;
-        this.get_fillers.emit({ page: 1, sort_col: this.sorting_column, sort_ord: this.sorting_order });
+        this.get_fillers.emit({
+            page: 1,
+            sort_col: this.sorting_column,
+            sort_ord: this.sorting_order,
+        });
     }
 
     callNextPage(page) {
@@ -215,7 +227,13 @@ export class FillerMainViewComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data: any) => {
                 if (data.message) {
-                    this.openConfirmationModal('warning', 'Delete Filler Group', 'Are you sure you want to delete this filler group?', 'delete', id);
+                    this.openConfirmationModal(
+                        'warning',
+                        'Delete Filler Group',
+                        'Are you sure you want to delete this filler group?',
+                        'delete',
+                        id,
+                    );
                 } else {
                     const delete_dialog = this._dialog.open(DeleteFillerGroupComponent, {
                         width: '500px',

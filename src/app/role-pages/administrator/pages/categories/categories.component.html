@@ -5,20 +5,22 @@
                 <h1 class="page-title">{{ title }}</h1>
             </div>
             <div class="text-right">
-                <button mat-button mat-raised-button class="theme-btn mr-2" (click)="openCreateCategoryModal()">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn mr-2"
+                    (click)="openCreateCategoryModal()">
                     Add Category
                     <span class="fas fa-plus ml-2"></span>
                 </button>
             </div>
         </div>
-        <hr class="my-4">
+        <hr class="my-4" />
     </div>
 
     <div class="content-section">
         <mat-card>
-            <app-data-table 
-            [table_data]="category_data" 
-            [table_columns]="category_table_column">
+            <app-data-table [table_data]="category_data" [table_columns]="category_table_column">
             </app-data-table>
         </mat-card>
     </div>

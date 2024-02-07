@@ -1,86 +1,86 @@
 #dma-tab-view {
-	.content {
-		.content-container {
-			.map-overlay {
-				position: relative;
-			}
+    .content {
+        .content-container {
+            .map-overlay {
+                position: relative;
+            }
 
-			.search-container {
-				position: absolute;
-				height: 600px;
-				top: 10px;
-				left: 10px;
-				z-index: 99;
-				width: 400px;
-				padding-bottom: 10px;
-				overflow: visible;
-				transition: width 0.5s;
+            .search-container {
+                position: absolute;
+                height: 600px;
+                top: 10px;
+                left: 10px;
+                z-index: 99;
+                width: 400px;
+                padding-bottom: 10px;
+                overflow: visible;
+                transition: width 0.5s;
 
-				.search-box {
-					background-color: rgba(255, 255, 255, 0.8);
-				}
+                .search-box {
+                    background-color: rgba(255, 255, 255, 0.8);
+                }
 
-				.selected-dma {
-					background-color: white;
+                .selected-dma {
+                    background-color: white;
 
-					.data-selected {
-						border-radius: 5px;
-						border: 1px solid gray;
+                    .data-selected {
+                        border-radius: 5px;
+                        border: 1px solid gray;
 
-						.remove-btn {
-							text-align: center;
+                        .remove-btn {
+                            text-align: center;
 
-							mat-icon {
-								font-size: 12px;
-								line-height: 25px;
-							}
-						}
-					}
-				}
+                            mat-icon {
+                                font-size: 12px;
+                                line-height: 25px;
+                            }
+                        }
+                    }
+                }
 
-				img {
-					position: absolute;
-					left: -5px;
-					top: -8px;
-					width: 20px;
-					height: 20px;
-				}
+                img {
+                    position: absolute;
+                    left: -5px;
+                    top: -8px;
+                    width: 20px;
+                    height: 20px;
+                }
 
-				.selected-info {
-					background-color: rgba(255, 255, 255, 0.5);
+                .selected-info {
+                    background-color: rgba(255, 255, 255, 0.5);
 
-					max-height: 425px;
-					overflow: auto;
+                    max-height: 425px;
+                    overflow: auto;
 
-					.total-hosts {
-						margin-left: auto;
-					}
-				}
-			}
+                    .total-hosts {
+                        margin-left: auto;
+                    }
+                }
+            }
 
-			.minimize-overlay {
-				width: 0px !important;
-				transition: width 0.5s;
-				overflow: hidden !important;
-			}
-		}
-	}
+            .minimize-overlay {
+                width: 0px !important;
+                transition: width 0.5s;
+                overflow: hidden !important;
+            }
+        }
+    }
 }
 
 .mat-expansion-panel-content > .mat-expansion-panel-body {
-	padding-right: 0 !important;
+    padding-right: 0 !important;
 }
 
 .text-pending {
-	color: #fa8415;
+    color: #fa8415;
 }
 
 .dealer-and-category {
-	gap: 20px;
+    gap: 20px;
 }
 
 .host-pin {
-	img {
-		position: unset !important;
-	}
+    img {
+        position: unset !important;
+    }
 }

@@ -1,55 +1,76 @@
 <div class="theme-container">
-	<div class="title-section">
-		<div class="d-flex align-items-center">
-			<div class="flex-even">
-				<h1 class="page-title">{{ title }}</h1>
-			</div>
-			<div class="flex-even text-right">
-				<button mat-button mat-raised-button class="theme-btn" (click)="assignContent()" [disabled]="is_view_only">
-					<span class="button-label">Upload Media</span>
-					<span class="fas fa-upload ml-2 sm-text"></span>
-				</button>
-			</div>
-		</div>
-		<hr class="my-4" />
-	</div>
+    <div class="title-section">
+        <div class="d-flex align-items-center">
+            <div class="flex-even">
+                <h1 class="page-title">{{ title }}</h1>
+            </div>
+            <div class="flex-even text-right">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn"
+                    (click)="assignContent()"
+                    [disabled]="is_view_only">
+                    <span class="button-label">Upload Media</span>
+                    <span class="fas fa-upload ml-2 sm-text"></span>
+                </button>
+            </div>
+        </div>
+        <hr class="my-4" />
+    </div>
 
-	<div>
-		<div class="row" *ngIf="compare != false">
-			<div class="col-12 col-lg">
-				<div>
-					<mat-card class="h-100 dealer-card" *ngIf="compare; else spinner">
-						<app-data-card-count [data_value]="compare.basis" [data_label]="compare.basis_label"> </app-data-card-count>
-					</mat-card>
-				</div>
-			</div>
-			<div class="col-12 col-lg">
-				<app-data-card-count *ngIf="count_1; else spinner" [data_value]="count_1.data_value" [data_label]="count_1.data_label">
-				</app-data-card-count>
-			</div>
-			<div class="col-12 col-lg">
-				<app-data-card-count *ngIf="count_2; else spinner" [data_value]="count_2.data_value" [data_label]="count_2.data_label">
-				</app-data-card-count>
-			</div>
-			<div class="col-12 col-lg">
-				<app-data-card-count *ngIf="count_3; else spinner" [data_value]="count_3.data_value" [data_label]="count_3.data_label">
-				</app-data-card-count>
-			</div>
-		</div>
-		<hr class="my-4" *ngIf="compare != false" />
-		<app-media (send_stats)="displayStats($event)" [reload]="eventsSubject.asObservable()" [is_view_only]="is_view_only" [is_dealer]="is_dealer">
-		</app-media>
-	</div>
+    <div>
+        <div class="row" *ngIf="compare != false">
+            <div class="col-12 col-lg">
+                <div>
+                    <mat-card class="h-100 dealer-card" *ngIf="compare; else spinner">
+                        <app-data-card-count
+                            [data_value]="compare.basis"
+                            [data_label]="compare.basis_label">
+                        </app-data-card-count>
+                    </mat-card>
+                </div>
+            </div>
+            <div class="col-12 col-lg">
+                <app-data-card-count
+                    *ngIf="count_1; else spinner"
+                    [data_value]="count_1.data_value"
+                    [data_label]="count_1.data_label">
+                </app-data-card-count>
+            </div>
+            <div class="col-12 col-lg">
+                <app-data-card-count
+                    *ngIf="count_2; else spinner"
+                    [data_value]="count_2.data_value"
+                    [data_label]="count_2.data_label">
+                </app-data-card-count>
+            </div>
+            <div class="col-12 col-lg">
+                <app-data-card-count
+                    *ngIf="count_3; else spinner"
+                    [data_value]="count_3.data_value"
+                    [data_label]="count_3.data_label">
+                </app-data-card-count>
+            </div>
+        </div>
+        <hr class="my-4" *ngIf="compare != false" />
+        <app-media
+            (send_stats)="displayStats($event)"
+            [reload]="eventsSubject.asObservable()"
+            [is_view_only]="is_view_only"
+            [is_dealer]="is_dealer">
+        </app-media>
+    </div>
 
-	<ng-template #spinner>
-		<mat-card class="py-5">
-			<app-spinner [diameter]="65"></app-spinner>
-		</mat-card>
-	</ng-template>
+    <ng-template #spinner>
+        <mat-card class="py-5">
+            <app-spinner [diameter]="65"></app-spinner>
+        </mat-card>
+    </ng-template>
 
-	<ng-container *ngIf="loading_overlay">
-		<div class="loading-overlay d-flex align-items-center justify-content-center">
-			<app-spinner></app-spinner>
-		</div>
-	</ng-container>
+    <ng-container *ngIf="loading_overlay">
+        <div class="loading-overlay d-flex align-items-center justify-content-center">
+            <app-spinner></app-spinner>
+        </div>
+    </ng-container>
 </div>

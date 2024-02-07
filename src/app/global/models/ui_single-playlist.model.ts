@@ -15,9 +15,15 @@ export class UI_SINGLE_PLAYLIST {
     host_licenses: UI_PLAYLIST_HOST_LICENSE[];
 
     constructor(
-        id: string, dealer: string, playlist_name: string, 
-        playlist_description: string, created_by: string, date_created: string,
-        playlist_type: string, playlist_content: UI_PLAYLIST_CONTENT[], host_licenses: UI_PLAYLIST_HOST_LICENSE[],
+        id: string,
+        dealer: string,
+        playlist_name: string,
+        playlist_description: string,
+        created_by: string,
+        date_created: string,
+        playlist_type: string,
+        playlist_content: UI_PLAYLIST_CONTENT[],
+        host_licenses: UI_PLAYLIST_HOST_LICENSE[],
     ) {
         this.id = id;
         this.dealer = dealer;
@@ -35,7 +41,7 @@ export class UI_PLAYLIST_SCREENS {
     screen_id: string;
     index: number;
     title: string;
-    
+
     constructor(id: string, index: number, title: string) {
         this.screen_id = id;
         this.index = index;
@@ -52,8 +58,17 @@ export class UI_PLAYLIST_SCREENS_NEW {
     type: any;
     template: any;
     createdby: any;
-    
-    constructor(id: object, index: object, title: object, dealer: any, host: any, type: any, template: any, created: any) {
+
+    constructor(
+        id: object,
+        index: object,
+        title: object,
+        dealer: any,
+        host: any,
+        type: any,
+        template: any,
+        created: any,
+    ) {
         this.screen_id = id;
         this.index = index;
         this.title = title;
@@ -72,7 +87,13 @@ export class UI_BLOCKLIST_CONTENT {
     date_created: string;
     date_updated: string;
 
-    constructor(block_id: string, license_id: string, content_id: string, date_created: string, date_updated: string) {
+    constructor(
+        block_id: string,
+        license_id: string,
+        content_id: string,
+        date_created: string,
+        date_updated: string,
+    ) {
         this.block_id = block_id;
         this.license_id = license_id;
         this.content_id = content_id;

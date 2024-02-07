@@ -14,7 +14,7 @@
                             "version": "1"
                         },
                         "runOrder": 1,
-                        "roleArn": "arn:aws:iam::892444632159:role/codepipeline-cross-account-role", 
+                        "roleArn": "arn:aws:iam::892444632159:role/codepipeline-cross-account-role",
                         "configuration": {
                             "BranchName": "development",
                             "PollForSourceChanges": "true",

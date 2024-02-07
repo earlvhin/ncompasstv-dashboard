@@ -258,7 +258,11 @@
             background-color: gray;
             color: white;
             padding-left: 10px;
-            text-shadow: black -1px 0px, black 0px 1px, black 1px 0px, black 0px -1px;
+            text-shadow:
+                black -1px 0px,
+                black 0px 1px,
+                black 1px 0px,
+                black 0px -1px;
             border: 1px solid gray;
 
             mat-icon {

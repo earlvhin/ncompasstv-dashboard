@@ -1,5 +1,9 @@
-<aside class="sidebar height-100 p-fixed top-0" [ngClass]="icons_only ? 'sidebar-icons-only' : 'sidebar-menu'">
-    <button class="sidebar-toggle-button material-shadow no-border br-100 p-absolute" (click)="toggleSideBar()">
+<aside
+    class="sidebar height-100 p-fixed top-0"
+    [ngClass]="icons_only ? 'sidebar-icons-only' : 'sidebar-menu'">
+    <button
+        class="sidebar-toggle-button material-shadow no-border br-100 p-absolute"
+        (click)="toggleSideBar()">
         <span *ngIf="!icons_only" class="fas fa-angle-left text-green"></span>
         <span *ngIf="icons_only" class="fas fa-angle-right text-green"></span>
     </button>
@@ -11,11 +15,19 @@
 
     <ul class="menu list-unstyled m-0 p-0">
         <li class="menu-item full-width mb-1" *ngFor="let route of routes">
-            <a [routerLink]="route.path" routerLinkActive="is-active" class="full-width" title="{{ icons_only ? route.label : '' }}">
+            <a
+                [routerLink]="route.path"
+                routerLinkActive="is-active"
+                class="full-width"
+                title="{{ icons_only ? route.label : '' }}">
                 <span class="{{ route.icon }} inline-block"></span>
                 <span>
                     <span class="url-text">{{ route.label }}</span>
-                    <span class="url-text ml-2 badge pl-2 pr-2 br-100" *ngIf="route.label == 'Installations'">{{ installations_count }}</span>
+                    <span
+                        class="url-text ml-2 badge pl-2 pr-2 br-100"
+                        *ngIf="route.label == 'Installations'"
+                        >{{ installations_count }}</span
+                    >
                 </span>
             </a>
         </li>

@@ -5,9 +5,9 @@
                 <h1 class="page-title">Player Apps Version Control</h1>
             </div>
         </div>
-        <hr class="my-4">
+        <hr class="my-4" />
     </div>
-    
+
     <div class="content-section">
         <div class="row">
             <div class="col-lg-4">
@@ -24,23 +24,33 @@
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
-    
+
                         <mat-form-field appearance="fill" class="w-100">
                             <mat-label>Version</mat-label>
-                            <input formControlName="version" matInput placeholder="Ex. 2.2.0">
-                        </mat-form-field>
-    
-                        <mat-form-field appearance="fill" class="w-100">
-                            <mat-label>Release Notes</mat-label>
-                            <input formControlName="releaseNotes"  matInput placeholder="Ex. Change Configuration">
-                        </mat-form-field>
-    
-                        <mat-form-field appearance="fill" class="w-100">
-                            <mat-label>Downloadable URL</mat-label>
-                            <input formControlName="zipUrl" matInput placeholder="Ex. github.com/NCompass-TV/pi-server/2.2.0">
+                            <input formControlName="version" matInput placeholder="Ex. 2.2.0" />
                         </mat-form-field>
 
-                        <button mat-button mat-raised-button class="theme-btn mt-4" [disabled]="app_form_disabled">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>Release Notes</mat-label>
+                            <input
+                                formControlName="releaseNotes"
+                                matInput
+                                placeholder="Ex. Change Configuration" />
+                        </mat-form-field>
+
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>Downloadable URL</mat-label>
+                            <input
+                                formControlName="zipUrl"
+                                matInput
+                                placeholder="Ex. github.com/NCompass-TV/pi-server/2.2.0" />
+                        </mat-form-field>
+
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn mt-4"
+                            [disabled]="app_form_disabled">
                             Add Version
                         </button>
                     </form>
@@ -68,8 +78,8 @@
             </div>
         </div>
 
-        <hr class="my-4">
-        
+        <hr class="my-4" />
+
         <div class="row">
             <div class="col-lg-4">
                 <mat-card class="p-4">
@@ -79,26 +89,33 @@
                     <form [formGroup]="add_app_form" (ngSubmit)="addApp()">
                         <mat-form-field appearance="fill" class="w-100">
                             <mat-label>App Name</mat-label>
-                            <input formControlName="appName" matInput placeholder="Ex. 2.2.0">
+                            <input formControlName="appName" matInput placeholder="Ex. 2.2.0" />
                         </mat-form-field>
 
                         <mat-form-field appearance="fill" class="w-100">
                             <mat-label>App Description</mat-label>
-                            <input formControlName="appDescription" matInput placeholder="Ex. 2.2.0">
+                            <input
+                                formControlName="appDescription"
+                                matInput
+                                placeholder="Ex. 2.2.0" />
                         </mat-form-field>
 
                         <mat-form-field appearance="fill" class="w-100">
                             <mat-label>Github URL</mat-label>
-                            <input formControlName="githubUrl" matInput placeholder="Ex. 2.2.0">
+                            <input formControlName="githubUrl" matInput placeholder="Ex. 2.2.0" />
                         </mat-form-field>
 
-                        <button mat-button mat-raised-button class="theme-btn" [disabled]="add_app_form_disabled">
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn"
+                            [disabled]="add_app_form_disabled">
                             Add App
                         </button>
                     </form>
                 </mat-card>
             </div>
-            
+
             <div class="col-lg-4">
                 <mat-card class="p-4">
                     <h3>Delete Player App</h3>
@@ -114,7 +131,11 @@
                             </mat-select>
                         </mat-form-field>
 
-                        <button mat-button mat-raised-button class="theme-btn" [disabled]="delete_app_form_disabled">
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn"
+                            [disabled]="delete_app_form_disabled">
                             Delete App
                         </button>
                     </form>
@@ -130,13 +151,19 @@
                         <mat-form-field appearance="fill" class="w-100">
                             <mat-label>Select App</mat-label>
                             <mat-select formControlName="versionId" required>
-                                <mat-option *ngFor="let a of all_app_versions" [value]="a.versionId">
-                                    {{ a.appName }} - {{ a.version}}
+                                <mat-option
+                                    *ngFor="let a of all_app_versions"
+                                    [value]="a.versionId">
+                                    {{ a.appName }} - {{ a.version }}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
 
-                        <button mat-button mat-raised-button class="theme-btn" [disabled]="delete_app_version_form_disabled">
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn"
+                            [disabled]="delete_app_version_form_disabled">
                             Delete Version
                         </button>
                     </form>

@@ -3,23 +3,22 @@ import { GenerateFillerFeed } from 'src/app/global/models/api_feed_generator.mod
 import { environment } from '../../../../../environments/environment';
 
 @Component({
-	selector: 'app-filler-demo',
-	templateUrl: './filler-demo.component.html',
-	styleUrls: ['./filler-demo.component.scss']
+    selector: 'app-filler-demo',
+    templateUrl: './filler-demo.component.html',
+    styleUrls: ['./filler-demo.component.scss'],
 })
-
 export class FillerDemoComponent implements OnInit {
+    @Input() filler_data: GenerateFillerFeed;
+    iframeUrl: string;
 
-	@Input() filler_data: GenerateFillerFeed;
-	iframeUrl: string;
+    constructor() {}
 
-	constructor() { }
-
-	ngOnInit() {
-
-		this.iframeUrl = `${environment.base_uri}${environment.create.api_new_filler_feed_demo}
-		?contentIds=${this.filler_data.feedFillers.map(i => { return i.contentId }).toString()}`
-
-	}
-
+    ngOnInit() {
+        this.iframeUrl = `${environment.base_uri}${environment.create.api_new_filler_feed_demo}
+		?contentIds=${this.filler_data.feedFillers
+            .map((i) => {
+                return i.contentId;
+            })
+            .toString()}`;
+    }
 }

@@ -1,350 +1,506 @@
 <div id="dma-tab-view">
-	<div class="content">
-		<div class="content-container">
-			<div class="map-overlay">
-				<agm-map class="vh-100" [latitude]="latitude" [longitude]="longitude" [fitBounds]="hasSelectedData" [maxZoom]="19">
-					<agm-marker
-						id="{{ host.hostId }}"
-						*ngFor="let host of mapMarkers"
-						[latitude]="host.latitude"
-						[longitude]="host.longitude"
-						[agmFitBounds]="true"
-						[iconUrl]="host.iconUrl">
-						<agm-info-window [isOpen]="currentHostIdSelected == host.hostId" #window>
-							<h4 class="font-weight-bold">{{ host.hostName ? host.hostName : host.name }}</h4>
-							<div class="mt-2">
-								<tr>
-									<th>
-										<h5 class="font-weight-bold">Address:</h5>
-									</th>
-									<td class="mr-2">
-										<h5>{{ host.address }}</h5>
-									</td>
-								</tr>
-								<tr>
-									<th>
-										<h5 class="font-weight-bold">Category:</h5>
-									</th>
-									<td>
-										<h5>{{ host.category }}</h5>
-									</td>
-								</tr>
-								<tr>
-									<th class="pr-2">
-										<h5 class="font-weight-bold">Operation Hours:</h5>
-									</th>
-									<td>
-										<tr *ngFor="let schedule of host.storeHoursParsed">
-											<th class="pr-4">
-												<h5>{{ schedule.day }}</h5>
-											</th>
-											<span *ngIf="schedule.periods[0]; else close">
-												<td *ngFor="let hrs of schedule.periods; let j = index">
-													<h5 *ngIf="j > 0">&</h5>
-													<h5 *ngIf="hrs.open == '' && hrs.close == '' && schedule.status">- Open 24 hours</h5>
-													<h5 *ngIf="hrs.open == '' && hrs.close == '' && !schedule.status">- Closed</h5>
-													<h5 *ngIf="hrs.open != '' && hrs.close != ''">{{ hrs.open }} - {{ hrs.close }}</h5>
-												</td>
-											</span>
-											<ng-template #close>- CLOSED</ng-template>
-										</tr>
-									</td>
-								</tr>
-							</div>
-							<h6 class="coordinates mt-3"><i class="fas fa-map-marker"></i> {{ host.latitude }},{{ host.longitude }}</h6>
-						</agm-info-window>
-					</agm-marker>
-				</agm-map>
+    <div class="content">
+        <div class="content-container">
+            <div class="map-overlay">
+                <agm-map
+                    class="vh-100"
+                    [latitude]="latitude"
+                    [longitude]="longitude"
+                    [fitBounds]="hasSelectedData"
+                    [maxZoom]="19">
+                    <agm-marker
+                        id="{{ host.hostId }}"
+                        *ngFor="let host of mapMarkers"
+                        [latitude]="host.latitude"
+                        [longitude]="host.longitude"
+                        [agmFitBounds]="true"
+                        [iconUrl]="host.iconUrl">
+                        <agm-info-window [isOpen]="currentHostIdSelected == host.hostId" #window>
+                            <h4 class="font-weight-bold">
+                                {{ host.hostName ? host.hostName : host.name }}
+                            </h4>
+                            <div class="mt-2">
+                                <tr>
+                                    <th>
+                                        <h5 class="font-weight-bold">Address:</h5>
+                                    </th>
+                                    <td class="mr-2">
+                                        <h5>{{ host.address }}</h5>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        <h5 class="font-weight-bold">Category:</h5>
+                                    </th>
+                                    <td>
+                                        <h5>{{ host.category }}</h5>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="pr-2">
+                                        <h5 class="font-weight-bold">Operation Hours:</h5>
+                                    </th>
+                                    <td>
+                                        <tr *ngFor="let schedule of host.storeHoursParsed">
+                                            <th class="pr-4">
+                                                <h5>{{ schedule.day }}</h5>
+                                            </th>
+                                            <span *ngIf="schedule.periods[0]; else close">
+                                                <td
+                                                    *ngFor="
+                                                        let hrs of schedule.periods;
+                                                        let j = index
+                                                    ">
+                                                    <h5 *ngIf="j > 0">&</h5>
+                                                    <h5
+                                                        *ngIf="
+                                                            hrs.open == '' &&
+                                                            hrs.close == '' &&
+                                                            schedule.status
+                                                        ">
+                                                        - Open 24 hours
+                                                    </h5>
+                                                    <h5
+                                                        *ngIf="
+                                                            hrs.open == '' &&
+                                                            hrs.close == '' &&
+                                                            !schedule.status
+                                                        ">
+                                                        - Closed
+                                                    </h5>
+                                                    <h5 *ngIf="hrs.open != '' && hrs.close != ''">
+                                                        {{ hrs.open }} - {{ hrs.close }}
+                                                    </h5>
+                                                </td>
+                                            </span>
+                                            <ng-template #close>- CLOSED</ng-template>
+                                        </tr>
+                                    </td>
+                                </tr>
+                            </div>
+                            <h6 class="coordinates mt-3">
+                                <i class="fas fa-map-marker"></i> {{ host.latitude }},{{
+                                    host.longitude
+                                }}
+                            </h6>
+                        </agm-info-window>
+                    </agm-marker>
+                </agm-map>
 
-				<!-- SEARCH CONTAINER -->
-				<div class="search-container" [ngClass]="status ? 'minimize-overlay' : ''">
-					<div class="search-box pl-3 pt-2 pr-3">
-						<ng-container *ngIf="isFormReady">
-							<form [formGroup]="searchSelectForm">
-								<div class="d-flex">
-									<div class="search-input full-width">
-										<mat-form-field class="full-width md-text">
-											<mat-select
-												#multi_select
-												formControlName="list"
-												[placeholder]="select_placeholder"
-												[multiple]="true"
-												disableOptionCentering>
-												<div class="custom-panel">
-													<mat-option>
-														<ngx-mat-select-search
-															noEntriesFoundLabel="No results"
-															formControlName="searchKeyword"
-															[placeholderLabel]="search_placeholder"
-															[clearSearchInput]="true"
-															[searching]="isSearching"
-															class="md-text">
-															<mat-icon class="clear">close</mat-icon>
-														</ngx-mat-select-search>
-													</mat-option>
-													<div>
-														<mat-option *ngFor="let data of data_reference" [value]="data">
-															<ng-container [ngSwitch]="type">
-																<ng-container *ngSwitchCase="'category'">
-																	<div>{{ data.category }}</div>
-																</ng-container>
-																<ng-container *ngSwitchCase="'state'">
-																	<div>{{ data.state }}</div>
-																</ng-container>
-																<ng-container *ngSwitchDefault>
-																	<div>{{ data.hostName ? data.hostName : data.name }}</div>
-																</ng-container>
-															</ng-container>
-														</mat-option>
-													</div>
-												</div>
-												<footer class="selection">
-													<button class="theme-btn _primary md-text mr-3" (click)="multi_select.close()">
-														APPLY SELECTION
-													</button>
-												</footer>
-											</mat-select>
-										</mat-form-field>
-									</div>
-								</div>
-							</form>
-						</ng-container>
-					</div>
+                <!-- SEARCH CONTAINER -->
+                <div class="search-container" [ngClass]="status ? 'minimize-overlay' : ''">
+                    <div class="search-box pl-3 pt-2 pr-3">
+                        <ng-container *ngIf="isFormReady">
+                            <form [formGroup]="searchSelectForm">
+                                <div class="d-flex">
+                                    <div class="search-input full-width">
+                                        <mat-form-field class="full-width md-text">
+                                            <mat-select
+                                                #multi_select
+                                                formControlName="list"
+                                                [placeholder]="select_placeholder"
+                                                [multiple]="true"
+                                                disableOptionCentering>
+                                                <div class="custom-panel">
+                                                    <mat-option>
+                                                        <ngx-mat-select-search
+                                                            noEntriesFoundLabel="No results"
+                                                            formControlName="searchKeyword"
+                                                            [placeholderLabel]="search_placeholder"
+                                                            [clearSearchInput]="true"
+                                                            [searching]="isSearching"
+                                                            class="md-text">
+                                                            <mat-icon class="clear">close</mat-icon>
+                                                        </ngx-mat-select-search>
+                                                    </mat-option>
+                                                    <div>
+                                                        <mat-option
+                                                            *ngFor="let data of data_reference"
+                                                            [value]="data">
+                                                            <ng-container [ngSwitch]="type">
+                                                                <ng-container
+                                                                    *ngSwitchCase="'category'">
+                                                                    <div>{{ data.category }}</div>
+                                                                </ng-container>
+                                                                <ng-container
+                                                                    *ngSwitchCase="'state'">
+                                                                    <div>{{ data.state }}</div>
+                                                                </ng-container>
+                                                                <ng-container *ngSwitchDefault>
+                                                                    <div>
+                                                                        {{
+                                                                            data.hostName
+                                                                                ? data.hostName
+                                                                                : data.name
+                                                                        }}
+                                                                    </div>
+                                                                </ng-container>
+                                                            </ng-container>
+                                                        </mat-option>
+                                                    </div>
+                                                </div>
+                                                <footer class="selection">
+                                                    <button
+                                                        class="theme-btn _primary md-text mr-3"
+                                                        (click)="multi_select.close()">
+                                                        APPLY SELECTION
+                                                    </button>
+                                                </footer>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </form>
+                        </ng-container>
+                    </div>
 
-					<ng-container *ngIf="listControl.value.length > 0">
-						<div class="selected-dma p-3">
-							<div class="row">
-								<div class="col-lg-7 pl-3 pb-1">
-									<h5>{{ result_placeholder }}</h5>
-								</div>
-								<div class="col-lg-5 pr-3 pb-1 text-right md-text f-500 text-danger clickable" (click)="onClearResults()">
-									<i class="far fa-times-circle mr-2"></i>
-									<span>CLEAR SELECTION</span>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-lg-12 d-flex pr-3">
-									<ng-container>
-										<div class="list-container d-flex align-items-start flex-wrap">
-											<div
-												*ngFor="let data of listControl.value; let i = index"
-												class="data-selected pl-2 pr-2 mr-2 mb-2 sm-text text-white bg-primary d-flex align-items-center">
-												<div class="name">
-													<ng-container [ngSwitch]="type">
-														<ng-container *ngSwitchDefault>
-															{{ data.hostName ? data.hostName : data.name }}
-														</ng-container>
-														<ng-container *ngSwitchCase="'category'">
-															{{ data.category }}
-														</ng-container>
-														<ng-container *ngSwitchCase="'state'">
-															{{ data.state }}
-														</ng-container>
-													</ng-container>
-												</div>
-												<div class="remove-btn cursor-pointer" (click)="onRemoveResult(data)">
-													<mat-icon>close</mat-icon>
-												</div>
-											</div>
-										</div>
-									</ng-container>
-								</div>
-							</div>
-						</div>
-					</ng-container>
+                    <ng-container *ngIf="listControl.value.length > 0">
+                        <div class="selected-dma p-3">
+                            <div class="row">
+                                <div class="col-lg-7 pl-3 pb-1">
+                                    <h5>{{ result_placeholder }}</h5>
+                                </div>
+                                <div
+                                    class="col-lg-5 pr-3 pb-1 text-right md-text f-500 text-danger clickable"
+                                    (click)="onClearResults()">
+                                    <i class="far fa-times-circle mr-2"></i>
+                                    <span>CLEAR SELECTION</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 d-flex pr-3">
+                                    <ng-container>
+                                        <div
+                                            class="list-container d-flex align-items-start flex-wrap">
+                                            <div
+                                                *ngFor="
+                                                    let data of listControl.value;
+                                                    let i = index
+                                                "
+                                                class="data-selected pl-2 pr-2 mr-2 mb-2 sm-text text-white bg-primary d-flex align-items-center">
+                                                <div class="name">
+                                                    <ng-container [ngSwitch]="type">
+                                                        <ng-container *ngSwitchDefault>
+                                                            {{
+                                                                data.hostName
+                                                                    ? data.hostName
+                                                                    : data.name
+                                                            }}
+                                                        </ng-container>
+                                                        <ng-container *ngSwitchCase="'category'">
+                                                            {{ data.category }}
+                                                        </ng-container>
+                                                        <ng-container *ngSwitchCase="'state'">
+                                                            {{ data.state }}
+                                                        </ng-container>
+                                                    </ng-container>
+                                                </div>
+                                                <div
+                                                    class="remove-btn cursor-pointer"
+                                                    (click)="onRemoveResult(data)">
+                                                    <mat-icon>close</mat-icon>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
 
-					<ng-container *ngIf="currentList.length > 0">
-						<div class="selected-info p-3 mt-3">
-							<ng-container *ngIf="hasLoadedExpansionData; else loaderSmall">
-								<div class="row">
-									<div class="col-lg-12 bg-white text-center sm-text p-3 mb-3">
-										<span class="text-primary font-weight-bold">
-											{{ hostCount }}
-											<span class="text-gray">HOST(S)</span>
-										</span>
-										<span> | </span>
-										<span class="text-primary font-weight-bold"
-											>{{ licenseCount }}
-											<span class="text-gray">LICENSE(S)</span>
-										</span>
-										<br />
-										<span class="fas fa-circle xsm-text text-primary mr-2"></span>
-										<span class="text-primary font-weight-bold">{{ onlineCount }} <span class="text-gray">ONLINE</span></span>
-										<span> | </span>
-										<span class="fas fa-circle xsm-text text-pending mr-2"></span>
-										<span class="text-pending font-weight-bold">{{ pendingCount }} <span class="text-gray">PENDING</span></span>
-										<span> | </span>
-										<span class="fas fa-circle xsm-text text-danger mr-2"></span>
-										<span class="text-danger font-weight-bold">{{ offlineCount }} <span class="text-gray">OFFLINE</span></span>
-									</div>
-								</div>
-								<ng-container *ngIf="type === 'host'; else stateOrCategoryAccordion">
-									<mat-accordion>
-										<mat-expansion-panel *ngFor="let host of hosts" class="mb-3">
-											<mat-expansion-panel-header class="mt-2">
-												<mat-panel-title class="md-text p-0" (click)="onClickHostName(host.hostId)">
-													<div class="d-flex align-items-center">
-														<div class="host-pin mr-1">
-															<img class="map-header-status" [src]="host.iconUrl" alt="Status" />
-														</div>
-														<div class="host-name">
-															{{ host.hostName ? host.hostName : host.name }}
-														</div>
-													</div>
-												</mat-panel-title>
-												<mat-panel-description class="md-text p-0">
-													<div class="total-hosts d-flex">
-														<p class="font-weigh-bold mr-1">
-															{{ host.totalLicenses }}
-														</p>
-														<p>License(s)</p>
-													</div>
-												</mat-panel-description>
-											</mat-expansion-panel-header>
-											<div class="expansion-panel-content full-width">
-												<hr />
-												<mat-list>
-													<div class="d-flex flex-column">
-														<div class="d-flex dealer-and-category pb-1">
-															<div class="dealer d-flex flex-column sm-text mr-2">
-																<span class="font-weight-bold text-gray">DEALER</span>
-																{{ host.businessName }}
-															</div>
-															<div class="category d-flex flex-column sm-text">
-																<span class="font-weight-bold text-gray">CATEGORY</span>
-																{{ host.generalCategory }} > {{ host.category }}
-															</div>
-														</div>
-														<div class="d-flex state flex-column sm-text">
-															<span class="font-weight-bold text-gray">STATE</span>
-															{{ host.state }}
-														</div>
-														<span class="font-weight-bold text-gray sm-text mt-2">LICENSES</span>
-														<mat-list-item *ngFor="let license of host.licenses" class="name sm-text p-0">
-															<div class="row">
-																<div
-																	class="col-lg-12 d-flex p-0 xsm-text clickable"
-																	(click)="openPageNewTab('licenses', license.licenseId)">
-																	<span
-																		[ngClass]="{
-																			'text-primary': license.status === 'online',
-																			'text-danger': license.status === 'offline',
-																			'text-pending': license.status === 'pending'
-																		}">
-																		<i class="fas fa-circle xsm-text mr-3"></i> </span
-																	>{{ license.licenseKey }}
-																</div>
-															</div>
-														</mat-list-item>
-													</div>
-												</mat-list>
-											</div>
-										</mat-expansion-panel>
-									</mat-accordion>
-								</ng-container>
-								<ng-template #stateOrCategoryAccordion>
-									<mat-accordion>
-										<ng-container *ngIf="hasFinishedMapping"></ng-container>
-										<mat-expansion-panel
-											*ngFor="let data of categoryOrStateData"
-											class="mb-3"
-											id="remove-mat-expansion-panel-padding">
-											<mat-expansion-panel-header class="mt-2">
-												<mat-panel-title class="md-text p-0" (click)="onClickHostName(data[0].hostId)">
-													<div class="name font-weight-bold md-text">
-														{{ data[type] }}
-													</div>
-												</mat-panel-title>
-												<mat-panel-description class="md-text p-0">
-													<div class="total-hosts">
-														<b>{{ data.totalLicenses }}</b> License(s)
-													</div>
-												</mat-panel-description>
-											</mat-expansion-panel-header>
-											<div class="row full-width">
-												<div class="col-lg-12" *ngFor="let host of data.hosts">
-													<mat-expansion-panel
-														#categoryOrStatePanel
-														id="outer-mat"
-														class="mb-3 p-2"
-														hideToggle
-														(click)="onClickHostName(host.hostId)"
-														[class.panelBorder]="categoryOrStatePanel.expanded">
-														<!-- [expanded]='h.hostId == clicked_marker_id'		 -->
-														<mat-expansion-panel-header class="pr-0 pl-0 mt-2">
-															<mat-panel-title class="md-text p-0">
-																<div class="row flex-nowrap align-items-center m-0 w-100">
-																	<div class="col-lg-1 p-0 mr-2 ml-2 text-left">
-																		<img class="map-header-status" [src]="host.iconUrl" alt="Status" />
-																	</div>
-																	<p class="col-lg-9 p-0 mt-1 mr-2 text-left">
-																		<span class="font-weight-bold md-text">
-																			{{ host.hostName }}
-																		</span>
-																		<br />
-																		<span class="sm-text">
-																			{{ host.city }} {{ host.state }} {{ host.postalCode }}
-																		</span>
-																	</p>
-																	<div class="col-lg-2 p-0 text-right">
-																		<div *ngIf="!categoryOrStatePanel.expanded" class="ctm-accordion-icon">
-																			<i class="fas fa-plus"></i>
-																		</div>
-																		<div *ngIf="categoryOrStatePanel.expanded" class="ctm-accordion-icon">
-																			<i class="fas fa-minus"></i>
-																		</div>
-																	</div>
-																</div>
-															</mat-panel-title>
-														</mat-expansion-panel-header>
-														<div class="pt-2">
-															<div class="host-licenses-list" *ngIf="host.licenses.length > 0; else no_licenses_text">
-																<div class="row">
-																	<div class="col-xs-6 mr-3" *ngFor="let license of host.licenses">
-																		<div>
-																			<span
-																				class="fas fa-circle mr-1 sm-text"
-																				[ngClass]="{
-																					'text-primary': license.status === 'online',
-																					'text-danger': license.status === 'offline',
-																					'text-pending': license.status === 'pending'
-																				}">
-																			</span>
-																			<a
-																				[routerLink]="['/administrator/licenses/' + license.licenseId]"
-																				target="_blank"
-																				class="clickable">
-																				{{
-																					license.alias && license.alias.length > 0
-																						? license.alias
-																						: license.licenseKey
-																				}}
-																			</a>
-																		</div>
-																	</div>
-																</div>
-															</div>
-															<ng-template #no_licenses_text>
-																<p>No licenses for this host</p>
-															</ng-template>
-														</div>
-													</mat-expansion-panel>
-												</div>
-											</div>
-										</mat-expansion-panel>
-									</mat-accordion>
-								</ng-template>
-							</ng-container>
-						</div>
-					</ng-container>
-				</div>
-			</div>
-		</div>
-	</div>
+                    <ng-container *ngIf="currentList.length > 0">
+                        <div class="selected-info p-3 mt-3">
+                            <ng-container *ngIf="hasLoadedExpansionData; else loaderSmall">
+                                <div class="row">
+                                    <div class="col-lg-12 bg-white text-center sm-text p-3 mb-3">
+                                        <span class="text-primary font-weight-bold">
+                                            {{ hostCount }}
+                                            <span class="text-gray">HOST(S)</span>
+                                        </span>
+                                        <span> | </span>
+                                        <span class="text-primary font-weight-bold"
+                                            >{{ licenseCount }}
+                                            <span class="text-gray">LICENSE(S)</span>
+                                        </span>
+                                        <br />
+                                        <span
+                                            class="fas fa-circle xsm-text text-primary mr-2"></span>
+                                        <span class="text-primary font-weight-bold"
+                                            >{{ onlineCount }}
+                                            <span class="text-gray">ONLINE</span></span
+                                        >
+                                        <span> | </span>
+                                        <span
+                                            class="fas fa-circle xsm-text text-pending mr-2"></span>
+                                        <span class="text-pending font-weight-bold"
+                                            >{{ pendingCount }}
+                                            <span class="text-gray">PENDING</span></span
+                                        >
+                                        <span> | </span>
+                                        <span
+                                            class="fas fa-circle xsm-text text-danger mr-2"></span>
+                                        <span class="text-danger font-weight-bold"
+                                            >{{ offlineCount }}
+                                            <span class="text-gray">OFFLINE</span></span
+                                        >
+                                    </div>
+                                </div>
+                                <ng-container
+                                    *ngIf="type === 'host'; else stateOrCategoryAccordion">
+                                    <mat-accordion>
+                                        <mat-expansion-panel
+                                            *ngFor="let host of hosts"
+                                            class="mb-3">
+                                            <mat-expansion-panel-header class="mt-2">
+                                                <mat-panel-title
+                                                    class="md-text p-0"
+                                                    (click)="onClickHostName(host.hostId)">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="host-pin mr-1">
+                                                            <img
+                                                                class="map-header-status"
+                                                                [src]="host.iconUrl"
+                                                                alt="Status" />
+                                                        </div>
+                                                        <div class="host-name">
+                                                            {{
+                                                                host.hostName
+                                                                    ? host.hostName
+                                                                    : host.name
+                                                            }}
+                                                        </div>
+                                                    </div>
+                                                </mat-panel-title>
+                                                <mat-panel-description class="md-text p-0">
+                                                    <div class="total-hosts d-flex">
+                                                        <p class="font-weigh-bold mr-1">
+                                                            {{ host.totalLicenses }}
+                                                        </p>
+                                                        <p>License(s)</p>
+                                                    </div>
+                                                </mat-panel-description>
+                                            </mat-expansion-panel-header>
+                                            <div class="expansion-panel-content full-width">
+                                                <hr />
+                                                <mat-list>
+                                                    <div class="d-flex flex-column">
+                                                        <div
+                                                            class="d-flex dealer-and-category pb-1">
+                                                            <div
+                                                                class="dealer d-flex flex-column sm-text mr-2">
+                                                                <span
+                                                                    class="font-weight-bold text-gray"
+                                                                    >DEALER</span
+                                                                >
+                                                                {{ host.businessName }}
+                                                            </div>
+                                                            <div
+                                                                class="category d-flex flex-column sm-text">
+                                                                <span
+                                                                    class="font-weight-bold text-gray"
+                                                                    >CATEGORY</span
+                                                                >
+                                                                {{ host.generalCategory }} >
+                                                                {{ host.category }}
+                                                            </div>
+                                                        </div>
+                                                        <div
+                                                            class="d-flex state flex-column sm-text">
+                                                            <span class="font-weight-bold text-gray"
+                                                                >STATE</span
+                                                            >
+                                                            {{ host.state }}
+                                                        </div>
+                                                        <span
+                                                            class="font-weight-bold text-gray sm-text mt-2"
+                                                            >LICENSES</span
+                                                        >
+                                                        <mat-list-item
+                                                            *ngFor="let license of host.licenses"
+                                                            class="name sm-text p-0">
+                                                            <div class="row">
+                                                                <div
+                                                                    class="col-lg-12 d-flex p-0 xsm-text clickable"
+                                                                    (click)="
+                                                                        openPageNewTab(
+                                                                            'licenses',
+                                                                            license.licenseId
+                                                                        )
+                                                                    ">
+                                                                    <span
+                                                                        [ngClass]="{
+                                                                            'text-primary':
+                                                                                license.status ===
+                                                                                'online',
+                                                                            'text-danger':
+                                                                                license.status ===
+                                                                                'offline',
+                                                                            'text-pending':
+                                                                                license.status ===
+                                                                                'pending'
+                                                                        }">
+                                                                        <i
+                                                                            class="fas fa-circle xsm-text mr-3"></i> </span
+                                                                    >{{ license.licenseKey }}
+                                                                </div>
+                                                            </div>
+                                                        </mat-list-item>
+                                                    </div>
+                                                </mat-list>
+                                            </div>
+                                        </mat-expansion-panel>
+                                    </mat-accordion>
+                                </ng-container>
+                                <ng-template #stateOrCategoryAccordion>
+                                    <mat-accordion>
+                                        <ng-container *ngIf="hasFinishedMapping"></ng-container>
+                                        <mat-expansion-panel
+                                            *ngFor="let data of categoryOrStateData"
+                                            class="mb-3"
+                                            id="remove-mat-expansion-panel-padding">
+                                            <mat-expansion-panel-header class="mt-2">
+                                                <mat-panel-title
+                                                    class="md-text p-0"
+                                                    (click)="onClickHostName(data[0].hostId)">
+                                                    <div class="name font-weight-bold md-text">
+                                                        {{ data[type] }}
+                                                    </div>
+                                                </mat-panel-title>
+                                                <mat-panel-description class="md-text p-0">
+                                                    <div class="total-hosts">
+                                                        <b>{{ data.totalLicenses }}</b> License(s)
+                                                    </div>
+                                                </mat-panel-description>
+                                            </mat-expansion-panel-header>
+                                            <div class="row full-width">
+                                                <div
+                                                    class="col-lg-12"
+                                                    *ngFor="let host of data.hosts">
+                                                    <mat-expansion-panel
+                                                        #categoryOrStatePanel
+                                                        id="outer-mat"
+                                                        class="mb-3 p-2"
+                                                        hideToggle
+                                                        (click)="onClickHostName(host.hostId)"
+                                                        [class.panelBorder]="
+                                                            categoryOrStatePanel.expanded
+                                                        ">
+                                                        <!-- [expanded]='h.hostId == clicked_marker_id'		 -->
+                                                        <mat-expansion-panel-header
+                                                            class="pr-0 pl-0 mt-2">
+                                                            <mat-panel-title class="md-text p-0">
+                                                                <div
+                                                                    class="row flex-nowrap align-items-center m-0 w-100">
+                                                                    <div
+                                                                        class="col-lg-1 p-0 mr-2 ml-2 text-left">
+                                                                        <img
+                                                                            class="map-header-status"
+                                                                            [src]="host.iconUrl"
+                                                                            alt="Status" />
+                                                                    </div>
+                                                                    <p
+                                                                        class="col-lg-9 p-0 mt-1 mr-2 text-left">
+                                                                        <span
+                                                                            class="font-weight-bold md-text">
+                                                                            {{ host.hostName }}
+                                                                        </span>
+                                                                        <br />
+                                                                        <span class="sm-text">
+                                                                            {{ host.city }}
+                                                                            {{ host.state }}
+                                                                            {{ host.postalCode }}
+                                                                        </span>
+                                                                    </p>
+                                                                    <div
+                                                                        class="col-lg-2 p-0 text-right">
+                                                                        <div
+                                                                            *ngIf="
+                                                                                !categoryOrStatePanel.expanded
+                                                                            "
+                                                                            class="ctm-accordion-icon">
+                                                                            <i
+                                                                                class="fas fa-plus"></i>
+                                                                        </div>
+                                                                        <div
+                                                                            *ngIf="
+                                                                                categoryOrStatePanel.expanded
+                                                                            "
+                                                                            class="ctm-accordion-icon">
+                                                                            <i
+                                                                                class="fas fa-minus"></i>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </mat-panel-title>
+                                                        </mat-expansion-panel-header>
+                                                        <div class="pt-2">
+                                                            <div
+                                                                class="host-licenses-list"
+                                                                *ngIf="
+                                                                    host.licenses.length > 0;
+                                                                    else no_licenses_text
+                                                                ">
+                                                                <div class="row">
+                                                                    <div
+                                                                        class="col-xs-6 mr-3"
+                                                                        *ngFor="
+                                                                            let license of host.licenses
+                                                                        ">
+                                                                        <div>
+                                                                            <span
+                                                                                class="fas fa-circle mr-1 sm-text"
+                                                                                [ngClass]="{
+                                                                                    'text-primary':
+                                                                                        license.status ===
+                                                                                        'online',
+                                                                                    'text-danger':
+                                                                                        license.status ===
+                                                                                        'offline',
+                                                                                    'text-pending':
+                                                                                        license.status ===
+                                                                                        'pending'
+                                                                                }">
+                                                                            </span>
+                                                                            <a
+                                                                                [routerLink]="[
+                                                                                    '/administrator/licenses/' +
+                                                                                        license.licenseId
+                                                                                ]"
+                                                                                target="_blank"
+                                                                                class="clickable">
+                                                                                {{
+                                                                                    license.alias &&
+                                                                                    license.alias
+                                                                                        .length > 0
+                                                                                        ? license.alias
+                                                                                        : license.licenseKey
+                                                                                }}
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <ng-template #no_licenses_text>
+                                                                <p>No licenses for this host</p>
+                                                            </ng-template>
+                                                        </div>
+                                                    </mat-expansion-panel>
+                                                </div>
+                                            </div>
+                                        </mat-expansion-panel>
+                                    </mat-accordion>
+                                </ng-template>
+                            </ng-container>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <ng-template #loaderSmall>
-	<div class="vh-50 d-flex align-items-center justify-content-center">
-		<app-spinner [diameter]="60"></app-spinner>
-	</div>
+    <div class="vh-50 d-flex align-items-center justify-content-center">
+        <app-spinner [diameter]="60"></app-spinner>
+    </div>
 </ng-template>

@@ -6,14 +6,25 @@
                 <h3 class="mb-1 mt-2">Edit {{ message }}</h3>
             </div>
             <div class="form-body mb-3">
-                <mat-form-field appearance="fill" class="full-width" *ngIf="!status.label.includes('Date'); else datepicker">
+                <mat-form-field
+                    appearance="fill"
+                    class="full-width"
+                    *ngIf="!status.label.includes('Date'); else datepicker">
                     <mat-label>Edit {{ message }}</mat-label>
                     <input matInput [(ngModel)]="data" />
                 </mat-form-field>
             </div>
             <div class="form-footer">
-                <button mat-button mat-raised-button class="theme-btn bg-danger mr-2" mat-dialog-close>Cancel <i class="fas fa-times ml-2"></i></button>
-                <button mat-button mat-raised-button class="theme-btn" (click)="updateField(data)">Save <i class="fas fa-save text-green ml-2"></i></button>
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn bg-danger mr-2"
+                    mat-dialog-close>
+                    Cancel <i class="fas fa-times ml-2"></i>
+                </button>
+                <button mat-button mat-raised-button class="theme-btn" (click)="updateField(data)">
+                    Save <i class="fas fa-save text-green ml-2"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -21,7 +32,12 @@
     <ng-template #datepicker>
         <mat-form-field appearance="fill" class="install-datepicker" appDefaultDateFormat>
             <mat-label>Choose a date</mat-label>
-            <input matInput (dateInput)="onSelectDate($event.value)" [matDatepicker]="picker" [(value)]="date" readonly />
+            <input
+                matInput
+                (dateInput)="onSelectDate($event.value)"
+                [matDatepicker]="picker"
+                [(value)]="date"
+                readonly />
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
@@ -43,21 +59,34 @@
                         [required]="false"
                         [label]="'Click to select a Screen Type'"
                         [new_value]="screen_init"
-                        [initial_value]="screen_init"
-                    >
+                        [initial_value]="screen_init">
                     </app-autocomplete-field>
                 </ng-container>
-            </div><!-- Form Body: Screen -->
+            </div>
+            <!-- Form Body: Screen -->
 
             <div class="form-body mb-3" *ngIf="status.label == 'Hosts'">
                 <ng-container *ngIf="hosts_data; else loader">
-                    <app-autocomplete [field_data]="hosts_data" *ngIf="hosts_data && hosts_data.data.length" (value_selected)="setHost($event)"> </app-autocomplete>
+                    <app-autocomplete
+                        [field_data]="hosts_data"
+                        *ngIf="hosts_data && hosts_data.data.length"
+                        (value_selected)="setHost($event)">
+                    </app-autocomplete>
                 </ng-container>
-            </div><!-- Form Body: Host -->
+            </div>
+            <!-- Form Body: Host -->
 
             <div class="form-footer">
-                <button mat-button mat-raised-button class="theme-btn bg-danger mr-2" mat-dialog-close>Cancel <i class="fas fa-times ml-2"></i></button>
-                <button mat-button mat-raised-button class="theme-btn" (click)="updateDropdown()">Save <i class="fas fa-save ml-2"></i></button>
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn bg-danger mr-2"
+                    mat-dialog-close>
+                    Cancel <i class="fas fa-times ml-2"></i>
+                </button>
+                <button mat-button mat-raised-button class="theme-btn" (click)="updateDropdown()">
+                    Save <i class="fas fa-save ml-2"></i>
+                </button>
             </div>
         </div>
     </ng-template>

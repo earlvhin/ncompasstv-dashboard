@@ -1,19 +1,30 @@
-<div class="new-paging-container" *ngIf="paging_data" [ngClass]="media_lib ? 'media-lib-paging':''">
+<div
+    class="new-paging-container"
+    *ngIf="paging_data"
+    [ngClass]="media_lib ? 'media-lib-paging' : ''">
     <div class="row p-0 m-0" *ngIf="paging_data.entities && paging_data.entities.length > 0">
         <div class="col-lg-12 text-center mt-4 data-table-page">
             <nav aria-label="Page navigation example">
                 <ul class="pagination pg-blue">
-                <li class="page-item" [ngClass]="{'disabled': !paging_data.hasPreviousPage}">
-                    <a class="page-link" (click)="getPage(paging_data.page - 1)">Previous</a>
-                </li>
-                <li *ngFor="let i of pages" [ngClass]="{'active': i === paging_data.page,'not-clickable': i === '...'}" class="page-item">
-                    <span *ngIf="paging_data.pages > 1">
-                        <a class="page-link" [ngClass]="{'bg-gray': i === '...'}" (click)="getPage(i)">{{i}}</a>
-                    </span>
-                </li>
-                <li class="page-item" [ngClass]="{'disabled': !paging_data.hasNextPage}">
-                    <a class="page-link" (click)="getPage(paging_data.page + 1)">Next</a>
-                </li>
+                    <li class="page-item" [ngClass]="{ disabled: !paging_data.hasPreviousPage }">
+                        <a class="page-link" (click)="getPage(paging_data.page - 1)">Previous</a>
+                    </li>
+                    <li
+                        *ngFor="let i of pages"
+                        [ngClass]="{ active: i === paging_data.page, 'not-clickable': i === '...' }"
+                        class="page-item">
+                        <span *ngIf="paging_data.pages > 1">
+                            <a
+                                class="page-link"
+                                [ngClass]="{ 'bg-gray': i === '...' }"
+                                (click)="getPage(i)"
+                                >{{ i }}</a
+                            >
+                        </span>
+                    </li>
+                    <li class="page-item" [ngClass]="{ disabled: !paging_data.hasNextPage }">
+                        <a class="page-link" (click)="getPage(paging_data.page + 1)">Next</a>
+                    </li>
                 </ul>
             </nav>
         </div>

@@ -15,12 +15,8 @@ export const FORMAT = {
 
 @Directive({
     selector: '[monthDayFormat]',
-    providers: [
-        { provide: MAT_DATE_FORMATS, useValue: FORMAT },
-    ],
+    providers: [{ provide: MAT_DATE_FORMATS, useValue: FORMAT }],
 })
 export class MonthDayFormatDirective {
-
-  constructor() { }
-
+    constructor() {}
 }

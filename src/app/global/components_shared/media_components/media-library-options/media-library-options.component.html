@@ -1,43 +1,52 @@
 <div class="bg-white material-shadow p-3 rounded option-area">
-	<div class="row">
-		<div class="col-lg-7">
-			<div class="d-flex pt-3">
-				<div class="sort-file-type mr-2">
-					<button mat-button mat-raised-button [matMenuTriggerFor]="menu" mat-raised-button class="theme-btn">
-						<span class="button-label">Media Type</span>
-						<span class="fas fa-angle-down ml-2"></span>
-					</button>
-					<mat-menu #menu="matMenu">
-						<button mat-menu-item (click)="viewByFileType('image')">Images</button>
-						<button mat-menu-item (click)="viewByFileType('video')">Videos</button>
-						<button mat-menu-item (click)="viewByFileType('feed')">Feeds</button>
-					</mat-menu>
-				</div>
-			
-				<div class="sort-by-date mr-2">
-					<button mat-button mat-raised-button [matMenuTriggerFor]="orderSort" class="theme-btn">
-						<span class="button-label">Order by Date</span>
-						<span class="fas fa-sort ml-2"></span>
-					</button>
-					<mat-menu #orderSort="matMenu">
-						<button mat-menu-item (click)="sortAscending()">Ascending</button>
-						<button mat-menu-item (click)="sortDescending()">Descending</button>
-					</mat-menu>
-				</div>
-				
-				<div class="sort-by-user mr-2" *ngIf="!disable_user_filter">
-					<button mat-button mat-raised-button (click)="sortByUser()" class="theme-btn">
-						<span class="button-label">Filter by User</span>
-						<span class="fas fa-sort fa-user"></span>
-					</button>
-				</div>
-			</div>
-		</div>
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="d-flex pt-3">
+                <div class="sort-file-type mr-2">
+                    <button
+                        mat-button
+                        mat-raised-button
+                        [matMenuTriggerFor]="menu"
+                        mat-raised-button
+                        class="theme-btn">
+                        <span class="button-label">Media Type</span>
+                        <span class="fas fa-angle-down ml-2"></span>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item (click)="viewByFileType('image')">Images</button>
+                        <button mat-menu-item (click)="viewByFileType('video')">Videos</button>
+                        <button mat-menu-item (click)="viewByFileType('feed')">Feeds</button>
+                    </mat-menu>
+                </div>
 
-		<div class="col-lg-5">
-			<div class="d-flex">
-				<!-- DO NOT REMOVE -->
-				<!-- <div class="flex-even mr-2">
+                <div class="sort-by-date mr-2">
+                    <button
+                        mat-button
+                        mat-raised-button
+                        [matMenuTriggerFor]="orderSort"
+                        class="theme-btn">
+                        <span class="button-label">Order by Date</span>
+                        <span class="fas fa-sort ml-2"></span>
+                    </button>
+                    <mat-menu #orderSort="matMenu">
+                        <button mat-menu-item (click)="sortAscending()">Ascending</button>
+                        <button mat-menu-item (click)="sortDescending()">Descending</button>
+                    </mat-menu>
+                </div>
+
+                <div class="sort-by-user mr-2" *ngIf="!disable_user_filter">
+                    <button mat-button mat-raised-button (click)="sortByUser()" class="theme-btn">
+                        <span class="button-label">Filter by User</span>
+                        <span class="fas fa-sort fa-user"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="d-flex">
+                <!-- DO NOT REMOVE -->
+                <!-- <div class="flex-even mr-2">
 					<form [formGroup]="filler_search" *ngIf="show_filler_search" class="full-width mb-4 position-relative" #formDirective="ngForm">
 						<mat-form-field class="full-width" appearance="fill">
 							<mat-label>Select a Filler</mat-label>
@@ -55,22 +64,24 @@
 						</mat-form-field>
 					</form>
 				</div> -->
-	
-				<div class="flex-even form-field">
-					<span *ngIf="search_form_invalid" class="invalidator text-danger font-weight-bold xsm-text">
-						Type in at least 3 characters
-					</span>
-					<mat-form-field class="full-width" appearance="fill">
-						<mat-label>Search a File</mat-label>
-						<input
-						matInput 
-						type="text" 
-						placeholder="Search a File"
-						[formControl]="search_control">
-					</mat-form-field>
-					<span class="fas fa-search"></span>
-				</div>
-			</div>
-		</div>
-	</div>
+
+                <div class="flex-even form-field">
+                    <span
+                        *ngIf="search_form_invalid"
+                        class="invalidator text-danger font-weight-bold xsm-text">
+                        Type in at least 3 characters
+                    </span>
+                    <mat-form-field class="full-width" appearance="fill">
+                        <mat-label>Search a File</mat-label>
+                        <input
+                            matInput
+                            type="text"
+                            placeholder="Search a File"
+                            [formControl]="search_control" />
+                    </mat-form-field>
+                    <span class="fas fa-search"></span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

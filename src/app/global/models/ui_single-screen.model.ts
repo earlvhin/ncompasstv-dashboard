@@ -18,9 +18,18 @@ export class UI_SINGLE_SCREEN {
     screen_license: SCREEN_LICENSE_TABLE_FORMAT[];
 
     constructor(
-        id: string, title: string, description: string, dealer_id: string, dealer_name: string,
-        host_id: string, host_name: string, template_id: string, template_name: string,
-        created_by: string, screen_zone_playlist: UI_SCREEN_ZONE_PLAYLIST[], licenses: SCREEN_LICENSE_TABLE_FORMAT[]
+        id: string,
+        title: string,
+        description: string,
+        dealer_id: string,
+        dealer_name: string,
+        host_id: string,
+        host_name: string,
+        template_id: string,
+        template_name: string,
+        created_by: string,
+        screen_zone_playlist: UI_SCREEN_ZONE_PLAYLIST[],
+        licenses: SCREEN_LICENSE_TABLE_FORMAT[],
     ) {
         this.screen_id = id;
         this.screen_title = title;
@@ -31,7 +40,7 @@ export class UI_SINGLE_SCREEN {
         this.assigned_host = host_name;
         this.assigned_template_id = template_id;
         this.assigned_template = template_name;
-        this.created_by = created_by
+        this.created_by = created_by;
         this.screen_zone_playlist = screen_zone_playlist;
         this.screen_license = licenses;
     }
@@ -40,10 +49,10 @@ export class UI_SINGLE_SCREEN {
 export class UI_SCREEN_ZONE_PLAYLIST {
     screen_template: UI_ZONE_PLAYLIST;
     contents: UI_CONTENT[];
-    
+
     constructor(screen_template: UI_ZONE_PLAYLIST, contents: UI_CONTENT[]) {
         this.screen_template = screen_template;
-        this.contents = contents;   
+        this.contents = contents;
     }
 }
 
@@ -58,14 +67,23 @@ export class UI_ZONE_PLAYLIST {
     playlist_id: string;
     name: string;
     playlist_name: string;
-	description: string;
-	order: number;
-	link?: string;
-    
+    description: string;
+    order: number;
+    link?: string;
+
     constructor(
-        screen_id: string, template_id: string, zone_id: string, x_pos: string, y_pos: string,
-        height: string, width: string, playlist_id: string, playlist_name: string,
-        name: string, description: string, order: number,
+        screen_id: string,
+        template_id: string,
+        zone_id: string,
+        x_pos: string,
+        y_pos: string,
+        height: string,
+        width: string,
+        playlist_id: string,
+        playlist_name: string,
+        name: string,
+        description: string,
+        order: number,
     ) {
         this.screen_id = screen_id;
         this.template_id = template_id;
@@ -77,8 +95,8 @@ export class UI_ZONE_PLAYLIST {
         this.playlist_id = playlist_id;
         this.playlist_name = playlist_name;
         this.name = name;
-		this.description = description;
-		this.order = order;
+        this.description = description;
+        this.order = order;
     }
 }
 
@@ -91,8 +109,17 @@ export class UI_SCREEN_LICENSE {
     internet_speed: string;
     is_activated: number;
     is_registered: number;
-    
-    constructor(id: string, i: number, key: string, alias: string, type: string, speed: string, is_activated: number, is_registered: number) {
+
+    constructor(
+        id: string,
+        i: number,
+        key: string,
+        alias: string,
+        type: string,
+        speed: string,
+        is_activated: number,
+        is_registered: number,
+    ) {
         this.license_id = id;
         this.index = i;
         this.license_key = key;
@@ -114,9 +141,20 @@ export class UI_SCREEN_LICENSE_SCREENS {
     is_activated: object;
     is_registered: object;
     pi_status: object;
-	player_status: object;
-    
-    constructor(id: object, i: object, key: object, alias: object, type: object, speed: object, is_activated: object, is_registered: object, pi_status: object, player_status: object) {
+    player_status: object;
+
+    constructor(
+        id: object,
+        i: object,
+        key: object,
+        alias: object,
+        type: object,
+        speed: object,
+        is_activated: object,
+        is_registered: object,
+        pi_status: object,
+        player_status: object,
+    ) {
         this.license_id = id;
         this.index = i;
         this.license_key = key;
@@ -126,12 +164,12 @@ export class UI_SCREEN_LICENSE_SCREENS {
         this.is_activated = is_activated;
         this.is_registered = is_registered;
         this.pi_status = pi_status;
-		this.player_status = player_status;
+        this.player_status = player_status;
     }
 }
 
 interface SCREEN_LICENSE_TABLE_FORMAT {
-	license_id: TABLE_ROW_FORMAT;
+    license_id: TABLE_ROW_FORMAT;
     index: TABLE_ROW_FORMAT;
     license_key: TABLE_ROW_FORMAT;
     alias: TABLE_ROW_FORMAT;

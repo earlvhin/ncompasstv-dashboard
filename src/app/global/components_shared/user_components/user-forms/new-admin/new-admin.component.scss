@@ -1,16 +1,14 @@
 .password-container {
-	
-	.field {
-		display: flex;
-		flex-direction: row;
+    .field {
+        display: flex;
+        flex-direction: row;
 
-		.pw-visibility {
-			cursor: pointer;
-		}
-	}
-
+        .pw-visibility {
+            cursor: pointer;
+        }
+    }
 }
 
 .validation {
-	display: flex;
+    display: flex;
 }

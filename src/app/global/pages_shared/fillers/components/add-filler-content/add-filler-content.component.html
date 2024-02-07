@@ -1,44 +1,59 @@
 <div class="create-dialog p-2" id="create-filler-dialog">
-	<div class="row">
-		<div class="col-lg-11">
-			<h3>Upload Filler</h3>
-		</div>
-		<div class="col-lg-1">
-			<button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
-				<span class="fas fa-times"></span>
-			</button>
-		</div>
-		<div class="col-lg-12">
-			<p class="sm-text">Upload media files or feeds to serve as fillers.</p>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-lg-11">
+            <h3>Upload Filler</h3>
+        </div>
+        <div class="col-lg-1">
+            <button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
+                <span class="fas fa-times"></span>
+            </button>
+        </div>
+        <div class="col-lg-12">
+            <p class="sm-text">Upload media files or feeds to serve as fillers.</p>
+        </div>
+    </div>
 
-	<div class="row mt-3">
-		<div class="col-lg-12">
-			<mat-form-field class="full-width">
-				<mat-label>Select Media Type</mat-label>
-				<mat-select [(value)]="media_type">
-					<mat-option value="image">Image</mat-option>
-					<mat-option value="video">Video</mat-option>
-					<mat-option value="feed">Feed</mat-option>
-				</mat-select>
-			</mat-form-field>
-		</div>
-		<div class="col-lg-12 text-right">
-			<button mat-button mat-raised-button class="theme-btn" *ngIf="media_type === 'image'" (click)="onUploadImage()">
-				<span class="fas fa-image mr-2"></span>
-				<span> Upload Images Here </span>
-			</button>
+    <div class="row mt-3">
+        <div class="col-lg-12">
+            <mat-form-field class="full-width">
+                <mat-label>Select Media Type</mat-label>
+                <mat-select [(value)]="media_type">
+                    <mat-option value="image">Image</mat-option>
+                    <mat-option value="video">Video</mat-option>
+                    <mat-option value="feed">Feed</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="col-lg-12 text-right">
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn"
+                *ngIf="media_type === 'image'"
+                (click)="onUploadImage()">
+                <span class="fas fa-image mr-2"></span>
+                <span> Upload Images Here </span>
+            </button>
 
-			<button mat-button mat-raised-button class="theme-btn" *ngIf="media_type === 'video'" (click)="onUploadVideo()">
-				<span class="fas fa-image mr-2"></span>
-				<span> Upload Videos Here </span>
-			</button>
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn"
+                *ngIf="media_type === 'video'"
+                (click)="onUploadVideo()">
+                <span class="fas fa-image mr-2"></span>
+                <span> Upload Videos Here </span>
+            </button>
 
-			<button mat-button mat-raised-button class="theme-btn" *ngIf="media_type === 'feed'" (click)="onUploadFeed()">
-				<span class="fas fa-news mr-2"></span>
-				<span> Upload Feed Here </span>
-			</button>
-		</div>
-	</div>
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn"
+                *ngIf="media_type === 'feed'"
+                (click)="onUploadFeed()">
+                <span class="fas fa-news mr-2"></span>
+                <span> Upload Feed Here </span>
+            </button>
+        </div>
+    </div>
 </div>

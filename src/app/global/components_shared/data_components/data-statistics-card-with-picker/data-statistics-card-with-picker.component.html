@@ -1,12 +1,21 @@
 <div class="col-lg-12 p-0 flex">
-    <div class="p-0" [ngClass]="installation ? 'col-lg-2': 'col-lg-4'">
+    <div class="p-0" [ngClass]="installation ? 'col-lg-2' : 'col-lg-4'">
         <form [formGroup]="contentsForm" *ngIf="contentsForm">
             <div class="col-lg-12 p-0 flex">
                 <div class="col-lg-12 p-0">
                     <mat-form-field class="full-width" appearance="fill" appDefaultDateFormat>
                         <mat-label class="md-text">Start Date</mat-label>
-                        <input formControlName="start_date" (dateInput)="onSelectStartDate($event.value)" matInput [matDatepickerFilter]="dateFilter" [matDatepicker]="datePicker" readonly>
-                        <mat-datepicker-toggle matSuffix [for]="datePicker" [disabled]="searching"></mat-datepicker-toggle>
+                        <input
+                            formControlName="start_date"
+                            (dateInput)="onSelectStartDate($event.value)"
+                            matInput
+                            [matDatepickerFilter]="dateFilter"
+                            [matDatepicker]="datePicker"
+                            readonly />
+                        <mat-datepicker-toggle
+                            matSuffix
+                            [for]="datePicker"
+                            [disabled]="searching"></mat-datepicker-toggle>
                         <mat-datepicker #datePicker></mat-datepicker>
                     </mat-form-field>
                 </div>
@@ -15,15 +24,23 @@
                 <div class="col-lg-12 p-0">
                     <mat-form-field class="full-width" appearance="fill" appDefaultDateFormat>
                         <mat-label class="md-text">End Date</mat-label>
-                        <input formControlName="end_date" (dateInput)="onSelectEndDate($event.value)" matInput [matDatepickerFilter]="dateFilter" [matDatepicker]="datePicker2" [min]="start_date" readonly>
-                        <mat-datepicker-toggle matSuffix [for]="datePicker2" [disabled]="searching"></mat-datepicker-toggle>
+                        <input
+                            formControlName="end_date"
+                            (dateInput)="onSelectEndDate($event.value)"
+                            matInput
+                            [matDatepickerFilter]="dateFilter"
+                            [matDatepicker]="datePicker2"
+                            [min]="start_date"
+                            readonly />
+                        <mat-datepicker-toggle
+                            matSuffix
+                            [for]="datePicker2"
+                            [disabled]="searching"></mat-datepicker-toggle>
                         <mat-datepicker #datePicker2></mat-datepicker>
                     </mat-form-field>
                 </div>
             </div>
-            <div class="md-text col-lg-12 p-0">
-                Select Dealer
-            </div>
+            <div class="md-text col-lg-12 p-0">Select Dealer</div>
             <div class="col-lg-12 flex p-0">
                 <div class="col-lg-11 p-0">
                     <app-autocomplete-field
@@ -39,19 +56,31 @@
                         (searched)="searchData($event)"
                         [loading_data]="loading_data"
                         [loading_search]="loading_search"
-                        [disabled]="((!start_date || !end_date))"
-                        [reset_value]="clear_dealer">							
+                        [disabled]="!start_date || !end_date"
+                        [reset_value]="clear_dealer">
                     </app-autocomplete-field>
                 </div>
                 <div class="col-lg-1 p-0 pt-3 text-left">
-                    <button class="hidden-button white-bg fas fa-times" [ngClass]="selected_dealer ? 'text-danger cursor-pointer' : 'text-gray drop-cursor'" title="Unselect Dealer" [disabled]="!selected_dealer" (click)="unselectDealer()"></button>
+                    <button
+                        class="hidden-button white-bg fas fa-times"
+                        [ngClass]="
+                            selected_dealer ? 'text-danger cursor-pointer' : 'text-gray drop-cursor'
+                        "
+                        title="Unselect Dealer"
+                        [disabled]="!selected_dealer"
+                        (click)="unselectDealer()"></button>
                 </div>
             </div>
         </form>
     </div>
-    <div [ngClass]="installation ? 'col-lg-10': 'col-lg-8'">
+    <div [ngClass]="installation ? 'col-lg-10' : 'col-lg-8'">
         <mat-card>
-            <app-data-statistics-card *ngIf="(generate_chart && !installation ) || (installation && total && is_valid_onchange); else no_content"
+            <app-data-statistics-card
+                *ngIf="
+                    (generate_chart && !installation) ||
+                        (installation && total && is_valid_onchange);
+                    else no_content
+                "
                 [id]="'average-view'"
                 [total_dealer]="total_dealer"
                 [label_array]="label_array"
@@ -76,7 +105,13 @@
             <div class="text-center w-100">
                 <span class="fas fa-briefcase fa-2x text-primary mb-3"></span>
                 <h3>{{ !generate_chart ? 'No Data Found' : 'Date Exceeded' }}</h3>
-                <p class="sm-text mb-3">{{ installation ? "Adjust the dealer or date range up to 1 year to display selected dealer's breakdown." : "Adjust the dealer or date range to display selected dealer's breakdown." }}</p>
+                <p class="sm-text mb-3">
+                    {{
+                        installation
+                            ? "Adjust the dealer or date range up to 1 year to display selected dealer's breakdown."
+                            : "Adjust the dealer or date range to display selected dealer's breakdown."
+                    }}
+                </p>
             </div>
         </div>
     </ng-template>

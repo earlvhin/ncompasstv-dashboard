@@ -3,23 +3,22 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { UnassignHostLicenseComponent } from './unassign-host-license.component';
 
 describe('UnassignHostLicenseComponent', () => {
-  let component: UnassignHostLicenseComponent;
-  let fixture: ComponentFixture<UnassignHostLicenseComponent>;
+    let component: UnassignHostLicenseComponent;
+    let fixture: ComponentFixture<UnassignHostLicenseComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ UnassignHostLicenseComponent ]
-    })
-    .compileComponents();
-  }));
+    beforeEach(async(() => {
+        TestBed.configureTestingModule({
+            declarations: [UnassignHostLicenseComponent],
+        }).compileComponents();
+    }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(UnassignHostLicenseComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(UnassignHostLicenseComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

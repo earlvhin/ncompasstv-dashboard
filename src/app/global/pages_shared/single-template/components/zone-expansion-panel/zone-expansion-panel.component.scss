@@ -1,24 +1,29 @@
 .disabled {
-	background: gray !important;
-	pointer-events: none;
-	cursor: none;
+    background: gray !important;
+    pointer-events: none;
+    cursor: none;
 }
 
-.first-row, .second-row {
-	mat-form-field {
-		margin-right: 15px;
-	}
+.first-row,
+.second-row {
+    mat-form-field {
+        margin-right: 15px;
+    }
 }
 
 .first-row {
-	margin-bottom: 20px;
+    margin-bottom: 20px;
 }
 
 .color-picker-field {
-	text-shadow: black -1px 0px, black 0px 1px, black 1px 0px, black 0px -1px;
-	color: white;
+    text-shadow:
+        black -1px 0px,
+        black 0px 1px,
+        black 1px 0px,
+        black 0px -1px;
+    color: white;
 }
 
 mat-action-row {
-	margin-top: 30px;
+    margin-top: 30px;
 }

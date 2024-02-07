@@ -1,6 +1,6 @@
 export interface API_TIMEZONE {
-	dateCreated: string;
-	id: string;
-	name: string;
-	status: string;
+    dateCreated: string;
+    id: string;
+    name: string;
+    status: string;
 }

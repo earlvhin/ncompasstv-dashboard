@@ -5,51 +5,56 @@ $dashboard-accent: mat-palette($mat-grey, 900);
 $n-compass-theme: mat-light-theme($dashboard-primary, $dashboard-accent);
 @include angular-material-theme($n-compass-theme);
 
-$custom-typography: mat-typography-config($font-family: '"Poppins", sans-serif;');
+$custom-typography: mat-typography-config(
+    $font-family: '"Poppins", sans-serif;',
+);
 @include mat-core($custom-typography);
 
 html {
     scroll-behavior: smooth;
 }
 
-.selected, .marked {
-	box-shadow: 0 0 10px rgba(147, 202, 20, 0.945), 0 0 10px rgba(151, 209, 17, 0.938);
+.selected,
+.marked {
+    box-shadow:
+        0 0 10px rgba(147, 202, 20, 0.945),
+        0 0 10px rgba(151, 209, 17, 0.938);
 }
 
 .mat-slide-toggle-thumb-container {
-	z-index: initial !important;
+    z-index: initial !important;
 }
 
 .no-padding > .mat-dialog-container {
-	padding: 0 !important;
+    padding: 0 !important;
 }
 
 .draggable-content {
-	cursor: move;
+    cursor: move;
 
-	&.dragging {
-		&:before {
-			background-color: rgba(151, 209, 17, 0.2);
-			content: ' ';
-			position: absolute;
-			height: 100%;
-			width: 100%;
-			z-index: 9;
-		}
+    &.dragging {
+        &:before {
+            background-color: rgba(151, 209, 17, 0.2);
+            content: ' ';
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            z-index: 9;
+        }
 
-		cursor: move;
-		opacity: 1;
-	}
+        cursor: move;
+        opacity: 1;
+    }
 }
 
 .mat-tab-list {
-	padding-bottom: 0 !important;
+    padding-bottom: 0 !important;
 }
 
 .mat-form-field-no-padding-bottom .mat-form-field-wrapper {
-	margin-bottom: -1.25em;
+    margin-bottom: -1.25em;
 }
 
 .margin-left-auto {
-	margin-left: auto;
+    margin-left: auto;
 }

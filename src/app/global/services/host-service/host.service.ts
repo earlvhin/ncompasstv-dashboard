@@ -3,7 +3,17 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
 
 import { BaseService } from '../base.service';
-import { API_DEALER, API_FILTERS, API_HOST, API_HOST_MINIFIED, API_TIMEZONE, CustomFieldGroup, HOST_S3_FILE, PAGING, TAG } from 'src/app/global/models';
+import {
+    API_DEALER,
+    API_FILTERS,
+    API_HOST,
+    API_HOST_MINIFIED,
+    API_TIMEZONE,
+    CustomFieldGroup,
+    HOST_S3_FILE,
+    PAGING,
+    TAG,
+} from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
 @Injectable({
@@ -87,7 +97,11 @@ export class HostService extends BaseService {
         return this.getRequest(url);
     }
 
-    get_dma_hosts_by_rank(rank: number, code: string, name: string): Observable<{ paging: PAGING }> {
+    get_dma_hosts_by_rank(
+        rank: number,
+        code: string,
+        name: string,
+    ): Observable<{ paging: PAGING }> {
         const url = `${this.getters.dma_hosts_by_rank}?dmaRank=${rank}&dmaCode=${code}&dmaName=${encodeURIComponent(name)}&pageSize=0`;
         return this.getRequest(url);
     }
@@ -136,7 +150,12 @@ export class HostService extends BaseService {
         return this.getRequest(url).map((data) => data.paging.entities);
     }
 
-    get_host_activity(ownerId: string, sortColumn: string, sortOrder: string, page: number): Observable<{ paging: PAGING; message?: string }> {
+    get_host_activity(
+        ownerId: string,
+        sortColumn: string,
+        sortOrder: string,
+        page: number,
+    ): Observable<{ paging: PAGING; message?: string }> {
         const base = `${this.getters.api_get_hosts_activity}`;
         const params = this.setUrlParams({ ownerId, sortColumn, sortOrder, page }, false, true);
         const url = `${base}${params}`;
@@ -170,21 +189,32 @@ export class HostService extends BaseService {
         return this.getRequest(url);
     }
 
-    get_host_fetch(filters: API_FILTERS, enforceTagKeySearch = false, allowBlankFilters = true): Observable<{ host?: any[]; paging?: PAGING; message?: string }> {
+    get_host_fetch(
+        filters: API_FILTERS,
+        enforceTagKeySearch = false,
+        allowBlankFilters = true,
+    ): Observable<{ host?: any[]; paging?: PAGING; message?: string }> {
         const base = `${this.getters.api_get_hosts_fetch}`;
         const params = this.setUrlParams(filters, enforceTagKeySearch, allowBlankFilters);
         const url = `${base}${params}`;
         return this.getRequest(url);
     }
 
-    get_host_fetch_export(filters: API_FILTERS): Observable<{ host?: API_HOST[]; paging?: PAGING; message?: string }> {
+    get_host_fetch_export(
+        filters: API_FILTERS,
+    ): Observable<{ host?: API_HOST[]; paging?: PAGING; message?: string }> {
         const base = `${this.getters.api_get_hosts_fetch_for_export}`;
         const params = this.setUrlParams(filters, false, true);
         const url = `${base}${params}`;
         return this.getRequest(url);
     }
 
-    get_host_by_dealer_id(id: any, page: number, key: string, pageSize = 15): Observable<{ paging?: PAGING; message?: string }> {
+    get_host_by_dealer_id(
+        id: any,
+        page: number,
+        key: string,
+        pageSize = 15,
+    ): Observable<{ paging?: PAGING; message?: string }> {
         let url = `${this.getters.api_get_host_by_dealer}${id}&page=${page}&pageSize=${pageSize}`;
 
         if (key && key.trim().length > 0) {
@@ -195,7 +225,13 @@ export class HostService extends BaseService {
         return this.getRequest(url);
     }
 
-    get_host_by_dealer_id_locator(id: any, page: number, key: string, pageSize = 15, pending = false): Observable<{ paging?: PAGING; message?: string }> {
+    get_host_by_dealer_id_locator(
+        id: any,
+        page: number,
+        key: string,
+        pageSize = 15,
+        pending = false,
+    ): Observable<{ paging?: PAGING; message?: string }> {
         let url = `${this.getters.api_get_host_by_dealer}${id}&page=${page}&pageSize=${pageSize}&pending=${pending}`;
 
         if (key && key.trim().length > 0) {
@@ -206,7 +242,12 @@ export class HostService extends BaseService {
         return this.getRequest(url);
     }
 
-    get_support_entries(hostId: string, page: number, sortColumn: string, sortOrder: string): Observable<{ paging: PAGING; message?: string }> {
+    get_support_entries(
+        hostId: string,
+        page: number,
+        sortColumn: string,
+        sortOrder: string,
+    ): Observable<{ paging: PAGING; message?: string }> {
         const base = `${this.getters.api_get_support}`;
         const params = this.setUrlParams({ hostId, page, sortColumn, sortOrder }, false, true);
         const url = `${base}${params}`;
@@ -303,7 +344,7 @@ export class HostService extends BaseService {
                 '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
                 '(\\?[;&a-z\\d%_.~+=-]*)?' +
                 '(\\#[-a-z\\d_]*)?$',
-            'i'
+            'i',
         );
         return pattern.test(url);
     }

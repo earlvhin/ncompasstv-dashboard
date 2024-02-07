@@ -30,244 +30,243 @@ export const SUB_DEALER_ROUTES: Routes = [
     {
         path: 'sub-dealer',
         component: SubDealerLayoutComponent,
-        canActivate: [ AuthGuard ],
-        data: { 
-            role: [ UI_ROLE_DEFINITION['sub-dealer']],
-            breadcrumb: 'Dashboard'
+        canActivate: [AuthGuard],
+        data: {
+            role: [UI_ROLE_DEFINITION['sub-dealer']],
+            breadcrumb: 'Dashboard',
         },
         children: [
-            { 
-                path: '', 
-                component: DashboardComponent 
+            {
+                path: '',
+                component: DashboardComponent,
             },
-			{ 
-                path: 'dashboard', 
-                component: DashboardComponent 
+            {
+                path: 'dashboard',
+                component: DashboardComponent,
             },
-			{ 
-                path: 'hosts', 
+            {
+                path: 'hosts',
                 data: {
-                    breadcrumb: 'Hosts'
+                    breadcrumb: 'Hosts',
                 },
                 children: [
                     {
                         path: '',
-                        component: HostsComponent, 
+                        component: HostsComponent,
                     },
-                    { 
-                        path: 'create-host', 
-                        component: CreateHostComponent, 
-                        canActivate: [ PermissionGuard ],
-                        data: {
-                            breadcrumb: 'Create Host'
-                        }
-                    },
-                    { 
-                        path: ':data', 
-                        component: SingleHostComponent,
-						canActivate: [ OwnerGuard ],
-                        data: {
-                            breadcrumb: 'Single Host Page'
-                        }
-                    },
-                    { 
-                        path: ':data/:breadcrumb', 
-                        component: SingleHostComponent,
-						canActivate: [ OwnerGuard ]
-                    }
-                ]
-            },
-			{ 
-                path: 'licenses', 
-                data: {
-                    breadcrumb: 'Licenses'
-                },
-                children: [
                     {
-                        path: '',
-                        component: LicensesComponent, 
+                        path: 'create-host',
+                        component: CreateHostComponent,
+                        canActivate: [PermissionGuard],
+                        data: {
+                            breadcrumb: 'Create Host',
+                        },
                     },
-                    { 
+                    {
                         path: ':data',
-                        component: SingleLicenseComponent, 
-						canActivate: [ OwnerGuard ],
+                        component: SingleHostComponent,
+                        canActivate: [OwnerGuard],
                         data: {
-                            breadcrumb: 'Single License Page'
-                        }
+                            breadcrumb: 'Single Host Page',
+                        },
                     },
-                    { 
+                    {
                         path: ':data/:breadcrumb',
-                        component: SingleLicenseComponent, 
-						canActivate: [ OwnerGuard ]
-                    }
-                ]
+                        component: SingleHostComponent,
+                        canActivate: [OwnerGuard],
+                    },
+                ],
             },
-			{ 
-                path: 'advertisers', 
+            {
+                path: 'licenses',
                 data: {
-                    breadcrumb: 'Advertisers'
+                    breadcrumb: 'Licenses',
                 },
                 children: [
                     {
                         path: '',
-                        component: AdvertisersComponent, 
+                        component: LicensesComponent,
                     },
-                    { 
-                        path: 'create-advertiser', 
-                        component: CreateAdvertiserComponent, 
-                        canActivate: [ PermissionGuard ],
+                    {
+                        path: ':data',
+                        component: SingleLicenseComponent,
+                        canActivate: [OwnerGuard],
                         data: {
-                            breadcrumb: 'Create Advertiser'
-                        }
+                            breadcrumb: 'Single License Page',
+                        },
                     },
-                    { 
-                        path: ':data', 
-                        component: SingleAdvertiserComponent,
-						canActivate: [ OwnerGuard ],
-                        data: {
-                            breadcrumb: 'Single Advertiser Page'
-                        }
+                    {
+                        path: ':data/:breadcrumb',
+                        component: SingleLicenseComponent,
+                        canActivate: [OwnerGuard],
                     },
-                    { 
-                        path: ':data/:breadcrumb', 
-                        component: SingleAdvertiserComponent,
-						canActivate: [ OwnerGuard ]
-                    }
-                ]
+                ],
             },
-			{ 
-                path: 'locator', 
-                component: LocatorComponent, 
+            {
+                path: 'advertisers',
                 data: {
-                    breadcrumb: 'Locator'
-                }
-            },
-			{ 
-                path: 'media-library', 
-                data: {
-                    breadcrumb: 'Media Library'
+                    breadcrumb: 'Advertisers',
                 },
                 children: [
                     {
                         path: '',
-                        component: MediaLibraryComponent, 
+                        component: AdvertisersComponent,
                     },
-                    { 
-                        path: ':data', 
-                        component: SingleContentComponent, 
+                    {
+                        path: 'create-advertiser',
+                        component: CreateAdvertiserComponent,
+                        canActivate: [PermissionGuard],
                         data: {
-                            breadcrumb: 'Single Content Page'
-                        }
+                            breadcrumb: 'Create Advertiser',
+                        },
                     },
-                    { 
-                        path: ':data/:breadcrumb', 
-                        component: SingleContentComponent, 
+                    {
+                        path: ':data',
+                        component: SingleAdvertiserComponent,
+                        canActivate: [OwnerGuard],
                         data: {
-                            breadcrumb: 'Single Content Page'
-                        }
-                    }
-                ]
+                            breadcrumb: 'Single Advertiser Page',
+                        },
+                    },
+                    {
+                        path: ':data/:breadcrumb',
+                        component: SingleAdvertiserComponent,
+                        canActivate: [OwnerGuard],
+                    },
+                ],
             },
-			{ 
-                path: 'feeds', 
+            {
+                path: 'locator',
+                component: LocatorComponent,
                 data: {
-                    breadcrumb: 'Feeds'
+                    breadcrumb: 'Locator',
+                },
+            },
+            {
+                path: 'media-library',
+                data: {
+                    breadcrumb: 'Media Library',
+                },
+                children: [
+                    {
+                        path: '',
+                        component: MediaLibraryComponent,
+                    },
+                    {
+                        path: ':data',
+                        component: SingleContentComponent,
+                        data: {
+                            breadcrumb: 'Single Content Page',
+                        },
+                    },
+                    {
+                        path: ':data/:breadcrumb',
+                        component: SingleContentComponent,
+                        data: {
+                            breadcrumb: 'Single Content Page',
+                        },
+                    },
+                ],
+            },
+            {
+                path: 'feeds',
+                data: {
+                    breadcrumb: 'Feeds',
                 },
                 children: [
                     {
                         path: '',
                         component: FeedsComponent,
-                        
                     },
-                    { 
-                        path: 'generate', 
+                    {
+                        path: 'generate',
                         component: GenerateFeedComponent,
                         data: {
-                            breadcrumb: 'Generate Feeds'
-                        }
+                            breadcrumb: 'Generate Feeds',
+                        },
                     },
-                    { 
-                        path: 'edit-generated/:data', 
+                    {
+                        path: 'edit-generated/:data',
                         component: GenerateFeedComponent,
                         data: {
-                            breadcrumb: 'Edit Generated Feeds'
-                        }
-                    }
-                ]
+                            breadcrumb: 'Edit Generated Feeds',
+                        },
+                    },
+                ],
             },
-			{ 
-                path: 'playlists', 
+            {
+                path: 'playlists',
                 data: {
-                    breadcrumb: 'Playlists'
+                    breadcrumb: 'Playlists',
                 },
                 children: [
                     {
                         path: '',
-                        component: PlaylistsComponent, 
+                        component: PlaylistsComponent,
                     },
-                    { 
-                        path: 'create-playlist', 
-                        component: CreatePlaylistComponent, 
-                        canActivate: [ PermissionGuard ],
+                    {
+                        path: 'create-playlist',
+                        component: CreatePlaylistComponent,
+                        canActivate: [PermissionGuard],
                         data: {
-                            breadcrumb: 'Create Playlist'
-                        }
+                            breadcrumb: 'Create Playlist',
+                        },
                     },
-                    { 
-                        path: ':data', 
-                        component: SinglePlaylistComponent, 
-						canActivate: [ OwnerGuard ],
+                    {
+                        path: ':data',
+                        component: SinglePlaylistComponent,
+                        canActivate: [OwnerGuard],
                         data: {
-                            breadcrumb: 'Single Playlist Page'
-                        }
+                            breadcrumb: 'Single Playlist Page',
+                        },
                     },
-                    { 
-                        path: ':data/:breadcrumb', 
-                        component: SinglePlaylistComponent, 
-						canActivate: [ OwnerGuard ]
-                    }
-                ]
+                    {
+                        path: ':data/:breadcrumb',
+                        component: SinglePlaylistComponent,
+                        canActivate: [OwnerGuard],
+                    },
+                ],
             },
-			{ 
-                path: 'screens', 
+            {
+                path: 'screens',
                 data: {
-                    breadcrumb: 'Screens'
+                    breadcrumb: 'Screens',
                 },
                 children: [
                     {
                         path: '',
-                        component: ScreensComponent, 
+                        component: ScreensComponent,
                     },
-                    { 
-                        path: 'create-screen', 
-                        component: CreateScreenComponent, 
-                        canActivate: [ PermissionGuard ],
+                    {
+                        path: 'create-screen',
+                        component: CreateScreenComponent,
+                        canActivate: [PermissionGuard],
                         data: {
-                            breadcrumb: 'Create Screen'
-                        }
+                            breadcrumb: 'Create Screen',
+                        },
                     },
-                    { 
-                        path: ':data', 
+                    {
+                        path: ':data',
                         component: SingleScreenComponent,
-						canActivate: [ OwnerGuard ],
+                        canActivate: [OwnerGuard],
                         data: {
-                            breadcrumb: 'Single Screen Component'
-                        }
+                            breadcrumb: 'Single Screen Component',
+                        },
                     },
-                    { 
-                        path: ':data/:breadcrumb', 
+                    {
+                        path: ':data/:breadcrumb',
                         component: SingleScreenComponent,
-						canActivate: [ OwnerGuard ]
-                    }
-                ]
+                        canActivate: [OwnerGuard],
+                    },
+                ],
             },
-			{ 
-                path: 'profile-setting/:data', 
-                component: ProfileSettingComponent, 
+            {
+                path: 'profile-setting/:data',
+                component: ProfileSettingComponent,
                 data: {
-                    breadcrumb: 'Profile Settings'
-                }
-            }
+                    breadcrumb: 'Profile Settings',
+                },
+            },
         ],
-    }
+    },
 ];

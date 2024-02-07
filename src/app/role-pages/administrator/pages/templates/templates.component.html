@@ -1,33 +1,39 @@
 <div class="theme-container">
-	<div class="title-section">
-		<div class="d-flex align-items-center">
-			<div class="flex-even">
-				<h1 class="page-title">{{ title }}</h1>
-			</div>
-			<div class="flex-even text-right">
-				<button mat-button mat-raised-button class="theme-btn" [routerLink]="['create-template']">
-					<span class="button-label"> New Template </span>
-					<span class="fas fa-plus ml-2 sm-text"></span>
-				</button>
-			</div>
-		</div>
-		<hr class="my-4" />
-	</div>
+    <div class="title-section">
+        <div class="d-flex align-items-center">
+            <div class="flex-even">
+                <h1 class="page-title">{{ title }}</h1>
+            </div>
+            <div class="flex-even text-right">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn"
+                    [routerLink]="['create-template']">
+                    <span class="button-label"> New Template </span>
+                    <span class="fas fa-plus ml-2 sm-text"></span>
+                </button>
+            </div>
+        </div>
+        <hr class="my-4" />
+    </div>
 
-	<div *ngIf="templateData$ | async as templateData; else loading">
-		<div class="row">
-			<div class="col-lg-3 text-center mb-4" *ngFor="let data of templateData">
-				<app-template-minimap [template_data]="data"></app-template-minimap>
-				<h5 class="font-weight-bold mt-2">
-					<a class="cursor-pointer" (click)="onClickTemplateLink(data)">{{ data.template.name }}</a>
-				</h5>
-			</div>
-		</div>
-	</div>
+    <div *ngIf="templateData$ | async as templateData; else loading">
+        <div class="row">
+            <div class="col-lg-3 text-center mb-4" *ngFor="let data of templateData">
+                <app-template-minimap [template_data]="data"></app-template-minimap>
+                <h5 class="font-weight-bold mt-2">
+                    <a class="cursor-pointer" (click)="onClickTemplateLink(data)">{{
+                        data.template.name
+                    }}</a>
+                </h5>
+            </div>
+        </div>
+    </div>
 
-	<ng-template #loading>
-		<div class="text-center d-flex align-items-center justify-content-center vh-50">
-			<app-spinner></app-spinner>
-		</div>
-	</ng-template>
+    <ng-template #loading>
+        <div class="text-center d-flex align-items-center justify-content-center vh-50">
+            <app-spinner></app-spinner>
+        </div>
+    </ng-template>
 </div>

@@ -1,45 +1,47 @@
 <div id="single-template-page">
-	<div class="theme-container">
-		<ng-container *ngIf="data && !isLoading; else loading">
-			<div class="title-section">
-				<div class="d-flex align-items-center">
-					<div class="flex-even">
-						<!-- <h1 class="page-title">{{ data.template.name }}</h1> -->
-						<mat-form-field class="page-title template-name">
-							<input matInput [formControl]="templateNameCtrl">
-						</mat-form-field>
-					</div>
-				</div>
-				<hr class="my-4">
-			</div>
-	
-			<ng-container *ngIf="data.templateZones && data.templateZones.length > 0">
-				<div class="content-section d-flex flex-column">
-	
-					<div class="zones">
-						<div class="zone" *ngFor="let zone of data.templateZones">
-							<app-zone-expansion-panel [data]="zone"></app-zone-expansion-panel>
-						</div>
-					</div>
+    <div class="theme-container">
+        <ng-container *ngIf="data && !isLoading; else loading">
+            <div class="title-section">
+                <div class="d-flex align-items-center">
+                    <div class="flex-even">
+                        <!-- <h1 class="page-title">{{ data.template.name }}</h1> -->
+                        <mat-form-field class="page-title template-name">
+                            <input matInput [formControl]="templateNameCtrl" />
+                        </mat-form-field>
+                    </div>
+                </div>
+                <hr class="my-4" />
+            </div>
 
-					<div class="minimap">
-						<app-template-minimap [template_data]="data"></app-template-minimap>
-					</div>
-	
-				</div>
-			</ng-container>
+            <ng-container *ngIf="data.templateZones && data.templateZones.length > 0">
+                <div class="content-section d-flex flex-column">
+                    <div class="zones">
+                        <div class="zone" *ngFor="let zone of data.templateZones">
+                            <app-zone-expansion-panel [data]="zone"></app-zone-expansion-panel>
+                        </div>
+                    </div>
 
-			<button mat-button mat-raised-button class="submit-btn bg-primary text-white" 
-				(click)="onSubmit()"
-				[class.disabled]="!templateNameCtrl.valid || !allFormsValid"
-				[disabled]="!templateNameCtrl.valid || !allFormsValid">Submit</button>
-				
-		</ng-container>
+                    <div class="minimap">
+                        <app-template-minimap [template_data]="data"></app-template-minimap>
+                    </div>
+                </div>
+            </ng-container>
 
-		<ng-template #loading>
-			<div class="text-center d-flex align-items-center justify-content-center vh-50">
-				<app-spinner></app-spinner>
-			</div>
-		</ng-template>
-	</div>
+            <button
+                mat-button
+                mat-raised-button
+                class="submit-btn bg-primary text-white"
+                (click)="onSubmit()"
+                [class.disabled]="!templateNameCtrl.valid || !allFormsValid"
+                [disabled]="!templateNameCtrl.valid || !allFormsValid">
+                Submit
+            </button>
+        </ng-container>
+
+        <ng-template #loading>
+            <div class="text-center d-flex align-items-center justify-content-center vh-50">
+                <app-spinner></app-spinner>
+            </div>
+        </ng-template>
+    </div>
 </div>

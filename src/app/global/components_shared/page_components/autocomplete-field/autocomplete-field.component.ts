@@ -1,4 +1,16 @@
-import { Component, OnInit, Input, Output, EventEmitter, HostListener, OnDestroy, AfterViewInit, OnChanges, SimpleChanges, SimpleChange } from '@angular/core';
+import {
+    Component,
+    OnInit,
+    Input,
+    Output,
+    EventEmitter,
+    HostListener,
+    OnDestroy,
+    AfterViewInit,
+    OnChanges,
+    SimpleChanges,
+    SimpleChange,
+} from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
 import { FormControl } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
@@ -134,7 +146,11 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
     initializeSearch(event: { target: { value: any } }) {
         if (event.target.value) {
             this.search_result = this.data_reference.filter((res) => {
-                if (res[this.primary_keyword].toLowerCase().includes(event.target.value.toLowerCase())) {
+                if (
+                    res[this.primary_keyword]
+                        .toLowerCase()
+                        .includes(event.target.value.toLowerCase())
+                ) {
                     return res;
                 }
             });
@@ -146,7 +162,11 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
     search(event: { target: { value: any } }) {
         if (event.target.value) {
             this.search_result = this.data_reference.filter((res) => {
-                if (res[this.primary_keyword].toLowerCase().includes(event.target.value.toLowerCase())) {
+                if (
+                    res[this.primary_keyword]
+                        .toLowerCase()
+                        .includes(event.target.value.toLowerCase())
+                ) {
                     return res;
                 }
             });
@@ -194,7 +214,10 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
     onScroll(event) {
         if (this.is_scroll_next_disabled) return;
 
-        if (event.target.offsetHeight + event.target.scrollTop == event.target.scrollHeight && event.target.scrollHeight != 0) {
+        if (
+            event.target.offsetHeight + event.target.scrollTop == event.target.scrollHeight &&
+            event.target.scrollHeight != 0
+        ) {
             if (this.paging) {
                 if (this.paging.hasNextPage) {
                     this.timeOut = setTimeout(() => {
@@ -213,11 +236,13 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
             },
             (error) => {
                 console.error(error);
-            }
+            },
         );
     }
 
     private subscribeToMarkAsTouched() {
-        this._helper.onTouchPaginatedAutoCompleteField.pipe(takeUntil(this._unsubscribe)).subscribe(() => this.paginated_input_field_control.markAllAsTouched());
+        this._helper.onTouchPaginatedAutoCompleteField
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe(() => this.paginated_input_field_control.markAllAsTouched());
     }
 }

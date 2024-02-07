@@ -1,199 +1,202 @@
 <div class="theme-container">
     <div class="title-section">
         <h1 class="page-title">{{ title }}</h1>
-        <hr class="my-4">
+        <hr class="my-4" />
     </div>
 
     <div class="content-section">
         <h3 class="section-title">Statistics</h3>
         <div class="row mb-5 row-eq-height">
             <div class="col-lg-7">
-				<mat-card class="d-flex justify-content-center align-items-center w-100 h-100 p-4" *ngIf="host_report_chart!= false || license_report_chart!= false; else stat">
-					<div *ngIf="statTable.hosts || statTable.licenses; else spinner" class="w-100">
-						<h3 class="section-title text-center mb-3">{{statTable.title}}</h3>
-						<div class="col-lg-12 flex p-2 text-center">
-							<div class="col-lg-2">
-								<h2>{{statTable.hosts || 0}}</h2>
-								<h5 class="xsm-text">
-									Hosts
-								</h5>
-							</div>
-							<div class="col-lg-2 text-success">
-								<h2>
-									{{statTable.active_hosts || 0}}
-								</h2>
-								<h5 class="xsm-text">
-									Active
-								</h5>
-							</div>
-							<div class="col-lg-2 text-danger">
-								<h2>
-									{{statTable.inactive_hosts || 0}}
-								</h2>
-								<h5 class="xsm-text">
-									Inactive
-								</h5>
-							</div>
-							<div class="col-lg-2">
-								<h2>
-									{{statTable.licenses || 0}}
-								</h2>
-								<h5 class="xsm-text">
-									Licenses
-								</h5>
-							</div>
-							<div class="col-lg-2 text-success">
-								<h2>
-									{{statTable.assigned || 0}}
-								</h2>
-								<h5 class="xsm-text">
-									Assigned
-								</h5>
-							</div>
-							<div class="col-lg-2 text-danger">
-								<h2>
-									{{statTable.unassigned || 0}}
-								</h2>
-								<h5 class="xsm-text">
-									Unassigned
-								</h5>
-							</div>
-						</div>
-					</div>
-				</mat-card>
-				<ng-template #stat>
-					<mat-card class="p-5">
-						<div class="text-center">
-							<h3>Oh Sorry!</h3>
-							<h4 class="mb-2">No statistics available.</h4>
-							<h6 class="mb-0">Unable to display the statistics board. Kindly add a host(s) or license(s).</h6>
-						</div>
-					</mat-card>
-				</ng-template>
+                <mat-card
+                    class="d-flex justify-content-center align-items-center w-100 h-100 p-4"
+                    *ngIf="host_report_chart != false || license_report_chart != false; else stat">
+                    <div *ngIf="statTable.hosts || statTable.licenses; else spinner" class="w-100">
+                        <h3 class="section-title text-center mb-3">{{ statTable.title }}</h3>
+                        <div class="col-lg-12 flex p-2 text-center">
+                            <div class="col-lg-2">
+                                <h2>{{ statTable.hosts || 0 }}</h2>
+                                <h5 class="xsm-text">Hosts</h5>
+                            </div>
+                            <div class="col-lg-2 text-success">
+                                <h2>
+                                    {{ statTable.active_hosts || 0 }}
+                                </h2>
+                                <h5 class="xsm-text">Active</h5>
+                            </div>
+                            <div class="col-lg-2 text-danger">
+                                <h2>
+                                    {{ statTable.inactive_hosts || 0 }}
+                                </h2>
+                                <h5 class="xsm-text">Inactive</h5>
+                            </div>
+                            <div class="col-lg-2">
+                                <h2>
+                                    {{ statTable.licenses || 0 }}
+                                </h2>
+                                <h5 class="xsm-text">Licenses</h5>
+                            </div>
+                            <div class="col-lg-2 text-success">
+                                <h2>
+                                    {{ statTable.assigned || 0 }}
+                                </h2>
+                                <h5 class="xsm-text">Assigned</h5>
+                            </div>
+                            <div class="col-lg-2 text-danger">
+                                <h2>
+                                    {{ statTable.unassigned || 0 }}
+                                </h2>
+                                <h5 class="xsm-text">Unassigned</h5>
+                            </div>
+                        </div>
+                    </div>
+                </mat-card>
+                <ng-template #stat>
+                    <mat-card class="p-5">
+                        <div class="text-center">
+                            <h3>Oh Sorry!</h3>
+                            <h4 class="mb-2">No statistics available.</h4>
+                            <h6 class="mb-0">
+                                Unable to display the statistics board. Kindly add a host(s) or
+                                license(s).
+                            </h6>
+                        </div>
+                    </mat-card>
+                </ng-template>
             </div>
             <div class="col-lg-3">
-				<mat-card class="h-100 p-4 d-flex align-items-center justify-content-center">
-					<div *ngIf="statTable; else no">
-						<div *ngIf="!no_chart_to_show; else no" style="height: 200px">
-							<h3 class="section-title">Connection Type</h3>
-							<canvas id="connectionChart" height="150px"></canvas>
-						</div>
-					</div>
-					
-					<ng-template #no>
-						<div class="text-center">
-							<h4 class="mb-2">No chart data available.</h4>
-							<h6 class="mb-0">Unable to display the chart. Kindly activate one of your license(s).</h6>
-						</div>
-					</ng-template>
-				</mat-card>
+                <mat-card class="h-100 p-4 d-flex align-items-center justify-content-center">
+                    <div *ngIf="statTable; else no">
+                        <div *ngIf="!no_chart_to_show; else no" style="height: 200px">
+                            <h3 class="section-title">Connection Type</h3>
+                            <canvas id="connectionChart" height="150px"></canvas>
+                        </div>
+                    </div>
+
+                    <ng-template #no>
+                        <div class="text-center">
+                            <h4 class="mb-2">No chart data available.</h4>
+                            <h6 class="mb-0">
+                                Unable to display the chart. Kindly activate one of your license(s).
+                            </h6>
+                        </div>
+                    </ng-template>
+                </mat-card>
             </div>
         </div>
         <div class="row mb-5">
             <div class="col-lg-4 mb-4">
-				<ng-container *ngIf="host_report_chart!= false; else no_data_host">
-					<app-expansion-panel
-					*ngIf="host_report_chart; else spinner"
-					[title]="host_report_chart.title"
-					[description]="host_report_chart.stats"
-					[expand]="host_report_chart.expand"
-					[chart_id]="host_report_chart.chart_id"
-					[chart_label]="host_report_chart.chart_label"
-					[chart_data]="host_report_chart.chart_data">
-					</app-expansion-panel>
-				</ng-container>
-				
-				<ng-template #no_data_host>
-					<mat-card class="p-5">
-						<h3>Oh Snap!</h3>
-						<p class="sm-text mb-3">
-							There are no available hosts at the moment.
-						</p>
-						<button mat-button mat-raised-button class="theme-btn mr-2" 
-							[routerLink]="['/sub-dealer/hosts/create-host']"
-							[disabled]="is_view_only">Add Host <span class="fas fa-plus ml-2 sm-text"></span>
-						</button>
-					</mat-card>
-				</ng-template>
+                <ng-container *ngIf="host_report_chart != false; else no_data_host">
+                    <app-expansion-panel
+                        *ngIf="host_report_chart; else spinner"
+                        [title]="host_report_chart.title"
+                        [description]="host_report_chart.stats"
+                        [expand]="host_report_chart.expand"
+                        [chart_id]="host_report_chart.chart_id"
+                        [chart_label]="host_report_chart.chart_label"
+                        [chart_data]="host_report_chart.chart_data">
+                    </app-expansion-panel>
+                </ng-container>
+
+                <ng-template #no_data_host>
+                    <mat-card class="p-5">
+                        <h3>Oh Snap!</h3>
+                        <p class="sm-text mb-3">There are no available hosts at the moment.</p>
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn mr-2"
+                            [routerLink]="['/sub-dealer/hosts/create-host']"
+                            [disabled]="is_view_only">
+                            Add Host <span class="fas fa-plus ml-2 sm-text"></span>
+                        </button>
+                    </mat-card>
+                </ng-template>
             </div>
             <div class="col-lg-4 mb-4">
-				<ng-container *ngIf="advertiser_report_chart!= false; else no_data_advertiser">
-					<app-expansion-panel
-					*ngIf="advertiser_report_chart; else spinner"
-					[title]="advertiser_report_chart.title"
-					[description]="advertiser_report_chart.stats"
-					[expand]="advertiser_report_chart.expand"
-					[chart_id]="advertiser_report_chart.chart_id"
-					[chart_label]="advertiser_report_chart.chart_label"
-					[chart_data]="advertiser_report_chart.chart_data">
-					</app-expansion-panel>
-				</ng-container>
-				
-				<ng-template #no_data_advertiser>
-					<mat-card class="p-5">
-						<h3>Ugh! Sorry.</h3>
-						<p class="sm-text mb-3">
-							There are no available advertisers at the moment.
-						</p>
-						<button mat-button mat-raised-button class="theme-btn mr-2" 
-							[routerLink]="['/sub-dealer/advertisers/create-advertiser']"
-							[disabled]="is_view_only">Add Advertiser <span class="fas fa-plus ml-2 sm-text"></span>
-						</button>
-					</mat-card>
-				</ng-template>
+                <ng-container *ngIf="advertiser_report_chart != false; else no_data_advertiser">
+                    <app-expansion-panel
+                        *ngIf="advertiser_report_chart; else spinner"
+                        [title]="advertiser_report_chart.title"
+                        [description]="advertiser_report_chart.stats"
+                        [expand]="advertiser_report_chart.expand"
+                        [chart_id]="advertiser_report_chart.chart_id"
+                        [chart_label]="advertiser_report_chart.chart_label"
+                        [chart_data]="advertiser_report_chart.chart_data">
+                    </app-expansion-panel>
+                </ng-container>
+
+                <ng-template #no_data_advertiser>
+                    <mat-card class="p-5">
+                        <h3>Ugh! Sorry.</h3>
+                        <p class="sm-text mb-3">
+                            There are no available advertisers at the moment.
+                        </p>
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn mr-2"
+                            [routerLink]="['/sub-dealer/advertisers/create-advertiser']"
+                            [disabled]="is_view_only">
+                            Add Advertiser <span class="fas fa-plus ml-2 sm-text"></span>
+                        </button>
+                    </mat-card>
+                </ng-template>
             </div>
             <div class="col-lg-4 mb-4">
-				<ng-container *ngIf="license_report_chart!= false; else no_data_license">
-					<app-expansion-panel
-					*ngIf="license_report_chart; else spinner"
-					[title]="license_report_chart.title"
-					[description]="license_report_chart.stats"
-					[expand]="license_report_chart.expand"
-					[chart_id]="license_report_chart.chart_id"
-					[chart_label]="license_report_chart.chart_label"
-					[chart_data]="license_report_chart.chart_data">
-					</app-expansion-panel>
-				</ng-container>
-				
-				<ng-template #no_data_license>
-					<mat-card class="p-5">
-						<h3>Ugh! Sorry.</h3>
-						<p class="sm-text mb-3">
-							There are no available licenses at the moment.
-						</p>
-					</mat-card>
-				</ng-template>
+                <ng-container *ngIf="license_report_chart != false; else no_data_license">
+                    <app-expansion-panel
+                        *ngIf="license_report_chart; else spinner"
+                        [title]="license_report_chart.title"
+                        [description]="license_report_chart.stats"
+                        [expand]="license_report_chart.expand"
+                        [chart_id]="license_report_chart.chart_id"
+                        [chart_label]="license_report_chart.chart_label"
+                        [chart_data]="license_report_chart.chart_data">
+                    </app-expansion-panel>
+                </ng-container>
+
+                <ng-template #no_data_license>
+                    <mat-card class="p-5">
+                        <h3>Ugh! Sorry.</h3>
+                        <p class="sm-text mb-3">There are no available licenses at the moment.</p>
+                    </mat-card>
+                </ng-template>
             </div>
         </div>
         <div class="row mb-5">
             <div class="col-lg-12">
                 <div class="row mb-4">
-					<div class="col-lg-12">
-						<h3 class="section-title">Recently Added Hosts</h3>
-						<ng-container *ngIf="!no_hosts; else no_data_dealer_table">
-							<mat-card class="px-4" *ngIf="latest_hosts; else spinner">
-								<app-data-table
-								[table_data]="latest_hosts"
-								[table_columns]="latest_hosts_col"
-								[new_table]="true">
-								</app-data-table>
-							</mat-card>
-						</ng-container>
+                    <div class="col-lg-12">
+                        <h3 class="section-title">Recently Added Hosts</h3>
+                        <ng-container *ngIf="!no_hosts; else no_data_dealer_table">
+                            <mat-card class="px-4" *ngIf="latest_hosts; else spinner">
+                                <app-data-table
+                                    [table_data]="latest_hosts"
+                                    [table_columns]="latest_hosts_col"
+                                    [new_table]="true">
+                                </app-data-table>
+                            </mat-card>
+                        </ng-container>
 
-						<ng-template #no_data_dealer_table>
-							<mat-card class="p-5">
-								<h3>Sorry Jim.</h3>
-								<p class="sm-text mb-3">
-									There are no available hosts at the moment.
-								</p>
-								<button mat-button mat-raised-button class="theme-btn mr-2" 
-									[routerLink]="['/sub-dealer/users/create-user/hosts']"
-									[disabled]="is_view_only">Add Hosts <span class="fas fa-plus ml-2 sm-text"></span>
-								</button>
-							</mat-card>
-						</ng-template>
-					</div>
-				</div>
+                        <ng-template #no_data_dealer_table>
+                            <mat-card class="p-5">
+                                <h3>Sorry Jim.</h3>
+                                <p class="sm-text mb-3">
+                                    There are no available hosts at the moment.
+                                </p>
+                                <button
+                                    mat-button
+                                    mat-raised-button
+                                    class="theme-btn mr-2"
+                                    [routerLink]="['/sub-dealer/users/create-user/hosts']"
+                                    [disabled]="is_view_only">
+                                    Add Hosts <span class="fas fa-plus ml-2 sm-text"></span>
+                                </button>
+                            </mat-card>
+                        </ng-template>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

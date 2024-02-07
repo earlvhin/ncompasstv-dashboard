@@ -1,181 +1,230 @@
 <div class="p-2">
-	<div class="dialog-heading d-flex align-items-start">
-		<div class="flex-even">
-			<div class="d-flex align-items-center">
-				<h3 class="p-0">Advertiser Details:</h3>
-				<span class="status sm-text ml-3" [ngClass]="advertiser.status === 'A' ? 'active' : 'inactive'">
-					<span class="fas fa-circle xsm-text mr-2"> </span>
-				</span>
-			</div>
-			<p class="p-0 sm-text mb-4">You can update advertiser details here:</p>
-		</div>
-		<mat-slide-toggle (change)="onToggleStatus($event)" labelPosition="before" [(ngModel)]="is_active_advertiser">
-			<span class="sm-text font-weight-bold">{{ is_active_advertiser ? 'Active' : 'Inactive' }}</span>
-		</mat-slide-toggle>
-		<button class="modal-close-btn hidden-button" [mat-dialog-close]="false">
-			<span class="fas fa-times"></span>
-		</button>
-	</div>
-	<ng-container *ngIf="is_form_ready; else loading">
-		<form [formGroup]="edit_advertiser_form" (ngSubmit)="saveAdvertiserData()" class="text-left">
-			<div class="row">
-				<div class="col-lg-11 mb-3" *ngIf="!is_dealer">
-					<ng-container *ngIf="dealers_loaded; else loaderSmall">
-						<app-autocomplete-field
-							[data_reference]="dealers_data"
-							[primary_keyword]="'businessName'"
-							[key_of_value]="'dealerId'"
-							(data_value)="setDealer($event)"
-							[required]="true"
-							[label]="'Type in a Dealer Business Name'"
-							[new_value]="dealer_name"
-							[initial_value]="dealer_name"
-							[disabled]="disable_business_name"
-							[paging]="paging"
-							(searched)="searchDealers($event)"
-							[no_edit]="closed_without_edit">
-						</app-autocomplete-field>
-					</ng-container>
-				</div>
+    <div class="dialog-heading d-flex align-items-start">
+        <div class="flex-even">
+            <div class="d-flex align-items-center">
+                <h3 class="p-0">Advertiser Details:</h3>
+                <span
+                    class="status sm-text ml-3"
+                    [ngClass]="advertiser.status === 'A' ? 'active' : 'inactive'">
+                    <span class="fas fa-circle xsm-text mr-2"> </span>
+                </span>
+            </div>
+            <p class="p-0 sm-text mb-4">You can update advertiser details here:</p>
+        </div>
+        <mat-slide-toggle
+            (change)="onToggleStatus($event)"
+            labelPosition="before"
+            [(ngModel)]="is_active_advertiser">
+            <span class="sm-text font-weight-bold">{{
+                is_active_advertiser ? 'Active' : 'Inactive'
+            }}</span>
+        </mat-slide-toggle>
+        <button class="modal-close-btn hidden-button" [mat-dialog-close]="false">
+            <span class="fas fa-times"></span>
+        </button>
+    </div>
+    <ng-container *ngIf="is_form_ready; else loading">
+        <form
+            [formGroup]="edit_advertiser_form"
+            (ngSubmit)="saveAdvertiserData()"
+            class="text-left">
+            <div class="row">
+                <div class="col-lg-11 mb-3" *ngIf="!is_dealer">
+                    <ng-container *ngIf="dealers_loaded; else loaderSmall">
+                        <app-autocomplete-field
+                            [data_reference]="dealers_data"
+                            [primary_keyword]="'businessName'"
+                            [key_of_value]="'dealerId'"
+                            (data_value)="setDealer($event)"
+                            [required]="true"
+                            [label]="'Type in a Dealer Business Name'"
+                            [new_value]="dealer_name"
+                            [initial_value]="dealer_name"
+                            [disabled]="disable_business_name"
+                            [paging]="paging"
+                            (searched)="searchDealers($event)"
+                            [no_edit]="closed_without_edit">
+                        </app-autocomplete-field>
+                    </ng-container>
+                </div>
 
-				<div class="col-lg-1 mt-4 mb-3" *ngIf="!is_dealer && disable_business_name">
-					<span class="fa fa-pencil cursor-pointer" (click)="editBusinessName(false)"></span>
-				</div>
-				<div class="col-lg-1 mt-4 mb-3" *ngIf="!is_dealer && !disable_business_name">
-					<span class="fa fa-times text-danger cursor-pointer" (click)="editBusinessName(true)"></span>
-				</div>
-			</div>
+                <div class="col-lg-1 mt-4 mb-3" *ngIf="!is_dealer && disable_business_name">
+                    <span
+                        class="fa fa-pencil cursor-pointer"
+                        (click)="editBusinessName(false)"></span>
+                </div>
+                <div class="col-lg-1 mt-4 mb-3" *ngIf="!is_dealer && !disable_business_name">
+                    <span
+                        class="fa fa-times text-danger cursor-pointer"
+                        (click)="editBusinessName(true)"></span>
+                </div>
+            </div>
 
-			<div class="row">
-				<div class="col-lg-6">
-					<mat-form-field class="business-name mr-3 full-width">
-						<mat-label>Host Business Name</mat-label>
-						<input matInput type="text" formControlName="businessName" placeholder="Ex. Angel's Burger" />
-					</mat-form-field>
-				</div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <mat-form-field class="business-name mr-3 full-width">
+                        <mat-label>Host Business Name</mat-label>
+                        <input
+                            matInput
+                            type="text"
+                            formControlName="businessName"
+                            placeholder="Ex. Angel's Burger" />
+                    </mat-form-field>
+                </div>
 
-				<div class="col-lg-6">
-					<ng-container *ngIf="categories_loaded; else loadingCategories">
-						<div class="categories-selection flex-even">
-							<app-autocomplete-field
-								[data_reference]="categories_data"
-								[primary_keyword]="'categoryName'"
-								[key_of_value]="'categoryName'"
-								(data_value)="setCategory($event)"
-								[required]="true"
-								[label]="'Choose Category'"
-								[new_value]="category_selected"
-								[initial_value]="category_selected">
-							</app-autocomplete-field>
-						</div>
-					</ng-container>
+                <div class="col-lg-6">
+                    <ng-container *ngIf="categories_loaded; else loadingCategories">
+                        <div class="categories-selection flex-even">
+                            <app-autocomplete-field
+                                [data_reference]="categories_data"
+                                [primary_keyword]="'categoryName'"
+                                [key_of_value]="'categoryName'"
+                                (data_value)="setCategory($event)"
+                                [required]="true"
+                                [label]="'Choose Category'"
+                                [new_value]="category_selected"
+                                [initial_value]="category_selected">
+                            </app-autocomplete-field>
+                        </div>
+                    </ng-container>
 
-					<ng-template #loadingCategories>
-						<div class="d-flex full-width">
-							<div class="mr-4 mt-2">
-								<span class="md-text font-italic">Loading Categories...</span>
-							</div>
-							<app-spinner [diameter]="20"></app-spinner>
-						</div>
-					</ng-template>
-				</div>
-			</div>
+                    <ng-template #loadingCategories>
+                        <div class="d-flex full-width">
+                            <div class="mr-4 mt-2">
+                                <span class="md-text font-italic">Loading Categories...</span>
+                            </div>
+                            <app-spinner [diameter]="20"></app-spinner>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
 
-			<div class="row">
-				<div class="col-lg-6">
-					<mat-form-field class="full-width">
-						<mat-label>Latitude</mat-label>
-						<input matInput type="number" step="any" formControlName="lat" placeholder="Ex. 58.933" />
-					</mat-form-field>
-				</div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <mat-form-field class="full-width">
+                        <mat-label>Latitude</mat-label>
+                        <input
+                            matInput
+                            type="number"
+                            step="any"
+                            formControlName="lat"
+                            placeholder="Ex. 58.933" />
+                    </mat-form-field>
+                </div>
 
-				<div class="col-lg-6">
-					<mat-form-field class="full-width">
-						<mat-label>Longitude</mat-label>
-						<input matInput type="number" step="any" formControlName="long" placeholder="Ex. 58.933" />
-					</mat-form-field>
-				</div>
-			</div>
+                <div class="col-lg-6">
+                    <mat-form-field class="full-width">
+                        <mat-label>Longitude</mat-label>
+                        <input
+                            matInput
+                            type="number"
+                            step="any"
+                            formControlName="long"
+                            placeholder="Ex. 58.933" />
+                    </mat-form-field>
+                </div>
+            </div>
 
-			<div class="row mb-3">
-				<div class="col-lg-12">
-					<mat-checkbox [(ngModel)]="canada_selected" [ngModelOptions]="{ standalone: true }" (change)="getCanadaAddress($event)"> Canada Address </mat-checkbox>
-				</div>
-			</div>
+            <div class="row mb-3">
+                <div class="col-lg-12">
+                    <mat-checkbox
+                        [(ngModel)]="canada_selected"
+                        [ngModelOptions]="{ standalone: true }"
+                        (change)="getCanadaAddress($event)">
+                        Canada Address
+                    </mat-checkbox>
+                </div>
+            </div>
 
-			<div class="row">
-				<div class="col-lg-6">
-					<mat-form-field class="full-width">
-						<mat-label>Address</mat-label>
-						<input matInput type="text" formControlName="address" placeholder="Ex. 21st Drive Fifth Avenue Place" />
-					</mat-form-field>
-				</div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <mat-form-field class="full-width">
+                        <mat-label>Address</mat-label>
+                        <input
+                            matInput
+                            type="text"
+                            formControlName="address"
+                            placeholder="Ex. 21st Drive Fifth Avenue Place" />
+                    </mat-form-field>
+                </div>
 
-				<ng-container *ngIf="cities_loaded; else loadingCities">
-					<div class="col-lg-6">
-						<app-autocomplete-field
-							[label]="'City'"
-							[placeholder]="'Ex. Chicago'"
-							(data_value)="setCity($event, true)"
-							[key_of_value]="'city_state'"
-							[data_reference]="city_state"
-							[search_keyword]="'city_state'"
-							[primary_keyword]="'city_state'"
-							[new_value]="city_selected"
-							[initial_value]="city_selected"
-							[is_city]="true">
-						</app-autocomplete-field>
-					</div>
-				</ng-container>
+                <ng-container *ngIf="cities_loaded; else loadingCities">
+                    <div class="col-lg-6">
+                        <app-autocomplete-field
+                            [label]="'City'"
+                            [placeholder]="'Ex. Chicago'"
+                            (data_value)="setCity($event, true)"
+                            [key_of_value]="'city_state'"
+                            [data_reference]="city_state"
+                            [search_keyword]="'city_state'"
+                            [primary_keyword]="'city_state'"
+                            [new_value]="city_selected"
+                            [initial_value]="city_selected"
+                            [is_city]="true">
+                        </app-autocomplete-field>
+                    </div>
+                </ng-container>
 
-				<ng-template #loadingCities>
-					<div class="flex-even">
-						<div class="d-flex full-width">
-							<div class="mr-4 mt-2">
-								<span class="md-text font-italic">Loading Cities...</span>
-							</div>
-							<app-spinner [diameter]="20"></app-spinner>
-						</div>
-					</div>
-				</ng-template>
-			</div>
+                <ng-template #loadingCities>
+                    <div class="flex-even">
+                        <div class="d-flex full-width">
+                            <div class="mr-4 mt-2">
+                                <span class="md-text font-italic">Loading Cities...</span>
+                            </div>
+                            <app-spinner [diameter]="20"></app-spinner>
+                        </div>
+                    </div>
+                </ng-template>
+            </div>
 
-			<div class="row">
-				<div class="col-lg-4">
-					<mat-form-field class="full-width">
-						<mat-label>State</mat-label>
-						<input matInput type="text" formControlName="state" placeholder="Ex. IL" />
-					</mat-form-field>
-				</div>
-				<div class="col-lg-4">
-					<mat-form-field class="full-width">
-						<mat-label>Region</mat-label>
-						<input matInput type="text" formControlName="region" placeholder="Ex. SW" />
-					</mat-form-field>
-				</div>
+            <div class="row">
+                <div class="col-lg-4">
+                    <mat-form-field class="full-width">
+                        <mat-label>State</mat-label>
+                        <input matInput type="text" formControlName="state" placeholder="Ex. IL" />
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-4">
+                    <mat-form-field class="full-width">
+                        <mat-label>Region</mat-label>
+                        <input matInput type="text" formControlName="region" placeholder="Ex. SW" />
+                    </mat-form-field>
+                </div>
 
-				<div class="col-lg-4">
-					<mat-form-field class="full-width">
-						<mat-label>Zip Code</mat-label>
-						<input matInput type="text" formControlName="zip" placeholder="Ex. 54001" />
-					</mat-form-field>
-				</div>
-			</div>
+                <div class="col-lg-4">
+                    <mat-form-field class="full-width">
+                        <mat-label>Zip Code</mat-label>
+                        <input matInput type="text" formControlName="zip" placeholder="Ex. 54001" />
+                    </mat-form-field>
+                </div>
+            </div>
 
-			<button mat-button mat-raised-button type="submit" class="theme-btn mt-4 mr-2" color="primary" [disabled]="edit_advertiser_form.invalid || (canada_selected && edit_advertiser_form.get('zip').value.length !== 6) || (!canada_selected && edit_advertiser_form.get('zip').value.length !== 5)">
-				Update
-			</button>
-			<button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="false">Cancel</button>
-		</form>
-	</ng-container>
+            <button
+                mat-button
+                mat-raised-button
+                type="submit"
+                class="theme-btn mt-4 mr-2"
+                color="primary"
+                [disabled]="
+                    edit_advertiser_form.invalid ||
+                    (canada_selected && edit_advertiser_form.get('zip').value.length !== 6) ||
+                    (!canada_selected && edit_advertiser_form.get('zip').value.length !== 5)
+                ">
+                Update
+            </button>
+            <button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="false">
+                Cancel
+            </button>
+        </form>
+    </ng-container>
 </div>
 
 <ng-template #loading>
-	<div class="py-5">
-		<app-spinner></app-spinner>
-	</div>
+    <div class="py-5">
+        <app-spinner></app-spinner>
+    </div>
 </ng-template>
 
 <ng-template #loaderSmall>
-	<app-spinner [diameter]="60"></app-spinner>
+    <app-spinner [diameter]="60"></app-spinner>
 </ng-template>

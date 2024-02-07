@@ -10,8 +10,16 @@
             <div class="col-lg-6 pl-0">
                 <mat-form-field class="full-width" appearance="fill" appDefaultDateFormat>
                     <mat-label class="md-text">Start Date</mat-label>
-                    <input formControlName="start_date" (dateInput)="onSelectStartDate($event.value)" matInput [matDatepicker]="datePicker" readonly />
-                    <mat-datepicker-toggle matSuffix [for]="datePicker" [disabled]="searching"></mat-datepicker-toggle>
+                    <input
+                        formControlName="start_date"
+                        (dateInput)="onSelectStartDate($event.value)"
+                        matInput
+                        [matDatepicker]="datePicker"
+                        readonly />
+                    <mat-datepicker-toggle
+                        matSuffix
+                        [for]="datePicker"
+                        [disabled]="searching"></mat-datepicker-toggle>
                     <mat-datepicker #datePicker></mat-datepicker>
                 </mat-form-field>
             </div>
@@ -19,8 +27,17 @@
             <div class="col-lg-6 pl-0">
                 <mat-form-field class="full-width" appearance="fill" appDefaultDateFormat>
                     <mat-label class="md-text">End Date</mat-label>
-                    <input formControlName="end_date" (dateInput)="onSelectEndDate($event.value)" matInput [matDatepicker]="datePicker2" [min]="start_date" readonly />
-                    <mat-datepicker-toggle matSuffix [for]="datePicker2" [disabled]="searching"></mat-datepicker-toggle>
+                    <input
+                        formControlName="end_date"
+                        (dateInput)="onSelectEndDate($event.value)"
+                        matInput
+                        [matDatepicker]="datePicker2"
+                        [min]="start_date"
+                        readonly />
+                    <mat-datepicker-toggle
+                        matSuffix
+                        [for]="datePicker2"
+                        [disabled]="searching"></mat-datepicker-toggle>
                     <mat-datepicker #datePicker2></mat-datepicker>
                 </mat-form-field>
             </div>
@@ -46,8 +63,7 @@
                 [loading_search]="loading_search"
                 [disabled]="(!start_date && !end_date) || is_dealer"
                 [initial_value]="dealer_name"
-                [new_value]="dealer_name"
-            >
+                [new_value]="dealer_name">
             </app-autocomplete-field>
         </div>
         <div class="row"></div>
@@ -60,20 +76,28 @@
                 [primary_keyword]="'title'"
                 [secondary_keyword]="'title'"
                 (searched)="filterData($event)"
-                [api_search]="true"
-            ></app-search-field>
+                [api_search]="true"></app-search-field>
         </div>
         <div class="row"></div>
         <div class="col-lg-12 pl-0" *ngIf="selected_dealer_name != '' && filtered_data.length != 0">
             <div class="offset-6 col-lg-6 mb-2 pr-0 text-right">
-                <button mat-button mat-raised-button class="theme-btn" (click)="exportTable('dealer')" [disabled]="searching || workbook_generation" title="Export to CSV">
-                    <span class="button-label" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">
-                        {{ !workbook_generation ? "Export Results" : "Generating CSV" }}
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn"
+                    (click)="exportTable('dealer')"
+                    [disabled]="searching || workbook_generation"
+                    title="Export to CSV">
+                    <span
+                        class="button-label"
+                        [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">
+                        {{ !workbook_generation ? 'Export Results' : 'Generating CSV' }}
                     </span>
                     <span
-                        class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }} ml-2 sm-text"
-                        [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"
-                    ></span>
+                        class="{{
+                            !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin'
+                        }} ml-2 sm-text"
+                        [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
                 </button>
             </div>
         </div>
@@ -98,8 +122,7 @@
                             (page_triggered)="getMediaFiles($event)"
                             [content_metrics]="true"
                             [query_params]="{ start_date: start_date, end_date: end_date }"
-                            (export_content_details)="setContentSelected($event)"
-                        >
+                            (export_content_details)="setContentSelected($event)">
                         </app-data-table>
                     </mat-card>
                 </ng-container>
@@ -112,7 +135,10 @@
                         <i class="text-gray fa-5x far fa-file-alt"></i>
                     </div>
                     <h3 class="text-gray col-lg-12">No Results Found.</h3>
-                    <span class="text-gray col-lg-12">Try adjusting your date range or dealer to find what you're looking for.</span>
+                    <span class="text-gray col-lg-12"
+                        >Try adjusting your date range or dealer to find what you're looking
+                        for.</span
+                    >
                 </mat-card>
             </div>
         </ng-template>

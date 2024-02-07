@@ -3,23 +3,23 @@
     padding: 0;
 }
 
-button.mat-menu-panel  {
+button.mat-menu-panel {
     height: 200px !important;
     overflow: hidden;
 }
 
 .button-group {
-	.theme-btn {
-		border-radius: 0;
+    .theme-btn {
+        border-radius: 0;
 
-		&:first-child {
-			border-top-left-radius: 5px;
-			border-bottom-left-radius: 5px;
-		}
+        &:first-child {
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+        }
 
-		&:last-child {
-			border-top-right-radius: 5px;
-			border-bottom-right-radius: 5px;
-		}
-	}
+        &:last-child {
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+    }
 }

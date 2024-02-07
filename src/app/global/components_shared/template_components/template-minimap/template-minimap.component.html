@@ -1,16 +1,19 @@
-<div class="template-wrapper" [ngClass]="larger ? 'larger' : ''" [ngStyle]="{ 'height' : height, 'width' : width }">
+<div
+    class="template-wrapper"
+    [ngClass]="larger ? 'larger' : ''"
+    [ngStyle]="{ height: height, width: width }">
     <ng-container *ngFor="let t of template_data.templateZones">
-		<app-template-zones
-			[zone_name]="t.name"
-			[zone_background]="t.background"
-			[zone_width]="(t.width/1920)*100"
-			[zone_height]="(t.height/1080)*100"
-			[zone_pos_x]="(t.xPos/1920)*100"
-			[zone_pos_y]="(t.yPos/1080)*100"
-			[zone_order]="t.order"
-			[clickable_zone]="clickable"
-			[is_interactive]="is_interactive"
-			[is_focus]="zone_focus == t.name ? true : false">
-		</app-template-zones>  
+        <app-template-zones
+            [zone_name]="t.name"
+            [zone_background]="t.background"
+            [zone_width]="(t.width / 1920) * 100"
+            [zone_height]="(t.height / 1080) * 100"
+            [zone_pos_x]="(t.xPos / 1920) * 100"
+            [zone_pos_y]="(t.yPos / 1080) * 100"
+            [zone_order]="t.order"
+            [clickable_zone]="clickable"
+            [is_interactive]="is_interactive"
+            [is_focus]="zone_focus == t.name ? true : false">
+        </app-template-zones>
     </ng-container>
 </div>

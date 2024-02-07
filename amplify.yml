@@ -3,7 +3,7 @@ frontend:
     phases:
         preBuild:
             commands:
-                - nvm use $VERSION_NODE_12
+                - nvm use $VERSION_NODE_14
                 - npm config set legacy-peer-deps true
         build:
             commands:
@@ -13,7 +13,7 @@ frontend:
     artifacts:
         baseDirectory: dist/dashboard-material
         files:
-            - '**/*'
+            - "**/*"
     cache:
         paths:
             - node_modules/**/*

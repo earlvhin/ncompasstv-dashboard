@@ -1,15 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-warning-popup',
-  templateUrl: './warning-popup.component.html',
-  styleUrls: ['./warning-popup.component.scss']
+    selector: 'app-warning-popup',
+    templateUrl: './warning-popup.component.html',
+    styleUrls: ['./warning-popup.component.scss'],
 })
 export class WarningPopupComponent implements OnInit {
+    constructor() {}
 
-  constructor() { }
-
-  ngOnInit() {
-  }
-
+    ngOnInit() {}
 }

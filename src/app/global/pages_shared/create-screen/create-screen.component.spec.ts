@@ -3,23 +3,22 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { CreateScreenComponent } from './create-screen.component';
 
 describe('CreateScreenComponent', () => {
-  let component: CreateScreenComponent;
-  let fixture: ComponentFixture<CreateScreenComponent>;
+    let component: CreateScreenComponent;
+    let fixture: ComponentFixture<CreateScreenComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ CreateScreenComponent ]
-    })
-    .compileComponents();
-  }));
+    beforeEach(async(() => {
+        TestBed.configureTestingModule({
+            declarations: [CreateScreenComponent],
+        }).compileComponents();
+    }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(CreateScreenComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(CreateScreenComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

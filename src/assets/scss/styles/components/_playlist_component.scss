@@ -1,209 +1,212 @@
 .media-panel {
-	min-height: 435px;
-	overflow: hidden;
+    min-height: 435px;
+    overflow: hidden;
 }
 
 .example-container {
-	width: 400px;
-	max-width: 100%;
-	margin: 0 25px 25px 0;
-	display: inline-block;
-	vertical-align: top;
+    width: 400px;
+    max-width: 100%;
+    margin: 0 25px 25px 0;
+    display: inline-block;
+    vertical-align: top;
 }
 
 .example-list {
-	background: $playlist_bg;
-	border-radius: 4px;
-	overflow: hidden;
-	display: block;
-	flex-wrap: wrap;
+    background: $playlist_bg;
+    border-radius: 4px;
+    overflow: hidden;
+    display: block;
+    flex-wrap: wrap;
 }
 
 .example-box {
-	color: rgba(0, 0, 0, 0.87);
-	cursor: move;
-	background: white;
-	font-size: 14px;
+    color: rgba(0, 0, 0, 0.87);
+    cursor: move;
+    background: white;
+    font-size: 14px;
 }
 
 .cdk-drag-preview {
-	box-sizing: border-box;
-	border-radius: 4px;
-	box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+    box-sizing: border-box;
+    border-radius: 4px;
+    box-shadow:
+        0 5px 5px -3px rgba(0, 0, 0, 0.2),
+        0 8px 10px 1px rgba(0, 0, 0, 0.14),
+        0 3px 14px 2px rgba(0, 0, 0, 0.12);
 }
 
 .cdk-drag-placeholder {
-	opacity: 1;
+    opacity: 1;
 }
 
 .cdk-drag-animating {
-	transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
 .example-box:last-child {
-	border: none;
+    border: none;
 }
 
 .example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
-	transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
 .playlist-content-panel {
-	background-color: $playlist_bg;
-	min-height: 400px;
-	max-height: 600px;
-	overflow-y: scroll;
-	padding: 5px;
-	transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    background-color: $playlist_bg;
+    min-height: 400px;
+    max-height: 600px;
+    overflow-y: scroll;
+    padding: 5px;
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
 .playlist-media-panel {
-	background-color: $playlist_bg;
-	height: 450px;
-	overflow-y: scroll;
-	padding: 5px;
-	transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    background-color: $playlist_bg;
+    height: 450px;
+    overflow-y: scroll;
+    padding: 5px;
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
 .playlist-option-panel {
-	min-height: 300px;
+    min-height: 300px;
 }
 
 .no-content-yet {
-	left: 0;
-	top: 0;
-	width: 100%;
+    left: 0;
+    top: 0;
+    width: 100%;
 }
 
 .demo-panel {
-	video {
-		width: 100%;
-		height: 100%;
-		position: absolute;
-		left: 0;
-		top: 0;
-	}
+    video {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
 
-	img {
-		object-fit: contain;
-		position: absolute;
-		left: 0;
-		right: 0;
-		margin: auto;
-		top: 0;
-		height: 100%;
-		width: 100%;
-	}
+    img {
+        object-fit: contain;
+        position: absolute;
+        left: 0;
+        right: 0;
+        margin: auto;
+        top: 0;
+        height: 100%;
+        width: 100%;
+    }
 }
 
 .screen-demo-panel {
-	video {
-		object-fit: fill;
-		width: 100%;
-		height: 100%;
-		position: absolute;
-		left: 0;
-		top: 0;
-	}
+    video {
+        object-fit: fill;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
 
-	img {
-		position: absolute;
-		left: 0;
-		right: 0;
-		margin: auto;
-		top: 0;
-		height: 100%;
-		width: 100%;
-	}
+    img {
+        position: absolute;
+        left: 0;
+        right: 0;
+        margin: auto;
+        top: 0;
+        height: 100%;
+        width: 100%;
+    }
 }
 
 .playlist-expansion-header {
-	height: 50px;
+    height: 50px;
 }
 
 .playlist-expansion-header .mat-expansion-indicator {
-	display: none !important;
+    display: none !important;
 }
 
 .cdk-drop-list {
-	&.mat-accordion {
-		display: block;
-		// max-height: 400px !important;
-	}
+    &.mat-accordion {
+        display: block;
+        // max-height: 400px !important;
+    }
 }
 
 .playlist-expansion-panel .mat-expansion-panel-body {
-	padding: 0;
+    padding: 0;
 }
 
 .content-holder {
-	background: #000;
-	width: 100%;
-	padding-top: 56.25%;
-	position: relative;
+    background: #000;
+    width: 100%;
+    padding-top: 56.25%;
+    position: relative;
 
-	img,
-	iframe,
-	video {
-		height: 100%;
-		position: absolute;
-		left: 0;
-		right: 0;
-		top: 0;
-		margin: auto;
-		width: 100%;
-		object-fit: contain;
-	}
+    img,
+    iframe,
+    video {
+        height: 100%;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        margin: auto;
+        width: 100%;
+        object-fit: contain;
+    }
 }
 
 .screen-demo-container {
-	img,
-	video,
-	iframe {
-		object-fit: unset !important;
-	}
+    img,
+    video,
+    iframe {
+        object-fit: unset !important;
+    }
 }
 
 //Playlist Content
 .content-thumbnail {
-	height: 70px;
-	width: 100%;
-	position: relative;
-	overflow: hidden;
+    height: 70px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
 
-	img {
-		object-fit: contain;
-		object-position: center;
-	}
+    img {
+        object-fit: contain;
+        object-position: center;
+    }
 
-	.number-overlay {
-		background: rgba(#000, 0.8);
-		color: $primary;
-		position: absolute;
-		width: 100%;
-		padding: 5px;
-		left: 0;
-		top: 0;
-	}
+    .number-overlay {
+        background: rgba(#000, 0.8);
+        color: $primary;
+        position: absolute;
+        width: 100%;
+        padding: 5px;
+        left: 0;
+        top: 0;
+    }
 }
 
 .remove-content {
-	background-color: $transparent;
-	color: $danger;
+    background-color: $transparent;
+    color: $danger;
 }
 
 .host_license_list {
-	&:last-child {
-		margin-bottom: 0;
-	}
+    &:last-child {
+        margin-bottom: 0;
+    }
 }
 
 .loading-overlay {
-	background-color: rgba(#fff, 0.95);
-	position: absolute;
-	height: 100%;
-	width: 100%;
-	left: 0;
-	top: 0;
-	z-index: 9;
+    background-color: rgba(#fff, 0.95);
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    top: 0;
+    z-index: 9;
 }

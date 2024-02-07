@@ -1,75 +1,100 @@
 <div class="mt-5" *ngIf="!loadingDetails; else loader">
-	<div class="col-lg-12 pb-3 p-0">
-		<div class="pt-2 pb-4 col-lg-12 p-0 d-flex">
-			<div class="col-lg-8 p-0">
-				<h3 class="text-gray">PAYMENT OPTIONS :</h3>
-			</div>
-			<div class="col-lg-4 p-0 text-right">
-				<button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2 _info" (click)="addCard()">
-					<i class="far fa-credit-card"></i> <span class="ml-2 button_text_animation">Add Card</span>
-				</button>
-			</div>
-		</div>
-		<div class="col-lg-12 p-0 d-flex payment-options" *ngIf="actualCreditCardDetails.length > 0; else no_cc">
-			<div class="col-lg-3 pl-0" *ngFor="let card of actualCreditCardDetails; let i = index">
-				<div class="credit-card" *ngIf="i < 4" [ngClass]="i === 0 ? 'bg-primary' : ''">
-					<div class="col-lg-12 pt-3 d-flex">
-						<div class="icon text-white col-lg-2">
-							<i class="fab fa-cc-{{ card.brand }}"></i>
-						</div>
-						<div class="lg-text text-white col-lg-10 text-right pt-3">**** **** **** {{ card.last4 }}</div>
-					</div>
-					<div class="col-lg-12 pt-3 text-white md-text">
-						<div class="col-lg-12">
-							{{ card.name }}
-						</div>
-						<div class="col-lg-12 p-0 d-flex">
-							<div class="col-lg-4 pt-4">
-								<span class="bg-white text-primary f-500 sm-text pl-3 pr-3 pt-2 pb-2 br-5" *ngIf="i === 0"> PRIMARY </span>
-							</div>
-							<div class="col-lg-8 pt-4 text-right">{{ card.exp_month }} / {{ card.exp_year }}</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-lg-12 text-right mt-3" *ngIf="actualCreditCardDetails.length > 4">
-			<span class="clickable text-primary md-text" (click)="viewAllCards()">VIEW ALL CARDS</span>
-		</div>
-		<ng-template #no_cc>
-			<div class="col-lg-12 p-0 d-flex payment-options">
-				<div class="col-lg-3">
-					<div class="credit-card disable-card">
-						<div class="col-lg-12 pt-3 d-flex">
-							<div class="icon text-white col-lg-2">
-								<i class="far fa-credit-card"></i>
-							</div>
-							<div class="lg-text text-white col-lg-10 text-right pt-3">**** **** **** ****</div>
-						</div>
-						<div class="col-lg-12 pt-3 text-white md-text">
-							<div class="col-lg-12">No Credit Card Added</div>
-							<div class="col-lg-12">--</div>
-							<div class="col-lg-12 pt-2 text-right">00 / 0000</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</ng-template>
-	</div>
-	<div class="more_info col-lg-12 p-0 d-flex pb-5">
-		<div class="col-lg-4 p-0">
-			<div class="white-bg col-lg-12 p-4">
-				<h4 class="text-dark">MANAGE CARDS</h4>
-				<div class="col-lg-12 pt-3 p-0">
-					<mat-form-field class="full-width content-filter-dropdown">
-						<mat-label>Select Card Number</mat-label>
-						<!-- <mat-select (selectionChange)="onSearchOption($event.value)" [(value)]="currentSearchOption" [disabled]="loading_hosts">  -->
-						<mat-select (selectionChange)="cardSelection($event)" [(ngModel)]="cardNumber">
-							<mat-option value="">---- ---- ---- ----</mat-option>
-							<mat-option *ngFor="let card of actualCreditCardDetails" [value]="card.last4">**** **** **** {{ card.last4 }}</mat-option>
-						</mat-select>
-					</mat-form-field>
-					<!-- <div class="col-lg-12 p-0 pb-3">
+    <div class="col-lg-12 pb-3 p-0">
+        <div class="pt-2 pb-4 col-lg-12 p-0 d-flex">
+            <div class="col-lg-8 p-0">
+                <h3 class="text-gray">PAYMENT OPTIONS :</h3>
+            </div>
+            <div class="col-lg-4 p-0 text-right">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn pi-control sm-text mr-2 _info"
+                    (click)="addCard()">
+                    <i class="far fa-credit-card"></i>
+                    <span class="ml-2 button_text_animation">Add Card</span>
+                </button>
+            </div>
+        </div>
+        <div
+            class="col-lg-12 p-0 d-flex payment-options"
+            *ngIf="actualCreditCardDetails.length > 0; else no_cc">
+            <div class="col-lg-3 pl-0" *ngFor="let card of actualCreditCardDetails; let i = index">
+                <div class="credit-card" *ngIf="i < 4" [ngClass]="i === 0 ? 'bg-primary' : ''">
+                    <div class="col-lg-12 pt-3 d-flex">
+                        <div class="icon text-white col-lg-2">
+                            <i class="fab fa-cc-{{ card.brand }}"></i>
+                        </div>
+                        <div class="lg-text text-white col-lg-10 text-right pt-3">
+                            **** **** **** {{ card.last4 }}
+                        </div>
+                    </div>
+                    <div class="col-lg-12 pt-3 text-white md-text">
+                        <div class="col-lg-12">
+                            {{ card.name }}
+                        </div>
+                        <div class="col-lg-12 p-0 d-flex">
+                            <div class="col-lg-4 pt-4">
+                                <span
+                                    class="bg-white text-primary f-500 sm-text pl-3 pr-3 pt-2 pb-2 br-5"
+                                    *ngIf="i === 0">
+                                    PRIMARY
+                                </span>
+                            </div>
+                            <div class="col-lg-8 pt-4 text-right">
+                                {{ card.exp_month }} / {{ card.exp_year }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12 text-right mt-3" *ngIf="actualCreditCardDetails.length > 4">
+            <span class="clickable text-primary md-text" (click)="viewAllCards()"
+                >VIEW ALL CARDS</span
+            >
+        </div>
+        <ng-template #no_cc>
+            <div class="col-lg-12 p-0 d-flex payment-options">
+                <div class="col-lg-3">
+                    <div class="credit-card disable-card">
+                        <div class="col-lg-12 pt-3 d-flex">
+                            <div class="icon text-white col-lg-2">
+                                <i class="far fa-credit-card"></i>
+                            </div>
+                            <div class="lg-text text-white col-lg-10 text-right pt-3">
+                                **** **** **** ****
+                            </div>
+                        </div>
+                        <div class="col-lg-12 pt-3 text-white md-text">
+                            <div class="col-lg-12">No Credit Card Added</div>
+                            <div class="col-lg-12">--</div>
+                            <div class="col-lg-12 pt-2 text-right">00 / 0000</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </div>
+    <div class="more_info col-lg-12 p-0 d-flex pb-5">
+        <div class="col-lg-4 p-0">
+            <div class="white-bg col-lg-12 p-4">
+                <h4 class="text-dark">MANAGE CARDS</h4>
+                <div class="col-lg-12 pt-3 p-0">
+                    <mat-form-field class="full-width content-filter-dropdown">
+                        <mat-label>Select Card Number</mat-label>
+                        <!-- <mat-select (selectionChange)="onSearchOption($event.value)" [(value)]="currentSearchOption" [disabled]="loading_hosts">  -->
+                        <mat-select
+                            (selectionChange)="cardSelection($event)"
+                            [(ngModel)]="cardNumber">
+                            <mat-option value="">---- ---- ---- ----</mat-option>
+                            <mat-option
+                                *ngFor="let card of actualCreditCardDetails"
+                                [value]="card.last4"
+                                >**** **** **** {{ card.last4 }}</mat-option
+                            >
+                        </mat-select>
+                    </mat-form-field>
+                    <!-- <div class="col-lg-12 p-0 pb-3">
                         <mat-checkbox disabled>
                             <span class="xsm-text mr-2"></span>
                             <span class="sm-text">
@@ -77,125 +102,151 @@
                             </span>
                         </mat-checkbox>
                     </div> -->
-					<div class="col-lg-12 p-0">
-						<form [formGroup]="cardForm">
-							<mat-form-field class="full-width position-relative">
-								<mat-label>Name on card</mat-label>
-								<input formControlName="Name" matInput type="text" required />
-							</mat-form-field>
-							<mat-form-field class="full-width position-relative text-light-gray" required>
-								<mat-label>Email</mat-label>
-								<input formControlName="Email" matInput type="email" readonly />
-							</mat-form-field>
-							<div class="expiry-fields d-flex align-items-center">
-								<mat-form-field class="month col-lg-6 p-0 pr-5">
-									<mat-label>Expiry Month</mat-label>
-									<input formControlName="ExpirationMonth" matInput type="tel" maxlength="2" required />
-								</mat-form-field>
-								<mat-label class="divider">/</mat-label>
-								<mat-form-field class="year col-lg-6 p-0 pl-5">
-									<mat-label>Expiry Year</mat-label>
-									<input formControlName="ExpirationYear" matInput type="tel" maxlength="4" required />
-								</mat-form-field>
-							</div>
-							<mat-form-field class="full-width position-relative text-light-gray">
-								<mat-label>CVC</mat-label>
-								<input formControlName="Cvc" matInput type="password" required readonly />
-							</mat-form-field>
-						</form>
-					</div>
-				</div>
-				<div class="col-lg-12 text-right pr-0">
-					<button
-						mat-button
-						mat-raised-button
-						class="theme-btn mt-4 mr-3"
-						(click)="updateCard()"
-						[disabled]="!cardSelected || cardNumber === ''">
-						Update
-					</button>
-					<button
-						mat-button
-						mat-raised-button
-						class="theme-btn mt-4 bg-danger"
-						(click)="deleteCard()"
-						[disabled]="!cardSelected || cardNumber === ''">
-						Delete
-					</button>
-				</div>
-			</div>
-		</div>
-		<div class="col-lg-8 d-flex">
-			<div class="white-bg col-lg-12 p-4">
-				<h4 class="text-dark">ADDRESS:</h4>
-				<div class="col-lg-12 d-flex p-0 pt-4">
-					<div class="col-lg-6 pl-0">
-						<div class="col-lg-12 p-0 pb-3">
-							<h4 class="text-light-gray">DEALER ADDRESS</h4>
-						</div>
-						<div class="col-lg-12 p-0">
-							<form [formGroup]="dealerAddressForm">
-								<mat-form-field class="full-width position-relative">
-									<mat-label>Address</mat-label>
-									<input formControlName="AddressLine1" matInput type="text" />
-								</mat-form-field>
-								<mat-form-field class="full-width position-relative">
-									<mat-label>City</mat-label>
-									<input formControlName="AddressCity" matInput type="text" />
-								</mat-form-field>
-								<mat-form-field class="full-width position-relative">
-									<mat-label>State</mat-label>
-									<input formControlName="AddressState" matInput type="text" />
-								</mat-form-field>
-								<mat-form-field class="full-width position-relative">
-									<mat-label>ZIP Code</mat-label>
-									<input formControlName="AddressZip" matInput type="tel" />
-								</mat-form-field>
-							</form>
-						</div>
-					</div>
-					<div class="col-lg-6 p-0">
-						<div class="col-lg-12 d-flex p-0 pb-3">
-							<div class="col-lg-6 p-0">
-								<h4 class="text-gray">BILLING ADDRESS</h4>
-							</div>
-							<div class="col-lg-6 text-right p-0">
-								<mat-slide-toggle class="md-text text-gray" [labelPosition]="'before'" (change)="onSetAsCurrentAddress($event)">
-									Same as Dealer Address
-								</mat-slide-toggle>
-							</div>
-						</div>
-						<div class="col-lg-12 p-0">
-							<form [formGroup]="paymentSettingForm">
-								<mat-form-field class="full-width position-relative">
-									<mat-label>Address</mat-label>
-									<input formControlName="AddressLine1" matInput type="text" />
-								</mat-form-field>
-								<mat-form-field class="full-width position-relative">
-									<mat-label>City</mat-label>
-									<input formControlName="AddressCity" matInput type="text" />
-								</mat-form-field>
-								<mat-form-field class="full-width position-relative">
-									<mat-label>State</mat-label>
-									<input formControlName="AddressState" matInput type="text" />
-								</mat-form-field>
-								<mat-form-field class="full-width position-relative">
-									<mat-label>ZIP Code</mat-label>
-									<input formControlName="AddressZip" matInput type="tel" />
-								</mat-form-field>
-							</form>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-12 text-right pr-0">
-					<button mat-button mat-raised-button class="theme-btn mt-4" (click)="updateBillingDetails()">Save</button>
-				</div>
-			</div>
-		</div>
-	</div>
+                    <div class="col-lg-12 p-0">
+                        <form [formGroup]="cardForm">
+                            <mat-form-field class="full-width position-relative">
+                                <mat-label>Name on card</mat-label>
+                                <input formControlName="Name" matInput type="text" required />
+                            </mat-form-field>
+                            <mat-form-field
+                                class="full-width position-relative text-light-gray"
+                                required>
+                                <mat-label>Email</mat-label>
+                                <input formControlName="Email" matInput type="email" readonly />
+                            </mat-form-field>
+                            <div class="expiry-fields d-flex align-items-center">
+                                <mat-form-field class="month col-lg-6 p-0 pr-5">
+                                    <mat-label>Expiry Month</mat-label>
+                                    <input
+                                        formControlName="ExpirationMonth"
+                                        matInput
+                                        type="tel"
+                                        maxlength="2"
+                                        required />
+                                </mat-form-field>
+                                <mat-label class="divider">/</mat-label>
+                                <mat-form-field class="year col-lg-6 p-0 pl-5">
+                                    <mat-label>Expiry Year</mat-label>
+                                    <input
+                                        formControlName="ExpirationYear"
+                                        matInput
+                                        type="tel"
+                                        maxlength="4"
+                                        required />
+                                </mat-form-field>
+                            </div>
+                            <mat-form-field class="full-width position-relative text-light-gray">
+                                <mat-label>CVC</mat-label>
+                                <input
+                                    formControlName="Cvc"
+                                    matInput
+                                    type="password"
+                                    required
+                                    readonly />
+                            </mat-form-field>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-lg-12 text-right pr-0">
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn mt-4 mr-3"
+                        (click)="updateCard()"
+                        [disabled]="!cardSelected || cardNumber === ''">
+                        Update
+                    </button>
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn mt-4 bg-danger"
+                        (click)="deleteCard()"
+                        [disabled]="!cardSelected || cardNumber === ''">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8 d-flex">
+            <div class="white-bg col-lg-12 p-4">
+                <h4 class="text-dark">ADDRESS:</h4>
+                <div class="col-lg-12 d-flex p-0 pt-4">
+                    <div class="col-lg-6 pl-0">
+                        <div class="col-lg-12 p-0 pb-3">
+                            <h4 class="text-light-gray">DEALER ADDRESS</h4>
+                        </div>
+                        <div class="col-lg-12 p-0">
+                            <form [formGroup]="dealerAddressForm">
+                                <mat-form-field class="full-width position-relative">
+                                    <mat-label>Address</mat-label>
+                                    <input formControlName="AddressLine1" matInput type="text" />
+                                </mat-form-field>
+                                <mat-form-field class="full-width position-relative">
+                                    <mat-label>City</mat-label>
+                                    <input formControlName="AddressCity" matInput type="text" />
+                                </mat-form-field>
+                                <mat-form-field class="full-width position-relative">
+                                    <mat-label>State</mat-label>
+                                    <input formControlName="AddressState" matInput type="text" />
+                                </mat-form-field>
+                                <mat-form-field class="full-width position-relative">
+                                    <mat-label>ZIP Code</mat-label>
+                                    <input formControlName="AddressZip" matInput type="tel" />
+                                </mat-form-field>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 p-0">
+                        <div class="col-lg-12 d-flex p-0 pb-3">
+                            <div class="col-lg-6 p-0">
+                                <h4 class="text-gray">BILLING ADDRESS</h4>
+                            </div>
+                            <div class="col-lg-6 text-right p-0">
+                                <mat-slide-toggle
+                                    class="md-text text-gray"
+                                    [labelPosition]="'before'"
+                                    (change)="onSetAsCurrentAddress($event)">
+                                    Same as Dealer Address
+                                </mat-slide-toggle>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 p-0">
+                            <form [formGroup]="paymentSettingForm">
+                                <mat-form-field class="full-width position-relative">
+                                    <mat-label>Address</mat-label>
+                                    <input formControlName="AddressLine1" matInput type="text" />
+                                </mat-form-field>
+                                <mat-form-field class="full-width position-relative">
+                                    <mat-label>City</mat-label>
+                                    <input formControlName="AddressCity" matInput type="text" />
+                                </mat-form-field>
+                                <mat-form-field class="full-width position-relative">
+                                    <mat-label>State</mat-label>
+                                    <input formControlName="AddressState" matInput type="text" />
+                                </mat-form-field>
+                                <mat-form-field class="full-width position-relative">
+                                    <mat-label>ZIP Code</mat-label>
+                                    <input formControlName="AddressZip" matInput type="tel" />
+                                </mat-form-field>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12 text-right pr-0">
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn mt-4"
+                        (click)="updateBillingDetails()">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <ng-template #loader>
-	<div class="vh-50 d-flex align-items-center justify-content-center">
-		<app-spinner></app-spinner>
-	</div>
+    <div class="vh-50 d-flex align-items-center justify-content-center">
+        <app-spinner></app-spinner>
+    </div>
 </ng-template>

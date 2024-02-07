@@ -1,88 +1,109 @@
 <div class="theme-table" [ngClass]="paging ? 'with-page' : ''">
-	<table class="full-width" *ngIf="!isLoading; else loading">
-		<thead align="left" class="border-bottom">
-			<tr>
-				<th *ngFor="let column of tableColumns" [class]="column.class">{{ column.name }}</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr *ngFor="let data of tableData; let i = index">
-				<!-- TAGS ROW -->
-				<ng-container *ngIf="tableType === 'tags'; else tagOwnersData">
-					<td class="p-3">{{ paging.pageStart + i }}</td>
-					<!-- TAG NAME -->
-					<td class="p-3 tags">
-						<a
-							class="tag clickable"
-							placement="right"
-							[ngClass]="{ dealer: tab === 'dealer' }"
-							[ngbTooltip]="tagToolTip"
-							[style.backgroundColor]="data.tagColor"
-							(click)="clickedTagName(data)">
-							{{ data.name }}
-						</a>
+    <table class="full-width" *ngIf="!isLoading; else loading">
+        <thead align="left" class="border-bottom">
+            <tr>
+                <th *ngFor="let column of tableColumns" [class]="column.class">
+                    {{ column.name }}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of tableData; let i = index">
+                <!-- TAGS ROW -->
+                <ng-container *ngIf="tableType === 'tags'; else tagOwnersData">
+                    <td class="p-3">{{ paging.pageStart + i }}</td>
+                    <!-- TAG NAME -->
+                    <td class="p-3 tags">
+                        <a
+                            class="tag clickable"
+                            placement="right"
+                            [ngClass]="{ dealer: tab === 'dealer' }"
+                            [ngbTooltip]="tagToolTip"
+                            [style.backgroundColor]="data.tagColor"
+                            (click)="clickedTagName(data)">
+                            {{ data.name }}
+                        </a>
 
-						<ng-template #tagToolTip>
-							<span class="sm-text">{{ data.description ? data.description : 'No description available' }}</span>
-						</ng-template>
-					</td>
-					<!-- TAG COUNT -->
-					<td class="p-3 tags">{{ data.count }}</td>
-					<!-- ACTION BTNS -->
-					<td class="action-buttons">
-						<mat-icon class="no-select" color="primary" (click)="openDialog('edit_tag', data)">edit</mat-icon>
-						<mat-icon class="no-select text-danger" (click)="onDeleteTag(data.tagId)">delete</mat-icon>
-					</td>
-				</ng-container>
+                        <ng-template #tagToolTip>
+                            <span class="sm-text">{{
+                                data.description ? data.description : 'No description available'
+                            }}</span>
+                        </ng-template>
+                    </td>
+                    <!-- TAG COUNT -->
+                    <td class="p-3 tags">{{ data.count }}</td>
+                    <!-- ACTION BTNS -->
+                    <td class="action-buttons">
+                        <mat-icon
+                            class="no-select"
+                            color="primary"
+                            (click)="openDialog('edit_tag', data)"
+                            >edit</mat-icon
+                        >
+                        <mat-icon class="no-select text-danger" (click)="onDeleteTag(data.tagId)"
+                            >delete</mat-icon
+                        >
+                    </td>
+                </ng-container>
 
-				<!-- TAG OWNERS ROW -->
-				<ng-template #tagOwnersData>
-					<td class="p-3">{{ paging.pageStart + i }}</td>
-					<!-- OWNER NAME -->
-					<td class="p-3 w-30">
-						<div class="owner-name-container flex align-items-center">
-							<!-- <mat-icon class="owner-icon">{{ ownerIcons[data.tagTypeName.toLowerCase()] }}</mat-icon> -->
-							<div class="owner-icon">
-								<span>{{ ownerIcons[data.tagTypeName.toLowerCase()] }}</span>
-							</div>
-							<a [routerLink]="data.url" target="_blank">{{ data.displayName }}</a>
-						</div>
-					</td>
-					<!-- TAGS -->
-					<td class="p-3">
-						<div class="d-flex tags flex-wrap">
-							<div
-								class="tag d-flex align-items-center"
-								[ngClass]="{ dealer: tab === 'dealer' }"
-								*ngFor="let tag of data.tags"
-								[style.backgroundColor]="tag.tagColor">
-								<!-- TAG NAME -->
-								<div class="name">{{ tag.name }}</div>
-								<div class="remove-btn cursor-pointer" (click)="onDeleteTagFromOwner(tag.tagId, data.ownerId)">
-									<mat-icon class="no-select">close</mat-icon>
-								</div>
-							</div>
-						</div>
-					</td>
-					<td class="p-3 action-buttons">
-						<mat-icon class="no-select text-danger" (click)="onDeleteAllTagsFromOwner(data.ownerId)">delete</mat-icon>
-					</td>
-				</ng-template>
-			</tr>
-		</tbody>
-	</table>
+                <!-- TAG OWNERS ROW -->
+                <ng-template #tagOwnersData>
+                    <td class="p-3">{{ paging.pageStart + i }}</td>
+                    <!-- OWNER NAME -->
+                    <td class="p-3 w-30">
+                        <div class="owner-name-container flex align-items-center">
+                            <!-- <mat-icon class="owner-icon">{{ ownerIcons[data.tagTypeName.toLowerCase()] }}</mat-icon> -->
+                            <div class="owner-icon">
+                                <span>{{ ownerIcons[data.tagTypeName.toLowerCase()] }}</span>
+                            </div>
+                            <a [routerLink]="data.url" target="_blank">{{ data.displayName }}</a>
+                        </div>
+                    </td>
+                    <!-- TAGS -->
+                    <td class="p-3">
+                        <div class="d-flex tags flex-wrap">
+                            <div
+                                class="tag d-flex align-items-center"
+                                [ngClass]="{ dealer: tab === 'dealer' }"
+                                *ngFor="let tag of data.tags"
+                                [style.backgroundColor]="tag.tagColor">
+                                <!-- TAG NAME -->
+                                <div class="name">{{ tag.name }}</div>
+                                <div
+                                    class="remove-btn cursor-pointer"
+                                    (click)="onDeleteTagFromOwner(tag.tagId, data.ownerId)">
+                                    <mat-icon class="no-select">close</mat-icon>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-3 action-buttons">
+                        <mat-icon
+                            class="no-select text-danger"
+                            (click)="onDeleteAllTagsFromOwner(data.ownerId)"
+                            >delete</mat-icon
+                        >
+                    </td>
+                </ng-template>
+            </tr>
+        </tbody>
+    </table>
 </div>
 
 <div class="row" *ngIf="tableData.length > 0 && !paging">
-	<div class="col-lg-12 text-center mt-4">
-		<pagination-controls class="sm-text" (pageChange)="onPageChange($event)"></pagination-controls>
-	</div>
+    <div class="col-lg-12 text-center mt-4">
+        <pagination-controls
+            class="sm-text"
+            (pageChange)="onPageChange($event)"></pagination-controls>
+    </div>
 </div>
 
-<app-pagination-field [paging_data]="paging" (get_page)="clickedPageNumber($event)"></app-pagination-field>
+<app-pagination-field
+    [paging_data]="paging"
+    (get_page)="clickedPageNumber($event)"></app-pagination-field>
 
 <ng-template #loading>
-	<div class="py-4">
-		<app-spinner [diameter]="60"></app-spinner>
-	</div>
+    <div class="py-4">
+        <app-spinner [diameter]="60"></app-spinner>
+    </div>
 </ng-template>

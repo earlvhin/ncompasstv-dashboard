@@ -1,24 +1,28 @@
 <div class="d-flex align-items-center">
-	<div class="row p-3 w-100 m-0">
+    <div class="row p-3 w-100 m-0">
         <div class="col-lg-12 flex p-0">
             <div class="col-lg-10 p-0">
                 <h2 class="mb-2 text-left">
-                    <span class="text-primary">{{total}}</span> <span class="sm-text text-gray ml-3">{{new_this_week_label}}</span>
+                    <span class="text-primary">{{ total }}</span>
+                    <span class="sm-text text-gray ml-3">{{ new_this_week_label }}</span>
                 </h2>
             </div>
             <div class="col-lg-2 p-0">
                 <h2 class="mb-2 text-center">
                     <span class="text-gray cursor-pointer" (click)="navigateToLink()">
-                        <span class="{{icon}} with-primary-hover"></span>
+                        <span class="{{ icon }} with-primary-hover"></span>
                     </span>
                 </h2>
             </div>
         </div>
-        
+
         <div class="col-lg-12 p-0">
-            <span class="sm-text text-gray"> {{new_this_week}} New <span class="text-primary">{{new_this_week_label}}</span> this week</span>
+            <span class="sm-text text-gray">
+                {{ new_this_week }} New
+                <span class="text-primary">{{ new_this_week_label }}</span> this week</span
+            >
         </div>
-        
+
         <div class="col-lg-12 p-0">
             <mat-progress-bar
                 class="example-margin"
@@ -27,5 +31,5 @@
                 [value]="new_this_week">
             </mat-progress-bar>
         </div>
-	</div>
+    </div>
 </div>

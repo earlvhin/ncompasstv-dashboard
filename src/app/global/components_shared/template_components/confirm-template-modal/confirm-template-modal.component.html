@@ -4,30 +4,40 @@
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="template-drawing-board">
-                    <app-new-zone 
-                    *ngFor="let z of z_data.zones.templatezones"
-                    [zone_name]="z.name"
-                    [zone_background]="z.background"
-                    [zone_height]="(z.height/screen_height)*100"
-                    [zone_width]="(z.width/screen_width)*100"
-                    [zone_pos_x]="(z.xpos/screen_width)*100"
-                    [zone_pos_y]="(z.ypos/screen_height)*100">
+                    <app-new-zone
+                        *ngFor="let z of z_data.zones.templatezones"
+                        [zone_name]="z.name"
+                        [zone_background]="z.background"
+                        [zone_height]="(z.height / screen_height) * 100"
+                        [zone_width]="(z.width / screen_width) * 100"
+                        [zone_pos_x]="(z.xpos / screen_width) * 100"
+                        [zone_pos_y]="(z.ypos / screen_height) * 100">
                     </app-new-zone>
                 </div>
                 <p class="mb-4">Are you sure you want to save this template?</p>
-                <button mat-button mat-raised-button class="theme-btn mr-3" (click)="saveTemplate()">
-                    <span class="button-label">
-                        Save Template
-                    </span>
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn mr-3"
+                    (click)="saveTemplate()">
+                    <span class="button-label"> Save Template </span>
                     <span class="fas fa-save sm-text"></span>
                 </button>
 
-				<button mat-button mat-raised-button class="theme-btn mr-3" color="warn" [mat-dialog-close]="'cancel'">Cancel</button>
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn mr-3"
+                    color="warn"
+                    [mat-dialog-close]="'cancel'">
+                    Cancel
+                </button>
             </div>
         </div>
-    
+
         <ng-container *ngIf="is_submitted">
-            <div class="position-absolute h-100 w-100 loading-overlay text-center license-list overflow-hidden d-flex align-items-center justify-content-center">
+            <div
+                class="position-absolute h-100 w-100 loading-overlay text-center license-list overflow-hidden d-flex align-items-center justify-content-center">
                 <app-spinner></app-spinner>
             </div>
         </ng-container>
@@ -35,14 +45,12 @@
 </ng-container>
 
 <ng-template #success>
-    <div class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center py-5">
+    <div
+        class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center py-5">
         <div>
             <app-success-animation class="mb-2"></app-success-animation>
             <h3 class="mb-4">Template Saved!</h3>
-            <button mat-button mat-raised-button mat-dialog-close
-            class="theme-btn mr-3">
-                OK
-            </button>
+            <button mat-button mat-raised-button mat-dialog-close class="theme-btn mr-3">OK</button>
         </div>
     </div>
 </ng-template>

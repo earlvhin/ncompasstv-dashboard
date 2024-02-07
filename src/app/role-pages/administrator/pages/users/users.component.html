@@ -1,197 +1,233 @@
 <div class="theme-container">
-	<div class="title-section">
-		<div class="d-flex align-items-center">
-			<div class="flex-even">
-				<h1 class="page-title">{{ title }}</h1>
-			</div>
-			<div class="flex-even text-right" *ngIf="!is_dealer_admin">
-				<a [routerLink]="['create-user']" target="_blank">
-					<button mat-button mat-raised-button class="theme-btn">
-						<span class="button-label"> New User </span>
-						<span class="fas fa-plus ml-2 sm-text"></span>
-					</button>
-				</a>
-			</div>
-		</div>
-		<hr class="my-4" />
-	</div>
+    <div class="title-section">
+        <div class="d-flex align-items-center">
+            <div class="flex-even">
+                <h1 class="page-title">{{ title }}</h1>
+            </div>
+            <div class="flex-even text-right" *ngIf="!is_dealer_admin">
+                <a [routerLink]="['create-user']" target="_blank">
+                    <button mat-button mat-raised-button class="theme-btn">
+                        <span class="button-label"> New User </span>
+                        <span class="fas fa-plus ml-2 sm-text"></span>
+                    </button>
+                </a>
+            </div>
+        </div>
+        <hr class="my-4" />
+    </div>
 
-	<div>
-		<div class="row">
-			<div class="col-12 col-lg" *ngIf="!is_dealer_admin">
-				<mat-card class="h-100 dealer-card">
-					<app-data-card-count
-						*ngIf="user_details; else small_loader"
-						[data_value]="user_details.basis"
-						[data_label]="user_details.basis_label">
-					</app-data-card-count>
-				</mat-card>
-			</div>
-			<div class="col-12 col-lg" *ngIf="!is_dealer_admin">
-				<mat-card class="h-100 dealer-card">
-					<!-- <app-data-card-count *ngIf="user_details; else small_loader"
+    <div>
+        <div class="row">
+            <div class="col-12 col-lg" *ngIf="!is_dealer_admin">
+                <mat-card class="h-100 dealer-card">
+                    <app-data-card-count
+                        *ngIf="user_details; else small_loader"
+                        [data_value]="user_details.basis"
+                        [data_label]="user_details.basis_label">
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+            <div class="col-12 col-lg" *ngIf="!is_dealer_admin">
+                <mat-card class="h-100 dealer-card">
+                    <!-- <app-data-card-count *ngIf="user_details; else small_loader"
 						[data_value]="user_details.super_admin_count"
 						[data_label]="user_details.super_admin_label">
                     </app-data-card-count> -->
-					<h2 class="mb-2">
-						<div class="d-flex flex-column" *ngIf="user_details; else small_loader">
-							<div class="d-flex align-items-center">
-								<p class="text-primary font-weight-medium mr-2">{{ user_details.super_admin_count }}</p>
-								<p class="sm-text font-weight-medium">{{ user_details.super_admin_label }}</p>
-							</div>
-							<div class="d-flex align-items-center">
-								<p class="text-primary font-weight-medium mr-2">{{ user_details.dealer_admin_count }}</p>
-								<p class="sm-text font-weight-medium">{{ user_details.dealer_admin_label }}</p>
-							</div>
-						</div>
-					</h2>
-				</mat-card>
-			</div>
-			<div class="col-12 col-lg">
-				<mat-card>
-					<h2 class="mb-2">
-						<div class="d-flex flex-column" *ngIf="user_details; else small_loader">
-							<div class="d-flex align-items-center">
-								<p class="text-primary font-weight-medium mr-2">{{ user_details.total_dealer }}</p>
-								<p class="sm-text font-weight-medium">{{ user_details.total_dealer_label }}</p>
-							</div>
-							<div class="d-flex align-items-center">
-								<p class="text-primary font-weight-medium mr-2">{{ user_details.sub_dealer_count }}</p>
-								<p class="sm-text font-weight-medium">{{ user_details.sub_dealer_label }}</p>
-							</div>
-						</div>
-					</h2>
-				</mat-card>
-			</div>
-			<div class="col-12 col-lg">
-				<mat-card class="h-100 dealer-card">
-					<app-data-card-count
-						*ngIf="user_details; else small_loader"
-						[data_value]="user_details.total_host"
-						[data_label]="user_details.total_host_label">
-					</app-data-card-count>
-				</mat-card>
-			</div>
-			<div class="col-12 col-lg">
-				<mat-card class="h-100 dealer-card">
-					<app-data-card-count
-						*ngIf="user_details; else small_loader"
-						[data_value]="user_details.total_advertiser"
-						[data_label]="user_details.total_advertiser_label">
-					</app-data-card-count>
-				</mat-card>
-			</div>
-			<div class="col-12 col-lg" *ngIf="!is_dealer_admin">
-				<mat-card class="h-100 dealer-card">
-					<app-data-card-count
-						*ngIf="user_details; else small_loader"
-						[data_value]="user_details.total_tech"
-						[data_label]="user_details.total_tech_label">
-					</app-data-card-count>
-				</mat-card>
-			</div>
-		</div>
-		<ng-template #loader>
-			<div class="py-4">
-				<app-spinner [diameter]="60"></app-spinner>
-			</div>
-		</ng-template>
-		<hr class="my-4" />
-		<div *ngIf="!initial_load; else loader">
-			<div *ngIf="!no_user; else no_data">
-				<div class="row">
-					<div class="col-lg-8">
-						<div class="d-flex">
-							<!-- USER ROLES SELECTION -->
-							<button mat-button mat-raised-button [matMenuTriggerFor]="roleMenu" mat-raised-button class="theme-btn">
-								<span class="button-label">User Roles</span>
-								<span class="fas fa-angle-down ml-2"></span>
-							</button>
-							<mat-menu #roleMenu="matMenu">
-								<button mat-menu-item *ngFor="let role of roles" (click)="onFilterByRole(role)">
-									<span class="md-text">{{ role.roleName }}</span>
-								</button>
-							</mat-menu>
+                    <h2 class="mb-2">
+                        <div class="d-flex flex-column" *ngIf="user_details; else small_loader">
+                            <div class="d-flex align-items-center">
+                                <p class="text-primary font-weight-medium mr-2">
+                                    {{ user_details.super_admin_count }}
+                                </p>
+                                <p class="sm-text font-weight-medium">
+                                    {{ user_details.super_admin_label }}
+                                </p>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <p class="text-primary font-weight-medium mr-2">
+                                    {{ user_details.dealer_admin_count }}
+                                </p>
+                                <p class="sm-text font-weight-medium">
+                                    {{ user_details.dealer_admin_label }}
+                                </p>
+                            </div>
+                        </div>
+                    </h2>
+                </mat-card>
+            </div>
+            <div class="col-12 col-lg">
+                <mat-card>
+                    <h2 class="mb-2">
+                        <div class="d-flex flex-column" *ngIf="user_details; else small_loader">
+                            <div class="d-flex align-items-center">
+                                <p class="text-primary font-weight-medium mr-2">
+                                    {{ user_details.total_dealer }}
+                                </p>
+                                <p class="sm-text font-weight-medium">
+                                    {{ user_details.total_dealer_label }}
+                                </p>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <p class="text-primary font-weight-medium mr-2">
+                                    {{ user_details.sub_dealer_count }}
+                                </p>
+                                <p class="sm-text font-weight-medium">
+                                    {{ user_details.sub_dealer_label }}
+                                </p>
+                            </div>
+                        </div>
+                    </h2>
+                </mat-card>
+            </div>
+            <div class="col-12 col-lg">
+                <mat-card class="h-100 dealer-card">
+                    <app-data-card-count
+                        *ngIf="user_details; else small_loader"
+                        [data_value]="user_details.total_host"
+                        [data_label]="user_details.total_host_label">
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+            <div class="col-12 col-lg">
+                <mat-card class="h-100 dealer-card">
+                    <app-data-card-count
+                        *ngIf="user_details; else small_loader"
+                        [data_value]="user_details.total_advertiser"
+                        [data_label]="user_details.total_advertiser_label">
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+            <div class="col-12 col-lg" *ngIf="!is_dealer_admin">
+                <mat-card class="h-100 dealer-card">
+                    <app-data-card-count
+                        *ngIf="user_details; else small_loader"
+                        [data_value]="user_details.total_tech"
+                        [data_label]="user_details.total_tech_label">
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+        </div>
+        <ng-template #loader>
+            <div class="py-4">
+                <app-spinner [diameter]="60"></app-spinner>
+            </div>
+        </ng-template>
+        <hr class="my-4" />
+        <div *ngIf="!initial_load; else loader">
+            <div *ngIf="!no_user; else no_data">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="d-flex">
+                            <!-- USER ROLES SELECTION -->
+                            <button
+                                mat-button
+                                mat-raised-button
+                                [matMenuTriggerFor]="roleMenu"
+                                mat-raised-button
+                                class="theme-btn">
+                                <span class="button-label">User Roles</span>
+                                <span class="fas fa-angle-down ml-2"></span>
+                            </button>
+                            <mat-menu #roleMenu="matMenu">
+                                <button
+                                    mat-menu-item
+                                    *ngFor="let role of roles"
+                                    (click)="onFilterByRole(role)">
+                                    <span class="md-text">{{ role.roleName }}</span>
+                                </button>
+                            </mat-menu>
 
-							<ng-container *ngIf="current_filters.roleId">
-								<div class="pill selected-role">
-									<div class="d-flex align-items-center">
-										<div>
-											Role: <strong>{{ current_role_selected }}</strong>
-										</div>
-										<mat-icon (click)="onClearSelectedRole()">close</mat-icon>
-									</div>
-								</div>
-							</ng-container>
-						</div>
-					</div>
-					<div class="col-lg-4">
-						<app-search-field
-							*ngIf="!initial_load"
-							[form_title]="'Search Name or Email Address'"
-							[placeholder]="'Example: N-Compass'"
-							[data_reference]="users"
-							[primary_keyword]="'name'"
-							[secondary_keyword]="'email'"
-							(searched)="filterData($event)"
-							[api_search]="true"
-							(reset_search)="getAllusers()">
-						</app-search-field>
-					</div>
-				</div>
-				<div class="row" *ngIf="!initial_load">
-					<div class="col-lg-12">
-						<ng-container *ngIf="!searching; else loader">
-							<mat-card *ngIf="filtered_data.length > 0; else nodata">
-								<app-data-table
-									[table_data]="filtered_data"
-									[table_columns]="is_dealer_admin ? dealeradmin_users_table_columns : users_table_columns"
-									[new_table]="true"
-									[is_user_delete_enabled]="is_dealer_admin ? false : true"
-									[paging_details]="paging_data"
-									[can_toggle_email_notifications]="is_dealer_admin ? false : true"
-									(page_triggered)="pageRequested($event)">
-								</app-data-table>
-							</mat-card>
-						</ng-container>
-					</div>
-				</div>
-			</div>
-		</div>
+                            <ng-container *ngIf="current_filters.roleId">
+                                <div class="pill selected-role">
+                                    <div class="d-flex align-items-center">
+                                        <div>
+                                            Role: <strong>{{ current_role_selected }}</strong>
+                                        </div>
+                                        <mat-icon (click)="onClearSelectedRole()">close</mat-icon>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <app-search-field
+                            *ngIf="!initial_load"
+                            [form_title]="'Search Name or Email Address'"
+                            [placeholder]="'Example: N-Compass'"
+                            [data_reference]="users"
+                            [primary_keyword]="'name'"
+                            [secondary_keyword]="'email'"
+                            (searched)="filterData($event)"
+                            [api_search]="true"
+                            (reset_search)="getAllusers()">
+                        </app-search-field>
+                    </div>
+                </div>
+                <div class="row" *ngIf="!initial_load">
+                    <div class="col-lg-12">
+                        <ng-container *ngIf="!searching; else loader">
+                            <mat-card *ngIf="filtered_data.length > 0; else nodata">
+                                <app-data-table
+                                    [table_data]="filtered_data"
+                                    [table_columns]="
+                                        is_dealer_admin
+                                            ? dealeradmin_users_table_columns
+                                            : users_table_columns
+                                    "
+                                    [new_table]="true"
+                                    [is_user_delete_enabled]="is_dealer_admin ? false : true"
+                                    [paging_details]="paging_data"
+                                    [can_toggle_email_notifications]="
+                                        is_dealer_admin ? false : true
+                                    "
+                                    (page_triggered)="pageRequested($event)">
+                                </app-data-table>
+                            </mat-card>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-		<ng-template #no_data>
-			<mat-card class="p-5">
-				<h3>What the!?</h3>
-				<p class="sm-text mb-3">There are no available dealers and hosts at the moment.</p>
-				<button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/administrator/users/create-user/dealer']">
-					Add Dealer
-					<span class="fas fa-plus ml-2 sm-text"></span>
-				</button>
-			</mat-card>
-		</ng-template>
+        <ng-template #no_data>
+            <mat-card class="p-5">
+                <h3>What the!?</h3>
+                <p class="sm-text mb-3">There are no available dealers and hosts at the moment.</p>
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn mr-2"
+                    [routerLink]="['/administrator/users/create-user/dealer']">
+                    Add Dealer
+                    <span class="fas fa-plus ml-2 sm-text"></span>
+                </button>
+            </mat-card>
+        </ng-template>
 
-		<ng-template #nodata>
-			<div class="col-lg-12 pl-0 pr-0">
-				<mat-card class="pt-5 pb-5 col-lg-12 text-center">
-					<div class="mb-4">
-						<i class="text-gray fa-5x far fa-file-alt"></i>
-					</div>
-					<h3 class="text-gray col-lg-12">No Results Found.</h3>
-					<span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
-				</mat-card>
-			</div>
-		</ng-template>
+        <ng-template #nodata>
+            <div class="col-lg-12 pl-0 pr-0">
+                <mat-card class="pt-5 pb-5 col-lg-12 text-center">
+                    <div class="mb-4">
+                        <i class="text-gray fa-5x far fa-file-alt"></i>
+                    </div>
+                    <h3 class="text-gray col-lg-12">No Results Found.</h3>
+                    <span class="text-gray col-lg-12"
+                        >Try adjusting your search to find what you're looking for.</span
+                    >
+                </mat-card>
+            </div>
+        </ng-template>
 
-		<ng-template #loader>
-			<div class="py-4 white-bg h-500">
-				<app-spinner></app-spinner>
-			</div>
-		</ng-template>
+        <ng-template #loader>
+            <div class="py-4 white-bg h-500">
+                <app-spinner></app-spinner>
+            </div>
+        </ng-template>
 
-		<ng-template #small_loader>
-			<div class="py-4 white-bg">
-				<app-spinner [diameter]="60"></app-spinner>
-			</div>
-		</ng-template>
-	</div>
+        <ng-template #small_loader>
+            <div class="py-4 white-bg">
+                <app-spinner [diameter]="60"></app-spinner>
+            </div>
+        </ng-template>
+    </div>
 </div>

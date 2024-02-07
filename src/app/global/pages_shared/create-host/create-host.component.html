@@ -9,9 +9,15 @@
             <mat-card class="p-5">
                 <ng-container *ngIf="is_page_ready; else loading">
                     <h3 class="mb-1">Host Information</h3>
-                    <p class="mb-3">You can fill on the forms manually or search a business via the form on the right.</p>
+                    <p class="mb-3">
+                        You can fill on the forms manually or search a business via the form on the
+                        right.
+                    </p>
 
-                    <form [formGroup]="new_host_form" (ngSubmit)="onCreateHostPlace()" class="text-left">
+                    <form
+                        [formGroup]="new_host_form"
+                        (ngSubmit)="onCreateHostPlace()"
+                        class="text-left">
                         <div class="row mb-2">
                             <div class="col-lg-12">
                                 <app-autocomplete-field
@@ -28,36 +34,48 @@
                                     [disabled]="is_dealer"
                                     [paging]="paging"
                                     [loading_data]="loading_data"
-                                    [loading_search]="loading_search"
-                                >
+                                    [loading_search]="loading_search">
                                 </app-autocomplete-field>
                             </div>
-                            <div *ngFor="let field of new_host_form_fields" class="{{ field.col }} mb-2">
+                            <div
+                                *ngFor="let field of new_host_form_fields"
+                                class="{{ field.col }} mb-2">
                                 <mat-form-field
-                                    *ngIf="!field.autocomplete && !field.checkbox; else custom_field"
+                                    *ngIf="
+                                        !field.autocomplete && !field.checkbox;
+                                        else custom_field
+                                    "
                                     [hideRequiredMarker]="false"
                                     [floatLabel]="'auto'"
-                                    class="full-width"
-                                >
+                                    class="full-width">
                                     <mat-label>{{ field.label }}</mat-label>
-                                    <input matInput [formControlName]="field.control" [placeholder]="field.placeholder" [required]="field.is_required" />
+                                    <input
+                                        matInput
+                                        [formControlName]="field.control"
+                                        [placeholder]="field.placeholder"
+                                        [required]="field.is_required" />
                                 </mat-form-field>
 
                                 <ng-template #custom_field>
                                     <app-autocomplete-field
-                                        *ngIf="field.control == 'category' && !no_category; else no_category_selected"
+                                        *ngIf="
+                                            field.control == 'category' && !no_category;
+                                            else no_category_selected
+                                        "
                                         (data_value)="setToCategory($event)"
                                         [data_reference]="categories_data"
                                         [primary_keyword]="'categoryName'"
                                         [key_of_value]="'categoryName'"
                                         [required]="field.is_required"
                                         [label]="field.label"
-                                        [initial_value]="category_selected"
-                                    >
+                                        [initial_value]="category_selected">
                                     </app-autocomplete-field>
 
                                     <app-autocomplete-field
-                                        *ngIf="field.control == 'category2' && !no_category2; else no_category_selected2"
+                                        *ngIf="
+                                            field.control == 'category2' && !no_category2;
+                                            else no_category_selected2
+                                        "
                                         (data_value)="setToGeneralCategory($event)"
                                         [data_reference]="gen_categories_data"
                                         [primary_keyword]="'generalCategory'"
@@ -65,8 +83,7 @@
                                         [required]="false"
                                         [label]="field.label"
                                         [initial_value]="category_selected"
-                                        [disabled]="true"
-                                    >
+                                        [disabled]="true">
                                     </app-autocomplete-field>
 
                                     <!-- New Autocomplete Implementation-->
@@ -90,14 +107,21 @@
                                             *ngIf="city_field_data.data.length; else searching"
                                             [field_data]="city_field_data"
                                             (no_data_found)="searchCity($event)"
-                                            (value_selected)="searchCityById($event)"
-                                        ></app-autocomplete>
+                                            (value_selected)="
+                                                searchCityById($event)
+                                            "></app-autocomplete>
 
                                         <ng-template #searching>
                                             <div class="form-placeholder">
-                                                <mat-form-field appearance="standard" class="w-100 custom-autocomplete">
+                                                <mat-form-field
+                                                    appearance="standard"
+                                                    class="w-100 custom-autocomplete">
                                                     <mat-label>Loading ...</mat-label>
-                                                    <input type="text" [value]="search_keyword || 'Please wait'" matInput [disabled]="true" />
+                                                    <input
+                                                        type="text"
+                                                        [value]="search_keyword || 'Please wait'"
+                                                        matInput
+                                                        [disabled]="true" />
                                                 </mat-form-field>
                                             </div>
                                         </ng-template>
@@ -106,16 +130,32 @@
                                     <!-- New Autocomplete Implementation-->
 
                                     <ng-template #no_category_selected>
-                                        <mat-form-field *ngIf="field.control === 'category'" [hideRequiredMarker]="false" [floatLabel]="'auto'" class="full-width">
+                                        <mat-form-field
+                                            *ngIf="field.control === 'category'"
+                                            [hideRequiredMarker]="false"
+                                            [floatLabel]="'auto'"
+                                            class="full-width">
                                             <mat-label>Choose Category</mat-label>
-                                            <input matInput formControlName="category" placeholder="Category" [required]="field.is_required" />
+                                            <input
+                                                matInput
+                                                formControlName="category"
+                                                placeholder="Category"
+                                                [required]="field.is_required" />
                                         </mat-form-field>
                                     </ng-template>
 
                                     <ng-template #no_category_selected2>
-                                        <mat-form-field *ngIf="field.control === 'category2'" [hideRequiredMarker]="false" [floatLabel]="'auto'" class="full-width">
+                                        <mat-form-field
+                                            *ngIf="field.control === 'category2'"
+                                            [hideRequiredMarker]="false"
+                                            [floatLabel]="'auto'"
+                                            class="full-width">
                                             <mat-label>Choose General Category</mat-label>
-                                            <input matInput formControlName="category2" placeholder="General Category" [required]="false" />
+                                            <input
+                                                matInput
+                                                formControlName="category2"
+                                                placeholder="General Category"
+                                                [required]="false" />
                                         </mat-form-field>
                                     </ng-template>
 
@@ -127,8 +167,7 @@
                                         [key_of_value]="'id'"
                                         [required]="field.is_required"
                                         [label]="field.label"
-                                        [control]="newHostFormControls.zone"
-                                    >
+                                        [control]="newHostFormControls.zone">
                                     </app-autocomplete-field>
                                 </ng-template>
                             </div>
@@ -136,53 +175,82 @@
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div class="heading">
                                         <h3 class="mb-1">Business Hours</h3>
-                                        <p class="mb-4 sm-text">Click the letter of the corresponding day to set business hours</p>
+                                        <p class="mb-4 sm-text">
+                                            Click the letter of the corresponding day to set
+                                            business hours
+                                        </p>
                                     </div>
-                                    <button mat-button mat-raised-button class="theme-btn bulk-edit" type="button" (click)="onBulkAddHours()">Bulk Add</button>
+                                    <button
+                                        mat-button
+                                        mat-raised-button
+                                        class="theme-btn bulk-edit"
+                                        type="button"
+                                        (click)="onBulkAddHours()">
+                                        Bulk Add
+                                    </button>
                                 </div>
 
-                                <div class="d-flex align-items-center mb-4" *ngFor="let h of operation_days">
-                                    <div class="round-label mr-3" (click)="onSelectDay(h)" [ngClass]="h.status ? 'active' : ''">
+                                <div
+                                    class="d-flex align-items-center mb-4"
+                                    *ngFor="let h of operation_days">
+                                    <div
+                                        class="round-label mr-3"
+                                        (click)="onSelectDay(h)"
+                                        [ngClass]="h.status ? 'active' : ''">
                                         <span class="font-weight-bold">{{ h.label }}</span>
                                     </div>
 
                                     <div class="flex-even">
                                         <ng-container *ngIf="!is_always_open; else always_open">
                                             <ng-container *ngIf="h.status; else closed">
-                                                <div class="mb-3" *ngFor="let t of h.periods; let i = index">
+                                                <div
+                                                    class="mb-3"
+                                                    *ngFor="let t of h.periods; let i = index">
                                                     <div class="d-flex align-items-center">
                                                         <div class="mr-3">
                                                             <div class="time-picker">
-                                                                <mat-label class="sm-text">Opening Hours</mat-label>
+                                                                <mat-label class="sm-text"
+                                                                    >Opening Hours</mat-label
+                                                                >
                                                                 <ngb-timepicker
                                                                     [(ngModel)]="t.openingHourData"
                                                                     [spinners]="false"
                                                                     [meridian]="true"
-                                                                    [ngModelOptions]="{ standalone: true }"
-                                                                ></ngb-timepicker>
+                                                                    [ngModelOptions]="{
+                                                                        standalone: true
+                                                                    }"></ngb-timepicker>
                                                             </div>
                                                             <div class="d-inline-block mx-3">
                                                                 <span>--</span>
                                                             </div>
                                                             <div class="time-picker">
-                                                                <mat-label class="sm-text">Closing Hours</mat-label>
+                                                                <mat-label class="sm-text"
+                                                                    >Closing Hours</mat-label
+                                                                >
                                                                 <ngb-timepicker
                                                                     [(ngModel)]="t.closingHourData"
                                                                     [spinners]="false"
                                                                     [meridian]="true"
-                                                                    [ngModelOptions]="{ standalone: true }"
-                                                                ></ngb-timepicker>
+                                                                    [ngModelOptions]="{
+                                                                        standalone: true
+                                                                    }"></ngb-timepicker>
                                                             </div>
                                                         </div>
-                                                        <div class="flex-even add-remove-btn" *ngIf="h.periods.length > 1">
-                                                            <span class="remove-hours-btn" (click)="removeHours(h, i)">
+                                                        <div
+                                                            class="flex-even add-remove-btn"
+                                                            *ngIf="h.periods.length > 1">
+                                                            <span
+                                                                class="remove-hours-btn"
+                                                                (click)="removeHours(h, i)">
                                                                 <span class="fas fa-times"></span>
                                                             </span>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <span class="add-hours-btn" (click)="addHours(h)">
+                                                    <span
+                                                        class="add-hours-btn"
+                                                        (click)="addHours(h)">
                                                         Add Hours
                                                         <span class="fas fa-plus ml-2"></span>
                                                     </span>
@@ -190,7 +258,9 @@
                                             </ng-container>
 
                                             <ng-template #closed>
-                                                <h5 class="text-muted">Closed on {{ getFullDayName(h.label) }}</h5>
+                                                <h5 class="text-muted">
+                                                    Closed on {{ getFullDayName(h.label) }}
+                                                </h5>
                                             </ng-template>
                                         </ng-container>
                                     </div>
@@ -201,8 +271,12 @@
                                 </div>
                             </div>
                         </div>
-                        <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="new_host_form.invalid || is_creating_host">
-                            {{ is_creating_host ? "Saving Host Place..." : "Submit" }}
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn mr-2"
+                            [disabled]="new_host_form.invalid || is_creating_host">
+                            {{ is_creating_host ? 'Saving Host Place...' : 'Submit' }}
                         </button>
                     </form>
                 </ng-container>
@@ -224,20 +298,26 @@
                             type="text"
                             name="ng-scrape-form"
                             class="ng-input-form no-border full-width no-outline"
-                            placeholder="Search Host Business Name"
-                        />
-                        <button class="google-search-field-btn no-border right-0" [ngClass]="location_field ? 'disabled' : ''" [disabled]="location_field">
+                            placeholder="Search Host Business Name" />
+                        <button
+                            class="google-search-field-btn no-border right-0"
+                            [ngClass]="location_field ? 'disabled' : ''"
+                            [disabled]="location_field">
                             <span class="fas fa-search"></span>
                         </button>
                     </div>
                 </form>
 
-                <div class="location-candidates material-shadow" *ngIf="location_candidate_fetched && isListVisible">
+                <div
+                    class="location-candidates material-shadow"
+                    *ngIf="location_candidate_fetched && isListVisible">
                     <ul *ngIf="google_result.length != 0; else loading">
                         <div class="google-result-close-wrapper">
-							<button class="modal-close-btn no-border no-background" (click)="closeGoogleDropdownList()">
-								<span class="fas fa-times"></span>
-							</button>
+                            <button
+                                class="modal-close-btn no-border no-background"
+                                (click)="closeGoogleDropdownList()">
+                                <span class="fas fa-times"></span>
+                            </button>
                         </div>
                         <li *ngFor="let loc of google_result" (click)="plotToMap(loc)">
                             <div class="d-flex align-items-center">
@@ -266,14 +346,33 @@
                 <div class="business-profile-image material-shadow">
                     <div class="d-flex justify-content-center mb-3">
                         <div class="image-container">
-                            <img [src]="current_host_image" class="image-w-100 border" alt="business-profile-image" />
+                            <img
+                                [src]="current_host_image"
+                                class="image-w-100 border"
+                                alt="business-profile-image" />
                         </div>
                     </div>
-                    <button mat-raised-button class="theme-btn sm-text w-100" (click)="onChoosePhotos()" [disabled]="!place_id">Upload Image</button>
+                    <button
+                        mat-raised-button
+                        class="theme-btn sm-text w-100"
+                        (click)="onChoosePhotos()"
+                        [disabled]="!place_id">
+                        Upload Image
+                    </button>
                 </div>
 
-                <agm-map class="height-100" [latitude]="lat" [longitude]="lng" [fitBounds]="location_selected" [maxZoom]="19">
-                    <agm-marker *ngIf="selected_location" [latitude]="selected_location.latitude" [longitude]="selected_location.longitude" [agmFitBounds]="true"> </agm-marker>
+                <agm-map
+                    class="height-100"
+                    [latitude]="lat"
+                    [longitude]="lng"
+                    [fitBounds]="location_selected"
+                    [maxZoom]="19">
+                    <agm-marker
+                        *ngIf="selected_location"
+                        [latitude]="selected_location.latitude"
+                        [longitude]="selected_location.longitude"
+                        [agmFitBounds]="true">
+                    </agm-marker>
                 </agm-map>
             </div>
         </div>

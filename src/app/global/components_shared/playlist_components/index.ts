@@ -20,4 +20,3 @@ export * from './playlist-media-thumbnail/playlist-media-thumbnail.component';
 export * from './push-update/push-update.component';
 export * from './view-content-list/view-content-list.component';
 export * from './view-schedules/view-schedules.component';
-

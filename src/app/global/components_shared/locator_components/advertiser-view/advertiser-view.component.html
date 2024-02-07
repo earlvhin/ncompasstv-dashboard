@@ -1,79 +1,99 @@
 <div class="content-section">
-	<div class="col-lg-12 p-0">
-		<div class="row mb-2">
-			<div class="col-lg-4">
-				<ng-container *ngIf="advertiser.length > 0; else no_advertiser">
-					<app-autocomplete-field
-						[data_reference]="advertiser_data"
-						[primary_keyword]="'name'"
-						[key_of_value]="'id'"
-						(data_value)="advertiserEntered($event)"
-						[required]="true"
-						[label]="'Type in an Advertiser name here'"
-						[paging]="paging_advertiser"
-						(call_next_page)="advertiserSearchBoxTrigger($event)"
-						(searched)="searchAdvertiserData($event)"
-						[loading_data]="loading_data_advertiser"
-						[loading_search]="loading_search_advertiser"
-						[initial_load]="initial_load_advertiser">
-					</app-autocomplete-field>
-				</ng-container>
-			</div>
-			<div class="col-lg-8">
-				<div class="float-container d-flex">
-					<div class="d-flex align-items-center mr-2">
-						<p class="sm-text">LEGEND:</p>
-					</div>
-					<div class="d-flex align-items-center mr-2">
-						<img class="map-status" src="assets/media-files/markers/online_all.png" alt="online-all" />
-						<p class="sm-text ml-1">Online</p>
-					</div>
-					<div class="d-flex align-items-center mr-2">
-						<img class="map-status" src="assets/media-files/markers/online_many.png" alt="online-all" />
-						<p class="sm-text ml-1">Up to 75% online</p>
-					</div>
-					<div class="d-flex align-items-center mr-2">
-						<img class="map-status" src="assets/media-files/markers/online_few.png" alt="online-all" />
-						<p class="sm-text ml-1">50% or less online</p>
-					</div>
-					<div class="d-flex align-items-center mr-2">
-						<img class="map-status" src="assets/media-files/markers/offline.png" alt="online-all" />
-						<p class="sm-text ml-1">Offline</p>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-lg-12 mr-2">
-				<div id="wrapper">
-					<div id="google_map">
-						<agm-map class="vh-100" [latitude]="lat" [longitude]="lng" [fitBounds]="location_selected" [maxZoom]="19">
-							<agm-marker
-								*ngIf="map_markers as h"
-								[latitude]="h.latitude"
-								[longitude]="h.longitude"
-								[agmFitBounds]="true"
-								[iconUrl]="h.icon_url">
-								<agm-info-window #window>
-									<h4 class="font-weight-bold">{{ h.name }}</h4>
-									<div class="mt-2">
-										<tr>
-											<th>
-												<h5 class="font-weight-bold">Address:</h5>
-											</th>
-											<td class="pl-2">
-												<h5>{{ h.address }}, {{ h.city }}, {{ h.state }} {{ h.postalCode }}</h5>
-											</td>
-										</tr>
-										<tr>
-											<th>
-												<h5 class="font-weight-bold">Category:</h5>
-											</th>
-											<td class="pl-2">
-												<h5>{{ h.category }}</h5>
-											</td>
-										</tr>
-										<!-- <tr>
+    <div class="col-lg-12 p-0">
+        <div class="row mb-2">
+            <div class="col-lg-4">
+                <ng-container *ngIf="advertiser.length > 0; else no_advertiser">
+                    <app-autocomplete-field
+                        [data_reference]="advertiser_data"
+                        [primary_keyword]="'name'"
+                        [key_of_value]="'id'"
+                        (data_value)="advertiserEntered($event)"
+                        [required]="true"
+                        [label]="'Type in an Advertiser name here'"
+                        [paging]="paging_advertiser"
+                        (call_next_page)="advertiserSearchBoxTrigger($event)"
+                        (searched)="searchAdvertiserData($event)"
+                        [loading_data]="loading_data_advertiser"
+                        [loading_search]="loading_search_advertiser"
+                        [initial_load]="initial_load_advertiser">
+                    </app-autocomplete-field>
+                </ng-container>
+            </div>
+            <div class="col-lg-8">
+                <div class="float-container d-flex">
+                    <div class="d-flex align-items-center mr-2">
+                        <p class="sm-text">LEGEND:</p>
+                    </div>
+                    <div class="d-flex align-items-center mr-2">
+                        <img
+                            class="map-status"
+                            src="assets/media-files/markers/online_all.png"
+                            alt="online-all" />
+                        <p class="sm-text ml-1">Online</p>
+                    </div>
+                    <div class="d-flex align-items-center mr-2">
+                        <img
+                            class="map-status"
+                            src="assets/media-files/markers/online_many.png"
+                            alt="online-all" />
+                        <p class="sm-text ml-1">Up to 75% online</p>
+                    </div>
+                    <div class="d-flex align-items-center mr-2">
+                        <img
+                            class="map-status"
+                            src="assets/media-files/markers/online_few.png"
+                            alt="online-all" />
+                        <p class="sm-text ml-1">50% or less online</p>
+                    </div>
+                    <div class="d-flex align-items-center mr-2">
+                        <img
+                            class="map-status"
+                            src="assets/media-files/markers/offline.png"
+                            alt="online-all" />
+                        <p class="sm-text ml-1">Offline</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 mr-2">
+                <div id="wrapper">
+                    <div id="google_map">
+                        <agm-map
+                            class="vh-100"
+                            [latitude]="lat"
+                            [longitude]="lng"
+                            [fitBounds]="location_selected"
+                            [maxZoom]="19">
+                            <agm-marker
+                                *ngIf="map_markers as h"
+                                [latitude]="h.latitude"
+                                [longitude]="h.longitude"
+                                [agmFitBounds]="true"
+                                [iconUrl]="h.icon_url">
+                                <agm-info-window #window>
+                                    <h4 class="font-weight-bold">{{ h.name }}</h4>
+                                    <div class="mt-2">
+                                        <tr>
+                                            <th>
+                                                <h5 class="font-weight-bold">Address:</h5>
+                                            </th>
+                                            <td class="pl-2">
+                                                <h5>
+                                                    {{ h.address }}, {{ h.city }}, {{ h.state }}
+                                                    {{ h.postalCode }}
+                                                </h5>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                <h5 class="font-weight-bold">Category:</h5>
+                                            </th>
+                                            <td class="pl-2">
+                                                <h5>{{ h.category }}</h5>
+                                            </td>
+                                        </tr>
+                                        <!-- <tr>
 											<th class="pr-2">
 												<h5 class="font-weight-bold">Operation Hours: </h5>
 											</th>
@@ -88,62 +108,77 @@
 												</tr>
 											</td>
 										</tr> -->
-									</div>
-									<h6 class="coordinates mt-3"><i class="fas fa-map-marker"></i> {{ h.latitude }},{{ h.longitude }}</h6>
-								</agm-info-window>
-							</agm-marker>
-						</agm-map>
-						<p class="sm-text mt-3 bg-info p-3 text-white">
-							Note: If advertiser is displayed but no marker is shown please check the coordinates of that advertiser.
-						</p>
-					</div>
-					<div id="over_map">
-						<ng-container *ngIf="!loading_advertisers; else loader">
-							<ng-container *ngIf="advertiser.length > 0; else no_advertiser">
-								<mat-card class="p-4" *ngIf="entered_advertiser_data as e">
-									<div class="align-items-center d-flex">
-										<div class="mr-1">
-											<img class="map-header-status" [src]="e.icon_url" alt="Status" />
-										</div>
-										<div class="flex-even">
-											<h3>{{ e.name }}</h3>
-											<p class="sm-text">{{ e.address }}, {{ e.state }} {{ e.postalCode }}</p>
-										</div>
-									</div>
-								</mat-card>
-							</ng-container>
-						</ng-container>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                                    </div>
+                                    <h6 class="coordinates mt-3">
+                                        <i class="fas fa-map-marker"></i> {{ h.latitude }},{{
+                                            h.longitude
+                                        }}
+                                    </h6>
+                                </agm-info-window>
+                            </agm-marker>
+                        </agm-map>
+                        <p class="sm-text mt-3 bg-info p-3 text-white">
+                            Note: If advertiser is displayed but no marker is shown please check the
+                            coordinates of that advertiser.
+                        </p>
+                    </div>
+                    <div id="over_map">
+                        <ng-container *ngIf="!loading_advertisers; else loader">
+                            <ng-container *ngIf="advertiser.length > 0; else no_advertiser">
+                                <mat-card class="p-4" *ngIf="entered_advertiser_data as e">
+                                    <div class="align-items-center d-flex">
+                                        <div class="mr-1">
+                                            <img
+                                                class="map-header-status"
+                                                [src]="e.icon_url"
+                                                alt="Status" />
+                                        </div>
+                                        <div class="flex-even">
+                                            <h3>{{ e.name }}</h3>
+                                            <p class="sm-text">
+                                                {{ e.address }}, {{ e.state }} {{ e.postalCode }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </mat-card>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-	<ng-template #loader>
-		<div class="vh-50 d-flex align-items-center justify-content-center">
-			<app-spinner></app-spinner>
-		</div>
-	</ng-template>
+    <ng-template #loader>
+        <div class="vh-50 d-flex align-items-center justify-content-center">
+            <app-spinner></app-spinner>
+        </div>
+    </ng-template>
 
-	<ng-template #no_record>
-		<mat-card class="vh-50 p-5">
-			<div class="border-dashed d-flex align-items-center h-100 p-5 w-100">
-				<div class="text-center w-100">
-					<span class="fas fa-map fa-2x text-primary mb-3"></span>
-					<h3>Welcome to Locator</h3>
-					<p class="sm-text">Enter an Advertiser name above to start</p>
-				</div>
-			</div>
-		</mat-card>
-	</ng-template>
+    <ng-template #no_record>
+        <mat-card class="vh-50 p-5">
+            <div class="border-dashed d-flex align-items-center h-100 p-5 w-100">
+                <div class="text-center w-100">
+                    <span class="fas fa-map fa-2x text-primary mb-3"></span>
+                    <h3>Welcome to Locator</h3>
+                    <p class="sm-text">Enter an Advertiser name above to start</p>
+                </div>
+            </div>
+        </mat-card>
+    </ng-template>
 
-	<ng-template #no_advertiser>
-		<div class="align-items-center justify-content-center">
-			<h3>Aw, Sorry!</h3>
-			<p class="sm-text mb-3">There are no available advertiser profile at the moment.</p>
-			<button mat-button mat-raised-button class="theme-btn mr-2" (click)="createAdvertiserProfile()" [disabled]="is_view_only">
-				Add Advertiser Profile<span class="fas fa-user ml-2 sm-text"></span>
-			</button>
-		</div>
-	</ng-template>
+    <ng-template #no_advertiser>
+        <div class="align-items-center justify-content-center">
+            <h3>Aw, Sorry!</h3>
+            <p class="sm-text mb-3">There are no available advertiser profile at the moment.</p>
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn mr-2"
+                (click)="createAdvertiserProfile()"
+                [disabled]="is_view_only">
+                Add Advertiser Profile<span class="fas fa-user ml-2 sm-text"></span>
+            </button>
+        </div>
+    </ng-template>
 </div>

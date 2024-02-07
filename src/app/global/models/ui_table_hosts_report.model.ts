@@ -9,8 +9,14 @@ export class UI_TABLE_HOSTS {
     dateCreated: object;
 
     constructor(
-        hostId:object, index: object, business_name: object,
-        address: object, region: object, city: object, state: object, dateCreated: object
+        hostId: object,
+        index: object,
+        business_name: object,
+        address: object,
+        region: object,
+        city: object,
+        state: object,
+        dateCreated: object,
     ) {
         this.hostId = hostId;
         this.index = index;

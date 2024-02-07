@@ -1,36 +1,55 @@
 <div class="h-100 d-flex flex-column">
-	<div class="heading d-flex">
-		<div class="flex-even">
-			<h3 class="p-0 col-lg-12">Upload Photos</h3>
-		</div>
-		<div>
-			<button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
-				<span class="fas fa-times"></span>
-			</button>
-		</div>
-	</div>
+    <div class="heading d-flex">
+        <div class="flex-even">
+            <h3 class="p-0 col-lg-12">Upload Photos</h3>
+        </div>
+        <div>
+            <button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
+                <span class="fas fa-times"></span>
+            </button>
+        </div>
+    </div>
 
-	<br>
+    <br />
 
-    <div class="text-center">  
-		<div [fileUploadInputFor]="imageUploadQueue" (onFileSelected)="onQueueImage()" class="upload-drop-zone d-flex flex-column align-items-center">
-			<h5>Drag and drop images here. Only these types are acceptable: </h5>
-			<h5>.png, .jpg, or .jpeg</h5>
-			<br>
-			<h5>or</h5>
-			<button mat-raised-button class="choose-file-btn theme-btn _primary" (click)="onClickChooseFilesBtn()">Choose an image</button>
-		</div>
+    <div class="text-center">
+        <div
+            [fileUploadInputFor]="imageUploadQueue"
+            (onFileSelected)="onQueueImage()"
+            class="upload-drop-zone d-flex flex-column align-items-center">
+            <h5>Drag and drop images here. Only these types are acceptable:</h5>
+            <h5>.png, .jpg, or .jpeg</h5>
+            <br />
+            <h5>or</h5>
+            <button
+                mat-raised-button
+                class="choose-file-btn theme-btn _primary"
+                (click)="onClickChooseFilesBtn()">
+                Choose an image
+            </button>
+        </div>
 
-		<input id="singleFile" type="file" accept=".png, .jpg, .jpeg" (change)="onQueueImage()" [fileUploadInputFor]="imageUploadQueue" hidden/>
-		
-		<div class="upload-list">
-			<mat-file-upload-queue #imageUploadQueue
-				class="upload-host-files-buttons-override"
-				[fileAlias]="'file'"
-				[httpUrl]="uploadUrl" multiple>
-				<mat-file-upload (onUpload)="uploaded($event)" [file]="files" [id]="i" *ngFor="let files of imageUploadQueue.files; let i = index"></mat-file-upload>
-			</mat-file-upload-queue>
-		</div>
+        <input
+            id="singleFile"
+            type="file"
+            accept=".png, .jpg, .jpeg"
+            (change)="onQueueImage()"
+            [fileUploadInputFor]="imageUploadQueue"
+            hidden />
+
+        <div class="upload-list">
+            <mat-file-upload-queue
+                #imageUploadQueue
+                class="upload-host-files-buttons-override"
+                [fileAlias]="'file'"
+                [httpUrl]="uploadUrl"
+                multiple>
+                <mat-file-upload
+                    (onUpload)="uploaded($event)"
+                    [file]="files"
+                    [id]="i"
+                    *ngFor="let files of imageUploadQueue.files; let i = index"></mat-file-upload>
+            </mat-file-upload-queue>
+        </div>
     </div>
 </div>
-

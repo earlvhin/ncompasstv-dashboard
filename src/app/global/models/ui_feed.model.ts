@@ -1,3 +1,1 @@
-export class UI_FEED {
-    
-}
+export class UI_FEED {}

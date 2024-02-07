@@ -1,27 +1,29 @@
 .heading {
-	margin-bottom: 20px;
+    margin-bottom: 20px;
 }
 
 .fields {
+    mat-form-field {
+        font-size: 14px;
+        margin-right: 20px;
+    }
 
-	mat-form-field {
-		font-size: 14px;
-		margin-right: 20px;
-	}
-
-	.tag {
-		input {
-			color: #ffffff;
-			text-shadow: black -1px 0px, black 0px 1px, black 1px 0px, black 0px -1px;
-		}
-	}
-
+    .tag {
+        input {
+            color: #ffffff;
+            text-shadow:
+                black -1px 0px,
+                black 0px 1px,
+                black 1px 0px,
+                black 0px -1px;
+        }
+    }
 }
 
-button[type="submit"] {
-	float: right;
-	position: absolute;
-	right: 0;
-	bottom: 0;
-	margin: 0 24px 24px 0;
+button[type='submit'] {
+    float: right;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin: 0 24px 24px 0;
 }

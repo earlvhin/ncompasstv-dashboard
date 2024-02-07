@@ -1,208 +1,315 @@
 <div class="theme-container">
-	<div class="title-section">
-		<h1 class="page-title">{{ title }}</h1>
-		<p class="sm-text">This is a danger zone, actions done in this page may result to breaking changes.</p>
-        <hr class="mt-4 mb-0">
-	</div>
-	
-	<div class="row">
-		<div class="col-lg-12">
-			<mat-tab-group dynamicHeight>
-				<mat-tab label="Admin Buttons">
-					<div class="row mt-4">
-						<div class="col-lg-4">
-							<mat-card class="p-4 mb-3">
-								<div class="d-flex align-items-center">
-									<div class="flex-even">
-										<h4>Reboot Player (Software)</h4>
-										<p class="sm-text mb-0">
-											This will reboot the software for all online players.
-										</p>
-									</div>
-									<div class="text-right">
-										<button mat-button mat-raised-button class="theme-btn _warning" (click)="remoteUpdateAll()" [disabled]="remote_update_disabled" *ngIf="!remote_update_disabled; else disabled_remote_update">
-											Reboot Player
-										</button>
-				
-										<ng-template #disabled_remote_update>
-											<button mat-button mat-raised-button class="theme-btn _warning" [disabled]="remote_update_disabled" [title]="timeout_message">
-												Reboot Player
-											</button>
-										</ng-template>
-									</div>
-								</div>
-							</mat-card>
-				
-							<mat-card class="p-4 mb-3">
-								<div class="d-flex align-items-center">
-									<div class="flex-even">
-										<h4>Reboot Pi (Device)</h4>
-										<p class="sm-text mb-0">
-											This will reboot all online Pis.
-										</p>
-									</div>
-									<div class="text-right">
-										<button mat-button mat-raised-button class="theme-btn _danger" (click)="remoteRebootAll()" [disabled]="remote_update_disabled" *ngIf="!remote_update_disabled; else disabled_remote_reboot">
-											Reboot Pi
-										</button>
-				
-										<ng-template #disabled_remote_reboot>
-											<button mat-button mat-raised-button class="theme-btn _danger" [disabled]="remote_reboot_disabled" [title]="timeout_message">
-												Reboot Pi
-											</button>
-										</ng-template>
-									</div>
-								</div>
-							</mat-card>
+    <div class="title-section">
+        <h1 class="page-title">{{ title }}</h1>
+        <p class="sm-text">
+            This is a danger zone, actions done in this page may result to breaking changes.
+        </p>
+        <hr class="mt-4 mb-0" />
+    </div>
 
-							<mat-card class="p-4 mb-3">
-								<div class="d-flex align-items-center">
-									<div class="flex-even">
-										<h4>Delete All Screenshots</h4>
-										<p class="sm-text mb-0">
-											This will delete all saved screenshots
-										</p>
-									</div>
-									<div class="text-right">
-										<button mat-button mat-raised-button class="theme-btn _caution" (click)="removeAllScreenshots()" [disabled]="remote_update_disabled" *ngIf="!remote_update_disabled; else disabled_remote_reboot">
-											Delete Screenshots
-										</button>
-				
-										<ng-template #disabled_remote_reboot>
-											<button mat-button mat-raised-button class="theme-btn _caution" [disabled]="remote_reboot_disabled" [title]="timeout_message">
-												Delete Screenshots
-											</button>
-										</ng-template>
-									</div>
-								</div>
-							</mat-card>
+    <div class="row">
+        <div class="col-lg-12">
+            <mat-tab-group dynamicHeight>
+                <mat-tab label="Admin Buttons">
+                    <div class="row mt-4">
+                        <div class="col-lg-4">
+                            <mat-card class="p-4 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-even">
+                                        <h4>Reboot Player (Software)</h4>
+                                        <p class="sm-text mb-0">
+                                            This will reboot the software for all online players.
+                                        </p>
+                                    </div>
+                                    <div class="text-right">
+                                        <button
+                                            mat-button
+                                            mat-raised-button
+                                            class="theme-btn _warning"
+                                            (click)="remoteUpdateAll()"
+                                            [disabled]="remote_update_disabled"
+                                            *ngIf="
+                                                !remote_update_disabled;
+                                                else disabled_remote_update
+                                            ">
+                                            Reboot Player
+                                        </button>
 
-							<mat-card class="p-4">
-								<div class="d-flex align-items-center">
-									<div class="flex-even">
-										<h4>Renew All Socket Connection</h4>
-										<p class="sm-text mb-0">
-											This will renew all player socket connection.
-										</p>
-									</div>
-									<div class="text-right">
-										<button mat-button mat-raised-button class="theme-btn _teal" (click)="renewSocket()" [disabled]="remote_update_disabled" *ngIf="!remote_update_disabled; else disabled_remote_reboot">
-											Renew Socket
-										</button>
-				
-										<ng-template #disabled_remote_reboot>
-											<button mat-button mat-raised-button class="theme-btn _teal" [disabled]="remote_reboot_disabled" [title]="timeout_message">
-												Renew Socket
-											</button>
-										</ng-template>
-									</div>
-								</div>
-							</mat-card>
-						</div>
-					</div>
-				</mat-tab>
-				<!-- Admin Buttons End -->
+                                        <ng-template #disabled_remote_update>
+                                            <button
+                                                mat-button
+                                                mat-raised-button
+                                                class="theme-btn _warning"
+                                                [disabled]="remote_update_disabled"
+                                                [title]="timeout_message">
+                                                Reboot Player
+                                            </button>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                            </mat-card>
 
-				<mat-tab label="Terminal">
-					<div class="terminal-area mt-4">
-						<div class="row">
-							<div class="col-lg-7">
-								<h3>Remote Terminal</h3>
-								<p class="sm-text mb-3">Write a short script and send it to all online players.</p>
-								<div class="terminal">
-									<div class="entered-scripts">
-										<div *ngFor="let s of terminal_entered_scripts">
-											<p class="sm-text text-primary">> {{ s }}</p>
-										</div>
-									</div>
+                            <mat-card class="p-4 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-even">
+                                        <h4>Reboot Pi (Device)</h4>
+                                        <p class="sm-text mb-0">This will reboot all online Pis.</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <button
+                                            mat-button
+                                            mat-raised-button
+                                            class="theme-btn _danger"
+                                            (click)="remoteRebootAll()"
+                                            [disabled]="remote_update_disabled"
+                                            *ngIf="
+                                                !remote_update_disabled;
+                                                else disabled_remote_reboot
+                                            ">
+                                            Reboot Pi
+                                        </button>
 
-									<div class="d-flex">
-										<input [(ngModel)]="terminal_value" placeholder="Enter Command" class="terminal-text-entry mb-3 flex-even" />
-										<button (click)="remoteRunTerminal()" class="terminal-submit-button" [disabled]="terminal_value === undefined || terminal_value === ''">
-											Run <span class="fas fa-play sm-text ml-2"></span>
-										</button>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</mat-tab>
+                                        <ng-template #disabled_remote_reboot>
+                                            <button
+                                                mat-button
+                                                mat-raised-button
+                                                class="theme-btn _danger"
+                                                [disabled]="remote_reboot_disabled"
+                                                [title]="timeout_message">
+                                                Reboot Pi
+                                            </button>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                            </mat-card>
 
-				<mat-tab label="Global Settings">
-					<div class="row">
-						<div class="col-lg-5">
-							<mat-card class="p-5 mt-5">
-								<h3>Set Global Settings</h3>
-								<p class="sm-text mb-4">Global settings are configuration fetched and applied by all players.</p>
-								<form [formGroup]="global_settings_form" (ngSubmit)="setGlobalSettings()">
-									<mat-form-field class="mb-3 full-width" appearance="fill">
-										<mat-label>Vistar Network ID</mat-label>
-										<input type="text" matInput formControlName="vistarNetworkId" placeholder="Enter Vistar Network ID">
-									</mat-form-field>
-			
-									<mat-form-field class="mb-3 full-width" appearance="fill">
-										<mat-label>Vistar API Key</mat-label>
-										<input type="text" matInput formControlName="vistarApiKey" placeholder="Enter API Key">
-									</mat-form-field>
-			
-									<button mat-button mat-raised-button class="theme-btn" [disabled]="!global_settings_form.valid">Save</button>
-								</form>
-							</mat-card>
-						</div>
-					</div>
-				</mat-tab>
+                            <mat-card class="p-4 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-even">
+                                        <h4>Delete All Screenshots</h4>
+                                        <p class="sm-text mb-0">
+                                            This will delete all saved screenshots
+                                        </p>
+                                    </div>
+                                    <div class="text-right">
+                                        <button
+                                            mat-button
+                                            mat-raised-button
+                                            class="theme-btn _caution"
+                                            (click)="removeAllScreenshots()"
+                                            [disabled]="remote_update_disabled"
+                                            *ngIf="
+                                                !remote_update_disabled;
+                                                else disabled_remote_reboot
+                                            ">
+                                            Delete Screenshots
+                                        </button>
 
-				<mat-tab label="Activity Codes">
-					<div class="row">
-						<div class="col-lg-5">
-							<mat-card class="p-5 mt-5">
-								<h3>Add Activity Code</h3>
-								<p class="sm-text mb-4">Activity codes for dashboard, reference for activity logs.</p>
-								<form [formGroup]="activity_code_form" #formDirective="ngForm" (ngSubmit)="saveActivity()">
-									<mat-form-field class="mb-3 full-width" appearance="fill">
-										<mat-label>Activity Code</mat-label>
-										<input type="text" matInput formControlName="activityCode" placeholder="Example: reboot_device">
-									</mat-form-field>
-			
-									<mat-form-field class="mb-4 full-width" appearance="fill">
-										<mat-label>Activity Description</mat-label>
-										<input type="text" matInput formControlName="activityDescription" placeholder="Example: Reboot Device">
-									</mat-form-field>
-			
-									<button mat-button mat-raised-button class="theme-btn" [disabled]="!activity_code_form.valid">Save</button>
-								</form>
-							</mat-card>
-						</div>
-						<div class="col-lg-7">
-							<mat-card class="mt-5 p-4">
-								<div class="row border-bottom">
-									<div class="col-lg-1 border-right py-2">
-										<span class="sm-text">#</span>
-									</div>
-									<div class="col-lg-3 border-right py-2">
-										<span class="sm-text">Activity Code</span>
-									</div>
-									<div class="col-lg-8 py-2">
-										<span class="sm-text">Activity Description</span>
-									</div>
-								</div>
-								<div class="row border-bottom" *ngFor="let a of activities; let i = index">
-									<div class="col-lg-1 border-right py-3">
-										{{ i + 1 }}
-									</div>
-									<div class="col-lg-3 border-right py-3">
-										{{ a.activityCode }}
-									</div>
-									<div class="col-lg-8 py-3">
-										{{ a.activityDescription }}
-									</div>
-								</div>
-							</mat-card>
-						</div>
-					</div>
-				</mat-tab>
-				<!-- Terminal End -->
-			</mat-tab-group>
-		</div>
-	</div>
+                                        <ng-template #disabled_remote_reboot>
+                                            <button
+                                                mat-button
+                                                mat-raised-button
+                                                class="theme-btn _caution"
+                                                [disabled]="remote_reboot_disabled"
+                                                [title]="timeout_message">
+                                                Delete Screenshots
+                                            </button>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                            </mat-card>
+
+                            <mat-card class="p-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-even">
+                                        <h4>Renew All Socket Connection</h4>
+                                        <p class="sm-text mb-0">
+                                            This will renew all player socket connection.
+                                        </p>
+                                    </div>
+                                    <div class="text-right">
+                                        <button
+                                            mat-button
+                                            mat-raised-button
+                                            class="theme-btn _teal"
+                                            (click)="renewSocket()"
+                                            [disabled]="remote_update_disabled"
+                                            *ngIf="
+                                                !remote_update_disabled;
+                                                else disabled_remote_reboot
+                                            ">
+                                            Renew Socket
+                                        </button>
+
+                                        <ng-template #disabled_remote_reboot>
+                                            <button
+                                                mat-button
+                                                mat-raised-button
+                                                class="theme-btn _teal"
+                                                [disabled]="remote_reboot_disabled"
+                                                [title]="timeout_message">
+                                                Renew Socket
+                                            </button>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                            </mat-card>
+                        </div>
+                    </div>
+                </mat-tab>
+                <!-- Admin Buttons End -->
+
+                <mat-tab label="Terminal">
+                    <div class="terminal-area mt-4">
+                        <div class="row">
+                            <div class="col-lg-7">
+                                <h3>Remote Terminal</h3>
+                                <p class="sm-text mb-3">
+                                    Write a short script and send it to all online players.
+                                </p>
+                                <div class="terminal">
+                                    <div class="entered-scripts">
+                                        <div *ngFor="let s of terminal_entered_scripts">
+                                            <p class="sm-text text-primary">> {{ s }}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex">
+                                        <input
+                                            [(ngModel)]="terminal_value"
+                                            placeholder="Enter Command"
+                                            class="terminal-text-entry mb-3 flex-even" />
+                                        <button
+                                            (click)="remoteRunTerminal()"
+                                            class="terminal-submit-button"
+                                            [disabled]="
+                                                terminal_value === undefined ||
+                                                terminal_value === ''
+                                            ">
+                                            Run <span class="fas fa-play sm-text ml-2"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+
+                <mat-tab label="Global Settings">
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <mat-card class="p-5 mt-5">
+                                <h3>Set Global Settings</h3>
+                                <p class="sm-text mb-4">
+                                    Global settings are configuration fetched and applied by all
+                                    players.
+                                </p>
+                                <form
+                                    [formGroup]="global_settings_form"
+                                    (ngSubmit)="setGlobalSettings()">
+                                    <mat-form-field class="mb-3 full-width" appearance="fill">
+                                        <mat-label>Vistar Network ID</mat-label>
+                                        <input
+                                            type="text"
+                                            matInput
+                                            formControlName="vistarNetworkId"
+                                            placeholder="Enter Vistar Network ID" />
+                                    </mat-form-field>
+
+                                    <mat-form-field class="mb-3 full-width" appearance="fill">
+                                        <mat-label>Vistar API Key</mat-label>
+                                        <input
+                                            type="text"
+                                            matInput
+                                            formControlName="vistarApiKey"
+                                            placeholder="Enter API Key" />
+                                    </mat-form-field>
+
+                                    <button
+                                        mat-button
+                                        mat-raised-button
+                                        class="theme-btn"
+                                        [disabled]="!global_settings_form.valid">
+                                        Save
+                                    </button>
+                                </form>
+                            </mat-card>
+                        </div>
+                    </div>
+                </mat-tab>
+
+                <mat-tab label="Activity Codes">
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <mat-card class="p-5 mt-5">
+                                <h3>Add Activity Code</h3>
+                                <p class="sm-text mb-4">
+                                    Activity codes for dashboard, reference for activity logs.
+                                </p>
+                                <form
+                                    [formGroup]="activity_code_form"
+                                    #formDirective="ngForm"
+                                    (ngSubmit)="saveActivity()">
+                                    <mat-form-field class="mb-3 full-width" appearance="fill">
+                                        <mat-label>Activity Code</mat-label>
+                                        <input
+                                            type="text"
+                                            matInput
+                                            formControlName="activityCode"
+                                            placeholder="Example: reboot_device" />
+                                    </mat-form-field>
+
+                                    <mat-form-field class="mb-4 full-width" appearance="fill">
+                                        <mat-label>Activity Description</mat-label>
+                                        <input
+                                            type="text"
+                                            matInput
+                                            formControlName="activityDescription"
+                                            placeholder="Example: Reboot Device" />
+                                    </mat-form-field>
+
+                                    <button
+                                        mat-button
+                                        mat-raised-button
+                                        class="theme-btn"
+                                        [disabled]="!activity_code_form.valid">
+                                        Save
+                                    </button>
+                                </form>
+                            </mat-card>
+                        </div>
+                        <div class="col-lg-7">
+                            <mat-card class="mt-5 p-4">
+                                <div class="row border-bottom">
+                                    <div class="col-lg-1 border-right py-2">
+                                        <span class="sm-text">#</span>
+                                    </div>
+                                    <div class="col-lg-3 border-right py-2">
+                                        <span class="sm-text">Activity Code</span>
+                                    </div>
+                                    <div class="col-lg-8 py-2">
+                                        <span class="sm-text">Activity Description</span>
+                                    </div>
+                                </div>
+                                <div
+                                    class="row border-bottom"
+                                    *ngFor="let a of activities; let i = index">
+                                    <div class="col-lg-1 border-right py-3">
+                                        {{ i + 1 }}
+                                    </div>
+                                    <div class="col-lg-3 border-right py-3">
+                                        {{ a.activityCode }}
+                                    </div>
+                                    <div class="col-lg-8 py-3">
+                                        {{ a.activityDescription }}
+                                    </div>
+                                </div>
+                            </mat-card>
+                        </div>
+                    </div>
+                </mat-tab>
+                <!-- Terminal End -->
+            </mat-tab-group>
+        </div>
+    </div>
 </div>

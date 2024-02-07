@@ -1,12 +1,19 @@
-<div class="zone zone-bg" (click)="zoneSelect(zone_name)"
-    [ngClass]="{ 'is-focus' : is_focus, 'is-interactive' : is_interactive && zone_name !== 'Background', 'is-selected' : zone_name === zone_selected }"
+<div
+    class="zone zone-bg"
+    (click)="zoneSelect(zone_name)"
+    [ngClass]="{
+        'is-focus': is_focus,
+        'is-interactive': is_interactive && zone_name !== 'Background',
+        'is-selected': zone_name === zone_selected
+    }"
     [ngStyle]="{
-    'background': zone_background,
-    'width.%': zone_width, 
-    'height.%': zone_height, 
-    'left.%': zone_pos_x, 
-	'top.%': zone_pos_y,
-	'z-index': zone_order}">
+        background: zone_background,
+        'width.%': zone_width,
+        'height.%': zone_height,
+        'left.%': zone_pos_x,
+        'top.%': zone_pos_y,
+        'z-index': zone_order
+    }">
     <div class="d-flex h-100 align-items-center justify-content-center">
         <span class="text-white sm-text">
             {{ zone_name | titlecase }}

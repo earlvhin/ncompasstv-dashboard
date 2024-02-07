@@ -1,182 +1,189 @@
 <div class="theme-container mt-4">
-	<div class="row align-items-center">
-		<div class="col-lg-6">
-			<h1 class="page-title">{{ title }}</h1>
-		</div>
-		<div class="col-lg-6 text-right">
-			<div *ngIf="isActiveTab == 0; else fillerFeedButtons">
-				<button
-					mat-button
-					mat-raised-button
-					class="theme-btn pi-control _info sm-text mr-2"
-					(click)="onCreateUrlFeed()"
-					title="Add URL Feed"
-					[disabled]="is_view_only">
-					<span class="fas fa-plus"></span>
-					<span class="ml-2 button_text_animation">Add URL Feed</span>
-				</button>
+    <div class="row align-items-center">
+        <div class="col-lg-6">
+            <h1 class="page-title">{{ title }}</h1>
+        </div>
+        <div class="col-lg-6 text-right">
+            <div *ngIf="isActiveTab == 0; else fillerFeedButtons">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn pi-control _info sm-text mr-2"
+                    (click)="onCreateUrlFeed()"
+                    title="Add URL Feed"
+                    [disabled]="is_view_only">
+                    <span class="fas fa-plus"></span>
+                    <span class="ml-2 button_text_animation">Add URL Feed</span>
+                </button>
 
-				<a [routerLink]="['generate']" target="_blank">
-					<button
-						mat-button
-						mat-raised-button
-						class="theme-btn pi-control _teal sm-text mr-2"
-						title="Generate Feed"
-						[disabled]="is_view_only">
-						<span class="fas fa-cogs"></span>
-						<span class="ml-2 button_text_animation">Generate Feed</span>
-					</button>
-				</a>
-			</div>
-		</div>
-	</div>
+                <a [routerLink]="['generate']" target="_blank">
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn pi-control _teal sm-text mr-2"
+                        title="Generate Feed"
+                        [disabled]="is_view_only">
+                        <span class="fas fa-cogs"></span>
+                        <span class="ml-2 button_text_animation">Generate Feed</span>
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
 
-	<hr class="my-4" />
+    <hr class="my-4" />
 
-	<div class="row">
-		<div class="col-3">
-			<mat-card class="h-100 dealer-card">
-				<app-data-card-count
-					*ngIf="feeds_stats.total_label; else small_loader"
-					[data_value]="feeds_stats.total_value"
-					[data_label]="feeds_stats.total_label">
-				</app-data-card-count>
-			</mat-card>
-		</div>
-		<div class="col-3">
-			<mat-card class="h-100 dealer-card">
-				<app-data-card-count
-					*ngIf="feeds_stats.total_label; else small_loader"
-					[data_value]="feeds_stats.this_week_value"
-					[data_label]="feeds_stats.this_week_value_label"
-					[data_description]="feeds_stats.this_week_value_description">
-				</app-data-card-count>
-			</mat-card>
-		</div>
-		<div class="col-3">
-			<mat-card class="h-100 dealer-card">
-				<app-data-card-count
-					*ngIf="filler_stats.total_label; else small_loader"
-					[data_value]="filler_stats.total_value"
-					[data_label]="filler_stats.total_label">
-				</app-data-card-count>
-			</mat-card>
-		</div>
-		<div class="col-3">
-			<mat-card class="h-100 dealer-card">
-				<app-data-card-count
-					*ngIf="filler_stats.total_label; else small_loader"
-					[data_value]="filler_stats.this_week_value"
-					[data_label]="filler_stats.this_week_value_label"
-					[data_description]="filler_stats.this_week_value_description">
-				</app-data-card-count>
-			</mat-card>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-3">
+            <mat-card class="h-100 dealer-card">
+                <app-data-card-count
+                    *ngIf="feeds_stats.total_label; else small_loader"
+                    [data_value]="feeds_stats.total_value"
+                    [data_label]="feeds_stats.total_label">
+                </app-data-card-count>
+            </mat-card>
+        </div>
+        <div class="col-3">
+            <mat-card class="h-100 dealer-card">
+                <app-data-card-count
+                    *ngIf="feeds_stats.total_label; else small_loader"
+                    [data_value]="feeds_stats.this_week_value"
+                    [data_label]="feeds_stats.this_week_value_label"
+                    [data_description]="feeds_stats.this_week_value_description">
+                </app-data-card-count>
+            </mat-card>
+        </div>
+        <div class="col-3">
+            <mat-card class="h-100 dealer-card">
+                <app-data-card-count
+                    *ngIf="filler_stats.total_label; else small_loader"
+                    [data_value]="filler_stats.total_value"
+                    [data_label]="filler_stats.total_label">
+                </app-data-card-count>
+            </mat-card>
+        </div>
+        <div class="col-3">
+            <mat-card class="h-100 dealer-card">
+                <app-data-card-count
+                    *ngIf="filler_stats.total_label; else small_loader"
+                    [data_value]="filler_stats.this_week_value"
+                    [data_label]="filler_stats.this_week_value_label"
+                    [data_description]="filler_stats.this_week_value_description">
+                </app-data-card-count>
+            </mat-card>
+        </div>
+    </div>
 
-	<hr class="my-4" />
+    <hr class="my-4" />
 
-	<div class="row">
-		<div class="col-lg-12">
-			<div class="custom-mat-tab mt-30">
-				<mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event.index)" [selectedIndex]="isActiveTab">
-					<mat-tab id="feeds-view-tab" label="Feeds">
-						<div *ngIf="!initial_load; else loader">
-							<div *ngIf="!no_feeds; else no_data_feed">
-								<div class="row">
-									<div class="offset-lg-8 col-lg-4">
-										<app-search-field
-											*ngIf="!initial_load"
-											[form_title]="'Search Feed Title or Business Name'"
-											[placeholder]="'Example: N-Compass Feed'"
-											[data_reference]="feed_data"
-											[primary_keyword]="'title'"
-											[secondary_keyword]="'business_name'"
-											(searched)="filterData($event)"
-											[api_search]="true">
-										</app-search-field>
-									</div>
-								</div>
-								<div class="row" *ngIf="!initial_load">
-									<div class="col-lg-12">
-										<ng-container *ngIf="!searching; else loader">
-											<mat-card *ngIf="filtered_data.length > 0; else nodata">
-												<app-data-table
-													[table_data]="filtered_data"
-													[table_columns]="feeds_table_column"
-													[new_table]="true"
-													[paging_details]="paging_data"
-													[feed_controls]="true"
-													[feed_preview]="true"
-													[feed_delete]="true"
-													[feed_edit]="true"
-													[active_tab]="sort_column"
-													[sort_column]="sort_column"
-													[sort_order]="sort_order"
-													[page]="'feeds'"
-													[has_action]="true"
-													[current_user]="current_user"
-													[is_view_only]="is_view_only"
-													(page_triggered)="getFeeds($event)"
-													(reload_page)="reloadPage($event)"
-													(to_sort_column)="getColumnsAndOrder($event)"
-													(update_info)="reloadPage($event)">
-												</app-data-table>
-											</mat-card>
-										</ng-container>
-									</div>
-								</div>
-							</div>
-						</div>
-					</mat-tab>
-					<mat-tab id="fillers-view-tab" label="Fillers">
-						<div *ngIf="isActiveTab == 1">
-							<app-filler-feeds-table [reload$]="reload_trigger.asObservable()" [reloads]="reload_detected" (reload_page)="reloadPage($event)"></app-filler-feeds-table>
-						</div>
-					</mat-tab>
-				</mat-tab-group>
-			</div>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="custom-mat-tab mt-30">
+                <mat-tab-group
+                    dynamicHeight
+                    #tabGroup
+                    (selectedTabChange)="onTabChanged($event.index)"
+                    [selectedIndex]="isActiveTab">
+                    <mat-tab id="feeds-view-tab" label="Feeds">
+                        <div *ngIf="!initial_load; else loader">
+                            <div *ngIf="!no_feeds; else no_data_feed">
+                                <div class="row">
+                                    <div class="offset-lg-8 col-lg-4">
+                                        <app-search-field
+                                            *ngIf="!initial_load"
+                                            [form_title]="'Search Feed Title or Business Name'"
+                                            [placeholder]="'Example: N-Compass Feed'"
+                                            [data_reference]="feed_data"
+                                            [primary_keyword]="'title'"
+                                            [secondary_keyword]="'business_name'"
+                                            (searched)="filterData($event)"
+                                            [api_search]="true">
+                                        </app-search-field>
+                                    </div>
+                                </div>
+                                <div class="row" *ngIf="!initial_load">
+                                    <div class="col-lg-12">
+                                        <ng-container *ngIf="!searching; else loader">
+                                            <mat-card *ngIf="filtered_data.length > 0; else nodata">
+                                                <app-data-table
+                                                    [table_data]="filtered_data"
+                                                    [table_columns]="feeds_table_column"
+                                                    [new_table]="true"
+                                                    [paging_details]="paging_data"
+                                                    [feed_controls]="true"
+                                                    [feed_preview]="true"
+                                                    [feed_delete]="true"
+                                                    [feed_edit]="true"
+                                                    [active_tab]="sort_column"
+                                                    [sort_column]="sort_column"
+                                                    [sort_order]="sort_order"
+                                                    [page]="'feeds'"
+                                                    [has_action]="true"
+                                                    [current_user]="current_user"
+                                                    [is_view_only]="is_view_only"
+                                                    (page_triggered)="getFeeds($event)"
+                                                    (reload_page)="reloadPage($event)"
+                                                    (to_sort_column)="getColumnsAndOrder($event)"
+                                                    (update_info)="reloadPage($event)">
+                                                </app-data-table>
+                                            </mat-card>
+                                        </ng-container>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-tab>
+                    <mat-tab id="fillers-view-tab" label="Fillers">
+                        <div *ngIf="isActiveTab == 1">
+                            <app-filler-feeds-table
+                                [reload$]="reload_trigger.asObservable()"
+                                [reloads]="reload_detected"
+                                (reload_page)="reloadPage($event)"></app-filler-feeds-table>
+                        </div>
+                    </mat-tab>
+                </mat-tab-group>
+            </div>
+        </div>
+    </div>
 
-	<ng-template #no_data_feed>
-		<mat-card class="p-5">
-			<h3>Oh Boy.</h3>
-			<p class="sm-text mb-3">There are no available feeds at the moment.</p>
-		</mat-card>
-	</ng-template>
+    <ng-template #no_data_feed>
+        <mat-card class="p-5">
+            <h3>Oh Boy.</h3>
+            <p class="sm-text mb-3">There are no available feeds at the moment.</p>
+        </mat-card>
+    </ng-template>
 
-	<ng-template #nodata>
-		<mat-card class="pt-5 pb-5 text-center text-gray">
-			<i class="fa-5x far fa-file-alt"></i>
-			<h3 class="mt-4">No Results Found.</h3>
-			<span>Try adjusting your search to find what you're looking for.</span>
-		</mat-card>
-	</ng-template>
+    <ng-template #nodata>
+        <mat-card class="pt-5 pb-5 text-center text-gray">
+            <i class="fa-5x far fa-file-alt"></i>
+            <h3 class="mt-4">No Results Found.</h3>
+            <span>Try adjusting your search to find what you're looking for.</span>
+        </mat-card>
+    </ng-template>
 
-	<ng-template #loader>
-		<div class="py-4 white-bg h-500">
-			<app-spinner></app-spinner>
-		</div>
-	</ng-template>
+    <ng-template #loader>
+        <div class="py-4 white-bg h-500">
+            <app-spinner></app-spinner>
+        </div>
+    </ng-template>
 
-	<ng-template #small_loader>
-		<div class="py-4 white-bg">
-			<app-spinner [diameter]="60"></app-spinner>
-		</div>
-	</ng-template>
+    <ng-template #small_loader>
+        <div class="py-4 white-bg">
+            <app-spinner [diameter]="60"></app-spinner>
+        </div>
+    </ng-template>
 
-	<ng-template #fillerFeedButtons>
-		<div>
-			<button
-				mat-button
-				mat-raised-button
-				class="theme-btn pi-control _cool sm-text mr-2"
-				(click)="createFillerFeed()"
-				title="Create Filler Feed">
-				<span class="fas fa-list-ol"></span>
-				<span class="ml-2 button_text_animation">Create Filler Feed</span>
-			</button>
-		</div>
-	</ng-template>
+    <ng-template #fillerFeedButtons>
+        <div>
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn pi-control _cool sm-text mr-2"
+                (click)="createFillerFeed()"
+                title="Create Filler Feed">
+                <span class="fas fa-list-ol"></span>
+                <span class="ml-2 button_text_animation">Create Filler Feed</span>
+            </button>
+        </div>
+    </ng-template>
 </div>

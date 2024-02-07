@@ -16,36 +16,65 @@
                 <form [formGroup]="addCardForm">
                     <mat-form-field class="full-width position-relative">
                         <mat-label>Card Number</mat-label>
-                        <input formControlName="Card" matInput type="text" required>
+                        <input formControlName="Card" matInput type="text" required />
                     </mat-form-field>
                     <mat-form-field class="full-width position-relative">
                         <mat-label>Name on card</mat-label>
-                        <input formControlName="Name" matInput type="text" required>
+                        <input formControlName="Name" matInput type="text" required />
                     </mat-form-field>
                     <mat-form-field class="full-width position-relative text-light-gray" required>
                         <mat-label>Email</mat-label>
-                        <input formControlName="Email" matInput type="email" required [readonly]= "_dialog_data.email != null">
+                        <input
+                            formControlName="Email"
+                            matInput
+                            type="email"
+                            required
+                            [readonly]="_dialog_data.email != null" />
                     </mat-form-field>
                     <div class="expiry-fields d-flex align-items-center">
                         <mat-form-field class="month col-lg-6 p-0 pr-5">
                             <mat-label>Expiry Month</mat-label>
-                            <input formControlName="ExpirationMonth" placeholder="MM" matInput type="tel" maxlength="2" required>
-                        </mat-form-field>                
+                            <input
+                                formControlName="ExpirationMonth"
+                                placeholder="MM"
+                                matInput
+                                type="tel"
+                                maxlength="2"
+                                required />
+                        </mat-form-field>
                         <mat-label class="divider">/</mat-label>
                         <mat-form-field class="year col-lg-6 p-0 pl-5">
                             <mat-label>Expiry Year</mat-label>
-                            <input formControlName="ExpirationYear" placeholder="YYYY" matInput type="tel" maxlength="4" required>
+                            <input
+                                formControlName="ExpirationYear"
+                                placeholder="YYYY"
+                                matInput
+                                type="tel"
+                                maxlength="4"
+                                required />
                         </mat-form-field>
                     </div>
                     <mat-form-field class="full-width position-relative text-light-gray">
                         <mat-label>CVC</mat-label>
-                        <input formControlName="Cvc" matInput type="password" required maxlength="3">
+                        <input
+                            formControlName="Cvc"
+                            matInput
+                            type="password"
+                            required
+                            maxlength="3" />
                     </mat-form-field>
                 </form>
             </div>
         </div>
         <div class="col-lg-12 text-right pr-0">
-            <button mat-button mat-raised-button class="theme-btn mt-4 mr-3" (click)="addCard()" [disabled]="addCardForm.invalid || processing">Add Card</button>
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn mt-4 mr-3"
+                (click)="addCard()"
+                [disabled]="addCardForm.invalid || processing">
+                Add Card
+            </button>
         </div>
     </div>
 </div>

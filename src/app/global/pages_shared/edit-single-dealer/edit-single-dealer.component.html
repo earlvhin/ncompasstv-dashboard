@@ -1,96 +1,135 @@
 <div class="p-2">
-	<div class="dialog-heading d-flex align-items-start">
-		<!-- HEADING -->
-		<div class="dealer-heading flex-even">
-			<div class="dealer-name-and-status d-flex align-items-center">
-				<h3 class="p-0">Dealer Details:</h3>
-				<span class="status sm-text ml-3" [ngClass]="dealer.status === 'A' ? 'active' : 'inactive'">
-					<span class="fas fa-circle xsm-text mr-2"> </span>
-				</span>
-			</div>
-			<p class="p-0 sm-text mb-4">You can update dealer details here:</p>
-		</div>
-		<!-- DEALER STATUS TOGGLE -->
-		<mat-slide-toggle (change)="onToggleStatus($event)" labelPosition="before" [(ngModel)]="is_active_dealer"
-			><span class="sm-text font-weight-bold">{{ is_active_dealer ? 'Active' : 'Inactive' }}:</span>
-		</mat-slide-toggle>
-		<!-- CLOSE BUTTON -->
-		<button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
-			<span class="fas fa-times"></span>
-		</button>
-	</div>
-	<ng-container *ngIf="is_form_loaded; else loaderSmall">
-		<form [formGroup]="edit_dealer_form" (ngSubmit)="saveDealerData()" class="text-left" id="edit-dealer-form">
-			<div class="row mb-4">
-				<div *ngFor="let field of edit_dealer_form_fields" class="{{ field.col }} mb-3">
-					<mat-form-field class="full-width" *ngIf="field.type !== 'toggle'">
-						<mat-label>{{ field.label }}</mat-label>
-						<span
-							class="validation-message warning sm-text py-1 text-danger"
-							*ngIf="!email_not_valid && has_duplicate_email && field.control == 'email'">
-							This email is already taken.
-						</span>
-						<span class="validation-message warning sm-text py-1 text-danger" *ngIf="email_not_valid && field.control == 'email'">
-							The email format is invalid.
-						</span>
-						<input
-							formControlName="{{ field.control }}"
-							matInput
-							placeholder="{{ field.placeholder }}"
-							*ngIf="field.control !== 'password'" />
-						<input
-							formControlName="{{ field.control }}"
-							matInput
-							placeholder="{{ field.placeholder }}"
-							*ngIf="field.control === 'password'"
-							[type]="is_password_field_type ? 'password' : 'text'" />
-						<mat-icon class="pw-visibility" matSuffix (click)="togglePasswordFieldType()" *ngIf="field.control === 'password'">
-							{{ is_password_field_type ? 'visibility_off' : 'visibility' }}
-						</mat-icon>
-					</mat-form-field>
-				</div>
-				<div class="col-lg-4">
-					<mat-form-field class="full-width" appearance="fill" appDefaultDateFormat>
-						<mat-label class="md-text">Start Date</mat-label>
-						<input
-							formControlName="start_date"
-							(dateInput)="onSelectStartDate($event.value)"
-							matInput
-							[matDatepicker]="startDatePicker"
-							[max]="today"
-							[(value)]="start_date"
-							readonly />
-						<mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
-						<mat-datepicker #startDatePicker></mat-datepicker>
-					</mat-form-field>
-				</div>
-			</div>
-			<button mat-button mat-raised-button type="submit" color="primary" class="theme-btn mt-4 mr-2" [disabled]="!enable_update_form">
-				Update
-			</button>
-			<button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="false">Cancel</button>
+    <div class="dialog-heading d-flex align-items-start">
+        <!-- HEADING -->
+        <div class="dealer-heading flex-even">
+            <div class="dealer-name-and-status d-flex align-items-center">
+                <h3 class="p-0">Dealer Details:</h3>
+                <span
+                    class="status sm-text ml-3"
+                    [ngClass]="dealer.status === 'A' ? 'active' : 'inactive'">
+                    <span class="fas fa-circle xsm-text mr-2"> </span>
+                </span>
+            </div>
+            <p class="p-0 sm-text mb-4">You can update dealer details here:</p>
+        </div>
+        <!-- DEALER STATUS TOGGLE -->
+        <mat-slide-toggle
+            (change)="onToggleStatus($event)"
+            labelPosition="before"
+            [(ngModel)]="is_active_dealer"
+            ><span class="sm-text font-weight-bold"
+                >{{ is_active_dealer ? 'Active' : 'Inactive' }}:</span
+            >
+        </mat-slide-toggle>
+        <!-- CLOSE BUTTON -->
+        <button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
+            <span class="fas fa-times"></span>
+        </button>
+    </div>
+    <ng-container *ngIf="is_form_loaded; else loaderSmall">
+        <form
+            [formGroup]="edit_dealer_form"
+            (ngSubmit)="saveDealerData()"
+            class="text-left"
+            id="edit-dealer-form">
+            <div class="row mb-4">
+                <div *ngFor="let field of edit_dealer_form_fields" class="{{ field.col }} mb-3">
+                    <mat-form-field class="full-width" *ngIf="field.type !== 'toggle'">
+                        <mat-label>{{ field.label }}</mat-label>
+                        <span
+                            class="validation-message warning sm-text py-1 text-danger"
+                            *ngIf="
+                                !email_not_valid && has_duplicate_email && field.control == 'email'
+                            ">
+                            This email is already taken.
+                        </span>
+                        <span
+                            class="validation-message warning sm-text py-1 text-danger"
+                            *ngIf="email_not_valid && field.control == 'email'">
+                            The email format is invalid.
+                        </span>
+                        <input
+                            formControlName="{{ field.control }}"
+                            matInput
+                            placeholder="{{ field.placeholder }}"
+                            *ngIf="field.control !== 'password'" />
+                        <input
+                            formControlName="{{ field.control }}"
+                            matInput
+                            placeholder="{{ field.placeholder }}"
+                            *ngIf="field.control === 'password'"
+                            [type]="is_password_field_type ? 'password' : 'text'" />
+                        <mat-icon
+                            class="pw-visibility"
+                            matSuffix
+                            (click)="togglePasswordFieldType()"
+                            *ngIf="field.control === 'password'">
+                            {{ is_password_field_type ? 'visibility_off' : 'visibility' }}
+                        </mat-icon>
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-4">
+                    <mat-form-field class="full-width" appearance="fill" appDefaultDateFormat>
+                        <mat-label class="md-text">Start Date</mat-label>
+                        <input
+                            formControlName="start_date"
+                            (dateInput)="onSelectStartDate($event.value)"
+                            matInput
+                            [matDatepicker]="startDatePicker"
+                            [max]="today"
+                            [(value)]="start_date"
+                            readonly />
+                        <mat-datepicker-toggle
+                            matSuffix
+                            [for]="startDatePicker"></mat-datepicker-toggle>
+                        <mat-datepicker #startDatePicker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </div>
+            <button
+                mat-button
+                mat-raised-button
+                type="submit"
+                color="primary"
+                class="theme-btn mt-4 mr-2"
+                [disabled]="!enable_update_form">
+                Update
+            </button>
+            <button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="false">
+                Cancel
+            </button>
 
-			<!-- DELETE DEALER BUTTON -->
-			<ng-container *ngIf="is_admin">
-				<button mat-button mat-raised-button class="theme-btn mt-4 delete bg-danger" type="button" (click)="onDeleteDealer()">
-					Delete Dealer
-				</button>
-			</ng-container>
+            <!-- DELETE DEALER BUTTON -->
+            <ng-container *ngIf="is_admin">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn mt-4 delete bg-danger"
+                    type="button"
+                    (click)="onDeleteDealer()">
+                    Delete Dealer
+                </button>
+            </ng-container>
 
-			<!-- RE-ASSIGN DEALER BUTTON -->
-			<button mat-button mat-raised-button class="theme-btn mt-4 mr-2 reassign bg-danger" type="button" (click)="onReassignDealer()">
-				Re-assign Dealer
-			</button>
-		</form>
-	</ng-container>
+            <!-- RE-ASSIGN DEALER BUTTON -->
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn mt-4 mr-2 reassign bg-danger"
+                type="button"
+                (click)="onReassignDealer()">
+                Re-assign Dealer
+            </button>
+        </form>
+    </ng-container>
 
-	<ng-template #loading>
-		<div class="vh-50 d-flex align-items-center justify-content-center">
-			<app-spinner></app-spinner>
-		</div>
-	</ng-template>
+    <ng-template #loading>
+        <div class="vh-50 d-flex align-items-center justify-content-center">
+            <app-spinner></app-spinner>
+        </div>
+    </ng-template>
 
-	<ng-template #loaderSmall>
-		<app-spinner [diameter]="70"></app-spinner>
-	</ng-template>
+    <ng-template #loaderSmall>
+        <app-spinner [diameter]="70"></app-spinner>
+    </ng-template>
 </div>

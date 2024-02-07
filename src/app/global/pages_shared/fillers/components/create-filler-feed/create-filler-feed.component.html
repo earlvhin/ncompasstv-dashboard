@@ -1,180 +1,224 @@
 <div class="create-dialog p-2" id="create-filler-dialog">
-	<div class="row">
-		<div class="col-lg-11">
-			<h3 *ngIf="!page_data.from_edit_table; else editTitle">Create Filler Feed</h3>
-			<ng-template #editTitle>
-				<h3>Edit Filler Feed</h3>
-			</ng-template>
-		</div>
-		<div class="col-lg-1">
-			<button class="modal-close-btn no-border no-background" [mat-dialog-close]="'close'">
-				<span class="fas fa-times"></span>
-			</button>
-		</div>
-		<div class="col-lg-12">
-			<p class="sm-text">Fill up for desired intervals and duration.</p>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-lg-11">
+            <h3 *ngIf="!page_data.from_edit_table; else editTitle">Create Filler Feed</h3>
+            <ng-template #editTitle>
+                <h3>Edit Filler Feed</h3>
+            </ng-template>
+        </div>
+        <div class="col-lg-1">
+            <button class="modal-close-btn no-border no-background" [mat-dialog-close]="'close'">
+                <span class="fas fa-times"></span>
+            </button>
+        </div>
+        <div class="col-lg-12">
+            <p class="sm-text">Fill up for desired intervals and duration.</p>
+        </div>
+    </div>
 
-	<div class="row mt-3">
-		<div class="col-lg-12">
-			<!-- <form [formGroup]="form" *ngIf="filler_group_form_loaded; else loaderSmall"> -->
-			<form [formGroup]="form">
-				<div class="row">
-					<div class="col-lg-12">
-						<mat-form-field class="full-width">
-							<mat-label>Filler Name *</mat-label>
-							<input matInput type="text" autocomplete="off" formControlName="fillerGroupName" />
-						</mat-form-field>
-					</div>
-					<div class="col-lg-6">
-						<mat-form-field class="full-width">
-							<mat-label>Interval (days)</mat-label>
-							<input matInput type="number" autocomplete="off" formControlName="fillerInterval" min="0" />
-						</mat-form-field>
-					</div>
-					<div class="col-lg-6">
-						<mat-form-field class="full-width">
-							<mat-label>Duration (seconds)</mat-label>
-							<input matInput type="number" autocomplete="off" formControlName="fillerDuration" min="0" />
-						</mat-form-field>
-					</div>
-				</div>
+    <div class="row mt-3">
+        <div class="col-lg-12">
+            <!-- <form [formGroup]="form" *ngIf="filler_group_form_loaded; else loaderSmall"> -->
+            <form [formGroup]="form">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <mat-form-field class="full-width">
+                            <mat-label>Filler Name *</mat-label>
+                            <input
+                                matInput
+                                type="text"
+                                autocomplete="off"
+                                formControlName="fillerGroupName" />
+                        </mat-form-field>
+                    </div>
+                    <div class="col-lg-6">
+                        <mat-form-field class="full-width">
+                            <mat-label>Interval (days)</mat-label>
+                            <input
+                                matInput
+                                type="number"
+                                autocomplete="off"
+                                formControlName="fillerInterval"
+                                min="0" />
+                        </mat-form-field>
+                    </div>
+                    <div class="col-lg-6">
+                        <mat-form-field class="full-width">
+                            <mat-label>Duration (seconds)</mat-label>
+                            <input
+                                matInput
+                                type="number"
+                                autocomplete="off"
+                                formControlName="fillerDuration"
+                                min="0" />
+                        </mat-form-field>
+                    </div>
+                </div>
 
-				<div *ngIf="!page_data.from_edit_table">
-					<div class="row mb-2">
-						<div class="col-lg-12">
-							<span class="sm-text">
-								<b>FILLER GROUP INSTRUCTIONS: </b>
-								<br />
-								<span class="text-gray"
-									>Select at least 1 Filler Group, then click the Add button. Expand the panel and input desired quantity.</span
-								>
-								<br />
-								<span class="text-danger"><b>NOTE: </b>Total Quantity should <u>not be greater</u> than 20.</span>
-							</span>
-						</div>
-					</div>
+                <div *ngIf="!page_data.from_edit_table">
+                    <div class="row mb-2">
+                        <div class="col-lg-12">
+                            <span class="sm-text">
+                                <b>FILLER GROUP INSTRUCTIONS: </b>
+                                <br />
+                                <span class="text-gray"
+                                    >Select at least 1 Filler Group, then click the Add button.
+                                    Expand the panel and input desired quantity.</span
+                                >
+                                <br />
+                                <span class="text-danger"
+                                    ><b>NOTE: </b>Total Quantity should <u>not be greater</u> than
+                                    20.</span
+                                >
+                            </span>
+                        </div>
+                    </div>
 
-					<div class="row" *ngIf="groups_loaded; else loaderSmall">
-						<div class="col-lg-10">
-							<app-autocomplete-field
-								(data_value)="setFillerGroup($event)"
-								(searched)="getAllFillers($event)"
-								[data_reference]="filler_groups"
-								[primary_keyword]="'name'"
-								[key_of_value]="'fillerGroupId'"
-								[required]="true"
-								[display_role]="true"
-								[role]="'role'"
-								[label]="'Select Filler Group'"
-								[initial_value]="filler_name"
-								[new_value]="filler_name"
-								[disabled]="disableSelectionField()">
-							</app-autocomplete-field>
-						</div>
-						<div class="col-lg-2 text-right">
-							<button
-								mat-button
-								mat-raised-button
-								class="mt-2 theme-btn _cool"
-								type="button"
-								(click)="addToSelectedFillerGroup()"
-								title="Add Selected Filler Group"
-								[disabled]="!enable_add_button">
-								<i class="fas fa-plus"></i>
-							</button>
-						</div>
-					</div>
+                    <div class="row" *ngIf="groups_loaded; else loaderSmall">
+                        <div class="col-lg-10">
+                            <app-autocomplete-field
+                                (data_value)="setFillerGroup($event)"
+                                (searched)="getAllFillers($event)"
+                                [data_reference]="filler_groups"
+                                [primary_keyword]="'name'"
+                                [key_of_value]="'fillerGroupId'"
+                                [required]="true"
+                                [display_role]="true"
+                                [role]="'role'"
+                                [label]="'Select Filler Group'"
+                                [initial_value]="filler_name"
+                                [new_value]="filler_name"
+                                [disabled]="disableSelectionField()">
+                            </app-autocomplete-field>
+                        </div>
+                        <div class="col-lg-2 text-right">
+                            <button
+                                mat-button
+                                mat-raised-button
+                                class="mt-2 theme-btn _cool"
+                                type="button"
+                                (click)="addToSelectedFillerGroup()"
+                                title="Add Selected Filler Group"
+                                [disabled]="!enable_add_button">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
 
-					<div class="row" *ngIf="selected_groups.length > 0">
-						<div class="col-lg-12">
-							<div class="full-width bg-gray p-3">
-								<mat-expansion-panel class="mt-2" *ngFor="let groups of selected_groups; let i = index">
-									<mat-expansion-panel-header>
-										<mat-panel-title class="md-text">
-											<b class="mr-3">Filler Group:</b> <i>{{ groups.name }}</i>
-											<span class="text-primary ml-2 xsm-text mt-1">(Total Fillers {{ groups.count }})</span>
-										</mat-panel-title>
-									</mat-expansion-panel-header>
-									<div class="row">
-										<div class="col-lg-12">
-											<span *ngIf="groups.paired == 1" class="xsm-text text-gray">
-												<b class="text-danger">NOTE: </b>This Filler Group is set as
-												<b class="text-orange">In Pairs</b> meaning quantity selected will be doubled when added to
-												playlist.</span
-											>
-										</div>
-										<div class="col-lg-8">
-											<div class="full-width border-bottom">
-												<mat-label> Select Quantity </mat-label>
-												<input
-													matInput
-													type="number"
-													autocomplete="off"
-													formControlName="fillerQuantity"
-													min="1"
-													[max]="groups.paired ? groups.count / 2 : groups.count"
-													[value]="groups.quantity ? groups.quantity : 1"
-													class="mt-2"
-													(keyup)="enforceMinMax($event)"
-													(focusout)="saveQuantity(i)" />
-											</div>
-										</div>
-										<div class="col-lg-4 text-right" *ngIf="selected_group">
-											<div class="text-danger clickable mt-4" (click)="removeSelectedFiller(groups)">
-												<i class="fas fa-times mr-3"></i> <span class="md-text font-weight-bold">REMOVE</span>
-											</div>
-										</div>
-									</div>
-								</mat-expansion-panel>
-							</div>
-						</div>
-					</div>
-				</div>
+                    <div class="row" *ngIf="selected_groups.length > 0">
+                        <div class="col-lg-12">
+                            <div class="full-width bg-gray p-3">
+                                <mat-expansion-panel
+                                    class="mt-2"
+                                    *ngFor="let groups of selected_groups; let i = index">
+                                    <mat-expansion-panel-header>
+                                        <mat-panel-title class="md-text">
+                                            <b class="mr-3">Filler Group:</b>
+                                            <i>{{ groups.name }}</i>
+                                            <span class="text-primary ml-2 xsm-text mt-1"
+                                                >(Total Fillers {{ groups.count }})</span
+                                            >
+                                        </mat-panel-title>
+                                    </mat-expansion-panel-header>
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <span
+                                                *ngIf="groups.paired == 1"
+                                                class="xsm-text text-gray">
+                                                <b class="text-danger">NOTE: </b>This Filler Group
+                                                is set as
+                                                <b class="text-orange">In Pairs</b> meaning quantity
+                                                selected will be doubled when added to
+                                                playlist.</span
+                                            >
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <div class="full-width border-bottom">
+                                                <mat-label> Select Quantity </mat-label>
+                                                <input
+                                                    matInput
+                                                    type="number"
+                                                    autocomplete="off"
+                                                    formControlName="fillerQuantity"
+                                                    min="1"
+                                                    [max]="
+                                                        groups.paired
+                                                            ? groups.count / 2
+                                                            : groups.count
+                                                    "
+                                                    [value]="groups.quantity ? groups.quantity : 1"
+                                                    class="mt-2"
+                                                    (keyup)="enforceMinMax($event)"
+                                                    (focusout)="saveQuantity(i)" />
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 text-right" *ngIf="selected_group">
+                                            <div
+                                                class="text-danger clickable mt-4"
+                                                (click)="removeSelectedFiller(groups)">
+                                                <i class="fas fa-times mr-3"></i>
+                                                <span class="md-text font-weight-bold">REMOVE</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </mat-expansion-panel>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-				<div class="row" *ngIf="page_data.from_edit_table">
-					<div class="col-lg-12" *ngIf="selected_groups.length > 0; else loaderSmall">
-						<h4 class="mb-2">Filler Groups:</h4>
-						<ul class="pl-3">
-							<li *ngFor="let groups of selected_groups; let i = index">
-								<span class="md-text text-primary clickable mr-2" (click)="routeToFillerGroup(groups.fillerGroupId)">{{
-									groups.name
-								}}</span>
-								<span class="sm-text text-dark">- {{ groups.quantity }} FILLERS</span>
-								<span
-									class="ml-3 fas fa-times text-danger clickable"
-									(click)="removeSelectedFiller(groups)"
-									title="Remove this Filler Group"
-									*ngIf="selected_groups.length > 1"></span>
-							</li>
-						</ul>
-					</div>
-				</div>
+                <div class="row" *ngIf="page_data.from_edit_table">
+                    <div class="col-lg-12" *ngIf="selected_groups.length > 0; else loaderSmall">
+                        <h4 class="mb-2">Filler Groups:</h4>
+                        <ul class="pl-3">
+                            <li *ngFor="let groups of selected_groups; let i = index">
+                                <span
+                                    class="md-text text-primary clickable mr-2"
+                                    (click)="routeToFillerGroup(groups.fillerGroupId)"
+                                    >{{ groups.name }}</span
+                                >
+                                <span class="sm-text text-dark"
+                                    >- {{ groups.quantity }} FILLERS</span
+                                >
+                                <span
+                                    class="ml-3 fas fa-times text-danger clickable"
+                                    (click)="removeSelectedFiller(groups)"
+                                    title="Remove this Filler Group"
+                                    *ngIf="selected_groups.length > 1"></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
 
-				<div class="row no-gutters mt-3">
-					<div class="col-lg-4">
-						<h4 class="text-danger font-weight-bold pt-2">TOTAL: {{ total_quantity }}</h4>
-					</div>
-					<div class="offset-lg-2 col-lg-6 text-right">
-						<button
-							mat-button
-							mat-raised-button
-							class="theme-btn"
-							type="submit"
-							(click)="arrangeData()"
-							[disabled]="!form.valid || total_quantity > 20 || total_quantity == 0">
-							{{ !page_data.from_edit_table ? 'Create Filler Feed' : 'Update Filler Feed' }}
-						</button>
-					</div>
-				</div>
-			</form>
-		</div>
-	</div>
+                <div class="row no-gutters mt-3">
+                    <div class="col-lg-4">
+                        <h4 class="text-danger font-weight-bold pt-2">
+                            TOTAL: {{ total_quantity }}
+                        </h4>
+                    </div>
+                    <div class="offset-lg-2 col-lg-6 text-right">
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn"
+                            type="submit"
+                            (click)="arrangeData()"
+                            [disabled]="!form.valid || total_quantity > 20 || total_quantity == 0">
+                            {{
+                                !page_data.from_edit_table
+                                    ? 'Create Filler Feed'
+                                    : 'Update Filler Feed'
+                            }}
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 <ng-template #loaderSmall>
-	<div class="full-width text-center">
-		<app-spinner [diameter]="60"></app-spinner>
-	</div>
+    <div class="full-width text-center">
+        <app-spinner [diameter]="60"></app-spinner>
+    </div>
 </ng-template>

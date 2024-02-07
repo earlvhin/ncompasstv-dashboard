@@ -1,21 +1,21 @@
 <div class="pt-4">
-	<div class="row">
-		<div class="col-lg-12">
-			<mat-card>
-				<app-data-table
-					[table_data]="activity_data"
-					[table_columns]="activity_table_column"
-					[new_table]="true"
-					[paging_details]="paging_data"
-					[active_tab]="sort_column"
-					[sort_column]="sort_column"
-					[sort_order]="sort_order"
-					(reload_page)="reload_page($event)"
-					(update_info)="reload_page($event)"
-					(page_triggered)="onPageChange($event)"
-					(to_sort_column)="sortOrder($event)">
-				</app-data-table>
-			</mat-card>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-lg-12">
+            <mat-card>
+                <app-data-table
+                    [table_data]="activity_data"
+                    [table_columns]="activity_table_column"
+                    [new_table]="true"
+                    [paging_details]="paging_data"
+                    [active_tab]="sort_column"
+                    [sort_column]="sort_column"
+                    [sort_order]="sort_order"
+                    (reload_page)="reload_page($event)"
+                    (update_info)="reload_page($event)"
+                    (page_triggered)="onPageChange($event)"
+                    (to_sort_column)="sortOrder($event)">
+                </app-data-table>
+            </mat-card>
+        </div>
+    </div>
 </div>

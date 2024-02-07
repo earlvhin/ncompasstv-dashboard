@@ -1,16 +1,15 @@
 <div class="stat-cards]mb-4 pt-4">
-	<div class="row">
+    <div class="row">
         <div class="col-lg-12">
-            <mat-card class="p-1" style="height: 400px;">
-                <agm-map [latitude]="latitude" 
-					[longitude]="longitude" 
-					[maxZoom]="20" [fitBounds]="true">
-						<agm-marker 
-							[latitude]="latitude" 
-							[longitude]="longitude"	
-							[agmFitBounds]="true">
-						</agm-marker>
-				</agm-map>
+            <mat-card class="p-1" style="height: 400px">
+                <agm-map
+                    [latitude]="latitude"
+                    [longitude]="longitude"
+                    [maxZoom]="20"
+                    [fitBounds]="true">
+                    <agm-marker [latitude]="latitude" [longitude]="longitude" [agmFitBounds]="true">
+                    </agm-marker>
+                </agm-map>
             </mat-card>
         </div>
     </div>

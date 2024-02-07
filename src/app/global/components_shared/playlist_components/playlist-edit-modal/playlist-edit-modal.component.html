@@ -6,21 +6,23 @@
             <mat-form-field class="full-width">
                 <mat-label>Playlist Name (Max Characters: 50)</mat-label>
                 <input
-                formControlName="playlistName" 
-                matInput type="text" 
-				placeholder="Playlist Name"
-				maxlength="50">
+                    formControlName="playlistName"
+                    matInput
+                    type="text"
+                    placeholder="Playlist Name"
+                    maxlength="50" />
             </mat-form-field>
-    
+
             <mat-form-field class="full-width mb-3">
                 <mat-label>Playlist Description (Max Characters: 100)</mat-label>
                 <input
-                formControlName="playlistDescription" 
-                matInput type="text" 
-				placeholder="Playlist Description"
-				maxlength="100">
+                    formControlName="playlistDescription"
+                    matInput
+                    type="text"
+                    placeholder="Playlist Description"
+                    maxlength="100" />
             </mat-form-field>
-    
+
             <button mat-button mat-raised-button class="theme-btn" [disabled]="disable_btn">
                 Edit Playlist
             </button>
@@ -28,14 +30,12 @@
     </ng-container>
 
     <ng-template #success>
-        <div class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center h-100">
+        <div
+            class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center h-100">
             <div>
                 <app-success-animation class="mb-2"></app-success-animation>
                 <h3 class="mb-4">Playlist Info Updated</h3>
-                <button mat-button mat-raised-button mat-dialog-close
-                class="theme-btn">
-                    OK
-                </button>
+                <button mat-button mat-raised-button mat-dialog-close class="theme-btn">OK</button>
             </div>
         </div>
     </ng-template>

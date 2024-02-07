@@ -5,7 +5,13 @@
         </div>
         <div class="col-lg-4">
             <div class="text-right">
-                <button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2" [routerLink]="createHostLink" [disabled]="is_view_only" title="Add Host Place">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn pi-control sm-text mr-2"
+                    [routerLink]="createHostLink"
+                    [disabled]="is_view_only"
+                    title="Add Host Place">
                     <span class="fas fa-map-marker"></span>
                     <span class="ml-2 button_text_animation">Add Host Place</span>
                 </button>
@@ -16,12 +22,15 @@
                     class="theme-btn pi-control sm-text _primary mr-2"
                     (click)="exportTable()"
                     [disabled]="workbook_generation"
-                    title="Export to CSV"
-                >
-                    <span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner' }}" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
-                    <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">{{
-                        !workbook_generation ? "Export" : "Generating CSV"
-                    }}</span>
+                    title="Export to CSV">
+                    <span
+                        class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner' }}"
+                        [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
+                    <span
+                        class="ml-2 button_text_animation"
+                        [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"
+                        >{{ !workbook_generation ? 'Export' : 'Generating CSV' }}</span
+                    >
                 </button>
             </div>
         </div>
@@ -39,8 +48,7 @@
                     [good_value]="host_count.good_value"
                     [good_value_label]="host_count.good_value_label"
                     [bad_value]="host_count.bad_value"
-                    [bad_value_label]="host_count.bad_value_label"
-                >
+                    [bad_value_label]="host_count.bad_value_label">
                 </app-data-card-compare>
             </mat-card>
         </div>
@@ -50,8 +58,7 @@
                     *ngIf="host_count; else small_loader"
                     [data_value]="host_count.new_this_week_value"
                     [data_label]="host_count.new_this_week_label"
-                    [data_description]="host_count.new_this_week_description"
-                >
+                    [data_description]="host_count.new_this_week_description">
                 </app-data-card-count>
             </mat-card>
         </div>
@@ -61,8 +68,7 @@
                     *ngIf="host_count; else small_loader"
                     [data_value]="host_count.new_last_week_value"
                     [data_label]="host_count.new_last_week_label"
-                    [data_description]="host_count.new_last_week_description"
-                >
+                    [data_description]="host_count.new_last_week_description">
                 </app-data-card-count>
             </mat-card>
         </div>
@@ -72,8 +78,7 @@
                     *ngIf="host_count; else small_loader"
                     [data_value]="host_count.pending_installation_value"
                     [data_label]="host_count.pending_installation_label"
-                    [data_description]="host_count.pending_installation_description"
-                >
+                    [data_description]="host_count.pending_installation_description">
                 </app-data-card-count>
             </mat-card>
         </div>
@@ -83,7 +88,11 @@
 
     <div class="row no-gutters">
         <div class="col-lg-12">
-            <mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event)" class="custom-mat-tab">
+            <mat-tab-group
+                dynamicHeight
+                #tabGroup
+                (selectedTabChange)="onTabChanged($event)"
+                class="custom-mat-tab">
                 <mat-tab id="hosts-view-tab" label="Hosts View">
                     <div *ngIf="tabGroup.selectedIndex === 0">
                         <div *ngIf="!initial_load; else loader">
@@ -92,20 +101,22 @@
                                     <div class="offset-lg-8 col-lg-4">
                                         <app-search-field
                                             *ngIf="!initial_load"
-                                            [form_title]="'Search Host Name, Address, City, Postal Code, or #Tag'"
+                                            [form_title]="
+                                                'Search Host Name, Address, City, Postal Code, or #Tag'
+                                            "
                                             [placeholder]="'Example: N-Compass'"
                                             [data_reference]="host_data"
                                             [primary_keyword]="'host_name'"
                                             [secondary_keyword]="'host_name'"
                                             (searched)="hostFilterData($event)"
-                                            [api_search]="true"
-                                        ></app-search-field>
+                                            [api_search]="true"></app-search-field>
                                     </div>
                                 </div>
                                 <div class="row" *ngIf="!initial_load">
                                     <div class="col-lg-12">
                                         <ng-container *ngIf="!searching; else loader">
-                                            <mat-card *ngIf="host_filtered_data.length > 0; else nodata">
+                                            <mat-card
+                                                *ngIf="host_filtered_data.length > 0; else nodata">
                                                 <app-data-table
                                                     [table_columns]="host_table_column"
                                                     [table_data]="host_filtered_data"
@@ -117,8 +128,9 @@
                                                     [is_view_only]="is_view_only"
                                                     (update_info)="ngOnInit()"
                                                     (page_triggered)="getHosts($event)"
-                                                    (to_sort_column)="getHostColumnsAndOrder($event)"
-                                                >
+                                                    (to_sort_column)="
+                                                        getHostColumnsAndOrder($event)
+                                                    ">
                                                 </app-data-table>
                                             </mat-card>
                                         </ng-container>
@@ -164,7 +176,12 @@
         <mat-card class="p-5">
             <h3>What the!?</h3>
             <p class="sm-text mb-3">There are no available hosts at the moment.</p>
-            <button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="createHostLink" [disabled]="is_view_only">
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn mr-2"
+                [routerLink]="createHostLink"
+                [disabled]="is_view_only">
                 Add Host Place
                 <span class="fas fa-plus ml-2 sm-text"></span>
             </button>

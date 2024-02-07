@@ -2,14 +2,20 @@
     <div class="text-center">
         <app-warning-animation></app-warning-animation>
         <h3 class="mb-1 mt-2">RENAME FILE</h3>
-        <p class="mb-4 sm-text font-weight-md text-warning">You are about to rename the file. <br>Please ensure that you will pick a unique name.</p>
+        <p class="mb-4 sm-text font-weight-md text-warning">
+            You are about to rename the file. <br />Please ensure that you will pick a unique name.
+        </p>
         <form [formGroup]="update_file">
             <mat-form-field class="col-lg-12 p-0">
                 <mat-label>File Name</mat-label>
-                <input matInput formControlName="filename" [placeholder]="'Ex. drinking_energy'">
+                <input matInput formControlName="filename" [placeholder]="'Ex. drinking_energy'" />
             </mat-form-field>
             <div>
-                <button mat-button mat-raised-button (click)="updateFile()" class="theme-btn mt-4 mr-3">
+                <button
+                    mat-button
+                    mat-raised-button
+                    (click)="updateFile()"
+                    class="theme-btn mt-4 mr-3">
                     Update
                 </button>
             </div>

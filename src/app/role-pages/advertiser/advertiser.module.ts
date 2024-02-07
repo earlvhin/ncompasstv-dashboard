@@ -8,18 +8,8 @@ import { ADVERTISER_ROUTES } from './advertiser.routes';
 import { AuthGuard } from '../../global/guards/auth/auth.guard';
 
 @NgModule({
-	declarations: [
-		AdvertiserLayoutComponent,
-		DashboardComponent
-	],
-	imports: [
-		CommonModule,
-		GlobalModule,
-		RouterModule.forChild(ADVERTISER_ROUTES)
-	],
-	providers: [
-		AuthGuard
-	]
+    declarations: [AdvertiserLayoutComponent, DashboardComponent],
+    imports: [CommonModule, GlobalModule, RouterModule.forChild(ADVERTISER_ROUTES)],
+    providers: [AuthGuard],
 })
-
-export class AdvertiserModule { }
+export class AdvertiserModule {}

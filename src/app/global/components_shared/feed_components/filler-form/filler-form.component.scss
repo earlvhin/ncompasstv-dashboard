@@ -5,9 +5,12 @@
     overflow-y: scroll;
 }
 
-.selected, .marked {
+.selected,
+.marked {
     .thumbnail-card {
-        box-shadow: 0 0 10px rgba(147, 202, 20, 0.945), 0 0 10px rgba(151, 209, 17, 0.938);
+        box-shadow:
+            0 0 10px rgba(147, 202, 20, 0.945),
+            0 0 10px rgba(151, 209, 17, 0.938);
     }
 }
 
@@ -16,7 +19,7 @@
 }
 
 .button-wrap {
-    background: rgba(0,0,0, 0.7);
+    background: rgba(0, 0, 0, 0.7);
     padding: 0 5px;
     position: absolute;
     top: 0;

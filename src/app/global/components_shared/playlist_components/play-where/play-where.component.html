@@ -2,14 +2,15 @@
     <div *ngIf="host_licenses; else no_host">
         <mat-accordion>
             <ng-container *ngFor="let h of host_licenses" class="mb-2">
-				<app-playlist-host *ngIf="blacklist_data"
-					[content_data]="content"
-					[blocklist_data]="blacklist_data"
-					[host_licenses]="h"
+                <app-playlist-host
+                    *ngIf="blacklist_data"
+                    [content_data]="content"
+                    [blocklist_data]="blacklist_data"
+                    [host_licenses]="h"
                     [is_child_frequency]="is_child_frequency"
-					[toggleEvent]="toggleEvent_child.asObservable()"
-					(blocklist_changes)="blacklistToggle($event)"
-					(whitelisted)="hasWhiteListed($event)">
+                    [toggleEvent]="toggleEvent_child.asObservable()"
+                    (blocklist_changes)="blacklistToggle($event)"
+                    (whitelisted)="hasWhiteListed($event)">
                 </app-playlist-host>
             </ng-container>
         </mat-accordion>
@@ -17,9 +18,7 @@
 
     <ng-template #no_host>
         <div class="d-flex pt-5 align-items-center">
-            <h4 class="w-100 text-center">
-                Playlist is not used in any screen of a host
-            </h4>
+            <h4 class="w-100 text-center">Playlist is not used in any screen of a host</h4>
         </div>
     </ng-template>
 </div>

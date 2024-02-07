@@ -1,124 +1,134 @@
 <div class="theme-container">
-	<div class="title-section">
-		<div class="d-flex">
-			<div class="flex-even">
-				<h1 class="page-title">{{ title }}</h1>
-			</div>
-			<div class="flex-even text-right">
-				<button mat-button mat-raised-button class="theme-btn" [routerLink]="['create-user']">
-					<span class="button-label"> New User </span>
-					<span class="fas fa-plus ml-2 sm-text"></span>
-				</button>
-			</div>
-		</div>
-		<hr class="my-4" />
-	</div>
+    <div class="title-section">
+        <div class="d-flex">
+            <div class="flex-even">
+                <h1 class="page-title">{{ title }}</h1>
+            </div>
+            <div class="flex-even text-right">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn"
+                    [routerLink]="['create-user']">
+                    <span class="button-label"> New User </span>
+                    <span class="fas fa-plus ml-2 sm-text"></span>
+                </button>
+            </div>
+        </div>
+        <hr class="my-4" />
+    </div>
 
-	<div>
-		<div class="row">
-			<div class="col-lg">
-				<mat-card class="h-100 dealer-card">
-					<app-data-card-count
-						*ngIf="user_details; else small_loader"
-						[data_value]="user_details.basis"
-						[data_label]="user_details.basis_label">
-					</app-data-card-count>
-				</mat-card>
-			</div>
-			<div class="col-lg">
-				<mat-card class="h-100 dealer-card">
-					<app-data-card-count
-						*ngIf="user_details; else small_loader"
-						[data_value]="user_details.sub_dealer_count"
-						[data_label]="user_details.sub_dealer_label">
-					</app-data-card-count>
-				</mat-card>
-			</div>
-			<div class="col-lg">
-				<mat-card class="h-100 dealer-card">
-					<app-data-card-count
-						*ngIf="user_details; else small_loader"
-						[data_value]="user_details.hosts"
-						[data_label]="user_details.hosts_label">
-					</app-data-card-count>
-				</mat-card>
-			</div>
-			<div class="col-lg">
-				<mat-card class="h-100 dealer-card">
-					<app-data-card-count
-						*ngIf="user_details; else small_loader"
-						[data_value]="user_details.advertiser"
-						[data_label]="user_details.advertiser_label">
-					</app-data-card-count>
-				</mat-card>
-			</div>
-		</div>
-		<hr class="my-4" />
-		<div *ngIf="users.length != 0 || no_user; else loader">
-			<div *ngIf="!no_user; else no_data">
-				<div class="row">
-					<div class="col-lg-8"></div>
-					<div class="col-lg-4">
-						<app-search-field
-							*ngIf="users.length != 0"
-							[form_title]="'Search Name or Email Address'"
-							[placeholder]="'Example: N-Compass'"
-							[data_reference]="users"
-							[primary_keyword]="'name'"
-							[secondary_keyword]="'email'"
-							(searched)="filterData($event)">
-						</app-search-field>
-					</div>
-				</div>
-				<div class="row" *ngIf="users.length != 0">
-					<div class="col-lg-12">
-						<mat-card *ngIf="filtered_data.length > 0; else nodata">
-							<app-data-table
-								[table_data]="filtered_data"
-								[table_columns]="users_table_column"
-								[is_user_delete_enabled]="true"
-								[can_toggle_email_notifications]="true"
-								[new_table]="true">
-							</app-data-table>
-						</mat-card>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div>
+        <div class="row">
+            <div class="col-lg">
+                <mat-card class="h-100 dealer-card">
+                    <app-data-card-count
+                        *ngIf="user_details; else small_loader"
+                        [data_value]="user_details.basis"
+                        [data_label]="user_details.basis_label">
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+            <div class="col-lg">
+                <mat-card class="h-100 dealer-card">
+                    <app-data-card-count
+                        *ngIf="user_details; else small_loader"
+                        [data_value]="user_details.sub_dealer_count"
+                        [data_label]="user_details.sub_dealer_label">
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+            <div class="col-lg">
+                <mat-card class="h-100 dealer-card">
+                    <app-data-card-count
+                        *ngIf="user_details; else small_loader"
+                        [data_value]="user_details.hosts"
+                        [data_label]="user_details.hosts_label">
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+            <div class="col-lg">
+                <mat-card class="h-100 dealer-card">
+                    <app-data-card-count
+                        *ngIf="user_details; else small_loader"
+                        [data_value]="user_details.advertiser"
+                        [data_label]="user_details.advertiser_label">
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+        </div>
+        <hr class="my-4" />
+        <div *ngIf="users.length != 0 || no_user; else loader">
+            <div *ngIf="!no_user; else no_data">
+                <div class="row">
+                    <div class="col-lg-8"></div>
+                    <div class="col-lg-4">
+                        <app-search-field
+                            *ngIf="users.length != 0"
+                            [form_title]="'Search Name or Email Address'"
+                            [placeholder]="'Example: N-Compass'"
+                            [data_reference]="users"
+                            [primary_keyword]="'name'"
+                            [secondary_keyword]="'email'"
+                            (searched)="filterData($event)">
+                        </app-search-field>
+                    </div>
+                </div>
+                <div class="row" *ngIf="users.length != 0">
+                    <div class="col-lg-12">
+                        <mat-card *ngIf="filtered_data.length > 0; else nodata">
+                            <app-data-table
+                                [table_data]="filtered_data"
+                                [table_columns]="users_table_column"
+                                [is_user_delete_enabled]="true"
+                                [can_toggle_email_notifications]="true"
+                                [new_table]="true">
+                            </app-data-table>
+                        </mat-card>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-	<ng-template #no_data>
-		<mat-card class="p-5">
-			<h3>What the!?</h3>
-			<p class="sm-text mb-3">There are no available users at the moment.</p>
-			<button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/dealer/users/create-user']">
-				Add User
-				<span class="fas fa-plus ml-2 sm-text"></span>
-			</button>
-		</mat-card>
-	</ng-template>
+    <ng-template #no_data>
+        <mat-card class="p-5">
+            <h3>What the!?</h3>
+            <p class="sm-text mb-3">There are no available users at the moment.</p>
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn mr-2"
+                [routerLink]="['/dealer/users/create-user']">
+                Add User
+                <span class="fas fa-plus ml-2 sm-text"></span>
+            </button>
+        </mat-card>
+    </ng-template>
 
-	<ng-template #nodata>
-		<div class="col-lg-12 pl-0 pr-0">
-			<mat-card class="pt-5 pb-5 col-lg-12 text-center">
-				<div class="mb-4">
-					<i class="text-gray fa-5x far fa-file-alt"></i>
-				</div>
-				<h3 class="text-gray col-lg-12">No Results Found.</h3>
-				<span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
-			</mat-card>
-		</div>
-	</ng-template>
+    <ng-template #nodata>
+        <div class="col-lg-12 pl-0 pr-0">
+            <mat-card class="pt-5 pb-5 col-lg-12 text-center">
+                <div class="mb-4">
+                    <i class="text-gray fa-5x far fa-file-alt"></i>
+                </div>
+                <h3 class="text-gray col-lg-12">No Results Found.</h3>
+                <span class="text-gray col-lg-12"
+                    >Try adjusting your search to find what you're looking for.</span
+                >
+            </mat-card>
+        </div>
+    </ng-template>
 
-	<ng-template #loader>
-		<div class="py-4 white-bg h-500">
-			<app-spinner [diameter]="60"></app-spinner>
-		</div>
-	</ng-template>
+    <ng-template #loader>
+        <div class="py-4 white-bg h-500">
+            <app-spinner [diameter]="60"></app-spinner>
+        </div>
+    </ng-template>
 
-	<ng-template #small_loader>
-		<div class="py-4 white-bg">
-			<app-spinner [diameter]="60"></app-spinner>
-		</div>
-	</ng-template>
+    <ng-template #small_loader>
+        <div class="py-4 white-bg">
+            <app-spinner [diameter]="60"></app-spinner>
+        </div>
+    </ng-template>
 </div>

@@ -1,72 +1,63 @@
 .disabled {
-	background: gray !important;
+    background: gray !important;
 
-	&:hover {
-		background: gray !important;
-	}
+    &:hover {
+        background: gray !important;
+    }
 }
 
 .title-section {
-	.template-name {
-		width: 600px;
-	}
+    .template-name {
+        width: 600px;
+    }
 }
 
 .content-section {
+    .zones {
+        margin: 0 auto;
 
-	.zones {
-		margin: 0 auto;
+        .zone {
+            margin-bottom: 10px;
+        }
+    }
 
-		.zone {
-			margin-bottom: 10px;
-		}	
-	}
-
-	.minimap {
-		margin-left: 25%;
-		margin-right: 25%;
-	}
-
+    .minimap {
+        margin-left: 25%;
+        margin-right: 25%;
+    }
 }
 
 button.submit-btn {
-	float: right;
-	margin-right: 7%;
+    float: right;
+    margin-right: 7%;
 }
 
 @media screen and (min-width: 1366px) {
+    .content-section {
+        flex-direction: row !important;
 
-	.content-section {
-		flex-direction: row !important;
+        .zones {
+            flex: 0.5;
+            margin: unset !important;
+            margin-right: 50px !important;
+        }
 
-		.zones {
-			flex: 0.50;
-			margin: unset !important;
-			margin-right: 50px !important;
-		}
-	
-		.minimap {
-			flex: 0.45;
-			margin: unset !important;
-		}
+        .minimap {
+            flex: 0.45;
+            margin: unset !important;
+        }
+    }
 
-	}
-
-	button.submit-btn {
-		float: unset !important;
-		margin-right: unset !important;
-	}
-
+    button.submit-btn {
+        float: unset !important;
+        margin-right: unset !important;
+    }
 }
 
 @media screen and (min-width: 1700px) {
-
-	.content-section {
-	
-		.minimap {
-			flex: 0.30 !important;
-		}
-
-	}
-
+    .content-section {
+        .minimap {
+            flex: 0.3 !important;
+        }
+    }
 }

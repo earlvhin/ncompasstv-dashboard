@@ -1,124 +1,134 @@
 <div class="theme-container">
-	<div class="title-section">
-		<div class="d-flex align-items-center">
-			<div class="flex-even">
-				<h1 class="page-title">Screens</h1>
-			</div>
-			<div class="flex-even text-right">
-				<button mat-button mat-raised-button class="theme-btn" [routerLink]="['create-screen']">
-					<span class="button-label"> New Screen </span>
-					<span class="fas fa-plus ml-2 sm-text"></span>
-				</button>
-			</div>
-		</div>
-		<hr class="my-4" />
-	</div>
+    <div class="title-section">
+        <div class="d-flex align-items-center">
+            <div class="flex-even">
+                <h1 class="page-title">Screens</h1>
+            </div>
+            <div class="flex-even text-right">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn"
+                    [routerLink]="['create-screen']">
+                    <span class="button-label"> New Screen </span>
+                    <span class="fas fa-plus ml-2 sm-text"></span>
+                </button>
+            </div>
+        </div>
+        <hr class="my-4" />
+    </div>
 
-	<div>
-		<div class="row">
-			<div class="col-12 col-lg">
-				<mat-card class="h-100">
-					<app-data-card-compare
-						*ngIf="screen_details.basis_label; else small_loader"
-						[compare_basis]="screen_details.basis"
-						[compare_basis_label]="screen_details.basis_label"
-						[good_value]="screen_details.good_value"
-						[good_value_label]="screen_details.good_value_label"
-						[bad_value]="screen_details.bad_value"
-						[bad_value_label]="screen_details.bad_value_label">
-					</app-data-card-compare>
-				</mat-card>
-			</div>
-			<div class="col-12 col-lg">
-				<mat-card class="h-100 dealer-card">
-					<app-data-card-count
-						*ngIf="screen_details.basis_label; else small_loader"
-						[data_value]="screen_details.new_this_week_value"
-						[data_label]="screen_details.new_this_week_value_label"
-						[data_description]="screen_details.new_this_week_value_description">
-					</app-data-card-count>
-				</mat-card>
-			</div>
-			<div class="col-12 col-lg">
-				<mat-card class="h-100 dealer-card">
-					<app-data-card-count
-						*ngIf="screen_details.basis_label; else small_loader"
-						[data_value]="screen_details.new_last_week_value"
-						[data_label]="screen_details.new_last_week_value_label"
-						[data_description]="screen_details.new_last_week_value_description">
-					</app-data-card-count>
-				</mat-card>
-			</div>
-		</div>
-		<hr class="my-4" />
-		<div *ngIf="!initial_load; else loader">
-			<div *ngIf="!no_screen; else no_data">
-				<div class="row justify-content-end">
-					<div class="col-lg-4">
-						<app-search-field
-							*ngIf="!initial_load"
-							[form_title]="'Search Screen Name'"
-							[placeholder]="'Example: N-Compass'"
-							[data_reference]="screens"
-							[primary_keyword]="'screen_name'"
-							[secondary_keyword]="'host_name'"
-							(searched)="filterData($event)"
-							[api_search]="true"></app-search-field>
-					</div>
-				</div>
-				<div class="row" *ngIf="!initial_load">
-					<div class="col-lg-12">
-						<ng-container *ngIf="!searching; else loader">
-							<mat-card *ngIf="filtered_data.length > 0; else nodata">
-								<app-data-table
-									[table_data]="filtered_data"
-									[table_columns]="tbl_screen_columns"
-									[new_table]="true"
-									[screen_delete]="true"
-									(update_info)="ngOnInit()"
-									[paging_details]="paging_data"
-									(page_triggered)="getAllScreens($event)">
-								</app-data-table>
-							</mat-card>
-						</ng-container>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div>
+        <div class="row">
+            <div class="col-12 col-lg">
+                <mat-card class="h-100">
+                    <app-data-card-compare
+                        *ngIf="screen_details.basis_label; else small_loader"
+                        [compare_basis]="screen_details.basis"
+                        [compare_basis_label]="screen_details.basis_label"
+                        [good_value]="screen_details.good_value"
+                        [good_value_label]="screen_details.good_value_label"
+                        [bad_value]="screen_details.bad_value"
+                        [bad_value_label]="screen_details.bad_value_label">
+                    </app-data-card-compare>
+                </mat-card>
+            </div>
+            <div class="col-12 col-lg">
+                <mat-card class="h-100 dealer-card">
+                    <app-data-card-count
+                        *ngIf="screen_details.basis_label; else small_loader"
+                        [data_value]="screen_details.new_this_week_value"
+                        [data_label]="screen_details.new_this_week_value_label"
+                        [data_description]="screen_details.new_this_week_value_description">
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+            <div class="col-12 col-lg">
+                <mat-card class="h-100 dealer-card">
+                    <app-data-card-count
+                        *ngIf="screen_details.basis_label; else small_loader"
+                        [data_value]="screen_details.new_last_week_value"
+                        [data_label]="screen_details.new_last_week_value_label"
+                        [data_description]="screen_details.new_last_week_value_description">
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+        </div>
+        <hr class="my-4" />
+        <div *ngIf="!initial_load; else loader">
+            <div *ngIf="!no_screen; else no_data">
+                <div class="row justify-content-end">
+                    <div class="col-lg-4">
+                        <app-search-field
+                            *ngIf="!initial_load"
+                            [form_title]="'Search Screen Name'"
+                            [placeholder]="'Example: N-Compass'"
+                            [data_reference]="screens"
+                            [primary_keyword]="'screen_name'"
+                            [secondary_keyword]="'host_name'"
+                            (searched)="filterData($event)"
+                            [api_search]="true"></app-search-field>
+                    </div>
+                </div>
+                <div class="row" *ngIf="!initial_load">
+                    <div class="col-lg-12">
+                        <ng-container *ngIf="!searching; else loader">
+                            <mat-card *ngIf="filtered_data.length > 0; else nodata">
+                                <app-data-table
+                                    [table_data]="filtered_data"
+                                    [table_columns]="tbl_screen_columns"
+                                    [new_table]="true"
+                                    [screen_delete]="true"
+                                    (update_info)="ngOnInit()"
+                                    [paging_details]="paging_data"
+                                    (page_triggered)="getAllScreens($event)">
+                                </app-data-table>
+                            </mat-card>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-	<ng-template #no_data>
-		<mat-card class="p-5">
-			<h3>What the!?</h3>
-			<p class="sm-text mb-3">There are no available screens at the moment.</p>
-			<button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/dealer/screens/create-screen']">
-				Add Screen
-				<span class="fas fa-plus ml-2 sm-text"></span>
-			</button>
-		</mat-card>
-	</ng-template>
+    <ng-template #no_data>
+        <mat-card class="p-5">
+            <h3>What the!?</h3>
+            <p class="sm-text mb-3">There are no available screens at the moment.</p>
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn mr-2"
+                [routerLink]="['/dealer/screens/create-screen']">
+                Add Screen
+                <span class="fas fa-plus ml-2 sm-text"></span>
+            </button>
+        </mat-card>
+    </ng-template>
 
-	<ng-template #nodata>
-		<div class="col-lg-12 pl-0 pr-0">
-			<mat-card class="pt-5 pb-5 col-lg-12 text-center">
-				<div class="mb-4">
-					<i class="text-gray fa-5x far fa-file-alt"></i>
-				</div>
-				<h3 class="text-gray col-lg-12">No Results Found.</h3>
-				<span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
-			</mat-card>
-		</div>
-	</ng-template>
+    <ng-template #nodata>
+        <div class="col-lg-12 pl-0 pr-0">
+            <mat-card class="pt-5 pb-5 col-lg-12 text-center">
+                <div class="mb-4">
+                    <i class="text-gray fa-5x far fa-file-alt"></i>
+                </div>
+                <h3 class="text-gray col-lg-12">No Results Found.</h3>
+                <span class="text-gray col-lg-12"
+                    >Try adjusting your search to find what you're looking for.</span
+                >
+            </mat-card>
+        </div>
+    </ng-template>
 
-	<ng-template #loader>
-		<div class="py-4 white-bg h-500">
-			<app-spinner [diameter]="60"></app-spinner>
-		</div>
-	</ng-template>
+    <ng-template #loader>
+        <div class="py-4 white-bg h-500">
+            <app-spinner [diameter]="60"></app-spinner>
+        </div>
+    </ng-template>
 
-	<ng-template #small_loader>
-		<div class="py-4 white-bg">
-			<app-spinner [diameter]="60"></app-spinner>
-		</div>
-	</ng-template>
+    <ng-template #small_loader>
+        <div class="py-4 white-bg">
+            <app-spinner [diameter]="60"></app-spinner>
+        </div>
+    </ng-template>
 </div>

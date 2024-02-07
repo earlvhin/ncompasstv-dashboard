@@ -4,20 +4,46 @@
             <div *ngFor="let w of weather_form_fields" class="{{ w.width }}">
                 <mat-form-field class="full-width mb-2" appearance="fill" *ngIf="!w.viewType">
                     <mat-label>{{ w.label }}</mat-label>
-                    <input matInput formControlName="{{ w.form_control_name }}" [type]="w.type" [required]="w.required" autocomplete="off">
+                    <input
+                        matInput
+                        formControlName="{{ w.form_control_name }}"
+                        [type]="w.type"
+                        [required]="w.required"
+                        autocomplete="off" />
                 </mat-form-field>
 
-                <div class="full-width bg-gray mb-4 position-relative overflow-hidden upload-image-field" appearance="fill" *ngIf="w.viewType == 'upload'">
-                    <img [src]="w.imageUri || '/assets/media-files/placeholder.png'" alt="Selected Image">
+                <div
+                    class="full-width bg-gray mb-4 position-relative overflow-hidden upload-image-field"
+                    appearance="fill"
+                    *ngIf="w.viewType == 'upload'">
+                    <img
+                        [src]="w.imageUri || '/assets/media-files/placeholder.png'"
+                        alt="Selected Image" />
                     <span class="sm-text label-when-filled" *ngIf="w.fileName">{{ w.label }}</span>
-                        <p class="filename" [ngClass]="w.fileName ? 'filled' : ''" [title]="w.fileName">{{ w.fileName ? (w.fileName | substring:18) : '' || w.label }}</p>
-                    <button *ngIf="w.fileName" class="remove-button" (click)="$event.preventDefault(); removeSelectedMedia(w.form_control_name);"><span class="fas fa-times"></span></button>
-                    <button class="upload-button" (click)="$event.preventDefault(); openMediaLibraryModal(w.form_control_name);"><span class="fas fa-camera"></span></button>
+                    <p class="filename" [ngClass]="w.fileName ? 'filled' : ''" [title]="w.fileName">
+                        {{ w.fileName ? (w.fileName | substring: 18) : '' || w.label }}
+                    </p>
+                    <button
+                        *ngIf="w.fileName"
+                        class="remove-button"
+                        (click)="$event.preventDefault(); removeSelectedMedia(w.form_control_name)">
+                        <span class="fas fa-times"></span>
+                    </button>
+                    <button
+                        class="upload-button"
+                        (click)="
+                            $event.preventDefault(); openMediaLibraryModal(w.form_control_name)
+                        ">
+                        <span class="fas fa-camera"></span>
+                    </button>
                 </div>
 
-                <mat-form-field class="full-width content-filter-dropdown" appearance="fill" *ngIf="w.viewType == 'select'">
+                <mat-form-field
+                    class="full-width content-filter-dropdown"
+                    appearance="fill"
+                    *ngIf="w.viewType == 'select'">
                     <mat-label>{{ w.label }}</mat-label>
-					
+
                     <mat-select formControlName="{{ w.form_control_name }}">
                         <mat-option *ngFor="let filter of w.options" [value]="filter.label">
                             {{ filter.label }}
@@ -25,19 +51,26 @@
                     </mat-select>
                 </mat-form-field>
 
-                <mat-form-field class="full-width position-relative mb-2" appearance="fill" *ngIf="w.viewType == 'colorpicker'">
+                <mat-form-field
+                    class="full-width position-relative mb-2"
+                    appearance="fill"
+                    *ngIf="w.viewType == 'colorpicker'">
                     <mat-label>{{ w.label }}</mat-label>
 
-                    <input matInput autocomplete="off"
-                    formControlName="{{ w.form_control_name }}"
-                    (colorPickerChange)="colorPicker(w.colorValue, w.form_control_name)"
-                    [(colorPicker)]="w.colorValue"
-                    [type]="w.type"
-                    [cpAlphaChannel]="'enabled'"
-                    [cpDisableInput]="true"
-                    [value]="w.colorValue || ''"/>
+                    <input
+                        matInput
+                        autocomplete="off"
+                        formControlName="{{ w.form_control_name }}"
+                        (colorPickerChange)="colorPicker(w.colorValue, w.form_control_name)"
+                        [(colorPicker)]="w.colorValue"
+                        [type]="w.type"
+                        [cpAlphaChannel]="'enabled'"
+                        [cpDisableInput]="true"
+                        [value]="w.colorValue || ''" />
 
-                    <div class="color-showcase position-absolute" [style.background]="w.colorValue"></div>
+                    <div
+                        class="color-showcase position-absolute"
+                        [style.background]="w.colorValue"></div>
                 </mat-form-field>
 
                 <div class="error-message">
@@ -47,18 +80,30 @@
         </div>
 
         <div class="alert alert-primary" *ngIf="formControls.zipCode.valid && zipcode_checking">
-            <p class="sm-text font-weight-bold">Checking zipcode {{ formControls.zipCode.value }} validity ...</p>
+            <p class="sm-text font-weight-bold">
+                Checking zipcode {{ formControls.zipCode.value }} validity ...
+            </p>
         </div>
 
         <div class="alert alert-success" *ngIf="zipcode_valid === true && !zipcode_checking">
-            <p class="sm-text font-weight-bold">Zipcode {{ formControls.zipCode.value }} is a valid location.</p>
+            <p class="sm-text font-weight-bold">
+                Zipcode {{ formControls.zipCode.value }} is a valid location.
+            </p>
         </div>
 
         <div class="alert alert-danger" *ngIf="zipcode_valid === false && !zipcode_checking">
-            <p class="sm-text font-weight-bold">Zipcode {{ formControls.zipCode.value }} is not a valid location.</p>
+            <p class="sm-text font-weight-bold">
+                Zipcode {{ formControls.zipCode.value }} is not a valid location.
+            </p>
         </div>
 
-        <button mat-button mat-raised-button matStepperNext class="theme-btn" [disabled]="!zipcode_valid || zipcode_checking || weather_form.invalid" (click)="generateWeatherFeed()">
+        <button
+            mat-button
+            mat-raised-button
+            matStepperNext
+            class="theme-btn"
+            [disabled]="!zipcode_valid || zipcode_checking || weather_form.invalid"
+            (click)="generateWeatherFeed()">
             Next <span class="fas fa-long-arrow-right"></span>
         </button>
     </form>

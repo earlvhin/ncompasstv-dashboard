@@ -1,45 +1,52 @@
 <mat-expansion-panel>
-	<mat-expansion-panel-header>
-		<mat-panel-title>{{ data.name }}</mat-panel-title>
-		<!-- <mat-panel-description>{{ data.description }}</mat-panel-description> -->
-	</mat-expansion-panel-header>
-	
-	<ng-container *ngIf="form">
-		<form [formGroup]="form">
+    <mat-expansion-panel-header>
+        <mat-panel-title>{{ data.name }}</mat-panel-title>
+        <!-- <mat-panel-description>{{ data.description }}</mat-panel-description> -->
+    </mat-expansion-panel-header>
 
-			<div class="first-row d-flex justify-content-between">
-				<mat-form-field *ngFor="let field of firstRowFields">
+    <ng-container *ngIf="form">
+        <form [formGroup]="form">
+            <div class="first-row d-flex justify-content-between">
+                <mat-form-field *ngFor="let field of firstRowFields">
+                    <ng-container *ngIf="field.type !== 'color'; else colorPicker">
+                        <input
+                            matInput
+                            [placeholder]="field.placeholder"
+                            [type]="field.type"
+                            [formControlName]="field.name" />
+                    </ng-container>
 
-					<ng-container *ngIf="field.type !== 'color'; else colorPicker">
-						<input matInput [placeholder]="field.placeholder" [type]="field.type" [formControlName]="field.name">
-					</ng-container>
+                    <ng-template #colorPicker>
+                        <input
+                            matInput
+                            class="color-picker-field"
+                            [placeholder]="field.placeholder"
+                            [cpAlphaChannel]="'disabled'"
+                            [cpDisableInput]="true"
+                            [cpPosition]="'bottom-right'"
+                            [style.background]="selectedZoneColor"
+                            [(colorPicker)]="selectedZoneColor"
+                            (colorPickerChange)="onSelectZoneColor(selectedZoneColor)"
+                            [value]="selectedZoneColor || ''" />
+                    </ng-template>
+                </mat-form-field>
+            </div>
 
-					<ng-template #colorPicker>
-						<input matInput class="color-picker-field"
-							[placeholder]="field.placeholder"
-							[cpAlphaChannel]="'disabled'"
-							[cpDisableInput]="true"
-							[cpPosition]="'bottom-right'"
-							[style.background]="selectedZoneColor"
-							[(colorPicker)]="selectedZoneColor" 
-							(colorPickerChange)="onSelectZoneColor(selectedZoneColor)" 
-							[value]="selectedZoneColor || ''"/>
-					</ng-template>
+            <div class="second-row d-flex justify-content-between">
+                <mat-form-field *ngFor="let field of secondRowFields">
+                    <input
+                        matInput
+                        [placeholder]="field.placeholder"
+                        [type]="field.type"
+                        [formControlName]="field.name" />
+                </mat-form-field>
+            </div>
+        </form>
+    </ng-container>
 
-				</mat-form-field>
-			</div>
-
-			<div class="second-row d-flex justify-content-between">
-				<mat-form-field *ngFor="let field of secondRowFields">
-					<input matInput [placeholder]="field.placeholder" [type]="field.type" [formControlName]="field.name">
-				</mat-form-field>
-			</div>
-			
-		</form>
-	</ng-container>
-
-	<mat-action-row>
-		<button mat-button mat-raised-button class="bg-danger text-white" (click)="onReset()">Reset</button>
-	</mat-action-row>
-
+    <mat-action-row>
+        <button mat-button mat-raised-button class="bg-danger text-white" (click)="onReset()">
+            Reset
+        </button>
+    </mat-action-row>
 </mat-expansion-panel>

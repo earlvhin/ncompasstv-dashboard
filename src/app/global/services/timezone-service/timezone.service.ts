@@ -24,7 +24,7 @@ export class TimezoneService extends BaseService {
             catchError((error) => {
                 console.error('Error fetching timezone:', error);
                 return of('UTC'); // Default to UTC in case of error
-            })
+            }),
         );
     }
 

@@ -10,27 +10,32 @@
 
     <hr class="my-3" />
 
-	<div class="row my-4">
-		<div class="col-lg-8">
-			<div class="d-inline-flex pl-0">
-				<div class="icon-container mt-2 text-center h-40 w-40 bg-dark br-100 lh-40">
-					<span class="fas fa-user-shield text-white"></span>
-				</div>
-				<div class="ml-3">
-					<span class="lg-text text-primary f-20">Welcome back, Admin {{ user_name }}!</span>
-					<br />
-					<span class="text-gray sm-text"> This is your N-Compass Dashboard. Look around! </span>
-				</div>
-			</div>
-		</div>
-		<div class="col-lg-4">
-			<div class="text-right clickable">
-				<a [routerLink]="['/administrator/releases']" target="_blank">
-					<i class="fas fa-bullhorn mr-3"></i><span class="sm-text text-info font-weight-bold">WHAT'S NEW</span>
-				</a>
-			</div>
-		</div>
-	</div>
+    <div class="row my-4">
+        <div class="col-lg-8">
+            <div class="d-inline-flex pl-0">
+                <div class="icon-container mt-2 text-center h-40 w-40 bg-dark br-100 lh-40">
+                    <span class="fas fa-user-shield text-white"></span>
+                </div>
+                <div class="ml-3">
+                    <span class="lg-text text-primary f-20"
+                        >Welcome back, Admin {{ user_name }}!</span
+                    >
+                    <br />
+                    <span class="text-gray sm-text">
+                        This is your N-Compass Dashboard. Look around!
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="text-right clickable">
+                <a [routerLink]="['/administrator/releases']" target="_blank">
+                    <i class="fas fa-bullhorn mr-3"></i
+                    ><span class="sm-text text-info font-weight-bold">WHAT'S NEW</span>
+                </a>
+            </div>
+        </div>
+    </div>
 
     <div class="row mb-4">
         <div class="col-lg-3 col-md-6">
@@ -48,8 +53,7 @@
                 [sub_label_right]="'New last week'"
                 [sub_label_right_value]="dealer_stats.last_week"
                 [notes]="' '"
-                [sub_label_right_icon]="'fas fa-arrow-up'"
-            >
+                [sub_label_right_icon]="'fas fa-arrow-up'">
             </app-data-quick-stats>
         </div>
         <div class="col-lg-3 col-md-6">
@@ -67,8 +71,7 @@
                 [sub_label_right]="'New last week'"
                 [sub_label_right_value]="host_stats.last_week"
                 [notes]="' '"
-                [sub_label_right_icon]="'fas fa-arrow-up'"
-            ></app-data-quick-stats>
+                [sub_label_right_icon]="'fas fa-arrow-up'"></app-data-quick-stats>
         </div>
         <div class="col-lg-3 col-md-6">
             <app-data-quick-stats
@@ -85,8 +88,7 @@
                 [sub_label_right]="'New last week'"
                 [sub_label_right_value]="advertiser_stats.last_week"
                 [notes]="' '"
-                [sub_label_right_icon]="'fas fa-arrow-up'"
-            ></app-data-quick-stats>
+                [sub_label_right_icon]="'fas fa-arrow-up'"></app-data-quick-stats>
         </div>
         <div class="col-lg-3 col-md-6">
             <app-data-quick-stats
@@ -103,8 +105,7 @@
                 [sub_label_right]="'New last week'"
                 [sub_label_right_value]="license_stats.last_week"
                 [notes]="license_stats.notes"
-                [sub_label_right_icon]="'fas fa-arrow-up'"
-            ></app-data-quick-stats>
+                [sub_label_right_icon]="'fas fa-arrow-up'"></app-data-quick-stats>
         </div>
     </div>
 
@@ -120,7 +121,9 @@
                     <hr class="mb-3" />
                     <div class="row">
                         <div class="col-lg-4 text-center">
-                            <h4 class="xlg-text text-primary" *ngIf="isNumber(host_stats.total); else spinner">
+                            <h4
+                                class="xlg-text text-primary"
+                                *ngIf="isNumber(host_stats.total); else spinner">
                                 {{ getAverage(host_stats.total) }}
                             </h4>
                             <p>
@@ -131,7 +134,9 @@
                             </p>
                         </div>
                         <div class="col-lg-4 text-center">
-                            <h4 class="xlg-text text-primary" *ngIf="isNumber(advertiser_stats.total); else spinner">
+                            <h4
+                                class="xlg-text text-primary"
+                                *ngIf="isNumber(advertiser_stats.total); else spinner">
                                 {{ getAverage(advertiser_stats.total) }}
                             </h4>
                             <p>
@@ -142,7 +147,9 @@
                             </p>
                         </div>
                         <div class="col-lg-4 text-center">
-                            <h4 class="xlg-text text-primary" *ngIf="isNumber(license_stats.total); else spinner">
+                            <h4
+                                class="xlg-text text-primary"
+                                *ngIf="isNumber(license_stats.total); else spinner">
                                 {{ getAverage(license_stats.total) }}
                             </h4>
                             <p>
@@ -168,7 +175,9 @@
                     <hr class="mb-3" />
                     <div class="row no-gutters">
                         <div class="col-lg-6 text-center">
-                            <h4 class="xlg-text text-primary" *ngIf="isNumber(daily_content_total); else spinner">
+                            <h4
+                                class="xlg-text text-primary"
+                                *ngIf="isNumber(daily_content_total); else spinner">
                                 {{ daily_content_total || 0 }}
                             </h4>
                             <p>
@@ -177,7 +186,11 @@
                             </p>
                         </div>
                         <div class="col-lg-6 text-center">
-                            <h4 class="xlg-text text-primary" *ngIf="isNumber(daily_feed_total); else spinner">{{ daily_feed_total }}</h4>
+                            <h4
+                                class="xlg-text text-primary"
+                                *ngIf="isNumber(daily_feed_total); else spinner">
+                                {{ daily_feed_total }}
+                            </h4>
                             <p>
                                 <span class="fas fa-newspaper text-primary mr-1"></span>
                                 <span class="sm-text text-gray"> Feeds Created </span>
@@ -199,7 +212,9 @@
                     <hr class="mb-3" />
                     <div class="row no-gutters">
                         <div class="col-lg-4 text-center">
-                            <h4 class="xlg-text text-primary" *ngIf="isNumber(installation_stats.this_month); else spinner">
+                            <h4
+                                class="xlg-text text-primary"
+                                *ngIf="isNumber(installation_stats.this_month); else spinner">
                                 {{ installation_stats.this_month }}
                             </h4>
                             <p>
@@ -208,7 +223,9 @@
                             </p>
                         </div>
                         <div class="col-lg-4 text-center">
-                            <h4 class="xlg-text text-primary" *ngIf="isNumber(installation_stats.last_month); else spinner">
+                            <h4
+                                class="xlg-text text-primary"
+                                *ngIf="isNumber(installation_stats.last_month); else spinner">
                                 {{ installation_stats.last_month }}
                             </h4>
                             <p>
@@ -217,11 +234,14 @@
                             </p>
                         </div>
                         <div class="col-lg-4 text-center">
-                            <h4 class="xlg-text text-primary" *ngIf="isNumber(installation_stats.next_month); else spinner">
+                            <h4
+                                class="xlg-text text-primary"
+                                *ngIf="isNumber(installation_stats.next_month); else spinner">
                                 {{ installation_stats.next_month }}
                             </h4>
                             <p>
-                                <span class="{{ installation_stats.icon }} text-primary mr-1"></span>
+                                <span
+                                    class="{{ installation_stats.icon }} text-primary mr-1"></span>
                                 <span class="sm-text text-gray"> Next Month </span>
                             </p>
                         </div>
@@ -239,7 +259,11 @@
                     </h4>
                     <hr class="mb-3" />
                     <div class="text-center">
-                        <h4 class="xlg-text text-primary" *ngIf="isNumber(installation_stats.total); else spinner">{{ installation_stats.total }}</h4>
+                        <h4
+                            class="xlg-text text-primary"
+                            *ngIf="isNumber(installation_stats.total); else spinner">
+                            {{ installation_stats.total }}
+                        </h4>
                         <p>
                             <span class="fas fa-tools text-primary mr-1"></span>
                             <span class="sm-text text-gray"> Total Installations </span>
@@ -261,7 +285,11 @@
                     </h4>
                     <hr class="mb-3" />
                     <div class="text-center">
-                        <h4 class="xlg-text text-primary" *ngIf="isNumber(installation_stats.total); else spinner">{{ installation_stats.total }}</h4>
+                        <h4
+                            class="xlg-text text-primary"
+                            *ngIf="isNumber(installation_stats.total); else spinner">
+                            {{ installation_stats.total }}
+                        </h4>
                         <p>
                             <span class="fas fa-tools text-primary mr-1"></span>
                             <span class="sm-text text-gray"> Total Installations </span>
@@ -279,7 +307,9 @@
                     </h4>
                     <hr class="mb-3" />
                     <div class="text-center">
-                        <h4 class="xlg-text text-primary" *ngIf="isNumber(daily_login_total); else spinner">
+                        <h4
+                            class="xlg-text text-primary"
+                            *ngIf="isNumber(daily_login_total); else spinner">
                             {{ daily_login_total }}
                         </h4>
                         <p>

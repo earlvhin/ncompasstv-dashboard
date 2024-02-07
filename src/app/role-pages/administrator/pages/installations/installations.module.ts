@@ -7,8 +7,8 @@ import { InstallationsComponent } from './installations.component';
 import { TabContentComponent } from './components/tab-content/tab-content.component';
 
 @NgModule({
-	declarations: [ InstallationsComponent, TabContentComponent ],
-	imports: [ CommonModule, GlobalModule, RouterModule ],
-	providers: [ InstallationsComponent ]
+    declarations: [InstallationsComponent, TabContentComponent],
+    imports: [CommonModule, GlobalModule, RouterModule],
+    providers: [InstallationsComponent],
 })
-export class InstallationsModule { }
+export class InstallationsModule {}

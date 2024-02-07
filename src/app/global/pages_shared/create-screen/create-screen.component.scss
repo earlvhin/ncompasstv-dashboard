@@ -1,36 +1,36 @@
 .licenses-heading {
-	align-items: baseline;
-	display: flex;
-	margin-bottom: 20px;
+    align-items: baseline;
+    display: flex;
+    margin-bottom: 20px;
 
-	h4 {
-		line-height: 20px;
-	}
+    h4 {
+        line-height: 20px;
+    }
 
-	button {
-		justify-content: flex-end;
-		margin-left: auto !important;
-	}
+    button {
+        justify-content: flex-end;
+        margin-left: auto !important;
+    }
 }
 
 .install-date {
-	display: inline-flex;
-	justify-content: flex-end;
+    display: inline-flex;
+    justify-content: flex-end;
 
-	span, mat-icon {
-		font-size: 14px;
-	}
+    span,
+    mat-icon {
+        font-size: 14px;
+    }
 
-	mat-icon {
-		cursor: pointer;
-		text-align: right;
-		line-height: 18px;
-	}
-
+    mat-icon {
+        cursor: pointer;
+        text-align: right;
+        line-height: 18px;
+    }
 }
 
 .disabled {
-	opacity: 0.5;
+    opacity: 0.5;
 }
 
 .create-screen-height {

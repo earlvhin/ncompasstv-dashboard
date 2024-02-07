@@ -1,144 +1,180 @@
 <div class="container p-2" id="addTagModal">
-	<div class="row">
-		<div class="col-lg-11">
-			<h3>{{ title }}</h3>
-			<p class="sm-text mb-4">{{ description }}</p>
-		</div>
-		<div class="col-lg-1">
-			<button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
-				<span class="fas fa-times"></span>
-			</button>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-lg-11">
+            <h3>{{ title }}</h3>
+            <p class="sm-text mb-4">{{ description }}</p>
+        </div>
+        <div class="col-lg-1">
+            <button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
+                <span class="fas fa-times"></span>
+            </button>
+        </div>
+    </div>
 
-	<form [formGroup]="form" (ngSubmit)="onSubmit()">
-		<div class="row">
-			<div class="col-lg-6">
-				<h4>Create new tag:</h4>
-				<mat-form-field class="full-width">
-					<mat-label>Tag Color</mat-label>
-					<input
-						matInput
-						type="text"
-						formControlName="tagColor"
-						autocomplete="off"
-						[(colorPicker)]="selectedTagColor"
-						[cpAlphaChannel]="'disabled'"
-						[cpDisableInput]="true"
-						[style.background]="selectedTagColor"
-						[value]="selectedTagColor || ''"
-						(colorPickerChange)="onSelectTagColor(selectedTagColor)" />
-				</mat-form-field>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="row">
+            <div class="col-lg-6">
+                <h4>Create new tag:</h4>
+                <mat-form-field class="full-width">
+                    <mat-label>Tag Color</mat-label>
+                    <input
+                        matInput
+                        type="text"
+                        formControlName="tagColor"
+                        autocomplete="off"
+                        [(colorPicker)]="selectedTagColor"
+                        [cpAlphaChannel]="'disabled'"
+                        [cpDisableInput]="true"
+                        [style.background]="selectedTagColor"
+                        [value]="selectedTagColor || ''"
+                        (colorPickerChange)="onSelectTagColor(selectedTagColor)" />
+                </mat-form-field>
 
-				<mat-form-field class="tag-name full-width">
-					<input matInput type="text" formControlName="name" placeholder="Tag Name" />
-				</mat-form-field>
+                <mat-form-field class="tag-name full-width">
+                    <input matInput type="text" formControlName="name" placeholder="Tag Name" />
+                </mat-form-field>
 
-				<mat-form-field class="tag-description full-width">
-					<input matInput type="text" formControlName="description" placeholder="Tag Description" />
-				</mat-form-field>
+                <mat-form-field class="tag-description full-width">
+                    <input
+                        matInput
+                        type="text"
+                        formControlName="description"
+                        placeholder="Tag Description" />
+                </mat-form-field>
 
-				<mat-slide-toggle
-					class="exclude-toggle"
-					formControlName="exclude"
-					[checked]="form.get('exclude').value"
-					[labelPosition]="'before'"
-					*ngIf="_isAdmin()">
-					Exclude tag?
-				</mat-slide-toggle>
+                <mat-slide-toggle
+                    class="exclude-toggle"
+                    formControlName="exclude"
+                    [checked]="form.get('exclude').value"
+                    [labelPosition]="'before'"
+                    *ngIf="_isAdmin()">
+                    Exclude tag?
+                </mat-slide-toggle>
 
-				<button class="add theme-btn _primary" mat-button mat-raised-button (click)="onAddTag()" [disabled]="cannotAddTag()">
-					<ng-container *ngIf="isCheckingTagExistence; else doneChecking">
-						<mat-icon>pending</mat-icon>
-					</ng-container>
-					<ng-template #doneChecking> Add </ng-template>
-				</button>
-			</div>
+                <button
+                    class="add theme-btn _primary"
+                    mat-button
+                    mat-raised-button
+                    (click)="onAddTag()"
+                    [disabled]="cannotAddTag()">
+                    <ng-container *ngIf="isCheckingTagExistence; else doneChecking">
+                        <mat-icon>pending</mat-icon>
+                    </ng-container>
+                    <ng-template #doneChecking> Add </ng-template>
+                </button>
+            </div>
 
-			<div class="col-lg-6">
-				<h4>Use existing tags:</h4>
-				<mat-form-field class="full-width">
-					<mat-select #tagMultiSelect formControlName="existing" [placeholder]="'Choose a tag'" [multiple]="true">
-						<mat-option>
-							<ngx-mat-select-search
-								noEntriesFoundLabel="No results"
-								formControlName="tagFilter"
-								[placeholderLabel]="'Search a tag'"
-								[clearSearchInput]="false"
-								[searching]="isSearchingTags">
-								<mat-icon class="clear" ngxMatSelectSearchClear>close</mat-icon>
-							</ngx-mat-select-search>
-						</mat-option>
+            <div class="col-lg-6">
+                <h4>Use existing tags:</h4>
+                <mat-form-field class="full-width">
+                    <mat-select
+                        #tagMultiSelect
+                        formControlName="existing"
+                        [placeholder]="'Choose a tag'"
+                        [multiple]="true">
+                        <mat-option>
+                            <ngx-mat-select-search
+                                noEntriesFoundLabel="No results"
+                                formControlName="tagFilter"
+                                [placeholderLabel]="'Search a tag'"
+                                [clearSearchInput]="false"
+                                [searching]="isSearchingTags">
+                                <mat-icon class="clear" ngxMatSelectSearchClear>close</mat-icon>
+                            </ngx-mat-select-search>
+                        </mat-option>
 
-						<mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
-							<div class="tag">{{ tag.name }}</div>
-						</mat-option>
-					</mat-select>
-				</mat-form-field>
-			</div>
-		</div>
+                        <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
+                            <div class="tag">{{ tag.name }}</div>
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
 
-		<div class="row mt-5">
-			<div class="col-lg-12">
-				<h4>To Create:</h4>
-				<div
-					class="align-items-center d-inline-flex mt-3 p-2 mr-2"
-					*ngFor="let tag of form.get('new').value; let i = index"
-					[style.backgroundColor]="tag.tagColor">
-					<div matTooltip="{{ tag.description }}" class="sm-text">{{ tag.name }}</div>
-					<ng-container *ngIf="tag.exclude">
-						<div class="excluded"><mat-icon matTooltip="This tag is excluded">visibility_off</mat-icon></div>
-					</ng-container>
-					<div class="remove-btn cursor-pointer sm-text ml-2" (click)="onRemoveTag(i, 'new')"><i class="fas fa-times"></i></div>
-				</div>
-			</div>
-		</div>
+        <div class="row mt-5">
+            <div class="col-lg-12">
+                <h4>To Create:</h4>
+                <div
+                    class="align-items-center d-inline-flex mt-3 p-2 mr-2"
+                    *ngFor="let tag of form.get('new').value; let i = index"
+                    [style.backgroundColor]="tag.tagColor">
+                    <div matTooltip="{{ tag.description }}" class="sm-text">{{ tag.name }}</div>
+                    <ng-container *ngIf="tag.exclude">
+                        <div class="excluded">
+                            <mat-icon matTooltip="This tag is excluded">visibility_off</mat-icon>
+                        </div>
+                    </ng-container>
+                    <div
+                        class="remove-btn cursor-pointer sm-text ml-2"
+                        (click)="onRemoveTag(i, 'new')">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-		<div class="row mt-3">
-			<div class="col-lg-12">
-				<h4>To Assign:</h4>
-				<div
-					class="align-items-center d-inline-flex mt-3 p-2 mr-2"
-					*ngFor="let tag of form.get('existing').value; let i = index"
-					[style.backgroundColor]="tag.tagColor">
-					<div matTooltip="{{ tag.description }}" class="sm-text">{{ tag.name }}</div>
-					<ng-container *ngIf="tag.exclude">
-						<div class="excluded"><mat-icon matTooltip="This tag is excluded">visibility_off</mat-icon></div>
-					</ng-container>
-					<div class="remove-btn cursor-pointer sm-text ml-2" (click)="onRemoveTag(i, 'existing')"><i class="fas fa-times"></i></div>
-				</div>
-			</div>
-		</div>
+        <div class="row mt-3">
+            <div class="col-lg-12">
+                <h4>To Assign:</h4>
+                <div
+                    class="align-items-center d-inline-flex mt-3 p-2 mr-2"
+                    *ngFor="let tag of form.get('existing').value; let i = index"
+                    [style.backgroundColor]="tag.tagColor">
+                    <div matTooltip="{{ tag.description }}" class="sm-text">{{ tag.name }}</div>
+                    <ng-container *ngIf="tag.exclude">
+                        <div class="excluded">
+                            <mat-icon matTooltip="This tag is excluded">visibility_off</mat-icon>
+                        </div>
+                    </ng-container>
+                    <div
+                        class="remove-btn cursor-pointer sm-text ml-2"
+                        (click)="onRemoveTag(i, 'existing')">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-		<div class="row mt-3">
-			<div class="col-lg-12">
-				<h4>Current:</h4>
-				<div
-					class="align-items-center d-inline-flex mt-3 p-2 mr-2"
-					*ngFor="let tag of currentTags; let i = index"
-					[style.backgroundColor]="tag.tagColor">
-					<div matTooltip="{{ tag.description }}" class="sm-text">{{ tag.name }}</div>
-					<ng-container *ngIf="tag.exclude">
-						<div class="excluded"><mat-icon matTooltip="This tag is excluded">visibility_off</mat-icon></div>
-					</ng-container>
-					<div class="remove-btn cursor-pointer sm-text ml-2" (click)="onRemoveTag(i, 'current', tag)">
-						<i class="fas fa-times"></i>
-					</div>
-				</div>
-			</div>
-		</div>
+        <div class="row mt-3">
+            <div class="col-lg-12">
+                <h4>Current:</h4>
+                <div
+                    class="align-items-center d-inline-flex mt-3 p-2 mr-2"
+                    *ngFor="let tag of currentTags; let i = index"
+                    [style.backgroundColor]="tag.tagColor">
+                    <div matTooltip="{{ tag.description }}" class="sm-text">{{ tag.name }}</div>
+                    <ng-container *ngIf="tag.exclude">
+                        <div class="excluded">
+                            <mat-icon matTooltip="This tag is excluded">visibility_off</mat-icon>
+                        </div>
+                    </ng-container>
+                    <div
+                        class="remove-btn cursor-pointer sm-text ml-2"
+                        (click)="onRemoveTag(i, 'current', tag)">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-		<div class="row">
-			<div class="col-lg-12 text-right">
-				<button mat-button mat-raised-button class="submit theme-btn _primary" type="submit" [disabled]="cannotSubmitTags()">Submit</button>
-			</div>
-		</div>
-	</form>
+        <div class="row">
+            <div class="col-lg-12 text-right">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="submit theme-btn _primary"
+                    type="submit"
+                    [disabled]="cannotSubmitTags()">
+                    Submit
+                </button>
+            </div>
+        </div>
+    </form>
 </div>
 
 <ng-template #selectOwner>
-	<mat-form-field class="full-width">
-		<mat-label>Select Owner</mat-label>
-		<input matInput disabled />
-	</mat-form-field>
+    <mat-form-field class="full-width">
+        <mat-label>Select Owner</mat-label>
+        <input matInput disabled />
+    </mat-form-field>
 </ng-template>

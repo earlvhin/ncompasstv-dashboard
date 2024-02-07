@@ -8,11 +8,11 @@ export class API_ROLE_INFO {
     dateCreated: string;
     dateUpdated: string;
     dealerId: string;
-	dealerIdAlias: string;
-	dealerType: string;
+    dealerIdAlias: string;
+    dealerType: string;
     generatedId: string;
-	licenseCount: number;
-	permission: string;
+    licenseCount: number;
+    permission: string;
     region: string;
     state: string;
     status: string;

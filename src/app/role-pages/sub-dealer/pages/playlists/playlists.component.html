@@ -8,70 +8,76 @@
             </div>
             <div class="col-lg-2">
                 <div class="flex-even text-right">
-                    <button mat-button mat-raised-button class="theme-btn mr-2" 
-						[routerLink]="['create-playlist']"
-						[disabled]="is_view_only">
-							<span class="button-label">Create Playlist</span>
-                        	<span class="fas fa-play ml-2 sm-text"></span>
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn mr-2"
+                        [routerLink]="['create-playlist']"
+                        [disabled]="is_view_only">
+                        <span class="button-label">Create Playlist</span>
+                        <span class="fas fa-play ml-2 sm-text"></span>
                     </button>
                 </div>
             </div>
         </div>
-        <hr class="my-4">
+        <hr class="my-4" />
     </div>
     <div class="row">
         <div class="col-lg">
             <mat-card class="h-100">
-                <app-data-card-compare *ngIf="playlist_details; else small_loader"
-                [compare_basis]="playlist_details.basis"
-                [compare_basis_label]="playlist_details.basis_label"
-                [good_value]="playlist_details.good_value"
-                [good_value_label]="playlist_details.good_value_label"
-                [bad_value]="playlist_details.bad_value"
-                [bad_value_label]="playlist_details.bad_value_label">
+                <app-data-card-compare
+                    *ngIf="playlist_details; else small_loader"
+                    [compare_basis]="playlist_details.basis"
+                    [compare_basis_label]="playlist_details.basis_label"
+                    [good_value]="playlist_details.good_value"
+                    [good_value_label]="playlist_details.good_value_label"
+                    [bad_value]="playlist_details.bad_value"
+                    [bad_value_label]="playlist_details.bad_value_label">
                 </app-data-card-compare>
             </mat-card>
         </div>
         <div class="col-lg">
             <mat-card class="h-100 dealer-card">
-                <app-data-card-count *ngIf="playlist_details; else small_loader"
-                [data_value]="playlist_details.new_this_week_value"
-                [data_label]="playlist_details.new_this_week_label"
-                [data_description]="playlist_details.new_this_week_description">
+                <app-data-card-count
+                    *ngIf="playlist_details; else small_loader"
+                    [data_value]="playlist_details.new_this_week_value"
+                    [data_label]="playlist_details.new_this_week_label"
+                    [data_description]="playlist_details.new_this_week_description">
                 </app-data-card-count>
             </mat-card>
         </div>
         <div class="col-lg">
             <mat-card class="h-100 dealer-card">
-                <app-data-card-count *ngIf="playlist_details; else small_loader"
-                [data_value]="playlist_details.new_last_week_value"
-                [data_label]="playlist_details.new_last_week_label"
-                [data_description]="playlist_details.new_last_week_description">
+                <app-data-card-count
+                    *ngIf="playlist_details; else small_loader"
+                    [data_value]="playlist_details.new_last_week_value"
+                    [data_label]="playlist_details.new_last_week_label"
+                    [data_description]="playlist_details.new_last_week_description">
                 </app-data-card-count>
             </mat-card>
         </div>
     </div>
-    <hr class="my-4">
+    <hr class="my-4" />
     <div *ngIf="!initial_load; else loader">
         <div *ngIf="!no_playlist; else no_data">
             <div class="row justify-content-end">
                 <div class="col-lg-4">
-                    <app-search-field 
-                    [form_title]="'Search Playlist Name'"
-                    [placeholder]="'Example: N-Compass'" 
-                    [data_reference]="playlist_data" 
-                    [primary_keyword]="'name'" 
-                    [secondary_keyword]="'description'"
-                    (searched)="filterData($event)"
-                    [api_search]="true"
-                    (reset_search)="ngOnInit()"></app-search-field>
+                    <app-search-field
+                        [form_title]="'Search Playlist Name'"
+                        [placeholder]="'Example: N-Compass'"
+                        [data_reference]="playlist_data"
+                        [primary_keyword]="'name'"
+                        [secondary_keyword]="'description'"
+                        (searched)="filterData($event)"
+                        [api_search]="true"
+                        (reset_search)="ngOnInit()"></app-search-field>
                 </div>
             </div>
             <div class="row">
                 <div class="col-lg-12">
                     <ng-container *ngIf="!searching; else loader">
-                        <mat-card *ngIf="filtered_data.length > 0;else nodata">
-                            <app-data-table 
+                        <mat-card *ngIf="filtered_data.length > 0; else nodata">
+                            <app-data-table
                                 [table_data]="filtered_data"
                                 [table_columns]="playlist_table_column"
                                 [new_table]="true"
@@ -80,8 +86,8 @@
                                 [playlist_delete]="true"
                                 (update_info)="fromDelete()"
                                 [is_dealer]="true"
-								(push_license_updates)="onPushAllLicenseUpdates($event)"
-								[is_view_only]="is_view_only">
+                                (push_license_updates)="onPushAllLicenseUpdates($event)"
+                                [is_view_only]="is_view_only">
                             </app-data-table>
                         </mat-card>
                     </ng-container>
@@ -89,21 +95,22 @@
             </div>
         </div>
     </div>
-    
+
     <ng-template #no_data>
         <mat-card class="p-5">
             <h3>What the!?</h3>
-            <p class="sm-text mb-3">
-                There are no playlists at the moment.
-            </p>
-            <button mat-button mat-raised-button class="theme-btn mr-2" 
-				[routerLink]="['/sub-dealer/playlists/create-playlist']"
-				[disabled]="is_view_only">
-					Add Playlist<span class="fas fa-plus ml-2 sm-text"></span>
+            <p class="sm-text mb-3">There are no playlists at the moment.</p>
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn mr-2"
+                [routerLink]="['/sub-dealer/playlists/create-playlist']"
+                [disabled]="is_view_only">
+                Add Playlist<span class="fas fa-plus ml-2 sm-text"></span>
             </button>
         </mat-card>
     </ng-template>
-    
+
     <ng-template #nodata>
         <div class="col-lg-12 pl-0 pr-0">
             <mat-card class="pt-5 pb-5 col-lg-12 text-center">
@@ -111,7 +118,9 @@
                     <i class="text-gray fa-5x far fa-file-alt"></i>
                 </div>
                 <h3 class="text-gray col-lg-12">No Results Found.</h3>
-                <span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
+                <span class="text-gray col-lg-12"
+                    >Try adjusting your search to find what you're looking for.</span
+                >
             </mat-card>
         </div>
     </ng-template>

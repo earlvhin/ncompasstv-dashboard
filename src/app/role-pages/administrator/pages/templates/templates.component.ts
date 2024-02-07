@@ -6,29 +6,35 @@ import { API_TEMPLATE } from 'src/app/global/models';
 import { AuthService, TemplateService } from 'src/app/global/services';
 
 @Component({
-	selector: 'app-templates',
-	templateUrl: './templates.component.html',
-	styleUrls: ['./templates.component.scss']
+    selector: 'app-templates',
+    templateUrl: './templates.component.html',
+    styleUrls: ['./templates.component.scss'],
 })
 export class TemplatesComponent implements OnInit {
-	title: string = 'Templates';
-	templateData$ = this._template.get_templates();
+    title: string = 'Templates';
+    templateData$ = this._template.get_templates();
 
-	protected _unsubscribe: Subject<void> = new Subject<void>();
+    protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	constructor(public router: Router, private _auth: AuthService, private _template: TemplateService) {}
+    constructor(
+        public router: Router,
+        private _auth: AuthService,
+        private _template: TemplateService,
+    ) {}
 
-	ngOnInit() {}
+    ngOnInit() {}
 
-	onClickTemplateLink(data: API_TEMPLATE) {
-		this.router.navigate([`/${this.roleRoute}/templates/${data.template.templateId}`], { state: { data } });
-	}
+    onClickTemplateLink(data: API_TEMPLATE) {
+        this.router.navigate([`/${this.roleRoute}/templates/${data.template.templateId}`], {
+            state: { data },
+        });
+    }
 
-	protected get currentRole() {
-		return this._auth.current_role;
-	}
+    protected get currentRole() {
+        return this._auth.current_role;
+    }
 
-	protected get roleRoute() {
-		return this._auth.roleRoute;
-	}
+    protected get roleRoute() {
+        return this._auth.roleRoute;
+    }
 }

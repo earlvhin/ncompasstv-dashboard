@@ -1,111 +1,116 @@
 <div>
-	<ng-container *ngIf="is_banner_data_ready; else loading">
-		<app-banner
-			[image]="currentImage"
-			[title]="advertiser.name"
-			[description]="description"
-			[editable]="!has_only_view_permission"
-			(update_info)="ngOnInit()"
-			[page]="'single-advertiser'"
-			[page_data]="advertiserAndDealer"
-			[refresh_banner]="true">
-		</app-banner>
-	</ng-container>
+    <ng-container *ngIf="is_banner_data_ready; else loading">
+        <app-banner
+            [image]="currentImage"
+            [title]="advertiser.name"
+            [description]="description"
+            [editable]="!has_only_view_permission"
+            (update_info)="ngOnInit()"
+            [page]="'single-advertiser'"
+            [page_data]="advertiserAndDealer"
+            [refresh_banner]="true">
+        </app-banner>
+    </ng-container>
 
-	<div class="margin-top-extra-notes">
-		<div class="child-container">
-			<div class="row">
-				<div class="col-lg-12">
-					<mat-tab-group dynamicHeight [selectedIndex]="selected_index">
-						<mat-tab label="Content">
-							<div class="pt-4 pl-0 pr-0 pb-4">
-								<mat-card>
-									<ng-container *ngIf="contents_loaded; else loading">
-										<ng-container *ngIf="content_data.length > 0; else noContents">
-											<app-data-table
-												[table_columns]="table_columns"
-												[table_data]="content_data"
-												[media_array]="array_to_preview"
-												[preview_column]="true"
-												[new_table]="true"
-												[is_view_only]="has_only_view_permission">
-											</app-data-table>
-										</ng-container>
-									</ng-container>
-								</mat-card>
-							</div>
-						</mat-tab>
+    <div class="margin-top-extra-notes">
+        <div class="child-container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <mat-tab-group dynamicHeight [selectedIndex]="selected_index">
+                        <mat-tab label="Content">
+                            <div class="pt-4 pl-0 pr-0 pb-4">
+                                <mat-card>
+                                    <ng-container *ngIf="contents_loaded; else loading">
+                                        <ng-container
+                                            *ngIf="content_data.length > 0; else noContents">
+                                            <app-data-table
+                                                [table_columns]="table_columns"
+                                                [table_data]="content_data"
+                                                [media_array]="array_to_preview"
+                                                [preview_column]="true"
+                                                [new_table]="true"
+                                                [is_view_only]="has_only_view_permission">
+                                            </app-data-table>
+                                        </ng-container>
+                                    </ng-container>
+                                </mat-card>
+                            </div>
+                        </mat-tab>
 
-						<!-- Activity Tab -->
-						<mat-tab label="Activity">
-							<div class="pt-4 px-0">
-								<div class="row">
-									<div class="col-lg-12 ml-2">
-										<h5>{{ createdBy }}</h5>
-										<h6>{{ dateCreated | date : 'MMMM d, y' }}</h6>
-									</div>
-								</div>
+                        <!-- Activity Tab -->
+                        <mat-tab label="Activity">
+                            <div class="pt-4 px-0">
+                                <div class="row">
+                                    <div class="col-lg-12 ml-2">
+                                        <h5>{{ createdBy }}</h5>
+                                        <h6>{{ dateCreated | date: 'MMMM d, y' }}</h6>
+                                    </div>
+                                </div>
 
-								<div class="row">
-									<div class="col-lg-12" *ngIf="!initial_load_activity; else loadingContents">
-										<app-single-activity-tab
-											*ngIf="activity_data.length; else loadingContents"
-											[activity_data]="activity_data"
-											[paging_data]="paging_data_activity"
-											[sort_column]="sort_column_activity"
-											[sort_order]="sort_order_activity"
-											[currentUser]="current_user"
-											[currentRole]="current_role"
-											[ownerId]="advertiser_id"
-											[initial_load]="initial_load_activity"
-											[createdBy]="createdBy"
-											[dateCreated]="dateCreated"
-											[reload_data]="reload_data"
-											(pageChanged)="getAdvertiserActivity($event)"
-											(sortColumnEvent)="getActivityColumnsAndOrder($event)">
-										</app-single-activity-tab>
-									</div>
-								</div>
-							</div>
-						</mat-tab>
-					</mat-tab-group>
-				</div>
-			</div>
-		</div>
-	</div>
+                                <div class="row">
+                                    <div
+                                        class="col-lg-12"
+                                        *ngIf="!initial_load_activity; else loadingContents">
+                                        <app-single-activity-tab
+                                            *ngIf="activity_data.length; else loadingContents"
+                                            [activity_data]="activity_data"
+                                            [paging_data]="paging_data_activity"
+                                            [sort_column]="sort_column_activity"
+                                            [sort_order]="sort_order_activity"
+                                            [currentUser]="current_user"
+                                            [currentRole]="current_role"
+                                            [ownerId]="advertiser_id"
+                                            [initial_load]="initial_load_activity"
+                                            [createdBy]="createdBy"
+                                            [dateCreated]="dateCreated"
+                                            [reload_data]="reload_data"
+                                            (pageChanged)="getAdvertiserActivity($event)"
+                                            (sortColumnEvent)="getActivityColumnsAndOrder($event)">
+                                        </app-single-activity-tab>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-tab>
+                    </mat-tab-group>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <ng-template #loading>
-	<div class="loading-wrapper">
-		<app-spinner></app-spinner>
-	</div>
+    <div class="loading-wrapper">
+        <app-spinner></app-spinner>
+    </div>
 </ng-template>
 
 <ng-template #loadingContents>
-	<ng-container *ngIf="!no_activity_data; else noDataActivity">
-		<div class="loading-wrapper">
-			<app-spinner></app-spinner>
-		</div>
-	</ng-container>
+    <ng-container *ngIf="!no_activity_data; else noDataActivity">
+        <div class="loading-wrapper">
+            <app-spinner></app-spinner>
+        </div>
+    </ng-container>
 </ng-template>
 
 <ng-template #noDataActivity>
-	<mat-card class="mt-4">
-		<div class="no-contents d-flex flex-column align-items-center">
-			<div class="mb-4">
-				<i class="text-gray fa-5x far fa-file-alt"></i>
-			</div>
-			<h3 class="text-gray">No Activities Found</h3>
-		</div>
-	</mat-card>
+    <mat-card class="mt-4">
+        <div class="no-contents d-flex flex-column align-items-center">
+            <div class="mb-4">
+                <i class="text-gray fa-5x far fa-file-alt"></i>
+            </div>
+            <h3 class="text-gray">No Activities Found</h3>
+        </div>
+    </mat-card>
 </ng-template>
 
 <ng-template #noContents>
-	<div class="no-contents d-flex flex-column align-items-center pl-0 pr-0">
-		<div class="mb-4">
-			<i class="text-gray fa-5x far fa-file-alt"></i>
-		</div>
-		<h3 class="text-gray col-lg-12">No Contents Found</h3>
-		<span class="text-gray col-lg-12">Try adding or assigning contents to this advertiser first</span>
-	</div>
+    <div class="no-contents d-flex flex-column align-items-center pl-0 pr-0">
+        <div class="mb-4">
+            <i class="text-gray fa-5x far fa-file-alt"></i>
+        </div>
+        <h3 class="text-gray col-lg-12">No Contents Found</h3>
+        <span class="text-gray col-lg-12"
+            >Try adding or assigning contents to this advertiser first</span
+        >
+    </div>
 </ng-template>

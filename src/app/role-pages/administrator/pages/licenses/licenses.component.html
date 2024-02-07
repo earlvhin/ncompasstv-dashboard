@@ -5,7 +5,12 @@
                 <h1 class="page-title">{{ title }}</h1>
             </div>
             <div class="flex-even text-right" *ngIf="!is_dealer_admin">
-                <button mat-button mat-raised-button class="theme-btn pi-control _info sm-text mr-2" (click)="openGenerateLicenseModal()" title="Generate License">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn pi-control _info sm-text mr-2"
+                    (click)="openGenerateLicenseModal()"
+                    title="Generate License">
                     <span class="fas fa-plus"></span>
                     <span class="ml-2 button_text_animation">Generate License</span>
                 </button>
@@ -40,8 +45,7 @@
                             [third_value]="licenses_details.third_value"
                             [third_value_label]="licenses_details.third_value_label"
                             [fourth_value]="licenses_details.fourth_value"
-                            [fourth_value_label]="licenses_details.fourth_value_label"
-                        >
+                            [fourth_value_label]="licenses_details.fourth_value_label">
                         </app-data-card-graph>
                     </ng-container>
                 </mat-card>
@@ -54,8 +58,7 @@
                             [compare_basis]="licenses_details.new_this_week_value"
                             [compare_basis_label]="licenses_details.new_this_week_value_description"
                             [label_array]="temp_label_this_week"
-                            [value_array]="temp_array_this_week"
-                        >
+                            [value_array]="temp_array_this_week">
                         </app-data-card-graph>
                     </ng-container>
                 </mat-card>
@@ -68,8 +71,7 @@
                             [compare_basis]="licenses_details.new_last_week_value"
                             [compare_basis_label]="licenses_details.new_last_week_value_description"
                             [label_array]="temp_label_last_week"
-                            [value_array]="temp_array_last_week"
-                        >
+                            [value_array]="temp_array_last_week">
                         </app-data-card-graph>
                     </ng-container>
                 </mat-card>
@@ -81,10 +83,15 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="custom-mat-tab">
-                    <mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event)">
+                    <mat-tab-group
+                        dynamicHeight
+                        #tabGroup
+                        (selectedTabChange)="onTabChanged($event)">
                         <!-- LICENSES TAB -->
                         <mat-tab id="licenses-view-tab" label="Licenses View">
-                            <div class="licenses-view-tab-container mt-30" *ngIf="tabGroup.selectedIndex === 0">
+                            <div
+                                class="licenses-view-tab-container mt-30"
+                                *ngIf="tabGroup.selectedIndex === 0">
                                 <div class="flex">
                                     <div class="flex-2 d-inline-flex">
                                         <button
@@ -93,42 +100,104 @@
                                             mat-raised-button
                                             class="theme-btn sm-text mr-2 h-45"
                                             [matMenuTriggerFor]="licenseStatus"
-                                            [disabled]="hide_all_license"
-                                        >
+                                            [disabled]="hide_all_license">
                                             <span class="button-label">License Status</span>
                                             <span class="fas fa-circle xsm-text"></span>
                                         </button>
                                         <mat-menu #licenseStatus="matMenu">
-                                            <button class="md-text" mat-menu-item (click)="filterTable('assigned', 'true')" [matMenuTriggerFor]="assignedSubMenu">
-                                                <span class="fas fa-user text-primary mr-3"></span>Assigned
+                                            <button
+                                                class="md-text"
+                                                mat-menu-item
+                                                (click)="filterTable('assigned', 'true')"
+                                                [matMenuTriggerFor]="assignedSubMenu">
+                                                <span class="fas fa-user text-primary mr-3"></span
+                                                >Assigned
                                             </button>
-                                            <button class="md-text" mat-menu-item (click)="filterTable('assigned', 'false')">
-                                                <span class="fas fa-user-slash text-gray mr-3"></span>Unassigned
+                                            <button
+                                                class="md-text"
+                                                mat-menu-item
+                                                (click)="filterTable('assigned', 'false')">
+                                                <span
+                                                    class="fas fa-user-slash text-gray mr-3"></span
+                                                >Unassigned
                                             </button>
-                                            <button class="md-text" mat-menu-item (click)="filterTable('activated', '0')">
-                                                <span class="fas fa-user text-light-gray mr-3"></span>Inactive
+                                            <button
+                                                class="md-text"
+                                                mat-menu-item
+                                                (click)="filterTable('activated', '0')">
+                                                <span
+                                                    class="fas fa-user text-light-gray mr-3"></span
+                                                >Inactive
                                             </button>
-                                            <button class="md-text" mat-menu-item (click)="filterTable('recent', '7')">
-                                                <span class="far fa-clock text-gray mr-3"></span>Recent Installs
+                                            <button
+                                                class="md-text"
+                                                mat-menu-item
+                                                (click)="filterTable('recent', '7')">
+                                                <span class="far fa-clock text-gray mr-3"></span
+                                                >Recent Installs
                                             </button>
                                         </mat-menu>
 
                                         <mat-menu #assignedSubMenu="matMenu">
-                                            <button class="md-text" mat-menu-item (click)="filterTable('status', '1')">
-                                                <span class="fas fa-circle text-primary mr-3"></span>Online
+                                            <button
+                                                class="md-text"
+                                                mat-menu-item
+                                                (click)="filterTable('status', '1')">
+                                                <span class="fas fa-circle text-primary mr-3"></span
+                                                >Online
                                             </button>
-                                            <button class="md-text" mat-menu-item (click)="filterTable('status', '0')" [matMenuTriggerFor]="offlineSubMenu">
-                                                <span class="fas fa-circle text-danger mr-3"></span>Offline
+                                            <button
+                                                class="md-text"
+                                                mat-menu-item
+                                                (click)="filterTable('status', '0')"
+                                                [matMenuTriggerFor]="offlineSubMenu">
+                                                <span class="fas fa-circle text-danger mr-3"></span
+                                                >Offline
                                             </button>
-                                            <button class="md-text" mat-menu-item (click)="filterTable('pending', 'true')">
-                                                <span class="fas fa-circle text-orange mr-3"></span>Pending
+                                            <button
+                                                class="md-text"
+                                                mat-menu-item
+                                                (click)="filterTable('pending', 'true')">
+                                                <span class="fas fa-circle text-orange mr-3"></span
+                                                >Pending
                                             </button>
                                         </mat-menu>
 
                                         <mat-menu #offlineSubMenu="matMenu">
-                                            <button class="md-text" mat-menu-item (click)="filterTable('days_offline', '0', '5', '5 days')">5 Days</button>
-                                            <button class="md-text" mat-menu-item (click)="filterTable('days_offline', '6', '30', '30 days')">6 - 30 Days</button>
-                                            <button class="md-text" mat-menu-item (click)="filterTable('days_offline', '31', '365', 'Long Time')">> 30 Days</button>
+                                            <button
+                                                class="md-text"
+                                                mat-menu-item
+                                                (click)="
+                                                    filterTable('days_offline', '0', '5', '5 days')
+                                                ">
+                                                5 Days
+                                            </button>
+                                            <button
+                                                class="md-text"
+                                                mat-menu-item
+                                                (click)="
+                                                    filterTable(
+                                                        'days_offline',
+                                                        '6',
+                                                        '30',
+                                                        '30 days'
+                                                    )
+                                                ">
+                                                6 - 30 Days
+                                            </button>
+                                            <button
+                                                class="md-text"
+                                                mat-menu-item
+                                                (click)="
+                                                    filterTable(
+                                                        'days_offline',
+                                                        '31',
+                                                        '365',
+                                                        'Long Time'
+                                                    )
+                                                ">
+                                                > 30 Days
+                                            </button>
                                         </mat-menu>
 
                                         <button
@@ -137,19 +206,43 @@
                                             mat-raised-button
                                             class="theme-btn sm-text mr-2 h-45"
                                             [matMenuTriggerFor]="timezone"
-                                            [disabled]="hide_all_license"
-                                        >
+                                            [disabled]="hide_all_license">
                                             <span class="button-label">Timezone</span>
                                             <span class="fas fa-sort xsm-text"></span>
                                         </button>
                                         <mat-menu #timezone="matMenu">
-                                            <button class="md-text" mat-menu-item (click)="filterTable('zone', 'Central')">Central</button>
-                                            <button class="md-text" mat-menu-item (click)="filterTable('zone', 'Eastern')">Eastern</button>
-                                            <button class="md-text" mat-menu-item (click)="filterTable('zone', 'Mountain')">Mountain</button>
-                                            <button class="md-text" mat-menu-item (click)="filterTable('zone', 'Pacific')">Pacific</button>
+                                            <button
+                                                class="md-text"
+                                                mat-menu-item
+                                                (click)="filterTable('zone', 'Central')">
+                                                Central
+                                            </button>
+                                            <button
+                                                class="md-text"
+                                                mat-menu-item
+                                                (click)="filterTable('zone', 'Eastern')">
+                                                Eastern
+                                            </button>
+                                            <button
+                                                class="md-text"
+                                                mat-menu-item
+                                                (click)="filterTable('zone', 'Mountain')">
+                                                Mountain
+                                            </button>
+                                            <button
+                                                class="md-text"
+                                                mat-menu-item
+                                                (click)="filterTable('zone', 'Pacific')">
+                                                Pacific
+                                            </button>
                                         </mat-menu>
 
-                                        <button id="filter-by-user-btn" mat-button mat-raised-button class="theme-btn sm-text mr-2 h-45" (click)="sortByUser()">
+                                        <button
+                                            id="filter-by-user-btn"
+                                            mat-button
+                                            mat-raised-button
+                                            class="theme-btn sm-text mr-2 h-45"
+                                            (click)="sortByUser()">
                                             <span class="button-label">User</span>
                                             <span class="fas fa-user xsm-text"></span>
                                         </button>
@@ -160,16 +253,37 @@
                                             class="theme-btn pi-control _cool sm-text mr-2"
                                             [matMenuTriggerFor]="orderSort"
                                             title="Order by License Status"
-                                            [disabled]="hide_all_license"
-                                        >
+                                            [disabled]="hide_all_license">
                                             <span class="fas fa-sort"></span>
-                                            <span class="ml-2 button_text_animation">Order by License Status</span>
+                                            <span class="ml-2 button_text_animation"
+                                                >Order by License Status</span
+                                            >
                                         </button>
                                         <mat-menu #orderSort="matMenu">
-                                            <button class="md-text" mat-menu-item (click)="sortList('desc')">Online</button>
-                                            <button class="md-text" mat-menu-item (click)="sortList('asc')">Offline</button>
-                                            <button class="md-text" mat-menu-item (click)="sortDisplay('desc')">Display On</button>
-                                            <button class="md-text" mat-menu-item (click)="sortDisplay('asc')">Display Off</button>
+                                            <button
+                                                class="md-text"
+                                                mat-menu-item
+                                                (click)="sortList('desc')">
+                                                Online
+                                            </button>
+                                            <button
+                                                class="md-text"
+                                                mat-menu-item
+                                                (click)="sortList('asc')">
+                                                Offline
+                                            </button>
+                                            <button
+                                                class="md-text"
+                                                mat-menu-item
+                                                (click)="sortDisplay('desc')">
+                                                Display On
+                                            </button>
+                                            <button
+                                                class="md-text"
+                                                mat-menu-item
+                                                (click)="sortDisplay('asc')">
+                                                Display Off
+                                            </button>
                                         </mat-menu>
                                         <button
                                             id="export-licenses-btn-licenses-tab"
@@ -179,15 +293,27 @@
                                             (click)="exportTable('licenses')"
                                             [disabled]="workbook_generation"
                                             title="Export to CSV"
-                                            [disabled]="hide_all_license"
-                                        >
+                                            [disabled]="hide_all_license">
                                             <span
-                                                class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
-                                                [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"
-                                            ></span>
-                                            <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">{{
-                                                !workbook_generation ? "Export" : "Generating CSV"
-                                            }}</span>
+                                                class="{{
+                                                    !workbook_generation
+                                                        ? 'fas fa-file-excel'
+                                                        : 'fas fa-spinner fa-spin'
+                                                }}"
+                                                [ngStyle]="{
+                                                    color: workbook_generation ? '#222' : 'white'
+                                                }"></span>
+                                            <span
+                                                class="ml-2 button_text_animation"
+                                                [ngStyle]="{
+                                                    color: workbook_generation ? '#222' : 'white'
+                                                }"
+                                                >{{
+                                                    !workbook_generation
+                                                        ? 'Export'
+                                                        : 'Generating CSV'
+                                                }}</span
+                                            >
                                         </button>
                                         <button
                                             mat-button
@@ -196,14 +322,25 @@
                                             [matMenuTriggerFor]="adminOption"
                                             title="Admin Licenses"
                                             *ngIf="!is_dealer_admin"
-                                            [disabled]="hide_all_license"
-                                        >
+                                            [disabled]="hide_all_license">
                                             <span class="fas fa-user-shield"></span>
-                                            <span class="ml-2 button_text_animation">Show/Hide Admin License</span>
+                                            <span class="ml-2 button_text_animation"
+                                                >Show/Hide Admin License</span
+                                            >
                                         </button>
                                         <mat-menu #adminOption="matMenu">
-                                            <button class="md-text" mat-menu-item (click)="showAdminLicenses('true')">Show</button>
-                                            <button class="md-text" mat-menu-item (click)="showAdminLicenses('false')">Hide</button>
+                                            <button
+                                                class="md-text"
+                                                mat-menu-item
+                                                (click)="showAdminLicenses('true')">
+                                                Show
+                                            </button>
+                                            <button
+                                                class="md-text"
+                                                mat-menu-item
+                                                (click)="showAdminLicenses('false')">
+                                                Hide
+                                            </button>
                                         </mat-menu>
                                         <button
                                             mat-button
@@ -211,14 +348,25 @@
                                             class="theme-btn pi-control sm-text _caution mr-2"
                                             [matMenuTriggerFor]="favoriteOption"
                                             title="Favorite Licenses"
-                                            *ngIf="!hide_all_license && active_view === 'grid'"
-                                        >
+                                            *ngIf="!hide_all_license && active_view === 'grid'">
                                             <span class="fas fa-star"></span>
-                                            <span class="ml-2 button_text_animation">Show/Hide Favorites</span>
+                                            <span class="ml-2 button_text_animation"
+                                                >Show/Hide Favorites</span
+                                            >
                                         </button>
                                         <mat-menu #favoriteOption="matMenu">
-                                            <button class="md-text" mat-menu-item (click)="toggleFavorites('true')">Show</button>
-                                            <button class="md-text" mat-menu-item (click)="toggleFavorites('false')">Hide</button>
+                                            <button
+                                                class="md-text"
+                                                mat-menu-item
+                                                (click)="toggleFavorites('true')">
+                                                Show
+                                            </button>
+                                            <button
+                                                class="md-text"
+                                                mat-menu-item
+                                                (click)="toggleFavorites('false')">
+                                                Hide
+                                            </button>
                                         </mat-menu>
                                     </div>
                                     <div class="mr-3 text-right">
@@ -226,72 +374,119 @@
                                             mat-button
                                             mat-raised-button
                                             class="theme-btn sm-text h-45 mr-2"
-                                            [ngClass]="active_view === 'list' ? 'active-button' : ''"
+                                            [ngClass]="
+                                                active_view === 'list' ? 'active-button' : ''
+                                            "
                                             title="List View"
-                                            (click)="changeView('list')"
-                                        >
-                                            <span class="button-label mr-0"><i class="fas fa-list"></i></span>
+                                            (click)="changeView('list')">
+                                            <span class="button-label mr-0"
+                                                ><i class="fas fa-list"></i
+                                            ></span>
                                         </button>
                                         <button
                                             mat-button
                                             mat-raised-button
                                             class="theme-btn sm-text h-45"
-                                            [ngClass]="active_view === 'grid' ? 'active-button' : ''"
+                                            [ngClass]="
+                                                active_view === 'grid' ? 'active-button' : ''
+                                            "
                                             title="Grid View"
-                                            (click)="changeView('grid')"
-                                        >
-                                            <span class="button-label mr-0"><i class="fas fa-th"></i></span>
+                                            (click)="changeView('grid')">
+                                            <span class="button-label mr-0"
+                                                ><i class="fas fa-th"></i
+                                            ></span>
                                         </button>
                                     </div>
                                     <div class="flex-even">
                                         <app-search-field
                                             id="licenses-tab-search-field"
-                                            [form_title]="'Search License ID, Host name, Anydesk, or #Tag'"
+                                            [form_title]="
+                                                'Search License ID, Host name, Anydesk, or #Tag'
+                                            "
                                             [placeholder]="'Example: License # 9'"
                                             [data_reference]="licenses_data"
                                             [primary_keyword]="'license_id'"
                                             [secondary_keyword]="'alias'"
                                             (searched)="filterData($event, 'licenses')"
-                                            [api_search]="true"
-                                        >
+                                            [api_search]="true">
                                         </app-search-field>
                                     </div>
                                 </div>
-                                <div class="row" *ngIf="filters.label_status || filters.label_zone || filters.label_dealer || filters.label_host || filters.admin_licenses">
+                                <div
+                                    class="row"
+                                    *ngIf="
+                                        filters.label_status ||
+                                        filters.label_zone ||
+                                        filters.label_dealer ||
+                                        filters.label_host ||
+                                        filters.admin_licenses
+                                    ">
                                     <div class="col-lg-12">
                                         <div class="d-flex align-items-center p-2 bg-gray-2">
                                             <div class="d-flex align-items-center">
                                                 <div class="filter-pills">
-                                                    <div class="filetype-pill pill" *ngIf="filters.label_status">
-                                                        License Status: <strong>{{ filters.label_status }}</strong>
+                                                    <div
+                                                        class="filetype-pill pill"
+                                                        *ngIf="filters.label_status">
+                                                        License Status:
+                                                        <strong>{{ filters.label_status }}</strong>
                                                     </div>
 
-                                                    <div class="order-pill pill" *ngIf="filters.label_zone">
-                                                        Timezone: <strong>{{ filters.label_zone }}</strong>
+                                                    <div
+                                                        class="order-pill pill"
+                                                        *ngIf="filters.label_zone">
+                                                        Timezone:
+                                                        <strong>{{ filters.label_zone }}</strong>
                                                     </div>
 
-                                                    <div class="dealer-pill pill" *ngIf="filters.label_dealer">
-                                                        Dealer: <strong>{{ filters.label_dealer }}</strong>
+                                                    <div
+                                                        class="dealer-pill pill"
+                                                        *ngIf="filters.label_dealer">
+                                                        Dealer:
+                                                        <strong>{{ filters.label_dealer }}</strong>
                                                     </div>
 
-                                                    <div class="host-pill pill" *ngIf="filters.label_host">
-                                                        Host: <strong>{{ filters.label_host }}</strong>
+                                                    <div
+                                                        class="host-pill pill"
+                                                        *ngIf="filters.label_host">
+                                                        Host:
+                                                        <strong>{{ filters.label_host }}</strong>
                                                     </div>
 
-                                                    <div class="host-pill pill" *ngIf="filters.admin_licenses">
-                                                        Show Admin Licenses: <strong>{{ filters.admin_licenses }}</strong>
+                                                    <div
+                                                        class="host-pill pill"
+                                                        *ngIf="filters.admin_licenses">
+                                                        Show Admin Licenses:
+                                                        <strong>{{
+                                                            filters.admin_licenses
+                                                        }}</strong>
                                                     </div>
                                                 </div>
                                                 <div class="pl-2" *ngIf="!searching_licenses">
                                                     <p class="sm-text py-2 m-0">
-                                                        Showing <span class="text-danger">{{ getTotalShownLicenses() }}</span> out of
-                                                        <span class="text-danger">{{ getTotalLicenses() }}</span> licenses result.
-                                                        <span class="text-danger" *ngIf="filters.admin_licenses">Including admin licenses.</span>
+                                                        Showing
+                                                        <span class="text-danger">{{
+                                                            getTotalShownLicenses()
+                                                        }}</span>
+                                                        out of
+                                                        <span class="text-danger">{{
+                                                            getTotalLicenses()
+                                                        }}</span>
+                                                        licenses result.
+                                                        <span
+                                                            class="text-danger"
+                                                            *ngIf="filters.admin_licenses"
+                                                            >Including admin licenses.</span
+                                                        >
                                                     </p>
                                                 </div>
                                             </div>
                                             <div class="control flex-even text-right">
-                                                <button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
+                                                <button
+                                                    mat-button
+                                                    mat-raised-button
+                                                    class="theme-btn"
+                                                    (click)="clearFilter()">
                                                     <span class="button-label"> Clear Filter </span>
                                                     <span class="fas fa-times ml-2 sm-text"></span>
                                                 </button>
@@ -300,11 +495,19 @@
                                     </div>
                                 </div>
                                 <div class="p-0" *ngIf="!hide_all_license; else showLicensesButton">
-                                    <div class="row no-gutters flex p-0" *ngIf="!no_licenses; else no_data">
-                                        <div class="col-lg-12 mr-2 p-0" *ngIf="active_view === 'list'; else grid">
+                                    <div
+                                        class="row no-gutters flex p-0"
+                                        *ngIf="!no_licenses; else no_data">
+                                        <div
+                                            class="col-lg-12 mr-2 p-0"
+                                            *ngIf="active_view === 'list'; else grid">
                                             <ng-container>
                                                 <div *ngIf="!searching_licenses; else loader">
-                                                    <mat-card *ngIf="filtered_data_licenses.length > 0; else nodata">
+                                                    <mat-card
+                                                        *ngIf="
+                                                            filtered_data_licenses.length > 0;
+                                                            else nodata
+                                                        ">
                                                         <app-data-table
                                                             [table_data]="filtered_data_licenses"
                                                             [table_columns]="license_table_column"
@@ -313,11 +516,15 @@
                                                             [query_params]="tab"
                                                             (page_triggered)="getLicenses($event)"
                                                             [license_status_column]="true"
-                                                            (to_sort_column)="getColumnsAndOrder($event, 'licenses')"
+                                                            (to_sort_column)="
+                                                                getColumnsAndOrder(
+                                                                    $event,
+                                                                    'licenses'
+                                                                )
+                                                            "
                                                             [active_tab]="sort_column"
                                                             [sort_column]="sort_column"
-                                                            [sort_order]="sort_order"
-                                                        >
+                                                            [sort_order]="sort_order">
                                                         </app-data-table>
                                                     </mat-card>
                                                 </div>
@@ -325,7 +532,9 @@
                                         </div>
                                         <ng-template #grid>
                                             <app-grid-view-license
-                                                [license_data_for_grid_view]="license_data_for_grid_view"
+                                                [license_data_for_grid_view]="
+                                                    license_data_for_grid_view
+                                                "
                                                 (get_favorite)="getFavoriteLicenses($event)"
                                                 [favorites_list]="favorites_list"
                                                 [searching_licenses]="searching_licenses"
@@ -334,8 +543,7 @@
                                                 (show_more)="showMore($event)"
                                                 [no_favorites]="no_favorites"
                                                 [favorite_view]="favorite_view"
-                                                class="col-lg-12 mr-2 p-0"
-                                            >
+                                                class="col-lg-12 mr-2 p-0">
                                             </app-grid-view-license>
                                         </ng-template>
                                     </div>
@@ -345,15 +553,17 @@
                                         <div class="col-lg-12 mr-2 p-0 text-center">
                                             <ng-container>
                                                 <mat-card class="p-5">
-                                                    <span class="sm-text"> Licenses are hidden by default, If you wish to see the list, click the button below: </span>
+                                                    <span class="sm-text">
+                                                        Licenses are hidden by default, If you wish
+                                                        to see the list, click the button below:
+                                                    </span>
                                                     <br />
                                                     <button
                                                         mat-button
                                                         mat-raised-button
                                                         class="theme-btn sm-text _info mr-2 mt-3"
                                                         title="Show All Licenses"
-                                                        (click)="showAllLicenses()"
-                                                    >
+                                                        (click)="showAllLicenses()">
                                                         <span class="fas fa-eye"></span>
                                                         <span class="ml-2">Show All Licenses</span>
                                                     </button>
@@ -379,7 +589,13 @@
 
                         <!-- HOSTS TAB -->
                         <mat-tab id="hosts-view-tab" label="Hosts View">
-                            <div class="hosts-view-tab-container mt-30" *ngIf="is_dealer_admin ? tabGroup.selectedIndex === 2 : tabGroup.selectedIndex === 3">
+                            <div
+                                class="hosts-view-tab-container mt-30"
+                                *ngIf="
+                                    is_dealer_admin
+                                        ? tabGroup.selectedIndex === 2
+                                        : tabGroup.selectedIndex === 3
+                                ">
                                 <div *ngIf="!initial_load_hosts; else loader">
                                     <div *ngIf="!no_host; else no_data">
                                         <div class="row">
@@ -390,35 +606,56 @@
                                                     class="theme-btn pi-control sm-text _primary mr-2"
                                                     (click)="exportTable('hosts')"
                                                     [disabled]="workbook_generation"
-                                                    title="Export to CSV"
-                                                >
+                                                    title="Export to CSV">
                                                     <span
-                                                        class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner' }}"
-                                                        [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"
-                                                    ></span>
-                                                    <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">{{
-                                                        !workbook_generation ? "Export" : "Generating CSV"
-                                                    }}</span>
+                                                        class="{{
+                                                            !workbook_generation
+                                                                ? 'fas fa-file-excel'
+                                                                : 'fas fa-spinner'
+                                                        }}"
+                                                        [ngStyle]="{
+                                                            color: workbook_generation
+                                                                ? '#222'
+                                                                : 'white'
+                                                        }"></span>
+                                                    <span
+                                                        class="ml-2 button_text_animation"
+                                                        [ngStyle]="{
+                                                            color: workbook_generation
+                                                                ? '#222'
+                                                                : 'white'
+                                                        }"
+                                                        >{{
+                                                            !workbook_generation
+                                                                ? 'Export'
+                                                                : 'Generating CSV'
+                                                        }}</span
+                                                    >
                                                 </button>
                                             </div>
                                             <div class="col-lg-4">
                                                 <app-search-field
                                                     id="hosts-tab-search-field"
                                                     *ngIf="!initial_load_hosts"
-                                                    [form_title]="'Search Host Name, Address, City, Postal Code, or #Tag'"
+                                                    [form_title]="
+                                                        'Search Host Name, Address, City, Postal Code, or #Tag'
+                                                    "
                                                     [placeholder]="'Example: N-Compass Host'"
                                                     [data_reference]="hosts_data"
                                                     [primary_keyword]="'name'"
                                                     [secondary_keyword]="'name'"
                                                     (searched)="filterData($event, 'hosts')"
-                                                    [api_search]="true"
-                                                ></app-search-field>
+                                                    [api_search]="true"></app-search-field>
                                             </div>
                                         </div>
                                         <div class="row" *ngIf="!initial_load_hosts">
                                             <div class="col-lg-12">
                                                 <ng-container *ngIf="!searching_hosts; else loader">
-                                                    <mat-card *ngIf="filtered_data_host.length > 0; else nodata">
+                                                    <mat-card
+                                                        *ngIf="
+                                                            filtered_data_host.length > 0;
+                                                            else nodata
+                                                        ">
                                                         <app-data-table
                                                             [table_data]="filtered_data_host"
                                                             [table_columns]="hosts_table_column"
@@ -426,11 +663,12 @@
                                                             [paging_details]="paging_data_host"
                                                             [query_params]="tab"
                                                             (page_triggered)="getHosts($event)"
-                                                            (to_sort_column)="getColumnsAndOrder($event, 'hosts')"
+                                                            (to_sort_column)="
+                                                                getColumnsAndOrder($event, 'hosts')
+                                                            "
                                                             [active_tab]="sort_column_hosts"
                                                             [sort_column]="sort_column_hosts"
-                                                            [sort_order]="sort_order_hosts"
-                                                        >
+                                                            [sort_order]="sort_order_hosts">
                                                         </app-data-table>
                                                     </mat-card>
                                                 </ng-container>
@@ -460,7 +698,9 @@
         <ng-template #no_data>
             <mat-card class="p-5">
                 <h3>Oh Boy.</h3>
-                <p class="sm-text mb-3">There are no available dealers and licenses at the moment.</p>
+                <p class="sm-text mb-3">
+                    There are no available dealers and licenses at the moment.
+                </p>
                 <a [routerLink]="['/administrator/users/create-user/dealer']" target="_blank">
                     <button mat-button mat-raised-button class="theme-btn mr-2">
                         Add Dealer
@@ -477,7 +717,9 @@
                         <i class="text-gray fa-5x far fa-file-alt"></i>
                     </div>
                     <h3 class="text-gray col-lg-12">No Results Found.</h3>
-                    <span class="text-gray col-lg-12">Try adjusting your search or filter to find what you're looking for.</span>
+                    <span class="text-gray col-lg-12"
+                        >Try adjusting your search or filter to find what you're looking for.</span
+                    >
                 </mat-card>
             </div>
         </ng-template>

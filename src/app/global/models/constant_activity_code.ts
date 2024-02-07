@@ -10,5 +10,5 @@ export enum ACTIVITY_CODES {
     speedtest = 'speedtest',
     monitor_toggled_off = 'monitor_toggled_off',
     monitor_toggled_on = 'monitor_toggled_on',
-    terminal_run = 'terminal_run'
+    terminal_run = 'terminal_run',
 }

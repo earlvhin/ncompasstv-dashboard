@@ -1,29 +1,29 @@
 * {
-	font-family: 'Poppins', sans-serif;
+    font-family: 'Poppins', sans-serif;
 }
 
 body {
-	background-color: #f4f7f0;
-	margin: 0;
-	a {
-		color: $dark;
-		transition: 0.1s linear;
-		text-decoration: none !important;
-		&:hover {
-			color: $primary;
-		}
-	}
+    background-color: #f4f7f0;
+    margin: 0;
+    a {
+        color: $dark;
+        transition: 0.1s linear;
+        text-decoration: none !important;
+        &:hover {
+            color: $primary;
+        }
+    }
 }
 
 //image display
 img {
-	display: inline-block;
+    display: inline-block;
 }
 
 //button
 button {
-	cursor: pointer;
-	outline: none !important;
+    cursor: pointer;
+    outline: none !important;
 }
 
 //headings weight
@@ -33,104 +33,104 @@ h3,
 h4,
 h5,
 h6 {
-	font-weight: $f_medium;
-	margin: 0;
+    font-weight: $f_medium;
+    margin: 0;
 }
 
 //Lines
 hr {
-	margin-top: 1rem;
-	margin-bottom: 1rem;
-	border: 0;
-	border-top: 1px solid rgba(0, 0, 0, 0.1);
-	box-sizing: content-box;
-	height: 0;
-	overflow: visible;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    box-sizing: content-box;
+    height: 0;
+    overflow: visible;
 }
 
 .bg-danger {
-	background-color: $danger;
+    background-color: $danger;
 }
 
 .text-danger {
-	color: $danger !important;
+    color: $danger !important;
 }
 
 .text-danger-light {
-	color: #f1a9a0 !important;
+    color: #f1a9a0 !important;
 }
 
 .text-orange {
-	color: orange;
+    color: orange;
 }
 
 .text-success {
-	color: $primary;
+    color: $primary;
 }
 
 .dialog-container-position-relative {
-	mat-dialog-container {
-		position: relative !important;
-	}
+    mat-dialog-container {
+        position: relative !important;
+    }
 }
 
 .no-select {
-	-webkit-touch-callout: none; /* iOS Safari */
-	-webkit-user-select: none; /* Safari */
-	-khtml-user-select: none; /* Konqueror HTML */
-	-moz-user-select: none; /* Firefox */
-	-ms-user-select: none; /* Internet Explorer/Edge */
-	user-select: none; /* Non-prefixed version, currently
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
 									supported by Chrome and Opera */
 }
 
 .index-column-width {
-	width: 3%;
+    width: 3%;
 }
 
 .upload-host-files-buttons-override {
-	button.mat-raised-button {
-		margin-right: 10px !important;
-		float: left;
-		color: white;
-	}
+    button.mat-raised-button {
+        margin-right: 10px !important;
+        float: left;
+        color: white;
+    }
 
-	.upload-progress {
-		mat-progress-bar .mat-progress-bar-buffer {
-			background-color: gray;
-		}
+    .upload-progress {
+        mat-progress-bar .mat-progress-bar-buffer {
+            background-color: gray;
+        }
 
-		button {
-			display: none;
-		}
-	}
+        button {
+            display: none;
+        }
+    }
 }
 
 .credit-card {
-	background-color: rgb(11, 96, 136);
-	height: 180px;
-	border-radius: 10px;
-	.icon {
-		font-size: 40px;
-	}
+    background-color: rgb(11, 96, 136);
+    height: 180px;
+    border-radius: 10px;
+    .icon {
+        font-size: 40px;
+    }
 }
 
 .disable-card {
-	background-color: #bbb;
+    background-color: #bbb;
 }
 
 .flex-wrap {
-	flex-wrap: wrap;
+    flex-wrap: wrap;
 }
 
 .selection {
-	border-top: 2px solid $gray;
-	height: 56px;
-	padding-top: 10px;
-	text-align: right;
+    border-top: 2px solid $gray;
+    height: 56px;
+    padding-top: 10px;
+    text-align: right;
 }
 
 .custom-panel {
-	max-height: 200px;
-	overflow: auto;
+    max-height: 200px;
+    overflow: auto;
 }

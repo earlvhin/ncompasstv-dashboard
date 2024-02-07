@@ -1,128 +1,147 @@
 <div>
-	<div class="row table-row">
-		<div class="col-lg-12 p-0 d-flex" *ngIf="!initial_load_orders">
-			<div class="col-lg-8 pl-0 pb-4">
-				<div class="col-lg-12 d-flex">
-					<div class="col-lg-6 p-0">
-						<div class="col-lg-12 mb-2 p-0">
-							<div class="col-lg-12 p-0">
-								<span class="md-text"> Select Date Range </span>
-							</div>
-							<div class="row"></div>
-							<div class="col-lg-12 pl-0 flex">
-								<div class="col-lg-6 pl-0">
-									<mat-form-field class="full-width" appearance="fill" appDefaultDateFormat>
-										<mat-label class="md-text">Start Date</mat-label>
-										<input
-											[(ngModel)]="start"
-											(dateInput)="onSelectStartDate($event.value)"
-											matInput
-											[matDatepicker]="datePicker"
-											readonly />
-										<mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
-										<mat-datepicker #datePicker></mat-datepicker>
-									</mat-form-field>
-								</div>
+    <div class="row table-row">
+        <div class="col-lg-12 p-0 d-flex" *ngIf="!initial_load_orders">
+            <div class="col-lg-8 pl-0 pb-4">
+                <div class="col-lg-12 d-flex">
+                    <div class="col-lg-6 p-0">
+                        <div class="col-lg-12 mb-2 p-0">
+                            <div class="col-lg-12 p-0">
+                                <span class="md-text"> Select Date Range </span>
+                            </div>
+                            <div class="row"></div>
+                            <div class="col-lg-12 pl-0 flex">
+                                <div class="col-lg-6 pl-0">
+                                    <mat-form-field
+                                        class="full-width"
+                                        appearance="fill"
+                                        appDefaultDateFormat>
+                                        <mat-label class="md-text">Start Date</mat-label>
+                                        <input
+                                            [(ngModel)]="start"
+                                            (dateInput)="onSelectStartDate($event.value)"
+                                            matInput
+                                            [matDatepicker]="datePicker"
+                                            readonly />
+                                        <mat-datepicker-toggle
+                                            matSuffix
+                                            [for]="datePicker"></mat-datepicker-toggle>
+                                        <mat-datepicker #datePicker></mat-datepicker>
+                                    </mat-form-field>
+                                </div>
 
-								<div class="col-lg-6 pr-0">
-									<mat-form-field class="full-width" appearance="fill" appDefaultDateFormat>
-										<mat-label class="md-text">End Date</mat-label>
-										<input
-											[(ngModel)]="end"
-											(dateInput)="onSelectEndDate($event.value)"
-											matInput
-											[matDatepicker]="datePicker2"
-											[min]="start_date"
-											readonly />
-										<mat-datepicker-toggle matSuffix [for]="datePicker2"></mat-datepicker-toggle>
-										<mat-datepicker #datePicker2></mat-datepicker>
-									</mat-form-field>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col-lg-2 pt-4">
-						<button
-							id="filter-by-status-btn"
-							mat-button
-							mat-raised-button
-							class="theme-btn sm-text mr-2 h-45"
-							[matMenuTriggerFor]="status">
-							<span class="button-label">Status</span>
-							<span class="fas fa-sort xsm-text"></span>
-						</button>
-						<mat-menu #status="matMenu">
-							<button class="md-text" mat-menu-item (click)="filterStatus('Shipped')">Shipped</button>
-							<button class="md-text" mat-menu-item (click)="filterStatus('New Order')">New Order</button>
-						</mat-menu>
-					</div>
-				</div>
-			</div>
-			<div class="col-lg-4 pt-5">
-				<app-search-field
-					*ngIf="dealerId === ''"
-					[form_title]="'Search Dealer Name or Alias'"
-					[placeholder]="'Example: N-Compass TV'"
-					[data_reference]="orders"
-					[primary_keyword]="'dealerAlias'"
-					[secondary_keyword]="'businessName'"
-					(searched)="filterData($event)"
-					[api_search]="true">
-				</app-search-field>
-			</div>
-		</div>
-	</div>
-	<div class="row full-width m-0" *ngIf="filters.billing_date || filters.label_status">
-		<div class="col-lg-12 p-0">
-			<div class="d-flex align-items-center p-2 bg-gray-2">
-				<div class="filter-pills">
-					<div class="order-pill pill" *ngIf="filters.label_status">
-						Status: <strong>{{ filters.label_status }}</strong>
-					</div>
-				</div>
-				<div class="control flex-even text-right">
-					<button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
-						<span class="button-label"> Clear Filter </span>
-						<span class="fas fa-times ml-2 sm-text"></span>
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="row table-row">
-		<div class="col-lg-12 pt-2 pb-4" *ngIf="is_loading; else spinner">
-			<mat-card *ngIf="filtered_data_orders.length > 0; else nodata">
-				<app-data-table
-					class="full-width"
-					page="dealers-orders"
-					[table_columns]="orders_table_column"
-					[table_data]="orders_data"
-					[new_table]="true"
-					[paging_details]="orders_paging"
-					[is_view_only]="true"
-					[order_action]="dealerId === '' ? true : false"
-					[order_data]="orders"
-					(page_triggered)="getOrders($event)"
-					(shipping)="shipOrder($event)">
-				</app-data-table>
-			</mat-card>
-		</div>
-	</div>
-	<ng-template #spinner>
-		<div class="py-5 white-bg col-lg-12 text-center mt-4 mb-4">
-			<app-spinner [diameter]="85"></app-spinner>
-		</div>
-	</ng-template>
+                                <div class="col-lg-6 pr-0">
+                                    <mat-form-field
+                                        class="full-width"
+                                        appearance="fill"
+                                        appDefaultDateFormat>
+                                        <mat-label class="md-text">End Date</mat-label>
+                                        <input
+                                            [(ngModel)]="end"
+                                            (dateInput)="onSelectEndDate($event.value)"
+                                            matInput
+                                            [matDatepicker]="datePicker2"
+                                            [min]="start_date"
+                                            readonly />
+                                        <mat-datepicker-toggle
+                                            matSuffix
+                                            [for]="datePicker2"></mat-datepicker-toggle>
+                                        <mat-datepicker #datePicker2></mat-datepicker>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 pt-4">
+                        <button
+                            id="filter-by-status-btn"
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn sm-text mr-2 h-45"
+                            [matMenuTriggerFor]="status">
+                            <span class="button-label">Status</span>
+                            <span class="fas fa-sort xsm-text"></span>
+                        </button>
+                        <mat-menu #status="matMenu">
+                            <button class="md-text" mat-menu-item (click)="filterStatus('Shipped')">
+                                Shipped
+                            </button>
+                            <button
+                                class="md-text"
+                                mat-menu-item
+                                (click)="filterStatus('New Order')">
+                                New Order
+                            </button>
+                        </mat-menu>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 pt-5">
+                <app-search-field
+                    *ngIf="dealerId === ''"
+                    [form_title]="'Search Dealer Name or Alias'"
+                    [placeholder]="'Example: N-Compass TV'"
+                    [data_reference]="orders"
+                    [primary_keyword]="'dealerAlias'"
+                    [secondary_keyword]="'businessName'"
+                    (searched)="filterData($event)"
+                    [api_search]="true">
+                </app-search-field>
+            </div>
+        </div>
+    </div>
+    <div class="row full-width m-0" *ngIf="filters.billing_date || filters.label_status">
+        <div class="col-lg-12 p-0">
+            <div class="d-flex align-items-center p-2 bg-gray-2">
+                <div class="filter-pills">
+                    <div class="order-pill pill" *ngIf="filters.label_status">
+                        Status: <strong>{{ filters.label_status }}</strong>
+                    </div>
+                </div>
+                <div class="control flex-even text-right">
+                    <button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
+                        <span class="button-label"> Clear Filter </span>
+                        <span class="fas fa-times ml-2 sm-text"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row table-row">
+        <div class="col-lg-12 pt-2 pb-4" *ngIf="is_loading; else spinner">
+            <mat-card *ngIf="filtered_data_orders.length > 0; else nodata">
+                <app-data-table
+                    class="full-width"
+                    page="dealers-orders"
+                    [table_columns]="orders_table_column"
+                    [table_data]="orders_data"
+                    [new_table]="true"
+                    [paging_details]="orders_paging"
+                    [is_view_only]="true"
+                    [order_action]="dealerId === '' ? true : false"
+                    [order_data]="orders"
+                    (page_triggered)="getOrders($event)"
+                    (shipping)="shipOrder($event)">
+                </app-data-table>
+            </mat-card>
+        </div>
+    </div>
+    <ng-template #spinner>
+        <div class="py-5 white-bg col-lg-12 text-center mt-4 mb-4">
+            <app-spinner [diameter]="85"></app-spinner>
+        </div>
+    </ng-template>
 
-	<ng-template #nodata>
-		<div class="col-lg-12 pl-0 pr-0">
-			<mat-card class="pt-5 pb-5 col-lg-12 text-center">
-				<div class="mb-4">
-					<i class="text-gray fa-5x far fa-file-alt"></i>
-				</div>
-				<h3 class="text-gray col-lg-12">No Results Found.</h3>
-				<span class="text-gray col-lg-12">Try adjusting your search or filter to find what you're looking for.</span>
-			</mat-card>
-		</div>
-	</ng-template>
+    <ng-template #nodata>
+        <div class="col-lg-12 pl-0 pr-0">
+            <mat-card class="pt-5 pb-5 col-lg-12 text-center">
+                <div class="mb-4">
+                    <i class="text-gray fa-5x far fa-file-alt"></i>
+                </div>
+                <h3 class="text-gray col-lg-12">No Results Found.</h3>
+                <span class="text-gray col-lg-12"
+                    >Try adjusting your search or filter to find what you're looking for.</span
+                >
+            </mat-card>
+        </div>
+    </ng-template>
 </div>

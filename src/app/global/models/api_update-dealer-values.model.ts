@@ -9,7 +9,17 @@ export class API_UPDATE_DEALER_VALUES {
     perLicense: number;
     billing: number;
 
-    constructor(dealerId: string, month1: string, month19: string, month25: string, month31: string, month37: string, baseFee: number, perLicense: number, billing: number) {
+    constructor(
+        dealerId: string,
+        month1: string,
+        month19: string,
+        month25: string,
+        month31: string,
+        month37: string,
+        baseFee: number,
+        perLicense: number,
+        billing: number,
+    ) {
         this.dealerId = dealerId;
         this.month1 = month1;
         this.month19 = month19;

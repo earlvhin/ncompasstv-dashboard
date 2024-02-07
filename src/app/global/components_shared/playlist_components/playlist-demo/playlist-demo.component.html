@@ -1,27 +1,37 @@
 <div class="media-holder">
-	<button class="close-btn" *ngIf="in_modal" mat-dialog-close>
-		<span class="fas fa-times text-danger"></span>
-	</button>
+    <button class="close-btn" *ngIf="in_modal" mat-dialog-close>
+        <span class="fas fa-times text-danger"></span>
+    </button>
 
-	<ng-container *ngIf="current_filetype | isvideo">
-		<video #videoPlayer [src]="current_content | async" (error)="mediaFileError($event)" [ngClass]="no_stretch ? 'no-stretch' : null" (ended)="videoEnded()" autoplay [muted]="true"></video>
-	</ng-container>
+    <ng-container *ngIf="current_filetype | isvideo">
+        <video
+            #videoPlayer
+            [src]="current_content | async"
+            (error)="mediaFileError($event)"
+            [ngClass]="no_stretch ? 'no-stretch' : null"
+            (ended)="videoEnded()"
+            autoplay
+            [muted]="true"></video>
+    </ng-container>
 
-	<ng-container *ngIf="current_filetype | isimage">
-		<img [src]="current_content | async" (error)="mediaFileError($event)">
-	</ng-container>
+    <ng-container *ngIf="current_filetype | isimage">
+        <img [src]="current_content | async" (error)="mediaFileError($event)" />
+    </ng-container>
 
-	<ng-container *ngIf="current_filetype | isFeed">
-		<div class="frame-wrap">
-			<iframe class="responsive-iframe" [src]="current_content | sanitize" frameborder="0"></iframe>
-		</div>
-	</ng-container>
+    <ng-container *ngIf="current_filetype | isFeed">
+        <div class="frame-wrap">
+            <iframe
+                class="responsive-iframe"
+                [src]="current_content | sanitize"
+                frameborder="0"></iframe>
+        </div>
+    </ng-container>
 
-	<div class="d-flex h-100 align-items-center">
-		<mat-spinner [diameter]="50"></mat-spinner>
-	</div>
+    <div class="d-flex h-100 align-items-center">
+        <mat-spinner [diameter]="50"></mat-spinner>
+    </div>
 
-	<ng-template #error>
-		<h1>ERROR</h1>
-	</ng-template>
+    <ng-template #error>
+        <h1>ERROR</h1>
+    </ng-template>
 </div>

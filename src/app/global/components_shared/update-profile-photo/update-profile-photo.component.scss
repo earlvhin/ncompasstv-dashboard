@@ -1,33 +1,33 @@
 .profile-options {
-	top: 140px;
-	width: 200px;
-	border-radius: 5px;
-	box-shadow: 3px 3px 7px #1c2731;
-	z-index: 10;
-	.top-arrow {
-		&:after {
-			content: ' ';
-			height: 0;
-			position: absolute;
-			width: 0;
-			top: -20px;
-			left: 40px;
-			border: 10px solid transparent;
-			border-bottom-color: white;
-		}
-	}
-	li {
-		&:hover {
-			font-weight: 600;
-			color: #1c2731;
-			background: #f1f1f1;
-		}
-	}
+    top: 140px;
+    width: 200px;
+    border-radius: 5px;
+    box-shadow: 3px 3px 7px #1c2731;
+    z-index: 10;
+    .top-arrow {
+        &:after {
+            content: ' ';
+            height: 0;
+            position: absolute;
+            width: 0;
+            top: -20px;
+            left: 40px;
+            border: 10px solid transparent;
+            border-bottom-color: white;
+        }
+    }
+    li {
+        &:hover {
+            font-weight: 600;
+            color: #1c2731;
+            background: #f1f1f1;
+        }
+    }
 }
 
 .profile-picture-container {
-	width: 100px;
-	height: 100px;
-	object-fit: cover;
-	border-radius: 100%;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 100%;
 }

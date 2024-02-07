@@ -1,49 +1,76 @@
 <div class="col-lg-12 pl-0 pr-0 pb-4">
-	<div class="tab-actions-section d-flex align-items-center">
+    <div class="tab-actions-section d-flex align-items-center">
         <div class="col-lg-8 pl-0">
             <div class="datepicker-container flex mt-2">
                 <div class="">
                     <!-- DATEPICKER -->
                     <ng-container *ngIf="isDatePickerEnabled">
-                        <mat-form-field class="datepicker mat-form-field-no-padding-bottom" appearance="fill" appDefaultDateFormat>
+                        <mat-form-field
+                            class="datepicker mat-form-field-no-padding-bottom"
+                            appearance="fill"
+                            appDefaultDateFormat>
                             <mat-label>Current / Selected Date</mat-label>
-                            <input [formControl]="date" (dateInput)="dateSelected($event.value)" matInput [matDatepicker]="datePicker" readonly>
-                            <mat-datepicker-toggle matSuffix [for]="datePicker" [disabled]="searching"></mat-datepicker-toggle>
+                            <input
+                                [formControl]="date"
+                                (dateInput)="dateSelected($event.value)"
+                                matInput
+                                [matDatepicker]="datePicker"
+                                readonly />
+                            <mat-datepicker-toggle
+                                matSuffix
+                                [for]="datePicker"
+                                [disabled]="searching"></mat-datepicker-toggle>
                             <mat-datepicker #datePicker></mat-datepicker>
                         </mat-form-field>
                     </ng-container>
-    
+
                     <!-- DATE VIEW BUTTONS -->
                     <ng-container *ngIf="isDatePickerViewEnabled">
-                        <div class="date-views-container align-items-center col-lg-12 p-0 pt-2" name="view-toggle">
-                            <button class="sm-text theme-btn _neutral cursor-pointer mr-1" *ngFor="let view of dateViews" (click)="onSelectDateView.emit(view.index)">
-                                
+                        <div
+                            class="date-views-container align-items-center col-lg-12 p-0 pt-2"
+                            name="view-toggle">
+                            <button
+                                class="sm-text theme-btn _neutral cursor-pointer mr-1"
+                                *ngFor="let view of dateViews"
+                                (click)="onSelectDateView.emit(view.index)">
                                 <ng-container *ngIf="view.index === 0; else defaultViewButton">
-                                    <span class="fas fa-times" data-toggle="tooltip" title="Clear Filter"></span>
+                                    <span
+                                        class="fas fa-times"
+                                        data-toggle="tooltip"
+                                        title="Clear Filter"></span>
                                 </ng-container>
-        
+
                                 <ng-template #defaultViewButton>
                                     {{ view.name }}
                                 </ng-template>
-        
                             </button>
                         </div>
                     </ng-container>
                 </div>
 
-                 <!-- EXPORT BUTTON -->
-                <button mat-button mat-raised-button class="theme-btn pi-control sm-text _primary" [ngClass]="isDatePickerViewEnabled ? 'mr-2 ml-3 mt-3':''" title="Export to CSV" (click)="onExport.emit()" [disabled]="isExporting">
-                    <span class="{{ !isExporting ? 'fas fa-file-excel' : 'fas fa-spinner' }}"></span> 
-                    <span class="ml-2 button_text_animation">{{ !isExporting ? 'Export' : 'Generating CSV' }}</span>
+                <!-- EXPORT BUTTON -->
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn pi-control sm-text _primary"
+                    [ngClass]="isDatePickerViewEnabled ? 'mr-2 ml-3 mt-3' : ''"
+                    title="Export to CSV"
+                    (click)="onExport.emit()"
+                    [disabled]="isExporting">
+                    <span
+                        class="{{ !isExporting ? 'fas fa-file-excel' : 'fas fa-spinner' }}"></span>
+                    <span class="ml-2 button_text_animation">{{
+                        !isExporting ? 'Export' : 'Generating CSV'
+                    }}</span>
                 </button>
             </div>
-    
-           
         </div>
-		
-        <div class="col-lg-4" [ngClass]="isDatePickerViewEnabled ? 'mt-4':'mt-2'">
+
+        <div class="col-lg-4" [ngClass]="isDatePickerViewEnabled ? 'mt-4' : 'mt-2'">
             <!-- SEARCH FIELD -->
-            <app-search-field *ngIf="!initialLoad" class="search-field margin-left-auto"
+            <app-search-field
+                *ngIf="!initialLoad"
+                class="search-field margin-left-auto"
                 [form_title]="'Search Dealer Name'"
                 [placeholder]="'Example: N-Compass'"
                 [data_reference]="installations"
@@ -53,48 +80,49 @@
                 [api_search]="true">
             </app-search-field>
         </div>
-	</div>
+    </div>
 
-	<div class="mb-3 col-lg-12 p-0 pt-2">
-		<span class="sm-text">Note: Licenses colored in <span class="text-danger">Red</span> are expired installations.</span>
-	</div>
+    <div class="mb-3 col-lg-12 p-0 pt-2">
+        <span class="sm-text"
+            >Note: Licenses colored in <span class="text-danger">Red</span> are expired
+            installations.</span
+        >
+    </div>
 
-	<div *ngIf="!initialLoad; else loader">
-		<div class="row" *ngIf="!initialLoad">
-			<div class="col-lg-12">
-				<ng-container *ngIf="!searching; else loader">
-					<mat-card *ngIf="filteredData.length > 0; else no_data">
-						<!-- DATA TABLE -->
-						<app-data-table
-							(page_triggered)="onSelectPage.emit($event)"
-							(to_sort_column)="onSortByColumnAndOrder.emit($event)"
-							(update_info)="onTableRefresh.emit()"
-							[table_data]="filteredData"
-							[table_columns]="tableColumns"
-							[new_table]="true"
-							[paging_details]="pagingData"
-							[active_tab]="currentFilters.sortColumn"
-							[sort_column]="currentFilters.sortColumn"
-							[sort_order]="currentFilters.sortOrder">
-						</app-data-table>
-					</mat-card>
-				</ng-container>
-			</div>
-		</div>
-	</div>
+    <div *ngIf="!initialLoad; else loader">
+        <div class="row" *ngIf="!initialLoad">
+            <div class="col-lg-12">
+                <ng-container *ngIf="!searching; else loader">
+                    <mat-card *ngIf="filteredData.length > 0; else no_data">
+                        <!-- DATA TABLE -->
+                        <app-data-table
+                            (page_triggered)="onSelectPage.emit($event)"
+                            (to_sort_column)="onSortByColumnAndOrder.emit($event)"
+                            (update_info)="onTableRefresh.emit()"
+                            [table_data]="filteredData"
+                            [table_columns]="tableColumns"
+                            [new_table]="true"
+                            [paging_details]="pagingData"
+                            [active_tab]="currentFilters.sortColumn"
+                            [sort_column]="currentFilters.sortColumn"
+                            [sort_order]="currentFilters.sortOrder">
+                        </app-data-table>
+                    </mat-card>
+                </ng-container>
+            </div>
+        </div>
+    </div>
 </div>
 
 <ng-template #loader>
-	<mat-card>
-		<app-spinner [diameter]="60"></app-spinner>
-	</mat-card>
+    <mat-card>
+        <app-spinner [diameter]="60"></app-spinner>
+    </mat-card>
 </ng-template>
 
 <ng-template #no_data>
-	<mat-card class="p-5">
-		<h3>Oh Boy.</h3>
-		<p class="sm-text mb-3">
-			There are no scheduled installations at the moment.
-		</p>
-	</mat-card>
+    <mat-card class="p-5">
+        <h3>Oh Boy.</h3>
+        <p class="sm-text mb-3">There are no scheduled installations at the moment.</p>
+    </mat-card>
 </ng-template>

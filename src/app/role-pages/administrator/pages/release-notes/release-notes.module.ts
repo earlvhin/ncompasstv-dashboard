@@ -7,12 +7,9 @@ import { ReleaseNotesComponent } from './release-notes.component';
 import { CreateUpdateDialogComponent } from './components/create-update-dialog/create-update-dialog.component';
 import { ReleaseNotesViewComponent } from './components/release-notes-view/release-notes-view.component';
 
-
 @NgModule({
-	declarations: [ ReleaseNotesComponent, CreateUpdateDialogComponent, ReleaseNotesViewComponent ],
-	entryComponents: [ CreateUpdateDialogComponent ],
-	imports: [
-		CommonModule, GlobalModule, RouterModule
-	]
+    declarations: [ReleaseNotesComponent, CreateUpdateDialogComponent, ReleaseNotesViewComponent],
+    entryComponents: [CreateUpdateDialogComponent],
+    imports: [CommonModule, GlobalModule, RouterModule],
 })
-export class ReleaseNotesModule { }
+export class ReleaseNotesModule {}

@@ -1,51 +1,76 @@
 <div class="p2">
-	<div class="d-flex heading">
-		<div class="flex-even">
-			<h3 mat-dialog-title class="p-0">Delete Dealer</h3>
-		</div>
-	</div>
+    <div class="d-flex heading">
+        <div class="flex-even">
+            <h3 mat-dialog-title class="p-0">Delete Dealer</h3>
+        </div>
+    </div>
 
-	<div mat-dialog-content class="h-100 d-flex flex-column align-items-center justify-content-center text-center">
-		<ng-container *ngIf="!hasSubmittedRequest; else request_submitted">
-			<app-warning-animation></app-warning-animation>
+    <div
+        mat-dialog-content
+        class="h-100 d-flex flex-column align-items-center justify-content-center text-center">
+        <ng-container *ngIf="!hasSubmittedRequest; else request_submitted">
+            <app-warning-animation></app-warning-animation>
 
-			<p class="mb-4 md-text warning-text">
-				Permanently remove <b>{{ businessName }}</b> from the system
-			</p>
+            <p class="mb-4 md-text warning-text">
+                Permanently remove <b>{{ businessName }}</b> from the system
+            </p>
 
-			<div class="text-left control-toggle mb-3">
-				<mat-slide-toggle (change)="retainContents = !retainContents" labelPosition="before" [checked]="retainContents"
-					><span class="sm-text font-weight-bold">Keep Dealer Contents?</span>
-				</mat-slide-toggle>
-			</div>
-		</ng-container>
+            <div class="text-left control-toggle mb-3">
+                <mat-slide-toggle
+                    (change)="retainContents = !retainContents"
+                    labelPosition="before"
+                    [checked]="retainContents"
+                    ><span class="sm-text font-weight-bold">Keep Dealer Contents?</span>
+                </mat-slide-toggle>
+            </div>
+        </ng-container>
 
-		<ng-template #request_submitted>
-			<ng-container *ngIf="isDeleteSuccessful; else failed_to_delete">
-				<app-success-animation></app-success-animation>
-				<p class="mb-4 md-text">Success! Dealer has been deleted</p>
-			</ng-container>
+        <ng-template #request_submitted>
+            <ng-container *ngIf="isDeleteSuccessful; else failed_to_delete">
+                <app-success-animation></app-success-animation>
+                <p class="mb-4 md-text">Success! Dealer has been deleted</p>
+            </ng-container>
 
-			<ng-template #failed_to_delete>
-				<app-fail-animation></app-fail-animation>
-				<p class="mb-4 md-text">Whoops! Something went wrong. Please contact your system administrator</p>
-			</ng-template>
-		</ng-template>
-	</div>
+            <ng-template #failed_to_delete>
+                <app-fail-animation></app-fail-animation>
+                <p class="mb-4 md-text">
+                    Whoops! Something went wrong. Please contact your system administrator
+                </p>
+            </ng-template>
+        </ng-template>
+    </div>
 
-	<div mat-dialog-actions class="actions-container d-flex margin-left-auto justify-content-center">
-		<ng-container *ngIf="!hasSubmittedRequest; else request_submitted_actions">
-			<!-- SUBMIT BUTTON -->
-			<button mat-raised-button class="submit" color="primary" (click)="onSubmit()" [disabled]="isDeleting || !(dealerId && userId)">
-				{{ isDeleting ? 'Deleting, please wait...' : 'Submit' }}
-			</button>
+    <div
+        mat-dialog-actions
+        class="actions-container d-flex margin-left-auto justify-content-center">
+        <ng-container *ngIf="!hasSubmittedRequest; else request_submitted_actions">
+            <!-- SUBMIT BUTTON -->
+            <button
+                mat-raised-button
+                class="submit"
+                color="primary"
+                (click)="onSubmit()"
+                [disabled]="isDeleting || !(dealerId && userId)">
+                {{ isDeleting ? 'Deleting, please wait...' : 'Submit' }}
+            </button>
 
-			<!-- CANCEL BUTTON -->
-			<button mat-raised-button color="warn" [mat-dialog-close]="false" [disabled]="isDeleting">Cancel</button>
-		</ng-container>
+            <!-- CANCEL BUTTON -->
+            <button
+                mat-raised-button
+                color="warn"
+                [mat-dialog-close]="false"
+                [disabled]="isDeleting">
+                Cancel
+            </button>
+        </ng-container>
 
-		<ng-template #request_submitted_actions>
-			<button mat-raised-button [mat-dialog-close]="isDeleteSuccessful ? true : false" class="theme-btn">Dismiss</button>
-		</ng-template>
-	</div>
+        <ng-template #request_submitted_actions>
+            <button
+                mat-raised-button
+                [mat-dialog-close]="isDeleteSuccessful ? true : false"
+                class="theme-btn">
+                Dismiss
+            </button>
+        </ng-template>
+    </div>
 </div>

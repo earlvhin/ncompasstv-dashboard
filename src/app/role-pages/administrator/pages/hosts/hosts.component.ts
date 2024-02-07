@@ -5,7 +5,13 @@ import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver';
 import * as moment from 'moment';
 
-import { API_DEALER, API_HOST, UI_TABLE_HOSTS_BY_DEALER, UI_HOST_VIEW, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
+import {
+    API_DEALER,
+    API_HOST,
+    UI_TABLE_HOSTS_BY_DEALER,
+    UI_HOST_VIEW,
+    UI_ROLE_DEFINITION_TEXT,
+} from 'src/app/global/models';
 import { AuthService, DealerService, HelperService, HostService } from 'src/app/global/services';
 
 @Component({
@@ -47,7 +53,16 @@ export class HostsComponent implements OnInit {
     worksheet: any;
     role_label: string = '';
 
-    dealers_table_columns = ['#', 'Dealer Alias', 'Business Name', 'Contact Person', 'Total', 'Active', 'To Install', 'Recently Added Host'];
+    dealers_table_columns = [
+        '#',
+        'Dealer Alias',
+        'Business Name',
+        'Contact Person',
+        'Total',
+        'Active',
+        'To Install',
+        'Recently Added Host',
+    ];
 
     hosts_table_column = [
         { name: '#', sortable: false, no_export: true },
@@ -63,8 +78,20 @@ export class HostsComponent implements OnInit {
         { name: 'Timezone', sortable: true, column: 'TimezoneName', key: 'timezoneName' },
         { name: 'Total Licenses', sortable: true, column: 'TotalLicenses', key: 'totalLicenses' },
         { name: 'Tags', hidden: true, no_show: true, key: 'tagsToString' },
-        { name: 'Business Hours', sortable: false, key: 'storeHoursParse', hidden: true, no_show: true },
-        { name: 'Total Business Hours', sortable: false, key: 'storeHoursTotal', hidden: true, no_show: true },
+        {
+            name: 'Business Hours',
+            sortable: false,
+            key: 'storeHoursParse',
+            hidden: true,
+            no_show: true,
+        },
+        {
+            name: 'Total Business Hours',
+            sortable: false,
+            key: 'storeHoursTotal',
+            hidden: true,
+            no_show: true,
+        },
         { name: 'DMA Rank', sortable: false, hidden: true, key: 'dmaRank', no_show: true },
         { name: 'DMA Code', sortable: false, hidden: true, key: 'dmaCode', no_show: true },
         { name: 'DMA Name', sortable: false, hidden: true, key: 'dmaName', no_show: true },
@@ -77,7 +104,13 @@ export class HostsComponent implements OnInit {
 
     protected _unsubscribe = new Subject<void>();
 
-    constructor(private _auth: AuthService, private _host: HostService, private _dealer: DealerService, private cdr: ChangeDetectorRef, private _helper: HelperService) {}
+    constructor(
+        private _auth: AuthService,
+        private _host: HostService,
+        private _dealer: DealerService,
+        private cdr: ChangeDetectorRef,
+        private _helper: HelperService,
+    ) {}
 
     ngOnInit() {
         if (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
@@ -161,7 +194,7 @@ export class HostsComponent implements OnInit {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -180,7 +213,7 @@ export class HostsComponent implements OnInit {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -225,14 +258,21 @@ export class HostsComponent implements OnInit {
                         { value: dealer.contactPerson, link: null, editable: false, hidden: false },
                         { value: dealer.hosts.length, link: null, editable: false, hidden: false },
                         { value: dealer.activeHost, link: null, editable: false, hidden: false },
-                        { value: dealer.forInstallationHost, link: null, editable: false, hidden: false },
+                        {
+                            value: dealer.forInstallationHost,
+                            link: null,
+                            editable: false,
+                            hidden: false,
+                        },
                         {
                             value: dealer.hosts[0] ? dealer.hosts[0].name : '---',
-                            link: dealer.hosts[0] ? '/administrator/hosts/' + dealer.hosts[0].hostId : null,
+                            link: dealer.hosts[0]
+                                ? '/administrator/hosts/' + dealer.hosts[0].hostId
+                                : null,
                             new_tab_link: true,
                             editable: false,
                             hidden: false,
-                        }
+                        },
                     );
                 } else {
                     return new UI_TABLE_HOSTS_BY_DEALER(
@@ -255,8 +295,13 @@ export class HostsComponent implements OnInit {
                         { value: dealer.contactPerson, link: null, editable: false, hidden: false },
                         { value: 0, link: null, editable: false, hidden: false },
                         { value: dealer.activeHost, link: null, editable: false, hidden: false },
-                        { value: dealer.forInstallationHost, link: null, editable: false, hidden: false },
-                        { value: '--', link: null, editable: false, hidden: false }
+                        {
+                            value: dealer.forInstallationHost,
+                            link: null,
+                            editable: false,
+                            hidden: false,
+                        },
+                        { value: '--', link: null, editable: false, hidden: false },
                     );
                 }
             });
@@ -285,7 +330,9 @@ export class HostsComponent implements OnInit {
             pageSize: 15,
         };
 
-        let request = this.has_sort ? this._host.get_host_by_page(filters) : this._host.get_host_fetch(filters);
+        let request = this.has_sort
+            ? this._host.get_host_by_page(filters)
+            : this._host.get_host_fetch(filters);
 
         request
             .pipe(takeUntil(this._unsubscribe))
@@ -331,13 +378,34 @@ export class HostsComponent implements OnInit {
                     editable: false,
                     hidden: false,
                 },
-                { value: h.address ? h.address : '--', link: null, new_tab_link: true, editable: false, hidden: false },
+                {
+                    value: h.address ? h.address : '--',
+                    link: null,
+                    new_tab_link: true,
+                    editable: false,
+                    hidden: false,
+                },
                 { value: h.city ? h.city : '--', link: null, editable: false, hidden: false },
                 { value: h.state ? h.state : '--', hidden: false },
-                { value: h.postalCode ? h.postalCode : '--', link: null, editable: false, hidden: false },
-                { value: h.timezoneName ? h.timezoneName : '--', link: null, editable: false, hidden: false },
-                { value: h.totalLicenses ? h.totalLicenses : '0', link: null, editable: false, hidden: false },
-                { value: h.status, editable: false, hidden: true }
+                {
+                    value: h.postalCode ? h.postalCode : '--',
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                },
+                {
+                    value: h.timezoneName ? h.timezoneName : '--',
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                },
+                {
+                    value: h.totalLicenses ? h.totalLicenses : '0',
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                },
+                { value: h.status, editable: false, hidden: true },
             );
             return table;
         });
@@ -355,7 +423,8 @@ export class HostsComponent implements OnInit {
             address: data.address,
             schedule:
                 storehours[this.now] && storehours[this.now].status
-                    ? storehours[this.now].periods[0].open == '' && storehours[this.now].periods[0].close == ''
+                    ? storehours[this.now].periods[0].open == '' &&
+                      storehours[this.now].periods[0].close == ''
                         ? 'Open 24 Hours'
                         : storehours[this.now].periods.map((i) => {
                               return i.open + ' - ' + i.close;
@@ -407,13 +476,28 @@ export class HostsComponent implements OnInit {
                 } else {
                     for (let i = 1; i < 13; i++) {
                         this.hosts_table_column.push(
-                            { name: moment(i, 'M').format('MMM') + ' - Average Dwell Time', no_show: true, hidden: true, key: 'averageDwellTime-' + i, no_show_to_da: true },
-                            { name: moment(i, 'M').format('MMM') + ' - Foot Traffic', no_show: true, hidden: true, key: 'footTraffic-' + i, no_show_to_da: true }
+                            {
+                                name: moment(i, 'M').format('MMM') + ' - Average Dwell Time',
+                                no_show: true,
+                                hidden: true,
+                                key: 'averageDwellTime-' + i,
+                                no_show_to_da: true,
+                            },
+                            {
+                                name: moment(i, 'M').format('MMM') + ' - Foot Traffic',
+                                no_show: true,
+                                hidden: true,
+                                key: 'footTraffic-' + i,
+                                no_show_to_da: true,
+                            },
                         );
                     }
                 }
                 Object.keys(this.hosts_table_column).forEach((key) => {
-                    if (this.hosts_table_column[key].name && !this.hosts_table_column[key].no_export) {
+                    if (
+                        this.hosts_table_column[key].name &&
+                        !this.hosts_table_column[key].no_export
+                    ) {
                         header.push({
                             header: this.hosts_table_column[key].name,
                             key: this.hosts_table_column[key].key,
@@ -430,7 +514,8 @@ export class HostsComponent implements OnInit {
     }
 
     getDataForExport(tab: string): void {
-        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        const EXCEL_TYPE =
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 
         switch (tab) {
             case 'hosts':
@@ -469,7 +554,11 @@ export class HostsComponent implements OnInit {
                         let rowIndex = 1;
 
                         for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
-                            this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+                            this.worksheet.getRow(rowIndex).alignment = {
+                                vertical: 'middle',
+                                horizontal: 'center',
+                                wrapText: true,
+                            };
                         }
 
                         this.workbook.xlsx.writeBuffer().then((file: any) => {
@@ -504,9 +593,11 @@ export class HostsComponent implements OnInit {
 
                             if (time_start.getTime() > time_end.getTime()) {
                                 time_end = new Date(time_end.getTime() + 60 * 60 * 24 * 1000);
-                                this.diff_hours = (time_end.getTime() - time_start.getTime()) / 1000;
+                                this.diff_hours =
+                                    (time_end.getTime() - time_start.getTime()) / 1000;
                             } else {
-                                this.diff_hours = (time_end.getTime() - time_start.getTime()) / 1000;
+                                this.diff_hours =
+                                    (time_end.getTime() - time_start.getTime()) / 1000;
                             }
                         } else {
                             this.diff_hours = 86400;
@@ -578,10 +669,12 @@ export class HostsComponent implements OnInit {
     }
 
     private subscribeToStatusFilterClick() {
-        this._helper.onClickCardByStatus.pipe(takeUntil(this._unsubscribe)).subscribe((response) => {
-            if (response.page !== 'hosts') return;
-            this.current_status_filter = response.value;
-            this.getHosts(1);
-        });
+        this._helper.onClickCardByStatus
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((response) => {
+                if (response.page !== 'hosts') return;
+                this.current_status_filter = response.value;
+                this.getHosts(1);
+            });
     }
 }

@@ -1,14 +1,14 @@
 .playlist-content-thumb {
-	cursor: move; /* fallback if grab cursor is unsupported */
-	cursor: grab;
-	cursor: -moz-grab;
-	cursor: -webkit-grab;
+    cursor: move; /* fallback if grab cursor is unsupported */
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
 
-	&:active {
-		cursor: grabbing;
-		cursor: -moz-grabbing;
-		cursor: -webkit-grabbing;
-	}
+    &:active {
+        cursor: grabbing;
+        cursor: -moz-grabbing;
+        cursor: -webkit-grabbing;
+    }
 }
 
 .playlist-content-list-view {
@@ -16,55 +16,55 @@
 }
 
 .future-schedule {
-	border: 3px orange solid;
+    border: 3px orange solid;
 }
 
 .inactive-schedule {
-	border: 3px blue solid;
+    border: 3px blue solid;
 }
 
 .frequency-hover-grid {
-	border: 3px #117a8b solid;
+    border: 3px #117a8b solid;
 }
 
 .frequency-hover-list {
-	background-color: rgba(17, 122, 139, 0.7);
+    background-color: rgba(17, 122, 139, 0.7);
 }
 
 .frequency-badge {
-	background-color: #8EC641;
-	width: 15px;
-	height: 15px;
-	border-radius: 100%;
-	color: white;
-	font-size: 8px;
-	margin-left: 5px;
-	padding-top: 2px;
-	line-height: 14px;
-	text-align: center;
+    background-color: #8ec641;
+    width: 15px;
+    height: 15px;
+    border-radius: 100%;
+    color: white;
+    font-size: 8px;
+    margin-left: 5px;
+    padding-top: 2px;
+    line-height: 14px;
+    text-align: center;
 }
 
 .feed-thumb {
-	width: 100%;
-	height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
 .iframe-overlay {
-	height: 100%;
-	position: absolute;
-	width: 100%;
-	left: 0;
-	top: 0;
-	z-index: 7;
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 0;
+    z-index: 7;
 }
 
 .is-protected {
-	cursor: not-allowed;
-	opacity: 0.5;
+    cursor: not-allowed;
+    opacity: 0.5;
 }
 
 .cursor-not-allowed {
-	cursor: not-allowed;
+    cursor: not-allowed;
 }
 
 .thumbnail-wrapper {

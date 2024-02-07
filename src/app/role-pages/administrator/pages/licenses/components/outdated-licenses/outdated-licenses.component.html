@@ -1,88 +1,96 @@
 <div id="licenses-page-outdated-tab" class="content d-flex flex-column">
-	<div class="controls-and-search-container d-flex mt-4">
-		<div class="controls-container">
-			<button
-				mat-button
-				mat-raised-button
-				class="theme-btn pi-control sm-text _primary mr-2"
-				(click)="getDataForExport()"
-				title="Export to CSV"
-				[disabled]="isExporting">
-				<span class="{{ isExporting ? 'fas fa-spinner' : 'fas fa-file-excel' }}"></span>
-				<span class="ml-2 button_text_animation">{{ isExporting ? 'Generating CSV' : 'Export' }}</span>
-			</button>
-		</div>
+    <div class="controls-and-search-container d-flex mt-4">
+        <div class="controls-container">
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn pi-control sm-text _primary mr-2"
+                (click)="getDataForExport()"
+                title="Export to CSV"
+                [disabled]="isExporting">
+                <span class="{{ isExporting ? 'fas fa-spinner' : 'fas fa-file-excel' }}"></span>
+                <span class="ml-2 button_text_animation">{{
+                    isExporting ? 'Generating CSV' : 'Export'
+                }}</span>
+            </button>
+        </div>
 
-		<ng-container *ngIf="hasLoadedStats; else loaderSmall">
-			<div class="stats-container d-flex align-items-center">
-				<div class="stat total-outdated-licenses d-flex flex-column">
-					<h5>{{ totalCount }}</h5>
-					<h6>Total Outdated:</h6>
-				</div>
-				<div class="stat latest-server-version d-flex flex-column">
-					<h5>{{ latestVersion.server }}</h5>
-					<h6>Player Server Version:</h6>
-				</div>
-				<div class="stat latest-ui-version d-flex flex-column">
-					<h5>{{ latestVersion.ui }}</h5>
-					<h6>Player UI Version:</h6>
-				</div>
-			</div>
-		</ng-container>
+        <ng-container *ngIf="hasLoadedStats; else loaderSmall">
+            <div class="stats-container d-flex align-items-center">
+                <div class="stat total-outdated-licenses d-flex flex-column">
+                    <h5>{{ totalCount }}</h5>
+                    <h6>Total Outdated:</h6>
+                </div>
+                <div class="stat latest-server-version d-flex flex-column">
+                    <h5>{{ latestVersion.server }}</h5>
+                    <h6>Player Server Version:</h6>
+                </div>
+                <div class="stat latest-ui-version d-flex flex-column">
+                    <h5>{{ latestVersion.ui }}</h5>
+                    <h6>Player UI Version:</h6>
+                </div>
+            </div>
+        </ng-container>
 
-		<div class="search-field-container">
-			<mat-form-field class="full-width">
-				<mat-label>
-					<span class="fas fa-search sm-text mr-2"></span>
-					Search License Alias or License Key
-				</mat-label>
-				<input matInput [formControl]="searchControl" />
-			</mat-form-field>
-		</div>
-	</div>
+        <div class="search-field-container">
+            <mat-form-field class="full-width">
+                <mat-label>
+                    <span class="fas fa-search sm-text mr-2"></span>
+                    Search License Alias or License Key
+                </mat-label>
+                <input matInput [formControl]="searchControl" />
+            </mat-form-field>
+        </div>
+    </div>
 
-	<mat-card>
-		<ng-container *ngIf="isPageReady; else loader">
-			<app-data-table
-				[table_data]="currentTableData"
-				[table_columns]="tableColumns"
-				[new_table]="true"
-				[pagination_enabled]="false"
-				[spinner_enabled]="false"
-				[active_tab]="filters.sortColumn"
-				[license_status_column]="true"
-				[sort_column]="filters.sortColumn"
-				[sort_order]="filters.sortOrder"
-				(to_sort_column)="sortTable($event)">
-			</app-data-table>
-			<div class="load-data-button-container d-flex justify-content-center mt-3">
-				<button mat-raised-button class="theme-btn _primary" (click)="addToTable()" [disabled]="hasNoData || !isPreloadDataReady">
-					<ng-container *ngIf="isPreloadDataReady; else preloadingData"> Load more licenses... </ng-container>
-					<ng-template #preloadingData> Loading licenses... </ng-template>
-				</button>
-			</div>
-		</ng-container>
-	</mat-card>
+    <mat-card>
+        <ng-container *ngIf="isPageReady; else loader">
+            <app-data-table
+                [table_data]="currentTableData"
+                [table_columns]="tableColumns"
+                [new_table]="true"
+                [pagination_enabled]="false"
+                [spinner_enabled]="false"
+                [active_tab]="filters.sortColumn"
+                [license_status_column]="true"
+                [sort_column]="filters.sortColumn"
+                [sort_order]="filters.sortOrder"
+                (to_sort_column)="sortTable($event)">
+            </app-data-table>
+            <div class="load-data-button-container d-flex justify-content-center mt-3">
+                <button
+                    mat-raised-button
+                    class="theme-btn _primary"
+                    (click)="addToTable()"
+                    [disabled]="hasNoData || !isPreloadDataReady">
+                    <ng-container *ngIf="isPreloadDataReady; else preloadingData">
+                        Load more licenses...
+                    </ng-container>
+                    <ng-template #preloadingData> Loading licenses... </ng-template>
+                </button>
+            </div>
+        </ng-container>
+    </mat-card>
 </div>
 
 <ng-template #loader>
-	<ng-container *ngIf="!hasNoData; else noData">
-		<div class="py-4 white-bg h-500">
-			<app-spinner></app-spinner>
-		</div>
-	</ng-container>
+    <ng-container *ngIf="!hasNoData; else noData">
+        <div class="py-4 white-bg h-500">
+            <app-spinner></app-spinner>
+        </div>
+    </ng-container>
 </ng-template>
 
 <ng-template #loaderSmall>
-	<app-spinner [diameter]="35"></app-spinner>
+    <app-spinner [diameter]="35"></app-spinner>
 </ng-template>
 
 <ng-template #noData>
-	<mat-card class="pt-5 pb-5 text-center">
-		<div class="mb-4">
-			<i class="text-gray fa-5x far fa-file-alt"></i>
-		</div>
-		<h3 class="text-gray">No Results Found</h3>
-		<span class="text-gray">This page currently has no available data</span>
-	</mat-card>
+    <mat-card class="pt-5 pb-5 text-center">
+        <div class="mb-4">
+            <i class="text-gray fa-5x far fa-file-alt"></i>
+        </div>
+        <h3 class="text-gray">No Results Found</h3>
+        <span class="text-gray">This page currently has no available data</span>
+    </mat-card>
 </ng-template>

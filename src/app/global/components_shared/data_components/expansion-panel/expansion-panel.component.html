@@ -1,27 +1,27 @@
 <mat-accordion>
     <mat-expansion-panel [expanded]="expand">
-		<mat-expansion-panel-header>
-			<mat-panel-title>
-				<span class="font-weight-medium">
-					{{ title }}
-				</span>
-			</mat-panel-title>
-			<mat-panel-description class="sm-text">
-				<span class="text-dark">
-					{{ description }}
-				</span>
-			</mat-panel-description>
-		</mat-expansion-panel-header>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                <span class="font-weight-medium">
+                    {{ title }}
+                </span>
+            </mat-panel-title>
+            <mat-panel-description class="sm-text">
+                <span class="text-dark">
+                    {{ description }}
+                </span>
+            </mat-panel-description>
+        </mat-expansion-panel-header>
 
-		<ng-container *ngIf="data_is_list">
-			<app-list-item [list_data]="list_data"></app-list-item>
-		</ng-container>
+        <ng-container *ngIf="data_is_list">
+            <app-list-item [list_data]="list_data"></app-list-item>
+        </ng-container>
 
-		<app-data-graph
-		*ngIf="chart_id"
-		[data_labels]="chart_label"
-		[data_values]="chart_data"
-		[graph_id]="chart_id">
-		</app-data-graph>
+        <app-data-graph
+            *ngIf="chart_id"
+            [data_labels]="chart_label"
+            [data_values]="chart_data"
+            [graph_id]="chart_id">
+        </app-data-graph>
     </mat-expansion-panel>
 </mat-accordion>

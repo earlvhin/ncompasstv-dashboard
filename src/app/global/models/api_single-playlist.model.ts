@@ -6,9 +6,9 @@ export class API_SINGLE_PLAYLIST {
     blacklistedIContents: API_CONTENT_BLACKLISTED_CONTENTS[];
     playlist: API_SINGLE_PLAYLIST_INFO;
     hosts: API_HOST[];
-	licenses: API_LICENSE_PROPS[];
-	hostLicenses: any;
-	playlistContents: API_CONTENT[];
+    licenses: API_LICENSE_PROPS[];
+    hostLicenses: any;
+    playlistContents: API_CONTENT[];
     screens: API_SCREEN_OF_PLAYLIST[];
     playlistId?: any;
     contents?: any;
@@ -38,13 +38,13 @@ export class BLACKLISTED_CONTENT {
 }
 
 export class API_SCREEN_OF_PLAYLIST {
-	createdBy: string;
-	dateCreated: string;
-	dateUpdated: string;
-	dealerId: string;
-	description: string;
-	hostId: string;
-	screenId: string;
-	screenName: string;
-	templateId: string;
+    createdBy: string;
+    dateCreated: string;
+    dateUpdated: string;
+    dealerId: string;
+    description: string;
+    hostId: string;
+    screenId: string;
+    screenName: string;
+    templateId: string;
 }

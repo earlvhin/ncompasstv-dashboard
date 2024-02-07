@@ -5,29 +5,28 @@
     &.good {
         color: rgb(140, 202, 68);
     }
-    
+
     &.warning {
         color: rgb(230, 71, 71);
     }
 }
 
 .pw-visibility {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 .radio-btn-container {
-	label {
-		margin-right: 15px;
-	}
+    label {
+        margin-right: 15px;
+    }
 }
 
 .toggle-field-container {
-	margin-bottom: 15px;
-	
-	span {
-		margin-right: 20px;
-	}
+    margin-bottom: 15px;
 
+    span {
+        margin-right: 20px;
+    }
 }
 
 .selected-dealer-disabled {

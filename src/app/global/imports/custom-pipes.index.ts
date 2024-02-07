@@ -1,26 +1,25 @@
-import { 
-	FilenamePipe, 
-	IsEmptyPipe,
-	IsFeedPipe, 
-	IsimagePipe, 
-	IsvideoPipe,
-	ObjectKeysPipe,
-	NohandlePipe,
-	SanitizePipe,
-	ScreenshotPipe,
-	SubstringPipe
+import {
+    FilenamePipe,
+    IsEmptyPipe,
+    IsFeedPipe,
+    IsimagePipe,
+    IsvideoPipe,
+    ObjectKeysPipe,
+    NohandlePipe,
+    SanitizePipe,
+    ScreenshotPipe,
+    SubstringPipe,
 } from '../pipes';
 
-
 export const CUSTOM_PIPES = [
-	FilenamePipe, 
-	IsEmptyPipe,
-	IsFeedPipe, 
-	IsimagePipe, 
-	IsvideoPipe,
-	ObjectKeysPipe,
-	NohandlePipe,
-	SanitizePipe,
-	ScreenshotPipe,
-	SubstringPipe
+    FilenamePipe,
+    IsEmptyPipe,
+    IsFeedPipe,
+    IsimagePipe,
+    IsvideoPipe,
+    ObjectKeysPipe,
+    NohandlePipe,
+    SanitizePipe,
+    ScreenshotPipe,
+    SubstringPipe,
 ];

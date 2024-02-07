@@ -1,43 +1,47 @@
 <div class="pt-4">
-	<div class="row">
-		<div class="col-lg-8">
-			<button mat-button mat-raised-button class="theme-btn pi-control _primary sm-text mr-2" title='Upload Photo'
-				(click)="onClickUploadBtn()"
-				[disabled]="isViewOnly">
-				<span class="fas fa-upload"></span> 
-				<span class="ml-2 button_text_animation">Upload Photo</span>
-			</button>
-		</div>
+    <div class="row">
+        <div class="col-lg-8">
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn pi-control _primary sm-text mr-2"
+                title="Upload Photo"
+                (click)="onClickUploadBtn()"
+                [disabled]="isViewOnly">
+                <span class="fas fa-upload"></span>
+                <span class="ml-2 button_text_animation">Upload Photo</span>
+            </button>
+        </div>
 
-		<div class="col-lg-12 pt-4">
-			<mat-card>
-				<ng-container *ngIf="images && images.length > 0; else loading">
-					<app-data-table
-						[has_timestamp_beside_image]="false"
-						[is_delete_enabled]="true"
-						[table_columns]="tableColumns"
-						[table_data]="tableData"
-						[page]="'single-host-images-tab'"
-						[paging_details]="pagingData"
-						[new_table]="true"
-						[is_view_only]="isViewOnly"
-						(page_triggered)="getImages($event)"
-						(update_info)="getImages()">
-					</app-data-table>
-				</ng-container>
-			</mat-card>
-		</div>
-	</div>
+        <div class="col-lg-12 pt-4">
+            <mat-card>
+                <ng-container *ngIf="images && images.length > 0; else loading">
+                    <app-data-table
+                        [has_timestamp_beside_image]="false"
+                        [is_delete_enabled]="true"
+                        [table_columns]="tableColumns"
+                        [table_data]="tableData"
+                        [page]="'single-host-images-tab'"
+                        [paging_details]="pagingData"
+                        [new_table]="true"
+                        [is_view_only]="isViewOnly"
+                        (page_triggered)="getImages($event)"
+                        (update_info)="getImages()">
+                    </app-data-table>
+                </ng-container>
+            </mat-card>
+        </div>
+    </div>
 </div>
 
 <ng-template #loading>
-	<ng-container *ngIf="!hasNoData; else no_data">
-		<div class="loading-wrapper">
-			<app-spinner></app-spinner>
-		</div>
-	</ng-container>
+    <ng-container *ngIf="!hasNoData; else no_data">
+        <div class="loading-wrapper">
+            <app-spinner></app-spinner>
+        </div>
+    </ng-container>
 </ng-template>
 
 <ng-template #no_data>
-	<app-error-message></app-error-message>
+    <app-error-message></app-error-message>
 </ng-template>

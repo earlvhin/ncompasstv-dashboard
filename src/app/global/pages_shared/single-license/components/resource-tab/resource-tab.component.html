@@ -1,15 +1,20 @@
-<div class="resource-tab-container" *ngIf="screen else no_screen">
+<div class="resource-tab-container" *ngIf="screen; else no_screen">
     <div class="row mt-4">
         <div class="col-lg-4">
             <h2>Resource Usage</h2>
             <p class="sm-text">CPU and RAM Average usage of the Player.</p>
-            <br/>
+            <br />
         </div>
         <form [formGroup]="contentsForm" *ngIf="contentsForm" class="col-lg-8">
             <div class="text-right">
                 <mat-form-field class="mr-3" appearance="fill" appDefaultDateFormat>
                     <mat-label class="md-text">Select Date</mat-label>
-                    <input formControlName="select_date" (dateInput)="onSelectDate($event.value)" matInput [matDatepicker]="datePicker" readonly>
+                    <input
+                        formControlName="select_date"
+                        (dateInput)="onSelectDate($event.value)"
+                        matInput
+                        [matDatepicker]="datePicker"
+                        readonly />
                     <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
                     <mat-datepicker #datePicker></mat-datepicker>
                 </mat-form-field>
@@ -29,34 +34,36 @@
     </div>
 
     <!-- <ng-container *ngIf="end_date"> -->
-        <ng-container>
-            <div class="row" *ngIf="!dateRange_chart_updating; else loader">
-                <ng-container *ngIf="resource_logs.length > 0; else no_data">
-                    <div class="col-lg-12 mb-4" *ngFor="let res of resource_data">
-                        <mat-card style="height: 375px">
-                            <div class="d-flex align-items-center">
-                                <h5>{{res.resourceName}}</h5>
-                            </div>
-                            <app-data-graph
-                                [analytics_reload]="analytics_reload.asObservable()"
-                                [data_set]="res.resourceDataCount" [graph_id]="res.resourceName + '_dateRange'"
-                                [realtime_data_per_license]="realtime_data" [date_format]="display_mode"
-                                [date_queried]="queried_date" [page]="'single-license'">
-                            </app-data-graph>
-                        </mat-card>
-                    </div>
-                </ng-container>
-            </div>
-        </ng-container>
+    <ng-container>
+        <div class="row" *ngIf="!dateRange_chart_updating; else loader">
+            <ng-container *ngIf="resource_logs.length > 0; else no_data">
+                <div class="col-lg-12 mb-4" *ngFor="let res of resource_data">
+                    <mat-card style="height: 375px">
+                        <div class="d-flex align-items-center">
+                            <h5>{{ res.resourceName }}</h5>
+                        </div>
+                        <app-data-graph
+                            [analytics_reload]="analytics_reload.asObservable()"
+                            [data_set]="res.resourceDataCount"
+                            [graph_id]="res.resourceName + '_dateRange'"
+                            [realtime_data_per_license]="realtime_data"
+                            [date_format]="display_mode"
+                            [date_queried]="queried_date"
+                            [page]="'single-license'">
+                        </app-data-graph>
+                    </mat-card>
+                </div>
+            </ng-container>
+        </div>
+    </ng-container>
     <!-- </ng-container> -->
-
 </div>
 
 <ng-template #no_screen>
     <div class="no-screen vh-50 row align-items-center justify-content-center">
         <div class="col-lg-12 text-center">
             <span class="fa fa-tv"></span>
-            <br>
+            <br />
             <div class="captions mt-3">No Screen Assigned</div>
         </div>
     </div>

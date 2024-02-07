@@ -14,7 +14,7 @@ import { UI_TABLE_FILLER_FEED } from 'src/app/global/models/ui_table-filler-feed
 })
 export class FillerFeedsTableComponent implements OnInit {
     @Input() reloads: any = false;
-	@Input() reload$: Observable<void>;
+    @Input() reload$: Observable<void>;
 
     initial_load = true;
     filtered_data = [];
@@ -36,18 +36,20 @@ export class FillerFeedsTableComponent implements OnInit {
     protected _unsubscribe: Subject<void> = new Subject<void>();
     @Output() reload_page = new EventEmitter();
 
-    constructor(private _filler: FillerService, private _date: DatePipe, private _route: Router) {}
+    constructor(
+        private _filler: FillerService,
+        private _date: DatePipe,
+        private _route: Router,
+    ) {}
 
     ngOnInit() {
         this.getAllFillerFeeds();
 
-        this.reload$
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe({
-                next: () => {
-                    this.getAllFillerFeeds();
-                }
-            })
+        this.reload$.pipe(takeUntil(this._unsubscribe)).subscribe({
+            next: () => {
+                this.getAllFillerFeeds();
+            },
+        });
     }
 
     getAllFillerFeeds(page?) {
@@ -87,10 +89,26 @@ export class FillerFeedsTableComponent implements OnInit {
                     quantity: true,
                     filler_groups: filler.fillerGroups,
                 },
-                { value: filler.interval, link: null, editable: false, hidden: false, new_tab_link: true },
-                { value: filler.createdByName, link: null, editable: false, hidden: false, new_tab_link: true },
+                {
+                    value: filler.interval,
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                    new_tab_link: true,
+                },
+                {
+                    value: filler.createdByName,
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                    new_tab_link: true,
+                },
                 { value: filler.fillerGroups.length, editable: false, hidden: false },
-                { value: this._date.transform(filler.dateCreated, 'MMM dd y'), editable: false, hidden: false }
+                {
+                    value: this._date.transform(filler.dateCreated, 'MMM dd y'),
+                    editable: false,
+                    hidden: false,
+                },
             );
         });
     }
@@ -99,8 +117,17 @@ export class FillerFeedsTableComponent implements OnInit {
         let place_holder = '';
         filler.fillerGroups.map((filler, i, { length }) => {
             if (filler.isPair) {
-                if (length - 1 === i) place_holder = place_holder + filler.quantity + '<i class="fas fa-circle text-orange ml-1 mr-2" title="In Pairs"></i>';
-                else place_holder = place_holder + filler.quantity + '<i class="fas fa-circle text-orange ml-1 mr-2" title="In Pairs"></i>' + ' , ';
+                if (length - 1 === i)
+                    place_holder =
+                        place_holder +
+                        filler.quantity +
+                        '<i class="fas fa-circle text-orange ml-1 mr-2" title="In Pairs"></i>';
+                else
+                    place_holder =
+                        place_holder +
+                        filler.quantity +
+                        '<i class="fas fa-circle text-orange ml-1 mr-2" title="In Pairs"></i>' +
+                        ' , ';
             } else {
                 if (length - 1 === i) place_holder = place_holder + filler.quantity;
                 else place_holder = place_holder + filler.quantity + ' , ';

@@ -1,63 +1,71 @@
 <div [formGroup]="form">
-	<mat-select
-		#dropdownMultipleSelect
-		[formControlName]="dealerAdmin ? 'dealerAdmins' : 'dealers'"
-		[placeholder]="dropdownPlaceholder"
-		[multiple]="true"
-		class="full-width">
-		<div class="custom-panel">
-			<mat-option>
-				<ngx-mat-select-search
-					noEntriesFoundLabel="No results found"
-					[formControl]="dropdownFilterControl"
-					[placeholderLabel]="dropdownPlaceholder"
-					[clearSearchInput]="false">
-					<mat-icon class="clear" ngxMatSelectSearchClear>close</mat-icon>
-				</ngx-mat-select-search>
-			</mat-option>
-			<mat-option *ngFor="let data of dropdownData" [value]="data">
-				<div class="md-text" *ngIf="!dealerAdmin; else dealerAdminField">
-					{{ data.businessName }}
-				</div>
-				<ng-template #dealerAdminField>
-					<span class="name mr-2"> {{ data.firstName }} {{ data.lastName }} </span>
-				</ng-template>
-			</mat-option>
-		</div>
-		<footer class="selection">
-			<button class="theme-btn _primary md-text mr-3" (click)="dropdownMultipleSelect.close()">APPLY SELECTION</button>
-		</footer>
-	</mat-select>
+    <mat-select
+        #dropdownMultipleSelect
+        [formControlName]="dealerAdmin ? 'dealerAdmins' : 'dealers'"
+        [placeholder]="dropdownPlaceholder"
+        [multiple]="true"
+        class="full-width">
+        <div class="custom-panel">
+            <mat-option>
+                <ngx-mat-select-search
+                    noEntriesFoundLabel="No results found"
+                    [formControl]="dropdownFilterControl"
+                    [placeholderLabel]="dropdownPlaceholder"
+                    [clearSearchInput]="false">
+                    <mat-icon class="clear" ngxMatSelectSearchClear>close</mat-icon>
+                </ngx-mat-select-search>
+            </mat-option>
+            <mat-option *ngFor="let data of dropdownData" [value]="data">
+                <div class="md-text" *ngIf="!dealerAdmin; else dealerAdminField">
+                    {{ data.businessName }}
+                </div>
+                <ng-template #dealerAdminField>
+                    <span class="name mr-2"> {{ data.firstName }} {{ data.lastName }} </span>
+                </ng-template>
+            </mat-option>
+        </div>
+        <footer class="selection">
+            <button
+                class="theme-btn _primary md-text mr-3"
+                (click)="dropdownMultipleSelect.close()">
+                APPLY SELECTION
+            </button>
+        </footer>
+    </mat-select>
 
-	<div class="preview mt-3" *ngIf="selectedDropdownControl.value.length > 0">
-		<div class="row pb-3">
-			<div class="col-lg-6">
-				<div>
-					<h5 class="text-gray pb-1">{{ titleForSelectedValue }}</h5>
-				</div>
-			</div>
-			<div class="col-lg-6 text-right">
-				<button class="naked-btn pb-1 md-text f-500 text-danger clickable" (click)="onClearDealer()">
-					<i class="far fa-times-circle mr-2"></i>
-					<span>CLEAR SELECTION</span>
-				</button>
-			</div>
-		</div>
+    <div class="preview mt-3" *ngIf="selectedDropdownControl.value.length > 0">
+        <div class="row pb-3">
+            <div class="col-lg-6">
+                <div>
+                    <h5 class="text-gray pb-1">{{ titleForSelectedValue }}</h5>
+                </div>
+            </div>
+            <div class="col-lg-6 text-right">
+                <button
+                    class="naked-btn pb-1 md-text f-500 text-danger clickable"
+                    (click)="onClearDealer()">
+                    <i class="far fa-times-circle mr-2"></i>
+                    <span>CLEAR SELECTION</span>
+                </button>
+            </div>
+        </div>
 
-		<div class="row no-gutters">
-			<div class="col-lg-12 contents">
-				<div
-					*ngFor="let data of selectedDropdownControl.value; let i = index"
-					class="bg-primary text-white md-text px-2 py-1 br-5 mr-2 mb-2 dealer">
-					<span class="name mr-2" *ngIf="!dealerAdmin; else dealerAdminField">{{ data.businessName }}</span>
-					<ng-template #dealerAdminField>
-						<span class="name mr-2"> {{ data.firstName }} {{ data.lastName }} </span>
-					</ng-template>
-					<button class="naked-btn remove-btn cursor-pointer" (click)="onRemoveDealer(i)">
-						<i class="fas fa-times text-danger"></i>
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
+        <div class="row no-gutters">
+            <div class="col-lg-12 contents">
+                <div
+                    *ngFor="let data of selectedDropdownControl.value; let i = index"
+                    class="bg-primary text-white md-text px-2 py-1 br-5 mr-2 mb-2 dealer">
+                    <span class="name mr-2" *ngIf="!dealerAdmin; else dealerAdminField">{{
+                        data.businessName
+                    }}</span>
+                    <ng-template #dealerAdminField>
+                        <span class="name mr-2"> {{ data.firstName }} {{ data.lastName }} </span>
+                    </ng-template>
+                    <button class="naked-btn remove-btn cursor-pointer" (click)="onRemoveDealer(i)">
+                        <i class="fas fa-times text-danger"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

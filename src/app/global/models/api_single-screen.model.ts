@@ -6,7 +6,7 @@ export class API_SINGLE_SCREEN {
     dealer: dealer;
     host: host;
     licenses: API_LICENSE['license'][];
-	notes?: string;
+    notes?: string;
     screen: screenInfo;
     screenTypeId?: string;
     screenZonePlaylistsContents: API_SCREEN_ZONE_PLAYLISTS_CONTENTS[] = [];
@@ -22,8 +22,8 @@ class screenInfo {
     templateId: string;
     createdBy: string;
     dateCreated: string;
-	dateUpdated: string;
-	screenTypeId: string;
+    dateUpdated: string;
+    screenTypeId: string;
 }
 
 export class API_SCREEN_ZONE_PLAYLISTS_CONTENTS {
@@ -32,17 +32,17 @@ export class API_SCREEN_ZONE_PLAYLISTS_CONTENTS {
 }
 
 export class API_SCREEN_TEMPLATE_ZONE {
-	background?: string;
+    background?: string;
     description?: string;
     height: string;
     name: string;
-	order: number;
-	playlistDescription?: string;
+    order: number;
+    playlistDescription?: string;
     playlistId: string;
     playlistName: string;
     screenId: string;
     templateId: string;
-	templateZoneId: string;
+    templateZoneId: string;
     width: string;
     xPos: string;
     yPos: string;
@@ -54,7 +54,7 @@ class dealer {
     businessName: string;
 }
 
-class host{
+class host {
     hostId: string;
     dealerId: string;
     dealer: string;

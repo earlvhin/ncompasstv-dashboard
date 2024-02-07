@@ -15,8 +15,7 @@
         [page]="'single-host'"
         [page_data]="host"
         [refresh_banner]="true"
-        [is_host_page]="true"
-    >
+        [is_host_page]="true">
     </app-banner>
 </ng-container>
 
@@ -28,19 +27,29 @@
                     <!-- LICENSES TAB -->
                     <mat-tab label="Licenses">
                         <ng-template matTabContent>
-                            <app-licenses-tab [socket]="_socket" [currentRole]="currentRole" [currentUser]="currentUser" [hostId]="hostId"> </app-licenses-tab>
+                            <app-licenses-tab
+                                [socket]="_socket"
+                                [currentRole]="currentRole"
+                                [currentUser]="currentUser"
+                                [hostId]="hostId">
+                            </app-licenses-tab>
                         </ng-template>
                     </mat-tab>
                     <!-- CONTENTS TAB -->
                     <mat-tab label="Contents">
                         <ng-template matTabContent>
-                            <app-host-contents-tab [currentRole]="currentRole" [hostId]="hostId"> </app-host-contents-tab>
+                            <app-host-contents-tab [currentRole]="currentRole" [hostId]="hostId">
+                            </app-host-contents-tab>
                         </ng-template>
                     </mat-tab>
                     <!-- PICS TAB -->
                     <mat-tab label="Pics">
                         <ng-template matTabContent>
-                            <app-images-tab [currentUser]="currentUser" [currentRole]="currentRole" [hostId]="hostId"> </app-images-tab>
+                            <app-images-tab
+                                [currentUser]="currentUser"
+                                [currentRole]="currentRole"
+                                [hostId]="hostId">
+                            </app-images-tab>
                         </ng-template>
                     </mat-tab>
                     <!-- MAP TAB -->
@@ -52,19 +61,28 @@
                     <!-- DOCUMENTS TAB -->
                     <mat-tab label="Docs">
                         <ng-template matTabContent>
-                            <app-documents-tab [currentUser]="currentUser" [currentRole]="currentRole" [hostId]="hostId"> </app-documents-tab>
+                            <app-documents-tab
+                                [currentUser]="currentUser"
+                                [currentRole]="currentRole"
+                                [hostId]="hostId">
+                            </app-documents-tab>
                         </ng-template>
                     </mat-tab>
                     <!-- SUPPORT TAB -->
                     <mat-tab label="Support" *ngIf="is_admin">
                         <ng-template matTabContent>
-                            <app-support-tab [currentUser]="currentUser" [hostId]="hostId"> </app-support-tab>
+                            <app-support-tab [currentUser]="currentUser" [hostId]="hostId">
+                            </app-support-tab>
                         </ng-template>
                     </mat-tab>
                     <!-- ACTIVITY TAB -->
                     <mat-tab label="Activity">
                         <ng-template matTabContent>
-                            <app-activity-tab [currentUser]="currentUser" [currentRole]="currentRole" [hostId]="hostId"> </app-activity-tab>
+                            <app-activity-tab
+                                [currentUser]="currentUser"
+                                [currentRole]="currentRole"
+                                [hostId]="hostId">
+                            </app-activity-tab>
                         </ng-template>
                     </mat-tab>
                     <!-- Terminal -->
@@ -72,10 +90,13 @@
                         <div class="row mt-4">
                             <div class="col-lg-7">
                                 <h3>Remote Terminal</h3>
-                                <p class="sm-text mb-3">Write a short script and send it to all online players.</p>
+                                <p class="sm-text mb-3">
+                                    Write a short script and send it to all online players.
+                                </p>
 
                                 <div class="terminal-area mt-4">
-                                    <app-remote-terminal (run)="runTerminalScript($event)"></app-remote-terminal>
+                                    <app-remote-terminal
+                                        (run)="runTerminalScript($event)"></app-remote-terminal>
                                 </div>
                             </div>
                         </div>
@@ -107,7 +128,9 @@
                     <i class="text-gray fa-5x far fa-file-alt"></i>
                 </div>
                 <h3 class="text-gray col-lg-12">No Results Found.</h3>
-                <span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
+                <span class="text-gray col-lg-12"
+                    >Try adjusting your search to find what you're looking for.</span
+                >
             </mat-card>
         </div>
     </ng-template>

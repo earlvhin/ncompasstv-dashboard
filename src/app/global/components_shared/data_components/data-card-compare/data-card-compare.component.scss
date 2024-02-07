@@ -1,39 +1,39 @@
 .cursor-pointer {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 .dealer-status-filters {
-	display: flex;
+    display: flex;
 
-	.active {
-		margin-right: 5px;
-	}
+    .active {
+        margin-right: 5px;
+    }
 
-	.inactive {
-		margin-left: 5px;
-	}
+    .inactive {
+        margin-left: 5px;
+    }
 
-	.active, .inactive {
-		&:hover {
-			opacity: 0.6;			
-		}
+    .active,
+    .inactive {
+        &:hover {
+            opacity: 0.6;
+        }
 
-		&.selected {
-			border-bottom: 1px solid black;
-			box-shadow: unset;
-		}
-	}
-	
+        &.selected {
+            border-bottom: 1px solid black;
+            box-shadow: unset;
+        }
+    }
 }
 
 .on-hover {
-	&:hover {
-		opacity: 0.6 !important;	
-	}
+    &:hover {
+        opacity: 0.6 !important;
+    }
 }
 
 h2 {
-	.text-primary {
-		margin-right: 2px;
-	}
+    .text-primary {
+        margin-right: 2px;
+    }
 }

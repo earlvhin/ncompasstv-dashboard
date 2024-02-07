@@ -1,13 +1,13 @@
 <div id="billing-tab">
-	<div class="row">
-		<div class="col-lg-12">
-			<app-dealers-view *ngIf="reload; else spinner" [dealer]="dealer"></app-dealers-view>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-lg-12">
+            <app-dealers-view *ngIf="reload; else spinner" [dealer]="dealer"></app-dealers-view>
+        </div>
+    </div>
 </div>
 
 <ng-template #spinner>
-	<div class="col-lg-12 py-5">
-		<app-spinner [diameter]="85"></app-spinner>
-	</div>
+    <div class="col-lg-12 py-5">
+        <app-spinner [diameter]="85"></app-spinner>
+    </div>
 </ng-template>

@@ -2,9 +2,16 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { MatAutocompleteModule, MatButtonModule, MatCardModule, MatExpansionModule, MatInputModule, 
-	MatMenuModule, MatSelectModule } from '@angular/material';
-	
+import {
+    MatAutocompleteModule,
+    MatButtonModule,
+    MatCardModule,
+    MatExpansionModule,
+    MatInputModule,
+    MatMenuModule,
+    MatSelectModule,
+} from '@angular/material';
+
 import { RouterModule } from '@angular/router';
 
 import { AdvertisersComponent } from './pages/advertisers/advertisers.component';
@@ -22,32 +29,32 @@ import { ScreensComponent } from './pages/screens/screens.component';
 import { UsersComponent } from './pages/users/users.component';
 
 @NgModule({
-	declarations: [ 
-		AdvertisersComponent,
-		DashboardComponent,
-		HostsComponent,
-		LicensesComponent,
-		ScreensComponent,
-		UsersComponent,
-		SubDealerLayoutComponent,
-		PlaylistsComponent
-	],
-	imports: [
-		CommonModule,
-		GlobalModule,
-		RouterModule.forChild(SUB_DEALER_ROUTES),
-		MatCardModule,
-		MatButtonModule,
-		MatAutocompleteModule,
-		MatInputModule,
-		MatMenuModule,
-		MatSelectModule,
-		MatExpansionModule,
-		FeedsModule,
-		FormsModule,
-		ReactiveFormsModule,
-        BreadcrumbsModule
-	],
-	providers: [ AuthGuard ]
+    declarations: [
+        AdvertisersComponent,
+        DashboardComponent,
+        HostsComponent,
+        LicensesComponent,
+        ScreensComponent,
+        UsersComponent,
+        SubDealerLayoutComponent,
+        PlaylistsComponent,
+    ],
+    imports: [
+        CommonModule,
+        GlobalModule,
+        RouterModule.forChild(SUB_DEALER_ROUTES),
+        MatCardModule,
+        MatButtonModule,
+        MatAutocompleteModule,
+        MatInputModule,
+        MatMenuModule,
+        MatSelectModule,
+        MatExpansionModule,
+        FeedsModule,
+        FormsModule,
+        ReactiveFormsModule,
+        BreadcrumbsModule,
+    ],
+    providers: [AuthGuard],
 })
-export class SubDealerModule { }
+export class SubDealerModule {}

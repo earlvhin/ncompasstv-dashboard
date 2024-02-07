@@ -22,7 +22,15 @@ import {
     UserService,
 } from 'src/app/global/services';
 
-import { ACTIVITY_LOGS, DEALER_UI_TABLE_ADVERTISERS, UI_CURRENT_USER, UI_DEALER_ORDERS, UI_HOST_SUPPORT, UI_ROLE_DEFINITION, UI_TABLE_FEED } from 'src/app/global/models';
+import {
+    ACTIVITY_LOGS,
+    DEALER_UI_TABLE_ADVERTISERS,
+    UI_CURRENT_USER,
+    UI_DEALER_ORDERS,
+    UI_HOST_SUPPORT,
+    UI_ROLE_DEFINITION,
+    UI_TABLE_FEED,
+} from 'src/app/global/models';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
 import { DeleteFillerGroupComponent } from 'src/app/global/pages_shared/fillers/components/delete-filler-group/delete-filler-group.component';
 import { DeletePlaylistComponent } from '../../../components_shared/playlist_components/delete-playlist/delete-playlist.component';
@@ -132,7 +140,7 @@ export class DataTableComponent implements OnInit {
         private _screen: ScreenService,
         private _user: UserService,
         private _dealer: DealerService,
-        private _placer: PlacerService
+        private _placer: PlacerService,
     ) {}
 
     ngOnInit() {
@@ -180,7 +188,9 @@ export class DataTableComponent implements OnInit {
     }
 
     navigateToFiller(id: string) {
-        const url = this._router.serializeUrl(this._router.createUrlTree([`/${this.roleRoute}/fillers/view-fillers-group/${id}`], {}));
+        const url = this._router.serializeUrl(
+            this._router.createUrlTree([`/${this.roleRoute}/fillers/view-fillers-group/${id}`], {}),
+        );
         window.open(url, '_blank');
     }
 
@@ -213,12 +223,18 @@ export class DataTableComponent implements OnInit {
                     this.table_data = [...orders];
                     this._billing.on_click_order.next();
                 },
-                (error) => (this.in_progress = false)
+                (error) => (this.in_progress = false),
             )
             .add(() => (this.in_progress = false));
     }
 
-    private showInformationModal(width: string, height: string, title: string, contents: any, type: string): void {
+    private showInformationModal(
+        width: string,
+        height: string,
+        title: string,
+        contents: any,
+        type: string,
+    ): void {
         this._dialog.open(InformationModalComponent, {
             width: width,
             height: height,
@@ -250,7 +266,13 @@ export class DataTableComponent implements OnInit {
     }
 
     isActivatedOrAutoChargeEnabled(data: any) {
-        return data.is_activated ? (data.is_activated.value === 1 ? 'checked' : 'false') : data.autocharge.value === 1 ? 'checked' : 'false';
+        return data.is_activated
+            ? data.is_activated.value === 1
+                ? 'checked'
+                : 'false'
+            : data.autocharge.value === 1
+              ? 'checked'
+              : 'false';
     }
 
     mediaViewer_open(i): void {
@@ -294,7 +316,7 @@ export class DataTableComponent implements OnInit {
             },
             (error) => {
                 console.error(error);
-            }
+            },
         );
     }
 
@@ -325,12 +347,19 @@ export class DataTableComponent implements OnInit {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
     deleteFeed(id): void {
-        this.warningModal('warning', 'Delete Feed', 'Are you sure you want to delete this feed?', '', 'feed_delete', id);
+        this.warningModal(
+            'warning',
+            'Delete Feed',
+            'Are you sure you want to delete this feed?',
+            '',
+            'feed_delete',
+            id,
+        );
     }
 
     deleteFillers(id): void {
@@ -348,7 +377,14 @@ export class DataTableComponent implements OnInit {
                     .subscribe((result) => result == 'delete' && this.postDeleteFillerFeed([id]));
                 return;
             }
-            this.warningModal('warning', 'Delete Filler Feed', 'Are you sure you want to delete this Filler Feed?', '', 'fillers_delete', id);
+            this.warningModal(
+                'warning',
+                'Delete Filler Feed',
+                'Are you sure you want to delete this Filler Feed?',
+                '',
+                'fillers_delete',
+                id,
+            );
         });
     }
 
@@ -362,13 +398,20 @@ export class DataTableComponent implements OnInit {
                     : 'This advertiser has assigned contents. If you wish to continue, the contents of the advertiser will be unassigned.',
                 '',
                 data.message ? 'advertiser_delete' : 'advertiser_delete_force',
-                id
+                id,
             );
         });
     }
 
     deletePlacer(id) {
-        this.warningModal('warning', 'Delete Placer Record', 'Are you sure you want to delete this placer record?', '', 'delete', id);
+        this.warningModal(
+            'warning',
+            'Delete Placer Record',
+            'Are you sure you want to delete this placer record?',
+            '',
+            'delete',
+            id,
+        );
     }
 
     viewReceipt(link): void {
@@ -380,18 +423,33 @@ export class DataTableComponent implements OnInit {
     autoChargeToggle(e) {}
 
     deleteScreen(id) {
-        this.warningModal('warning', 'Delete Screen', 'Are you sure you want to delete this screen?', '', 'screen_delete', id);
+        this.warningModal(
+            'warning',
+            'Delete Screen',
+            'Are you sure you want to delete this screen?',
+            '',
+            'screen_delete',
+            id,
+        );
     }
 
     deletePlaylist(id): void {
         this._playlist.get_playlist_by_id(id).subscribe(
             (data) => {
-                if (data.screens.length == 0) this.warningModal('warning', 'Delete Playlist', 'Are you sure you want to delete this playlist?', '', 'playlist_delete', id);
+                if (data.screens.length == 0)
+                    this.warningModal(
+                        'warning',
+                        'Delete Playlist',
+                        'Are you sure you want to delete this playlist?',
+                        '',
+                        'playlist_delete',
+                        id,
+                    );
                 else this.playlistDelete(id);
             },
             (error) => {
                 console.error(error);
-            }
+            },
         );
     }
 
@@ -404,20 +462,49 @@ export class DataTableComponent implements OnInit {
     }
 
     deleteLicense(id): void {
-        this.warningModal('warning', 'Delete License', 'Are you sure you want to delete this license', '', 'license_delete', id);
+        this.warningModal(
+            'warning',
+            'Delete License',
+            'Are you sure you want to delete this license',
+            '',
+            'license_delete',
+            id,
+        );
     }
 
     deleteTicket(id): void {
-        this.warningModal('warning', 'Delete Note', 'Are you sure you want to delete this Note', '', 'ticket_delete', id);
+        this.warningModal(
+            'warning',
+            'Delete Note',
+            'Are you sure you want to delete this Note',
+            '',
+            'ticket_delete',
+            id,
+        );
     }
 
     getStatusColor(status: string) {
         return status === 'A' ? 'text-primary' : 'text-gray';
     }
 
-    warningModal(status: string, message: string, data: string, return_msg: string, action: string, id: any): void {
-        const deleteLicenseActivity = new ACTIVITY_LOGS(this.dealer_id, 'deleted_license', this._auth.current_user_value.user_id);
-        const deleteAdvertiser = new ACTIVITY_LOGS(this.dealer_id, 'deleted_advertiser', this._auth.current_user_value.user_id);
+    warningModal(
+        status: string,
+        message: string,
+        data: string,
+        return_msg: string,
+        action: string,
+        id: any,
+    ): void {
+        const deleteLicenseActivity = new ACTIVITY_LOGS(
+            this.dealer_id,
+            'deleted_license',
+            this._auth.current_user_value.user_id,
+        );
+        const deleteAdvertiser = new ACTIVITY_LOGS(
+            this.dealer_id,
+            'deleted_advertiser',
+            this._auth.current_user_value.user_id,
+        );
         this._dialog
             .open(ConfirmationModalComponent, {
                 width: '500px',
@@ -499,7 +586,7 @@ export class DataTableComponent implements OnInit {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -509,8 +596,8 @@ export class DataTableComponent implements OnInit {
                 () => this.update_info.emit(true),
                 (error) => {
                     console.error(error);
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -522,8 +609,8 @@ export class DataTableComponent implements OnInit {
                 },
                 (error) => {
                     console.error(error);
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -534,7 +621,7 @@ export class DataTableComponent implements OnInit {
             },
             (error) => {
                 console.error(error);
-            }
+            },
         );
     }
 
@@ -546,8 +633,8 @@ export class DataTableComponent implements OnInit {
                 },
                 (error) => {
                     console.error(error);
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -560,8 +647,8 @@ export class DataTableComponent implements OnInit {
                 },
                 (error) => {
                     console.error(error);
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -571,8 +658,8 @@ export class DataTableComponent implements OnInit {
                 () => this.reload_page.emit(true),
                 (error) => {
                     console.error(error);
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -582,8 +669,8 @@ export class DataTableComponent implements OnInit {
                 () => this.reload_page.emit(true),
                 (error) => {
                     console.error(error);
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -593,8 +680,8 @@ export class DataTableComponent implements OnInit {
                 () => this.update_info.emit(true),
                 (error) => {
                     console.error(error);
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -610,25 +697,36 @@ export class DataTableComponent implements OnInit {
                 switch (label) {
                     case 'License Alias':
                         this.subscription.add(
-                            this._license.update_alias({ licenseId: fields.id, alias: response }).subscribe(
-                                () => this.openConfirmationModal('success', 'Success!', 'License Alias changed succesfully'),
-                                (error) => {
-                                    console.error(error);
-                                }
-                            )
+                            this._license
+                                .update_alias({ licenseId: fields.id, alias: response })
+                                .subscribe(
+                                    () =>
+                                        this.openConfirmationModal(
+                                            'success',
+                                            'Success!',
+                                            'License Alias changed succesfully',
+                                        ),
+                                    (error) => {
+                                        console.error(error);
+                                    },
+                                ),
                         );
                         break;
                     case 'Install Date':
                         this.subscription.add(
                             this._license.update_install_date(fields.id, response).subscribe(
                                 () => {
-                                    this.openConfirmationModal('success', 'Success!', 'License Installation Date Updated!');
+                                    this.openConfirmationModal(
+                                        'success',
+                                        'Success!',
+                                        'License Installation Date Updated!',
+                                    );
                                     this._helper.onUpdateInstallationDate.next();
                                 },
                                 (error) => {
                                     console.error(error);
-                                }
-                            )
+                                },
+                            ),
                         );
                         break;
                     case 'Screen Type':
@@ -641,32 +739,49 @@ export class DataTableComponent implements OnInit {
                         };
                         this.subscription.add(
                             this._screen.edit_screen(filter_screen).subscribe(
-                                () => this.openConfirmationModal('success', 'Success!', 'Screen Type changed succesfully'),
+                                () =>
+                                    this.openConfirmationModal(
+                                        'success',
+                                        'Success!',
+                                        'Screen Type changed succesfully',
+                                    ),
                                 (error) => {
                                     console.error(error);
-                                }
-                            )
+                                },
+                            ),
                         );
                     case 'Host Document Alias':
                     case 'Host Photo Alias':
                         this._host
                             .update_file_alias(fields.id, response)
                             .pipe(takeUntil(this._unsubscribe))
-                            .subscribe(() => this.openConfirmationModal('success', 'Success!', 'Alias changed'));
+                            .subscribe(() =>
+                                this.openConfirmationModal('success', 'Success!', 'Alias changed'),
+                            );
                         break;
                     case 'Placer Name':
                     case 'Hosts':
                         this._placer
-                            .update_placer_host(response.hostId, response.placerId, response.placername)
+                            .update_placer_host(
+                                response.hostId,
+                                response.placerId,
+                                response.placername,
+                            )
                             .pipe(takeUntil(this._unsubscribe))
-                            .subscribe(() => this.openConfirmationModal('success', 'Success!', 'Placer Record Updated'));
+                            .subscribe(() =>
+                                this.openConfirmationModal(
+                                    'success',
+                                    'Success!',
+                                    'Placer Record Updated',
+                                ),
+                            );
                         break;
                     default:
                 }
             },
             (error) => {
                 console.error(error);
-            }
+            },
         );
     }
 
@@ -732,7 +847,7 @@ export class DataTableComponent implements OnInit {
                     },
                     (error) => {
                         console.error(error);
-                    }
+                    },
                 );
         });
     }
@@ -812,7 +927,14 @@ export class DataTableComponent implements OnInit {
     }
 
     onDeleteUser(userId: string, email: string): void {
-        this.warningModal('warning', 'Delete User', `Are you sure you want to delete ${email}?`, '', 'user_delete', userId);
+        this.warningModal(
+            'warning',
+            'Delete User',
+            `Are you sure you want to delete ${email}?`,
+            '',
+            'user_delete',
+            userId,
+        );
     }
 
     onEdit(dataId: string): void {
@@ -824,18 +946,34 @@ export class DataTableComponent implements OnInit {
     }
 
     onPushUpdateToAllLicenses(playlistId: string): void {
-        this.warningModal('warning', 'Push Update to All Licenses', 'Are you sure you want to proceed?', '', 'push_update_all_licenses', playlistId);
+        this.warningModal(
+            'warning',
+            'Push Update to All Licenses',
+            'Are you sure you want to proceed?',
+            '',
+            'push_update_all_licenses',
+            playlistId,
+        );
     }
 
     onToggleEmailNotification(event: MouseEvent, tableDataIndex: number): void {
         event.preventDefault();
-        const currentData: { allow_email: { value: string }; user_id: { value: string }; email: { value: string } } = this.table_data[tableDataIndex];
+        const currentData: {
+            allow_email: { value: string };
+            user_id: { value: string };
+            email: { value: string };
+        } = this.table_data[tableDataIndex];
         const { allow_email, user_id, email } = currentData;
         const currentValue = allow_email.value;
         const userId = user_id.value;
         const currentEmail = email.value;
         this.table_data[tableDataIndex]['allow_email'].value = !currentValue;
-        this._helper.onToggleEmailNotification.next({ userId, value: !currentValue, tableDataIndex, currentEmail });
+        this._helper.onToggleEmailNotification.next({
+            userId,
+            value: !currentValue,
+            tableDataIndex,
+            currentEmail,
+        });
     }
 
     shipOrder(id, status) {
@@ -855,7 +993,7 @@ export class DataTableComponent implements OnInit {
                 () => this._helper.onRefreshUsersPage.next(),
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -867,11 +1005,18 @@ export class DataTableComponent implements OnInit {
                 map((response) => {
                     if (!response.licenses || response.licenses.length <= 0) return [];
                     return response.licenses.map((license) => license.licenseId);
-                })
+                }),
             )
             .subscribe((licenses: string[]) => {
-                if (licenses.length <= 0) return this.showConfirmationDialog('error', 'No licenses associated with this playlist');
-                this.showConfirmationDialog('success', 'Succes! Pushed updates to all licenses with this playlist');
+                if (licenses.length <= 0)
+                    return this.showConfirmationDialog(
+                        'error',
+                        'No licenses associated with this playlist',
+                    );
+                this.showConfirmationDialog(
+                    'success',
+                    'Succes! Pushed updates to all licenses with this playlist',
+                );
                 this.push_license_updates.emit(licenses);
             });
     }
@@ -898,7 +1043,7 @@ export class DataTableComponent implements OnInit {
             },
             (error) => {
                 console.error(error);
-            }
+            },
         );
     }
 

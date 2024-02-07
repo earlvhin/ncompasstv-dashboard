@@ -1,110 +1,151 @@
 <div class="p-4 user-form position-relative">
-	<h3 class="mb-4">Edit Feed</h3>
+    <h3 class="mb-4">Edit Feed</h3>
 
-	<ng-container *ngIf="is_form_ready; else loading">
-		<form class="text-left" [formGroup]="edit_feed_form" (ngSubmit)="saveFeed()" class="text-left" #formDirective="ngForm">
-			<div class="d-flex flex-column mb-4">
-				<mat-form-field class="full-width">
-					<mat-label>Feed Type</mat-label>
-					<input matInput formControlName="classification" matInput type="text" readonly />
-				</mat-form-field>
+    <ng-container *ngIf="is_form_ready; else loading">
+        <form
+            class="text-left"
+            [formGroup]="edit_feed_form"
+            (ngSubmit)="saveFeed()"
+            class="text-left"
+            #formDirective="ngForm">
+            <div class="d-flex flex-column mb-4">
+                <mat-form-field class="full-width">
+                    <mat-label>Feed Type</mat-label>
+                    <input
+                        matInput
+                        formControlName="classification"
+                        matInput
+                        type="text"
+                        readonly />
+                </mat-form-field>
 
-				<mat-form-field class="full-width">
-					<mat-label>Feed Title</mat-label>
-					<input matInput formControlName="feedTitle" matInput type="text" placeholder="Ex: ESPN News" />
-				</mat-form-field>
+                <mat-form-field class="full-width">
+                    <mat-label>Feed Title</mat-label>
+                    <input
+                        matInput
+                        formControlName="feedTitle"
+                        matInput
+                        type="text"
+                        placeholder="Ex: ESPN News" />
+                </mat-form-field>
 
-				<mat-form-field class="full-width">
-					<mat-label>Feed Description</mat-label>
-					<input matInput formControlName="feedDescription" matInput type="text" placeholder="Ex: ESPN Latest News Today" />
-				</mat-form-field>
+                <mat-form-field class="full-width">
+                    <mat-label>Feed Description</mat-label>
+                    <input
+                        matInput
+                        formControlName="feedDescription"
+                        matInput
+                        type="text"
+                        placeholder="Ex: ESPN Latest News Today" />
+                </mat-form-field>
 
-				<ng-container *ngIf="!is_loading_dealers; else loadingDealers">
-					<div class="autocomplete-container full-width">
-						<app-autocomplete-field
-							(data_value)="dealerSelected($event)"
-							[data_reference]="dealers_data"
-							[key_of_value]="'dealerId'"
-							[label]="'Choose A Dealer'"
-							[placeholder]="'Choose A Dealer'"
-							[primary_keyword]="'businessName'"
-							[search_keyword]="'dealer'"
-							[paging]="paging"
-							(searched)="searchData($event)"
-							[loading_data]="is_loading_dealers"
-							[initial_value]="dealer_name"
-							[new_value]="dealer_name"
-							[disabled]="is_current_user_dealer"
-							[loading_search]="loading_search"
-							[disable_minimum_search_length]="true"
-							[disabled]="true">
-						</app-autocomplete-field>
-					</div>
-				</ng-container>
+                <ng-container *ngIf="!is_loading_dealers; else loadingDealers">
+                    <div class="autocomplete-container full-width">
+                        <app-autocomplete-field
+                            (data_value)="dealerSelected($event)"
+                            [data_reference]="dealers_data"
+                            [key_of_value]="'dealerId'"
+                            [label]="'Choose A Dealer'"
+                            [placeholder]="'Choose A Dealer'"
+                            [primary_keyword]="'businessName'"
+                            [search_keyword]="'dealer'"
+                            [paging]="paging"
+                            (searched)="searchData($event)"
+                            [loading_data]="is_loading_dealers"
+                            [initial_value]="dealer_name"
+                            [new_value]="dealer_name"
+                            [disabled]="is_current_user_dealer"
+                            [loading_search]="loading_search"
+                            [disable_minimum_search_length]="true"
+                            [disabled]="true">
+                        </app-autocomplete-field>
+                    </div>
+                </ng-container>
 
-				<ng-container *ngIf="is_widget_feed; else feedUrl">
-					<mat-form-field class="full-width">
-						<mat-label>Widget Script</mat-label>
-						<textarea
-							matInput
-							placeholder="Paste your widget here"
-							formControlName="embeddedScript"
-							cdkTextareaAutosize
-							cdkAutosizeMinRows="10"
-							cdkAutosizeMaxRows="15">
-						</textarea>
-					</mat-form-field>
-				</ng-container>
+                <ng-container *ngIf="is_widget_feed; else feedUrl">
+                    <mat-form-field class="full-width">
+                        <mat-label>Widget Script</mat-label>
+                        <textarea
+                            matInput
+                            placeholder="Paste your widget here"
+                            formControlName="embeddedScript"
+                            cdkTextareaAutosize
+                            cdkAutosizeMinRows="10"
+                            cdkAutosizeMaxRows="15">
+                        </textarea>
+                    </mat-form-field>
+                </ng-container>
 
-				<ng-template #feedUrl>
-					<div class="position-relative">
-						<mat-form-field class="full-width">
-							<mat-label>Feed URL</mat-label>
-							<input matInput formControlName="feedUrl" matInput type="text" placeholder="URL needs to be working" />
-						</mat-form-field>
-						<div *ngIf="is_validating_url" class="spinner-container d-flex align-items-center justify-content-between position-absolute top-0 right-0">
-							<app-spinner [diameter]="35"></app-spinner>
-						</div>
-					</div>
-				</ng-template>
+                <ng-template #feedUrl>
+                    <div class="position-relative">
+                        <mat-form-field class="full-width">
+                            <mat-label>Feed URL</mat-label>
+                            <input
+                                matInput
+                                formControlName="feedUrl"
+                                matInput
+                                type="text"
+                                placeholder="URL needs to be working" />
+                        </mat-form-field>
+                        <div
+                            *ngIf="is_validating_url"
+                            class="spinner-container d-flex align-items-center justify-content-between position-absolute top-0 right-0">
+                            <app-spinner [diameter]="35"></app-spinner>
+                        </div>
+                    </div>
+                </ng-template>
 
-				<ng-container *ngIf="onEditUrl && is_invalid_url">
-					<ng-container *ngIf="is_invalid_url && isUrlValidType; else isInvalidType">
-						<div class="alert alert-warning">
-							<p class="sm-text font-weight-bold">Entered Feed URL may be invalid.</p>
-						</div>
-					</ng-container>
-			
-					<ng-template #isInvalidType>
-						<div class="alert alert-danger" >
-							<p class="sm-text font-weight-bold">Feed URL Error! Possible reasons may be;</p>
-							<div class="ml-2">
-								<ul class="sm-text font-weight-bold">
-									<li>The feed URL does not start with "http" or "https".</li>
-									<li>Multiple HTTP protocols. Input one URL only.</li>
-								</ul>
-							</div>
-						</div>
-					</ng-template>
-				</ng-container>
-			</div>
-			<div class="d-flex flex-even align-items-center">
-				<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="is_invalid_url && !isUrlValidType">Submit</button>
-				<button mat-button mat-raised-button class="theme-btn btn-danger" [mat-dialog-close]="false">Cancel</button>
-			</div>
-		</form>
-	</ng-container>
+                <ng-container *ngIf="onEditUrl && is_invalid_url">
+                    <ng-container *ngIf="is_invalid_url && isUrlValidType; else isInvalidType">
+                        <div class="alert alert-warning">
+                            <p class="sm-text font-weight-bold">Entered Feed URL may be invalid.</p>
+                        </div>
+                    </ng-container>
 
-	<ng-template #loading>
-		<div class="py-5">
-			<app-spinner></app-spinner>
-		</div>
-	</ng-template>
+                    <ng-template #isInvalidType>
+                        <div class="alert alert-danger">
+                            <p class="sm-text font-weight-bold">
+                                Feed URL Error! Possible reasons may be;
+                            </p>
+                            <div class="ml-2">
+                                <ul class="sm-text font-weight-bold">
+                                    <li>The feed URL does not start with "http" or "https".</li>
+                                    <li>Multiple HTTP protocols. Input one URL only.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ng-container>
+            </div>
+            <div class="d-flex flex-even align-items-center">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn mr-2"
+                    [disabled]="is_invalid_url && !isUrlValidType">
+                    Submit
+                </button>
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn btn-danger"
+                    [mat-dialog-close]="false">
+                    Cancel
+                </button>
+            </div>
+        </form>
+    </ng-container>
+
+    <ng-template #loading>
+        <div class="py-5">
+            <app-spinner></app-spinner>
+        </div>
+    </ng-template>
 </div>
 
 <ng-template #loadingDealers>
-	<div class="spinner-container d-flex align-items-center justify-content-between">
-		<h4>Loading dealers...</h4>
-		<app-spinner [diameter]="35"></app-spinner>
-	</div>
+    <div class="spinner-container d-flex align-items-center justify-content-between">
+        <h4>Loading dealers...</h4>
+        <app-spinner [diameter]="35"></app-spinner>
+    </div>
 </ng-template>

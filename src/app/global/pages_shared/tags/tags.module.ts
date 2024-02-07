@@ -10,25 +10,17 @@ import { TagsSectionComponent } from './components/tags-section/tags-section.com
 import { TagOwnersSectionComponent } from './components/tag-owners-section/tag-owners-section.component';
 import { AssignTagsComponent } from './dialogs/assign-tags/assign-tags.component';
 
-const DIALOGS = [
-	CreateTagComponent,
-	EditTagComponent,
-	AssignTagsComponent
-];
+const DIALOGS = [CreateTagComponent, EditTagComponent, AssignTagsComponent];
 
 @NgModule({
-	declarations: [ 
-		DIALOGS, 
-		TagsComponent, 
-		TagOwnersSectionComponent, 
-		TagsTableComponent, 
-		TagsSectionComponent,
-	],
-	entryComponents: [ DIALOGS ],
-	imports: [
-		GlobalModule,
-		CommonModule,
-		RouterModule,
-	],
+    declarations: [
+        DIALOGS,
+        TagsComponent,
+        TagOwnersSectionComponent,
+        TagsTableComponent,
+        TagsSectionComponent,
+    ],
+    entryComponents: [DIALOGS],
+    imports: [GlobalModule, CommonModule, RouterModule],
 })
-export class TagsModule { }
+export class TagsModule {}

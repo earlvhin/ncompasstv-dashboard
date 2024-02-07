@@ -1,26 +1,26 @@
 .normal canvas {
-	width: 60rem;
-	height: 290px;
+    width: 60rem;
+    height: 290px;
 }
 
 .optional {
-	width: 60rem;
-	height: 290px;
-	margin: auto;
-	overflow: auto;
+    width: 60rem;
+    height: 290px;
+    margin: auto;
+    overflow: auto;
 
-	&::-webkit-scrollbar {
-		height: 10px;
-	}
+    &::-webkit-scrollbar {
+        height: 10px;
+    }
 
-	&::-webkit-scrollbar-thumb {
-		background: #8ec641;
-		border-radius: 10px;
-		box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-	}
+    &::-webkit-scrollbar-thumb {
+        background: #8ec641;
+        border-radius: 10px;
+        box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    }
 
-	&::-webkit-scrollbar-track {
-		box-shadow: inset 0 0 3px rgb(206, 206, 206);
-		border-radius: 10px;
-	}
+    &::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 3px rgb(206, 206, 206);
+        border-radius: 10px;
+    }
 }

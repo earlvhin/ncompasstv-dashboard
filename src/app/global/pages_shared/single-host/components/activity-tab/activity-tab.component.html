@@ -1,46 +1,46 @@
 <div class="pt-4">
-	<div class="row">
-		<div class="col-lg-12 ml-2" *ngFor="let h of hostData?.createdBy">
-			<h5>{{ h.firstName }} {{ h.lastName }} created this host</h5>
-			<h6>{{ dateFormatted }}</h6>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-lg-12 ml-2" *ngFor="let h of hostData?.createdBy">
+            <h5>{{ h.firstName }} {{ h.lastName }} created this host</h5>
+            <h6>{{ dateFormatted }}</h6>
+        </div>
+    </div>
 
-	<div class="content-section">
-		<div *ngIf="!initial_load; else loader">
-			<div class="row">
-				<div class="col-lg-12">
-					<mat-card *ngIf="activity_data.length > 0; else loader">
-						<app-data-table
-							[table_data]="activity_data"
-							[table_columns]="activity_table_column"
-							[new_table]="true"
-							[paging_details]="paging_data"
-							[active_tab]="sort_column"
-							[sort_column]="sort_column"
-							[sort_order]="sort_order"
-							(reload_page)="reload_page($event)"
-							(update_info)="reload_page($event)"
-							(page_triggered)="getActivity($event)"
-							(to_sort_column)="getColumnsAndOrder($event)">
-						</app-data-table>
-					</mat-card>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="content-section">
+        <div *ngIf="!initial_load; else loader">
+            <div class="row">
+                <div class="col-lg-12">
+                    <mat-card *ngIf="activity_data.length > 0; else loader">
+                        <app-data-table
+                            [table_data]="activity_data"
+                            [table_columns]="activity_table_column"
+                            [new_table]="true"
+                            [paging_details]="paging_data"
+                            [active_tab]="sort_column"
+                            [sort_column]="sort_column"
+                            [sort_order]="sort_order"
+                            (reload_page)="reload_page($event)"
+                            (update_info)="reload_page($event)"
+                            (page_triggered)="getActivity($event)"
+                            (to_sort_column)="getColumnsAndOrder($event)">
+                        </app-data-table>
+                    </mat-card>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <ng-template #loader>
-	<ng-container *ngIf="!no_activity_data; else no_data">
-		<div class="py-4 white-bg h-500">
-			<app-spinner></app-spinner>
-		</div>
-	</ng-container>
+    <ng-container *ngIf="!no_activity_data; else no_data">
+        <div class="py-4 white-bg h-500">
+            <app-spinner></app-spinner>
+        </div>
+    </ng-container>
 </ng-template>
 
 <ng-template #no_data>
-	<mat-card class="p-5">
-		<app-error-message></app-error-message>
-	</mat-card>
+    <mat-card class="p-5">
+        <app-error-message></app-error-message>
+    </mat-card>
 </ng-template>

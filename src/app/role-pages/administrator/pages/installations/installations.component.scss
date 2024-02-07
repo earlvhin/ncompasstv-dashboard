@@ -1,25 +1,25 @@
 .datepicker-container {
-	padding: 10px;
+    padding: 10px;
 
-	.datepicker {
-		font-size: 12px;
-		flex: 1;
-	}
-	
-	.date-views-container {
-		flex: 2;
-		font-size: 12px;
-		min-height: 46px;
-		max-height: 46px;
-		margin-left: 10px;
+    .datepicker {
+        font-size: 12px;
+        flex: 1;
+    }
 
-		mat-button-toggle {
-			border-right: 1px solid gray;
-		}
-	}
+    .date-views-container {
+        flex: 2;
+        font-size: 12px;
+        min-height: 46px;
+        max-height: 46px;
+        margin-left: 10px;
+
+        mat-button-toggle {
+            border-right: 1px solid gray;
+        }
+    }
 }
 
 .search-field {
-	width: 300px;
-	margin-right: 10px;
+    width: 300px;
+    margin-right: 10px;
 }

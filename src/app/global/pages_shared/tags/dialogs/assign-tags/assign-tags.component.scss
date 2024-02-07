@@ -1,82 +1,85 @@
 .owner-select-search {
-	.display-name {
-		span {
-			margin-right: 5px;
-			margin-bottom: 5px;
-			padding: 1px 5px 1px 7px;
-			font-size: 10px;
-			border-radius: 5px;
-			text-shadow: black -1px 0px, black 0px 1px, black 1px 0px, black 0px -1px;
-			color: white;
-			border: 1px solid gray;
-		}
-	}
+    .display-name {
+        span {
+            margin-right: 5px;
+            margin-bottom: 5px;
+            padding: 1px 5px 1px 7px;
+            font-size: 10px;
+            border-radius: 5px;
+            text-shadow:
+                black -1px 0px,
+                black 0px 1px,
+                black 1px 0px,
+                black 0px -1px;
+            color: white;
+            border: 1px solid gray;
+        }
+    }
 }
 
 .preview {
-	mat-icon {
-		font-size: 12px;
-	}
+    mat-icon {
+        font-size: 12px;
+    }
 
-	.remove-btn {
-		text-align: center;
+    .remove-btn {
+        text-align: center;
 
-		mat-icon {
-			line-height: 25px;
-		}
-	}
+        mat-icon {
+            line-height: 25px;
+        }
+    }
 
-	.owners-row {
-		margin-bottom: 20px;
-		
-		h4 {
-			margin-right: 20px;
-		}
+    .owners-row {
+        margin-bottom: 20px;
 
-		.selected-owners-container {
-	
-			.owner {
-				background: #8ec641;
-				color: white;
-				font-size: 12px;
-				margin-right: 5px;
-				margin-bottom: 5px;
-				padding: 1px 5px;
-			}
-	
-		}
-	}
+        h4 {
+            margin-right: 20px;
+        }
 
-	.tags-row {
-		h4 {
-			margin-right: 20px;
-		}
-	
-		.selected-tags-container {
-	
-			.tag {
-				margin-right: 5px;
-				margin-bottom: 5px;
-				padding: 1px 5px 1px 7px;
-				font-size: 12px;
-				text-shadow: black -1px 0px, black 0px 1px, black 1px 0px, black 0px -1px;
-				color: white;
-				border: 1px solid gray;
+        .selected-owners-container {
+            .owner {
+                background: #8ec641;
+                color: white;
+                font-size: 12px;
+                margin-right: 5px;
+                margin-bottom: 5px;
+                padding: 1px 5px;
+            }
+        }
+    }
 
-				&.dealer {
-					border-radius: 5px;
-				}
-			}
-		}
-	
-	}
+    .tags-row {
+        h4 {
+            margin-right: 20px;
+        }
 
+        .selected-tags-container {
+            .tag {
+                margin-right: 5px;
+                margin-bottom: 5px;
+                padding: 1px 5px 1px 7px;
+                font-size: 12px;
+                text-shadow:
+                    black -1px 0px,
+                    black 0px 1px,
+                    black 1px 0px,
+                    black 0px -1px;
+                color: white;
+                border: 1px solid gray;
+
+                &.dealer {
+                    border-radius: 5px;
+                }
+            }
+        }
+    }
 }
 
-button[type="submit"] {
-	float: right;
-	position: absolute;
-	right: 0;
-	bottom: 0;
-	margin: 0 24px 24px 0;
+button[type='submit'] {
+    float: right;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin: 0 24px 24px 0;
 }

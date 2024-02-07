@@ -1,25 +1,43 @@
 <div class="p-4 user-form position-relative">
-	<h3 class="mb-4">Edit Ticket</h3>
+    <h3 class="mb-4">Edit Ticket</h3>
 
-	<form class="text-left" [formGroup]="edit_ticket_form" (ngSubmit)="saveEditSupport()" #formDirective="ngForm">
-		<div class="d-flex flex-column mb-4">
-			<mat-form-field class="full-width">
-				<mat-label>URL</mat-label>
-				<input matInput formControlName="Url" matInput type="link" placeholder="URL Link here" />
-			</mat-form-field>
+    <form
+        class="text-left"
+        [formGroup]="edit_ticket_form"
+        (ngSubmit)="saveEditSupport()"
+        #formDirective="ngForm">
+        <div class="d-flex flex-column mb-4">
+            <mat-form-field class="full-width">
+                <mat-label>URL</mat-label>
+                <input
+                    matInput
+                    formControlName="Url"
+                    matInput
+                    type="link"
+                    placeholder="URL Link here" />
+            </mat-form-field>
 
-			<mat-form-field class="full-width">
-				<mat-label>Notes</mat-label>
-				<textarea matInput formControlName="Notes" matInput type="textarea" placeholder="Ticket Notes/Details"></textarea>
-			</mat-form-field>
-		</div>
+            <mat-form-field class="full-width">
+                <mat-label>Notes</mat-label>
+                <textarea
+                    matInput
+                    formControlName="Notes"
+                    matInput
+                    type="textarea"
+                    placeholder="Ticket Notes/Details"></textarea>
+            </mat-form-field>
+        </div>
 
-		<div class="d-flex flex-even">
-			<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="disabled_submit">
-				{{ is_creating_support && form_invalid ? 'Creating Entry...' : 'Submit' }}
-			</button>
+        <div class="d-flex flex-even">
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn mr-2"
+                [disabled]="disabled_submit">
+                {{ is_creating_support && form_invalid ? 'Creating Entry...' : 'Submit' }}
+            </button>
 
-			<button mat-button mat-raised-button class="theme-btn" mat-dialog-close>Cancel</button>
-		</div>
-	</form>
+            <button mat-button mat-raised-button class="theme-btn" mat-dialog-close>Cancel</button>
+        </div>
+    </form>
 </div>

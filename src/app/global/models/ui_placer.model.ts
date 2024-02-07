@@ -25,7 +25,7 @@ export class UI_PLACER_DATA {
         upload_by: any,
         publication_date: any,
         source_file: any,
-        placer_dump_id: any
+        placer_dump_id: any,
     ) {
         this.index = index;
         this.placer_id = placer_id;

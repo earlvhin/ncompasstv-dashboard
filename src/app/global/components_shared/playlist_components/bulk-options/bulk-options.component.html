@@ -1,92 +1,111 @@
 <div class="bulk-option-modal p-3">
-	<div class="d-flex mb-4">
-		<div class="flex-even">
-			<h3>Bulk Playlist Content Options</h3>
-			<p class="sm-text">
-				Here you can set duration, display mode, and choose where host and licenses the marked contents should play.
-			</p>
-		</div>
-		<div>
-			<button class="naked-btn" [mat-dialog-close]>
-				<span class="fas fa-times"></span>
-			</button>
-		</div>
-	</div>
+    <div class="d-flex mb-4">
+        <div class="flex-even">
+            <h3>Bulk Playlist Content Options</h3>
+            <p class="sm-text">
+                Here you can set duration, display mode, and choose where host and licenses the
+                marked contents should play.
+            </p>
+        </div>
+        <div>
+            <button class="naked-btn" [mat-dialog-close]>
+                <span class="fas fa-times"></span>
+            </button>
+        </div>
+    </div>
 
-	<div class="row no-gutters">
-		<div class="col-lg-6">
-			<div class="marked-contents mb-4">
-				<div class="row no-gutters">
-					<div class="col-lg-3" *ngFor="let c of selected_contents">
-						<app-playlist-media-thumbnail 
-						[content]="c"
-						[show_fullscreen_status]="true">
-						</app-playlist-media-thumbnail>
-					</div>
-				</div>
-			</div>
-			
-			<div class="d-flex mb-3">
-				<div class="flex-even">
-					<h4>{{ selected_contents.length }} Playlist contents selected</h4>
-				</div>
-			</div>
+    <div class="row no-gutters">
+        <div class="col-lg-6">
+            <div class="marked-contents mb-4">
+                <div class="row no-gutters">
+                    <div class="col-lg-3" *ngFor="let c of selected_contents">
+                        <app-playlist-media-thumbnail [content]="c" [show_fullscreen_status]="true">
+                        </app-playlist-media-thumbnail>
+                    </div>
+                </div>
+            </div>
 
-			<div class="d-flex mb-3">
-				<div class="flex-even">
-					<mat-slide-toggle (change)="setFullscreenStatus($event)">
-						<h5 class="mb-0">Modify Fullscreen Properties</h5>
-					</mat-slide-toggle>
-				</div>
+            <div class="d-flex mb-3">
+                <div class="flex-even">
+                    <h4>{{ selected_contents.length }} Playlist contents selected</h4>
+                </div>
+            </div>
 
-				<div *ngIf="edit_fullscreen_status">
-					<mat-slide-toggle (change)="toggleFullscreen($event)">
-						<h5 class="mb-0">Set All to Fullscreen</h5>
-					</mat-slide-toggle>
-				</div>
-			</div>
+            <div class="d-flex mb-3">
+                <div class="flex-even">
+                    <mat-slide-toggle (change)="setFullscreenStatus($event)">
+                        <h5 class="mb-0">Modify Fullscreen Properties</h5>
+                    </mat-slide-toggle>
+                </div>
 
-			<div class="mb-5">
-				<mat-form-field class="w-100" appearance="fill">
-					<mat-label>Set Content Duration</mat-label>
-					<input [formControl]="duration" matInput type="number" placeholder="Ex: 100" min="5" max="100">
-				</mat-form-field>
-				<p class="sm-text mb-0">
-					Content duration will apply to marked feeds and images only. Minimum is 5 seconds.
-				</p>
-			</div>
+                <div *ngIf="edit_fullscreen_status">
+                    <mat-slide-toggle (change)="toggleFullscreen($event)">
+                        <h5 class="mb-0">Set All to Fullscreen</h5>
+                    </mat-slide-toggle>
+                </div>
+            </div>
 
-			<div>
-				<button mat-button mat-raised-button 
-				class="theme-btn position-bottom" 
-				[mat-dialog-close]="{content_props: selected_contents, blacklist: blocklisting, whitelist: to_whitelist}">
-					Save Bulk Options
-					<span class="fas fa-save ml-2"></span>
-				</button>
-			</div>
-		</div>
+            <div class="mb-5">
+                <mat-form-field class="w-100" appearance="fill">
+                    <mat-label>Set Content Duration</mat-label>
+                    <input
+                        [formControl]="duration"
+                        matInput
+                        type="number"
+                        placeholder="Ex: 100"
+                        min="5"
+                        max="100" />
+                </mat-form-field>
+                <p class="sm-text mb-0">
+                    Content duration will apply to marked feeds and images only. Minimum is 5
+                    seconds.
+                </p>
+            </div>
 
-		<div class="col-lg-6 pl-3">
-			<div class="bulk-blocklist-disabled px-5" *ngIf="!enable_blacklisting; else blacklisting_enabled">
-				<div class="w-100">
-					<h4 class="mb-2">Bulk Blacklisting/Whitelisting</h4>
-					<p class="sm-text mb-4">This will overwrite the blacklist/whitelist properties of the currently marked playlist contents.</p>
-					<button mat-button mat-raised-button 
-					class="theme-btn position-bottom"
-					(click)="enable_blacklisting = true">
-						Enable
-					</button>
-				</div>
-			</div>
+            <div>
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn position-bottom"
+                    [mat-dialog-close]="{
+                        content_props: selected_contents,
+                        blacklist: blocklisting,
+                        whitelist: to_whitelist
+                    }">
+                    Save Bulk Options
+                    <span class="fas fa-save ml-2"></span>
+                </button>
+            </div>
+        </div>
 
-			<ng-template #blacklisting_enabled>
-				<app-bulk-playwhere
-				(blacklist)="blackListing($event)"
-				(whitelist)="whiteListing($event)"
-				(disable_blocklisting)="enable_blacklisting = false"
-				[host_licenses]="host_licenses">
-				</app-bulk-playwhere>
-			</ng-template>
-		</div>
-	</div>
+        <div class="col-lg-6 pl-3">
+            <div
+                class="bulk-blocklist-disabled px-5"
+                *ngIf="!enable_blacklisting; else blacklisting_enabled">
+                <div class="w-100">
+                    <h4 class="mb-2">Bulk Blacklisting/Whitelisting</h4>
+                    <p class="sm-text mb-4">
+                        This will overwrite the blacklist/whitelist properties of the currently
+                        marked playlist contents.
+                    </p>
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn position-bottom"
+                        (click)="enable_blacklisting = true">
+                        Enable
+                    </button>
+                </div>
+            </div>
+
+            <ng-template #blacklisting_enabled>
+                <app-bulk-playwhere
+                    (blacklist)="blackListing($event)"
+                    (whitelist)="whiteListing($event)"
+                    (disable_blocklisting)="enable_blacklisting = false"
+                    [host_licenses]="host_licenses">
+                </app-bulk-playwhere>
+            </ng-template>
+        </div>
+    </div>
 </div>

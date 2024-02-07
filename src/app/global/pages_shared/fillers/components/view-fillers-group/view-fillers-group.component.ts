@@ -42,10 +42,18 @@ export class ViewFillersGroupComponent implements OnInit {
 
     protected _unsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(private _filler: FillerService, private _params: ActivatedRoute, private _dialog: MatDialog, private _auth: AuthService, private _user: UserService) {}
+    constructor(
+        private _filler: FillerService,
+        private _params: ActivatedRoute,
+        private _dialog: MatDialog,
+        private _auth: AuthService,
+        private _user: UserService,
+    ) {}
 
     ngOnInit() {
-        this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() => (this.filler_group_id = this._params.snapshot.params.data));
+        this._params.paramMap
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe(() => (this.filler_group_id = this._params.snapshot.params.data));
         this.getFillerGroupContents(this.filler_group_id);
         this.getFillerGroupDetails(this.filler_group_id);
     }
@@ -62,7 +70,14 @@ export class ViewFillersGroupComponent implements OnInit {
 
     getFillerGroupContents(id, page?) {
         this._filler
-            .get_filler_group_contents(id, this.search_keyword, page, 27, this.sorting_column, this.sorting_order)
+            .get_filler_group_contents(
+                id,
+                this.search_keyword,
+                page,
+                27,
+                this.sorting_column,
+                this.sorting_order,
+            )
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data) => {
                 if ('message' in data) {
@@ -79,12 +94,15 @@ export class ViewFillersGroupComponent implements OnInit {
 
                 //add a screenshoturl since it is not provided yet in the api return
                 data.paging.entities.map((data) => {
-                    if (data.fileType == 'webm') data.screenshotURL = data.url.substring(0, data.url.lastIndexOf('.')) + '.jpg';
+                    if (data.fileType == 'webm')
+                        data.screenshotURL =
+                            data.url.substring(0, data.url.lastIndexOf('.')) + '.jpg';
                     else data.screenshotURL = data.url;
                 });
 
                 const results = data.paging.entities;
-                this.filler_group_contents = page > 1 ? this.filler_group_contents.concat(results) : [...results];
+                this.filler_group_contents =
+                    page > 1 ? this.filler_group_contents.concat(results) : [...results];
                 this.no_search_result = false;
             })
             .add(() => {
@@ -132,10 +150,24 @@ export class ViewFillersGroupComponent implements OnInit {
 
     deleteContent(id) {
         this.selected_filler = id;
-        this.warningModal('warning', 'Delete Filler', 'Are you sure you want to delete this filler?', '', 'delete', true);
+        this.warningModal(
+            'warning',
+            'Delete Filler',
+            'Are you sure you want to delete this filler?',
+            '',
+            'delete',
+            true,
+        );
     }
 
-    private warningModal(status: string, message: string, data: string, return_msg: string, action: string, todelete?: boolean): void {
+    private warningModal(
+        status: string,
+        message: string,
+        data: string,
+        return_msg: string,
+        action: string,
+        todelete?: boolean,
+    ): void {
         this._dialog.closeAll();
 
         const dialogRef = this._dialog.open(ConfirmationModalComponent, {
@@ -157,7 +189,14 @@ export class ViewFillersGroupComponent implements OnInit {
                     .delete_filler_contents(this.selected_filler)
                     .pipe(takeUntil(this._unsubscribe))
                     .subscribe((data: any) => {
-                        this.warningModal('success', 'Delete Filler', 'Filler Content ' + data.message, '', '', false);
+                        this.warningModal(
+                            'success',
+                            'Delete Filler',
+                            'Filler Content ' + data.message,
+                            '',
+                            '',
+                            false,
+                        );
                         this.ngOnInit();
                     });
             }
@@ -258,7 +297,8 @@ export class ViewFillersGroupComponent implements OnInit {
 
     allowedToDelete() {
         if (this._isDealer || this._isSubDealer) {
-            if (this.filler_group_data.createdBy != this._auth.current_user_value.user_id) this.restricted = true;
+            if (this.filler_group_data.createdBy != this._auth.current_user_value.user_id)
+                this.restricted = true;
             else this.restricted = false;
         } else if (this._isAdmin || this._isDealerAdmin) {
             this._user
@@ -268,8 +308,10 @@ export class ViewFillersGroupComponent implements OnInit {
                     if (UI_ROLE_DEFINITION.dealer in data.role) this.restricted = true;
                     else this.restricted = false;
 
-                    if (this._isDealerAdmin && UI_ROLE_DEFINITION.administrator in data.role) this.restricted = true;
-                    if (this._isAdmin && UI_ROLE_DEFINITION.dealeradmin in data.role) this.restricted = true;
+                    if (this._isDealerAdmin && UI_ROLE_DEFINITION.administrator in data.role)
+                        this.restricted = true;
+                    if (this._isAdmin && UI_ROLE_DEFINITION.dealeradmin in data.role)
+                        this.restricted = true;
                 });
         }
     }

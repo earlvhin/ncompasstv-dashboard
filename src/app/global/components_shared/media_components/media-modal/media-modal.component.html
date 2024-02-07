@@ -1,146 +1,175 @@
 <ng-container>
-	<div class="assign-media-modal p-4 position-relative" *ngIf="!no_dealer_data; else no_dealers">
-		<button class="modal-close-btn no-border top-0 right-0 no-background p-absolute" [mat-dialog-close]="false">
-			<span class="fas fa-times"></span>
-		</button>
-		<ng-container *ngIf="checkInitialLoad(); else loading">
-			<h3 *ngIf="!is_edit; else title_edit">You are uploading content for:</h3>
-			<ng-template #title_edit>
-				<h3>You are editing content for:</h3>
-			</ng-template>
-			<p class="sm-text mb-4">Select a Dealer to get his/her Hosts and Advertiser.</p>
+    <div class="assign-media-modal p-4 position-relative" *ngIf="!no_dealer_data; else no_dealers">
+        <button
+            class="modal-close-btn no-border top-0 right-0 no-background p-absolute"
+            [mat-dialog-close]="false">
+            <span class="fas fa-times"></span>
+        </button>
+        <ng-container *ngIf="checkInitialLoad(); else loading">
+            <h3 *ngIf="!is_edit; else title_edit">You are uploading content for:</h3>
+            <ng-template #title_edit>
+                <h3>You are editing content for:</h3>
+            </ng-template>
+            <p class="sm-text mb-4">Select a Dealer to get his/her Hosts and Advertiser.</p>
 
-			<div class="text-left control-toggle mb-3" *ngIf="is_edit">
-				<mat-slide-toggle class="mr-3" (change)="onToggleFloatingContent($event)" [checked]="is_floating ? 'checked' : 'false'">
-				</mat-slide-toggle>
-				<span class="text-muted md-text">Set as Floating Content</span>
-			</div>
-			<!-- Dealer -->
-			<app-autocomplete-field
-				(data_value)="dealerSelected($event)"
-				[disabled]="is_floating || dealers.length == 0 || is_dealer"
-				[data_reference]="dealers_data"
-				[key_of_value]="'dealerId'"
-				[label]="'Choose A Dealer'"
-				[placeholder]="'Choose A Dealer'"
-				[primary_keyword]="'businessName'"
-				[search_keyword]="'dealer'"
-				[initial_value]="dealer_name"
-				[disabled]="is_dealer"
-				[paging]="paging"
-				(call_next_page)="searchBoxTrigger($event)"
-				(searched)="searchData($event)"
-				[loading_data]="loading_data"
-				[loading_search]="loading_search"
-				[new_value]="dealer_name"
-			>
-			</app-autocomplete-field>
+            <div class="text-left control-toggle mb-3" *ngIf="is_edit">
+                <mat-slide-toggle
+                    class="mr-3"
+                    (change)="onToggleFloatingContent($event)"
+                    [checked]="is_floating ? 'checked' : 'false'">
+                </mat-slide-toggle>
+                <span class="text-muted md-text">Set as Floating Content</span>
+            </div>
+            <!-- Dealer -->
+            <app-autocomplete-field
+                (data_value)="dealerSelected($event)"
+                [disabled]="is_floating || dealers.length == 0 || is_dealer"
+                [data_reference]="dealers_data"
+                [key_of_value]="'dealerId'"
+                [label]="'Choose A Dealer'"
+                [placeholder]="'Choose A Dealer'"
+                [primary_keyword]="'businessName'"
+                [search_keyword]="'dealer'"
+                [initial_value]="dealer_name"
+                [disabled]="is_dealer"
+                [paging]="paging"
+                (call_next_page)="searchBoxTrigger($event)"
+                (searched)="searchData($event)"
+                [loading_data]="loading_data"
+                [loading_search]="loading_search"
+                [new_value]="dealer_name">
+            </app-autocomplete-field>
 
-			<!-- Host -->
-			<div class="position-relative">
-				<app-autocomplete-field
-					(data_value)="hostSelected($event)"
-					[data_reference]="hosts_data"
-					[disabled]="is_floating || hosts.length == 0"
-					[key_of_value]="'hostId'"
-					[label]="'Choose A Host'"
-					[placeholder]="'Choose A Host'"
-					[primary_keyword]="'name'"
-					[search_keyword]="'name'"
-					[paging]="paging_host"
-					(call_next_page)="hostSearchBoxTrigger($event)"
-					(searched)="searchHostData($event)"
-					[loading_data]="loading_host_data"
-					[loading_search]="loading_search_host"
-					[initial_load]="initial_load_host"
-					[initial_value]="host_name"
-					[reset_value]="to_empty"
-				>
-				</app-autocomplete-field>
+            <!-- Host -->
+            <div class="position-relative">
+                <app-autocomplete-field
+                    (data_value)="hostSelected($event)"
+                    [data_reference]="hosts_data"
+                    [disabled]="is_floating || hosts.length == 0"
+                    [key_of_value]="'hostId'"
+                    [label]="'Choose A Host'"
+                    [placeholder]="'Choose A Host'"
+                    [primary_keyword]="'name'"
+                    [search_keyword]="'name'"
+                    [paging]="paging_host"
+                    (call_next_page)="hostSearchBoxTrigger($event)"
+                    (searched)="searchHostData($event)"
+                    [loading_data]="loading_host_data"
+                    [loading_search]="loading_search_host"
+                    [initial_load]="initial_load_host"
+                    [initial_value]="host_name"
+                    [reset_value]="to_empty">
+                </app-autocomplete-field>
 
-				<div class="form-spinner" *ngIf="loading_form">
-					<app-little-spinner></app-little-spinner>
-				</div>
-				<div class="no-data-found" *ngIf="no_host_found">
-					<span class="text-muted">No Host Available</span>
-				</div>
-			</div>
+                <div class="form-spinner" *ngIf="loading_form">
+                    <app-little-spinner></app-little-spinner>
+                </div>
+                <div class="no-data-found" *ngIf="no_host_found">
+                    <span class="text-muted">No Host Available</span>
+                </div>
+            </div>
 
-			<!-- Advertiser -->
-			<div class="position-relative">
-				<app-autocomplete-field
-					(data_value)="advertiserSelected($event)"
-					[data_reference]="advertiser_data"
-					[disabled]="is_floating || advertisers.length == 0"
-					[key_of_value]="'id'"
-					[label]="'Choose An Advertiser'"
-					[placeholder]="'Choose An Advertiser'"
-					[primary_keyword]="'name'"
-					[search_keyword]="'name'"
-					[initial_value]="advertiser_name"
-					[paging]="paging_advertiser"
-					(call_next_page)="advertiserSearchBoxTrigger($event)"
-					(searched)="searchAdvertiserData($event)"
-					[loading_data]="loading_advertiser_data"
-					[loading_search]="loading_search_advertiser"
-					[initial_load]="initial_load_advertiser"
-					[reset_value]="to_empty"
-				>
-				</app-autocomplete-field>
-				<div class="form-spinner" *ngIf="loading_form">
-					<app-little-spinner></app-little-spinner>
-				</div>
-				<div class="no-data-found" *ngIf="no_advertiser_found">
-					<span class="text-muted">No Advertiser Available</span>
-				</div>
-			</div>
+            <!-- Advertiser -->
+            <div class="position-relative">
+                <app-autocomplete-field
+                    (data_value)="advertiserSelected($event)"
+                    [data_reference]="advertiser_data"
+                    [disabled]="is_floating || advertisers.length == 0"
+                    [key_of_value]="'id'"
+                    [label]="'Choose An Advertiser'"
+                    [placeholder]="'Choose An Advertiser'"
+                    [primary_keyword]="'name'"
+                    [search_keyword]="'name'"
+                    [initial_value]="advertiser_name"
+                    [paging]="paging_advertiser"
+                    (call_next_page)="advertiserSearchBoxTrigger($event)"
+                    (searched)="searchAdvertiserData($event)"
+                    [loading_data]="loading_advertiser_data"
+                    [loading_search]="loading_search_advertiser"
+                    [initial_load]="initial_load_advertiser"
+                    [reset_value]="to_empty">
+                </app-autocomplete-field>
+                <div class="form-spinner" *ngIf="loading_form">
+                    <app-little-spinner></app-little-spinner>
+                </div>
+                <div class="no-data-found" *ngIf="no_advertiser_found">
+                    <span class="text-muted">No Advertiser Available</span>
+                </div>
+            </div>
 
-			<div *ngIf="!is_edit; else edit_button">
-				<div class="d-flex justify-content-between align-items-end">
-					<div>
-						<button mat-button mat-raised-button class="theme-btn mt-4 mr-2" [mat-dialog-close]="assign_data" [disabled]="no_dealer">
-							Done
-						</button>
-						<button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="assign_data">Skip</button>
-					</div>
+            <div *ngIf="!is_edit; else edit_button">
+                <div class="d-flex justify-content-between align-items-end">
+                    <div>
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn mt-4 mr-2"
+                            [mat-dialog-close]="assign_data"
+                            [disabled]="no_dealer">
+                            Done
+                        </button>
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn mt-4"
+                            [mat-dialog-close]="assign_data">
+                            Skip
+                        </button>
+                    </div>
 
-					<div>
-						<mat-slide-toggle (change)="setOptimizedVideoUploadValue($event)" [(ngModel)]="optimize_video_upload">
-							<small class="ml-2">Optimize video upload (Recommended)</small>
-						</mat-slide-toggle>
-					</div>
-				</div>
-			</div>
+                    <div>
+                        <mat-slide-toggle
+                            (change)="setOptimizedVideoUploadValue($event)"
+                            [(ngModel)]="optimize_video_upload">
+                            <small class="ml-2">Optimize video upload (Recommended)</small>
+                        </mat-slide-toggle>
+                    </div>
+                </div>
+            </div>
 
-			<ng-template #edit_button>
-				<button mat-button mat-raised-button class="theme-btn mt-4 mr-2" (click)="updateData()" [disabled]="no_dealer && !is_floating">
-					Update
-				</button>
-				<button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="false">Cancel</button>
-			</ng-template>
-		</ng-container>
-	</div>
+            <ng-template #edit_button>
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn mt-4 mr-2"
+                    (click)="updateData()"
+                    [disabled]="no_dealer && !is_floating">
+                    Update
+                </button>
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn mt-4"
+                    [mat-dialog-close]="false">
+                    Cancel
+                </button>
+            </ng-template>
+        </ng-container>
+    </div>
 
-	<ng-template #loading>
-		<div class="py-5">
-			<app-spinner></app-spinner>
-		</div>
-	</ng-template>
+    <ng-template #loading>
+        <div class="py-5">
+            <app-spinner></app-spinner>
+        </div>
+    </ng-template>
 
-	<ng-template #no_dealers>
-		<div class="p-3">
-			<h3>No Dealers Available</h3>
-			<p class="sm-text mb-4">The media files you'll be uploading will be tagged as "Floating".</p>
-			<button
-				mat-button
-				mat-raised-button
-				class="theme-btn mt-4 mr-2"
-				[mat-dialog-close]="false"
-				[routerLink]="['administrator/users/create-user/dealer']"
-			>
-				Create Dealer First
-			</button>
-			<button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="true">Continue</button>
-		</div>
-	</ng-template>
+    <ng-template #no_dealers>
+        <div class="p-3">
+            <h3>No Dealers Available</h3>
+            <p class="sm-text mb-4">
+                The media files you'll be uploading will be tagged as "Floating".
+            </p>
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn mt-4 mr-2"
+                [mat-dialog-close]="false"
+                [routerLink]="['administrator/users/create-user/dealer']">
+                Create Dealer First
+            </button>
+            <button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="true">
+                Continue
+            </button>
+        </div>
+    </ng-template>
 </ng-container>

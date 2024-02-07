@@ -13,8 +13,7 @@
                     class="theme-btn pi-control _info sm-text mr-2"
                     (click)="addFillerContent(filler_group_data)"
                     [disabled]="restricted"
-                    title="Upload Filler"
-                >
+                    title="Upload Filler">
                     <span class="fas fa-upload"></span>
                     <span class="ml-2 button_text_animation">Upload Filler</span>
                 </button>
@@ -24,8 +23,7 @@
                     class="theme-btn pi-control _cool sm-text mr-2"
                     (click)="createFillerFeed(filler_group_data, true)"
                     title="Create Filler Feed"
-                    [disabled]="filler_group_contents.length == 0"
-                >
+                    [disabled]="filler_group_contents.length == 0">
                     <span class="fas fa-list-ol"></span>
                     <span class="ml-2 button_text_animation">Create Filler Feed</span>
                 </button>
@@ -35,17 +33,32 @@
     <hr class="my-4" />
 
     <div class="custom-mat-tab mt-30">
-        <mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event.index)" [selectedIndex]="isActiveTab">
+        <mat-tab-group
+            dynamicHeight
+            #tabGroup
+            (selectedTabChange)="onTabChanged($event.index)"
+            [selectedIndex]="isActiveTab">
             <mat-tab label="Contents">
                 <div class="d-flex mt-3 mb-2" *ngIf="filler_group_contents.length > 0">
                     <div class="filter-container">
-                        <button mat-button mat-raised-button [matMenuTriggerFor]="orderSort" class="theme-btn mt-2" [disabled]="no_search_result">
+                        <button
+                            mat-button
+                            mat-raised-button
+                            [matMenuTriggerFor]="orderSort"
+                            class="theme-btn mt-2"
+                            [disabled]="no_search_result">
                             <span class="button-label">Order by Filename</span>
                             <span class="fas fa-sort ml-2"></span>
                         </button>
                         <mat-menu #orderSort="matMenu">
-                            <button mat-menu-item (click)="sortFillerGroup('asc')"><i class="fa fa-sort-alpha-asc mr-3" aria-hidden="true"></i>Ascending</button>
-                            <button mat-menu-item (click)="sortFillerGroup('desc')"><i class="fa fa-sort-alpha-desc mr-3" aria-hidden="true"></i>Descending</button>
+                            <button mat-menu-item (click)="sortFillerGroup('asc')">
+                                <i class="fa fa-sort-alpha-asc mr-3" aria-hidden="true"></i
+                                >Ascending
+                            </button>
+                            <button mat-menu-item (click)="sortFillerGroup('desc')">
+                                <i class="fa fa-sort-alpha-desc mr-3" aria-hidden="true"></i
+                                >Descending
+                            </button>
                         </mat-menu>
                     </div>
                     <div class="search-container flex-even">
@@ -56,8 +69,7 @@
                             [primary_keyword]="'name'"
                             [secondary_keyword]="'name'"
                             (searched)="onSearchFiller($event)"
-                            [api_search]="true"
-                        >
+                            [api_search]="true">
                         </app-search-field>
                     </div>
                 </div>
@@ -65,12 +77,19 @@
                     <div class="flex-even">
                         <div class="filter-pills pt-1">
                             <div class="filetype-pill pill">
-                                Ordered by Filename : <strong>{{ sorting_order == "asc" ? "Ascending" : "Descending" }}</strong>
+                                Ordered by Filename :
+                                <strong>{{
+                                    sorting_order == 'asc' ? 'Ascending' : 'Descending'
+                                }}</strong>
                             </div>
                         </div>
                     </div>
                     <div class="control text-right">
-                        <button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn"
+                            (click)="clearFilter()">
                             <span class="button-label"> Clear Filter </span>
                             <span class="fas fa-times ml-2 sm-text"></span>
                         </button>
@@ -81,7 +100,9 @@
                     <div *ngIf="!no_search_result; else noResultsFound">
                         <ng-container *ngIf="!is_loading; else loader">
                             <div class="d-flex flex-row thumbnail-parent-container">
-                                <div class="thumbnail-container m-2" *ngFor="let data of filler_group_contents">
+                                <div
+                                    class="thumbnail-container m-2"
+                                    *ngFor="let data of filler_group_contents">
                                     <app-thumbnail-card
                                         (click)="gotoFileURL(data.url)"
                                         [content_id]="data.fillerContentId"
@@ -95,17 +116,23 @@
                                         [is_view_only]="false"
                                         [is_filler]="true"
                                         (filler_delete)="deleteContent(data.fillerContentId)"
-                                        (converted)="videoConverted($event)"
-                                    ></app-thumbnail-card>
+                                        (converted)="videoConverted($event)"></app-thumbnail-card>
                                 </div>
                             </div>
                             <div class="full-width text-center">
                                 <button
                                     class="text-white p-3 bg-primary btn md-text pl-5 pr-5"
-                                    (click)="getFillerGroupContents(filler_group_id, filler_group_pagination.page + 1)"
+                                    (click)="
+                                        getFillerGroupContents(
+                                            filler_group_id,
+                                            filler_group_pagination.page + 1
+                                        )
+                                    "
                                     [disabled]="is_loading"
-                                    *ngIf="filler_group_contents.length > 0 && filler_group_pagination.hasNextPage"
-                                >
+                                    *ngIf="
+                                        filler_group_contents.length > 0 &&
+                                        filler_group_pagination.hasNextPage
+                                    ">
                                     <span>SHOW MORE</span>
                                 </button>
                             </div>
@@ -118,15 +145,20 @@
                     <div class="row mt-3 mb-2" *ngIf="playing_where.length > 0; else notInUse">
                         <div class="col-lg-3">
                             <mat-card>
-                                <div class="md-text font-weight-bold text-gray pl-3">FILLER FEEDS</div>
+                                <div class="md-text font-weight-bold text-gray pl-3">
+                                    FILLER FEEDS
+                                </div>
                                 <hr />
                                 <ul class="list-unstyled">
                                     <li
                                         class="sm-text p-3 clickable"
                                         *ngFor="let playwhere of playing_where; let i = index"
-                                        [ngClass]="selected_filler_feed_index == i ? 'active-selection' : ''"
-                                        (click)="selectFillerFeeds(playwhere, i)"
-                                    >
+                                        [ngClass]="
+                                            selected_filler_feed_index == i
+                                                ? 'active-selection'
+                                                : ''
+                                        "
+                                        (click)="selectFillerFeeds(playwhere, i)">
                                         {{ playwhere.fillerFeedName }}
                                     </li>
                                 </ul>
@@ -139,10 +171,14 @@
                                 <ul class="list-unstyled">
                                     <li
                                         class="sm-text p-3 clickable"
-                                        *ngFor="let playlist of playing_where_selected; let i = index"
-                                        [ngClass]="selected_playlist_index == i ? 'active-selection' : ''"
-                                        (click)="selectPlaylist(playlist, i)"
-                                    >
+                                        *ngFor="
+                                            let playlist of playing_where_selected;
+                                            let i = index
+                                        "
+                                        [ngClass]="
+                                            selected_playlist_index == i ? 'active-selection' : ''
+                                        "
+                                        (click)="selectPlaylist(playlist, i)">
                                         {{ playlist.playlistName }}
                                     </li>
                                 </ul>
@@ -156,9 +192,10 @@
                                     <li
                                         class="sm-text p-3 clickable"
                                         *ngFor="let host of playlist_selected; let i = index"
-                                        [ngClass]="selected_host_index == i ? 'active-selection' : ''"
-                                        (click)="selectHost(host, i)"
-                                    >
+                                        [ngClass]="
+                                            selected_host_index == i ? 'active-selection' : ''
+                                        "
+                                        (click)="selectHost(host, i)">
                                         {{ host.hostName }}
                                     </li>
                                 </ul>
@@ -172,10 +209,15 @@
                                     <li
                                         class="sm-text p-3 clickable"
                                         *ngFor="let license of host_selected; let i = index"
-                                        [ngClass]="selected_license_index == i ? 'active-selection' : ''"
-                                        (click)="selectLicenses(license, i)"
-                                    >
-                                        {{ license.licenseAlias ? license.licenseAlias : license.licenseId }}
+                                        [ngClass]="
+                                            selected_license_index == i ? 'active-selection' : ''
+                                        "
+                                        (click)="selectLicenses(license, i)">
+                                        {{
+                                            license.licenseAlias
+                                                ? license.licenseAlias
+                                                : license.licenseId
+                                        }}
                                     </li>
                                 </ul>
                             </mat-card>
@@ -190,7 +232,12 @@
 <ng-template #noContent>
     <div class="row">
         <div class="col-lg-12 mt-3">
-            <i class="md-text">There are no contents right now. <span *ngIf="!restricted">Click on the Upload Filler button above if you wish to add one.</span></i>
+            <i class="md-text"
+                >There are no contents right now.
+                <span *ngIf="!restricted"
+                    >Click on the Upload Filler button above if you wish to add one.</span
+                ></i
+            >
         </div>
     </div>
 </ng-template>
@@ -213,7 +260,10 @@
                     <i class="text-gray fa-5x far fa-file-alt"></i>
                 </div>
                 <h3 class="text-gray col-lg-12">No Records Found.</h3>
-                <span class="text-gray col-lg-12">Make sure to use this Filler Group in Filler Feeds >> Playlists >> Screen.</span>
+                <span class="text-gray col-lg-12"
+                    >Make sure to use this Filler Group in Filler Feeds >> Playlists >>
+                    Screen.</span
+                >
             </mat-card>
         </div>
     </div>
@@ -231,7 +281,10 @@
             <div class="col-lg-12 p-0 text-center text-gray pt-5">
                 <strong>P R O C E S S I N G</strong>
                 <br />
-                <span class="sm-text">Please wait while we filter our database for you. Filtering may take up to 30 seconds.</span>
+                <span class="sm-text"
+                    >Please wait while we filter our database for you. Filtering may take up to 30
+                    seconds.</span
+                >
             </div>
         </div>
         <app-spinner></app-spinner>

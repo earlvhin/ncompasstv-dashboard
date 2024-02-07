@@ -1,89 +1,120 @@
 <div id="news-form" class="news-form">
-	<form [formGroup]="news_form">
-		<div class="row mb-3">
-			<div *ngFor="let n of news_form_fields" class="{{ n.width }}">
-				<mat-form-field class="full-width mb-2" appearance="fill" *ngIf="!n.viewType">
-					<mat-label>{{ n.label }}</mat-label>
-					<input matInput formControlName="{{ n.form_control_name }}" [type]="n.type" [required]="n.required" autocomplete="off" />
-				</mat-form-field>
+    <form [formGroup]="news_form">
+        <div class="row mb-3">
+            <div *ngFor="let n of news_form_fields" class="{{ n.width }}">
+                <mat-form-field class="full-width mb-2" appearance="fill" *ngIf="!n.viewType">
+                    <mat-label>{{ n.label }}</mat-label>
+                    <input
+                        matInput
+                        formControlName="{{ n.form_control_name }}"
+                        [type]="n.type"
+                        [required]="n.required"
+                        autocomplete="off" />
+                </mat-form-field>
 
-				<div
-					class="full-width bg-gray mb-4 position-relative overflow-hidden upload-image-field"
-					appearance="fill"
-					*ngIf="n.viewType == 'upload'">
-					<img [src]="n.imageUri || '/assets/media-files/placeholder.png'" alt="Selected Image" />
-					<span class="sm-text label-when-filled" *ngIf="n.fileName">{{ n.label }}</span>
-					<p class="filename" [ngClass]="n.fileName ? 'filled' : ''" [title]="n.fileName">
-						{{ n.fileName ? (n.fileName | substring : 18) : '' || n.label }}
-					</p>
-					<button *ngIf="n.fileName" class="remove-button" (click)="$event.preventDefault(); removeSelectedMedia(n.form_control_name)">
-						<span class="fas fa-times"></span>
-					</button>
-					<button class="upload-button" (click)="$event.preventDefault(); openMediaLibraryModal(n.form_control_name)">
-						<span class="fas fa-camera"></span>
-					</button>
-				</div>
+                <div
+                    class="full-width bg-gray mb-4 position-relative overflow-hidden upload-image-field"
+                    appearance="fill"
+                    *ngIf="n.viewType == 'upload'">
+                    <img
+                        [src]="n.imageUri || '/assets/media-files/placeholder.png'"
+                        alt="Selected Image" />
+                    <span class="sm-text label-when-filled" *ngIf="n.fileName">{{ n.label }}</span>
+                    <p class="filename" [ngClass]="n.fileName ? 'filled' : ''" [title]="n.fileName">
+                        {{ n.fileName ? (n.fileName | substring: 18) : '' || n.label }}
+                    </p>
+                    <button
+                        *ngIf="n.fileName"
+                        class="remove-button"
+                        (click)="$event.preventDefault(); removeSelectedMedia(n.form_control_name)">
+                        <span class="fas fa-times"></span>
+                    </button>
+                    <button
+                        class="upload-button"
+                        (click)="
+                            $event.preventDefault(); openMediaLibraryModal(n.form_control_name)
+                        ">
+                        <span class="fas fa-camera"></span>
+                    </button>
+                </div>
 
-				<mat-form-field class="full-width content-filter-dropdown" appearance="fill" *ngIf="n.viewType == 'select'">
-					<mat-label>{{ n.label }}</mat-label>
-					<mat-select formControlName="{{ n.form_control_name }}" [disabled]="is_marking">
-						<mat-option *ngFor="let filter of n.options" [value]="filter.label">
-							{{ filter.label }}
-						</mat-option>
-					</mat-select>
-				</mat-form-field>
+                <mat-form-field
+                    class="full-width content-filter-dropdown"
+                    appearance="fill"
+                    *ngIf="n.viewType == 'select'">
+                    <mat-label>{{ n.label }}</mat-label>
+                    <mat-select formControlName="{{ n.form_control_name }}" [disabled]="is_marking">
+                        <mat-option *ngFor="let filter of n.options" [value]="filter.label">
+                            {{ filter.label }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
 
-				<mat-form-field class="full-width position-relative mb-2" appearance="fill" *ngIf="n.viewType == 'colorpicker'">
-					<mat-label>{{ n.label }}</mat-label>
+                <mat-form-field
+                    class="full-width position-relative mb-2"
+                    appearance="fill"
+                    *ngIf="n.viewType == 'colorpicker'">
+                    <mat-label>{{ n.label }}</mat-label>
 
-					<input
-						matInput
-						autocomplete="off"
-						formControlName="{{ n.form_control_name }}"
-						[type]="n.type"
-						[(colorPicker)]="n.colorValue"
-						(colorPickerChange)="colorPicker(n.colorValue, n.form_control_name)"
-						[cpAlphaChannel]="'enabled'"
-						[cpDisableInput]="true"
-						[value]="n.colorValue || ''" />
+                    <input
+                        matInput
+                        autocomplete="off"
+                        formControlName="{{ n.form_control_name }}"
+                        [type]="n.type"
+                        [(colorPicker)]="n.colorValue"
+                        (colorPickerChange)="colorPicker(n.colorValue, n.form_control_name)"
+                        [cpAlphaChannel]="'enabled'"
+                        [cpDisableInput]="true"
+                        [value]="n.colorValue || ''" />
 
-					<div class="color-showcase position-absolute" [style.background]="n.colorValue"></div>
-				</mat-form-field>
+                    <div
+                        class="color-showcase position-absolute"
+                        [style.background]="n.colorValue"></div>
+                </mat-form-field>
 
-				<div class="error-message">
-					<p class="sm-text m-0"></p>
-				</div>
-			</div>
-		</div>
+                <div class="error-message">
+                    <p class="sm-text m-0"></p>
+                </div>
+            </div>
+        </div>
 
-		<div *ngIf="is_validating_url" class="spinner-container d-flex justify-content-between mb-2">
-			<app-spinner [diameter]="35"></app-spinner>
-		</div>
+        <div
+            *ngIf="is_validating_url"
+            class="spinner-container d-flex justify-content-between mb-2">
+            <app-spinner [diameter]="35"></app-spinner>
+        </div>
 
-		<div class="alert alert-success" *ngIf="is_invalid_url === false && isUrlValidType === true">
-			<p class="sm-text font-weight-bold">Entered RSS URL is a supported format.</p>
-		</div>
+        <div
+            class="alert alert-success"
+            *ngIf="is_invalid_url === false && isUrlValidType === true">
+            <p class="sm-text font-weight-bold">Entered RSS URL is a supported format.</p>
+        </div>
 
-		<ng-container *ngIf="is_invalid_url && !is_validating_url">
-			<ng-container *ngIf="is_invalid_url && isUrlValidType; else isInvalidType">
-				<div class="alert alert-warning">
-					<p class="sm-text font-weight-bold">Entered Feed URL may be invalid.</p>
-				</div>
-			</ng-container>
-	
-			<ng-template #isInvalidType>
-				<div class="alert alert-danger" >
-					<p class="sm-text font-weight-bold">Feed URL Error! Possible reasons may be;</p>
-					<ul class="sm-text font-weight-bold pl-4">
-						<li>The feed URL does not start with "http" or "https"</li>
-						<li>Multiple HTTP protocols. Input one URL only.</li>
-					</ul>
-				</div>
-			</ng-template>
-		</ng-container>
+        <ng-container *ngIf="is_invalid_url && !is_validating_url">
+            <ng-container *ngIf="is_invalid_url && isUrlValidType; else isInvalidType">
+                <div class="alert alert-warning">
+                    <p class="sm-text font-weight-bold">Entered Feed URL may be invalid.</p>
+                </div>
+            </ng-container>
 
-		<button mat-button mat-raised-button matStepperNext class="theme-btn" (click)="generateNewsFeed()">
-			Next <span class="fas fa-long-arrow-right"></span>
-		</button>
-	</form>
+            <ng-template #isInvalidType>
+                <div class="alert alert-danger">
+                    <p class="sm-text font-weight-bold">Feed URL Error! Possible reasons may be;</p>
+                    <ul class="sm-text font-weight-bold pl-4">
+                        <li>The feed URL does not start with "http" or "https"</li>
+                        <li>Multiple HTTP protocols. Input one URL only.</li>
+                    </ul>
+                </div>
+            </ng-template>
+        </ng-container>
+
+        <button
+            mat-button
+            mat-raised-button
+            matStepperNext
+            class="theme-btn"
+            (click)="generateNewsFeed()">
+            Next <span class="fas fa-long-arrow-right"></span>
+        </button>
+    </form>
 </div>

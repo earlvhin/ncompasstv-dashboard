@@ -1,62 +1,60 @@
 .position-bottom {
-	position: absolute;
-	bottom: 0;
-	left: 15px;
+    position: absolute;
+    bottom: 0;
+    left: 15px;
 }
 
 .feed-url {
-	font-size: 12px;
+    font-size: 12px;
     text-decoration: underline !important;
-    color: #8EC641 !important;
-	cursor: pointer;
-	
-	&:hover {
-		opacity: 0.6;
-	}
+    color: #8ec641 !important;
+    cursor: pointer;
+
+    &:hover {
+        opacity: 0.6;
+    }
 }
 
 .overlayer {
-	position: relative;
+    position: relative;
 
-	.overlay {
-		background: rgba(#fff, 0.7);
-		height: 100%;
-		width: 100%;
-		left: 0;
-		top: 0;
-	}
+    .overlay {
+        background: rgba(#fff, 0.7);
+        height: 100%;
+        width: 100%;
+        left: 0;
+        top: 0;
+    }
 }
 
 .frequency-settings {
-	mat-label {
-		margin-right: 15px;
-	}
+    mat-label {
+        margin-right: 15px;
+    }
 
-	.total-contents-notice {
-		font-size: 12px;
-		margin-top: 12px;
-	}
+    .total-contents-notice {
+        font-size: 12px;
+        margin-top: 12px;
+    }
 }
 
 .play-credits {
+    .license-assignment-notice {
+        font-size: 12px;
+        margin-top: 12px;
 
-	.license-assignment-notice {
-		font-size: 12px;
-		margin-top: 12px;
+        .text-danger {
+            margin-bottom: 20px;
+        }
+    }
 
-		.text-danger {
-			margin-bottom: 20px;
-		}
-	}
+    .play-credits-settings {
+        mat-form-field {
+            margin-right: 20px;
+        }
+    }
 
-	.play-credits-settings {
-		mat-form-field {
-			margin-right: 20px; 
-		}
-	}
-
-	mat-hint {
-		font-size: 12px;
-	}
+    mat-hint {
+        font-size: 12px;
+    }
 }
-

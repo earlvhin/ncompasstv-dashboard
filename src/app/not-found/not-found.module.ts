@@ -6,13 +6,7 @@ import { ErrorNotFoundComponent } from './pages/error-not-found/error-not-found.
 import { NotFoundLayoutComponent } from './not-found-layout/not-found-layout.component';
 
 @NgModule({
-	declarations: [
-		ErrorNotFoundComponent,
-		NotFoundLayoutComponent
-	],
-	imports: [
-		CommonModule,
-		RouterModule.forChild(NOTFOUND_ROUTES)
-	]
+    declarations: [ErrorNotFoundComponent, NotFoundLayoutComponent],
+    imports: [CommonModule, RouterModule.forChild(NOTFOUND_ROUTES)],
 })
-export class NotfoundModule { }
+export class NotfoundModule {}

@@ -13,8 +13,15 @@ export class UI_TABLE_HOSTS_BY_DEALER {
     recently_added_host: object;
 
     constructor(
-        dealer_id: object, index: object, dealer_alias: object, business_name: object, contact_person: object, host_count: object, active: object, 
-        to_install: object, recently_added_host: object
+        dealer_id: object,
+        index: object,
+        dealer_alias: object,
+        business_name: object,
+        contact_person: object,
+        host_count: object,
+        active: object,
+        to_install: object,
+        recently_added_host: object,
     ) {
         this.dealer_id = dealer_id;
         this.index = index;

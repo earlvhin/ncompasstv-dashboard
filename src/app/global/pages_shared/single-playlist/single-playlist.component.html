@@ -1,126 +1,183 @@
 <ng-container>
-	<div class="theme-container" *ngIf="playlist; else loader">
-		<div class="title-section">
-			<div class="d-flex align-items-center">
-				<div class="flex-even">
-					<h1 class="page-title">{{ title }}</h1>
-					<p class="sm-text mb-0" *ngIf="description">{{ description }}</p>
-				</div>
-				<div class="flex-even text-right">
-					<button mat-button mat-raised-button class="theme-btn mr-2" (click)="clonePlaylist()" [disabled]="is_view_only">
-						Clone Playlist
-						<span class="fas fa-copy ml-2 sm-text"></span>
-					</button>
-					<button mat-button mat-raised-button class="theme-btn mr-2" (click)="pushUpdateToAllLicenses()" [disabled]="is_view_only">
-						Push Updates to All Licenses
-					</button>
-					<button mat-button mat-raised-button class="theme-btn" (click)="openUpdatePlaylistInfoModal()" [disabled]="is_view_only">
-						Edit Playlist Info
-						<span class="fas fa-edit ml-2 sm-text"></span>
-					</button>
-				</div>
-			</div>
-		</div>
-		
-		<div class="row no-gutters mt-3">
-			<div class="col-lg-12 custom-mat-tab">
-				<mat-tab-group>
-					<!-- <mat-tab label="Playlist Content"> -->
-					<mat-tab label="Contents">
-						<div class="position-relative pt-4">
-							<app-playlist-content-panel
-								*ngIf="!playlist_updating"
-								[dealer_id]="playlist.playlist.dealerId"
-								[is_admin]="is_admin"
-								[is_dealer]="is_dealer"
-								[is_view_only]="is_view_only"
-								[page]="'single-playlist'"
-								[playlist_id]="playlist.playlist.playlistId"
-								[playlist_contents]="playlist_content_and_blacklist"
-								[playlist_host_license]="playlist.hostLicenses"
-								(playlist_changes_saved)="reloadPlaylist()"
-								(reload_playlist)="reloadPlaylist()"
-								(reload_demo)="reloadDemo($event)"
-								(playlist_demo)="openPlaylistDemo($event)">
-							</app-playlist-content-panel>
-			
-							<div class="load_overlay d-flex align-items-center justify-content-center" *ngIf="playlist_updating">
-								<div class="text-center">
-									<app-spinner></app-spinner>
-									<h5 class="text-primary mt-4">Getting Playlist Data, Please Wait . . .</h5>
-								</div>
-							</div> <!--temp-->
-						</div>
-					</mat-tab>
-					<mat-tab label="Screens">
-						<mat-card class="mt-3" *ngIf="playlist_screens && playlist_screens.length > 0">
-							<app-data-table
-							[table_columns]="screen_table_column"
-							[table_data]="playlist_screen_table"
-							[new_table]="true">
-							</app-data-table>
-						</mat-card>
-					</mat-tab>
+    <div class="theme-container" *ngIf="playlist; else loader">
+        <div class="title-section">
+            <div class="d-flex align-items-center">
+                <div class="flex-even">
+                    <h1 class="page-title">{{ title }}</h1>
+                    <p class="sm-text mb-0" *ngIf="description">{{ description }}</p>
+                </div>
+                <div class="flex-even text-right">
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn mr-2"
+                        (click)="clonePlaylist()"
+                        [disabled]="is_view_only">
+                        Clone Playlist
+                        <span class="fas fa-copy ml-2 sm-text"></span>
+                    </button>
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn mr-2"
+                        (click)="pushUpdateToAllLicenses()"
+                        [disabled]="is_view_only">
+                        Push Updates to All Licenses
+                    </button>
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn"
+                        (click)="openUpdatePlaylistInfoModal()"
+                        [disabled]="is_view_only">
+                        Edit Playlist Info
+                        <span class="fas fa-edit ml-2 sm-text"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
 
-					<mat-tab label="Licenses" *ngIf="playlist_host_and_license.length > 0">
-						<button mat-button mat-raised-button class="theme-btn mr-2 mt-3" 
-							(click)="pushUpdateToSelectedLicenses()" 
-							[disabled]="license_to_update.length == 0 || is_view_only">
-							Push Updates to Selected Licenses
-						</button>
+        <div class="row no-gutters mt-3">
+            <div class="col-lg-12 custom-mat-tab">
+                <mat-tab-group>
+                    <!-- <mat-tab label="Playlist Content"> -->
+                    <mat-tab label="Contents">
+                        <div class="position-relative pt-4">
+                            <app-playlist-content-panel
+                                *ngIf="!playlist_updating"
+                                [dealer_id]="playlist.playlist.dealerId"
+                                [is_admin]="is_admin"
+                                [is_dealer]="is_dealer"
+                                [is_view_only]="is_view_only"
+                                [page]="'single-playlist'"
+                                [playlist_id]="playlist.playlist.playlistId"
+                                [playlist_contents]="playlist_content_and_blacklist"
+                                [playlist_host_license]="playlist.hostLicenses"
+                                (playlist_changes_saved)="reloadPlaylist()"
+                                (reload_playlist)="reloadPlaylist()"
+                                (reload_demo)="reloadDemo($event)"
+                                (playlist_demo)="openPlaylistDemo($event)">
+                            </app-playlist-content-panel>
 
-						<div class="row no-gutters">
-							<div class="col-lg-6">
-								<div class="mt-3" [ngClass]="playlist_updating ? 'overlay' : null">
-									<ng-container *ngIf="!playlist_updating; else loader_overlay">
-										<mat-accordion>
-											<mat-expansion-panel hideToggle [expanded]="false" *ngFor="let h of playlist_host_and_license">
-												<mat-expansion-panel-header>
-													<div class="d-flex w-100">
-														<div>
-															<a [routerLink]="[host_url, h.host.hostId]" target="_blank">
-																<h5 class="sm-text font-weight-bold mb-0">{{ h.host.name }}</h5>
-															</a>
-														</div>
-														<div class="flex-even text-right sm-text">
-															{{ h.licenses.length }} License<span *ngIf="h.licenses.length > 1">s</span>
-															<span class="fas fa-arrow-down ml-2"></span>
-														</div>
-													</div>
-												</mat-expansion-panel-header>
-											
-												<div class="px-3 py-3 border-top w-100">
-													<div *ngFor="let l of h.licenses" class="option-license-list w-100 mb-1">
-														<mat-checkbox class="sm-text" (change)="addToLicenseToPush($event, l.licenseId)">
-															<a [routerLink]="[license_url, l.licenseId]" target="_blank">
-																<h5 class="sm-text font-weight-bold mb-0">{{ l.alias || l.licenseKey }}</h5>
-															</a>
-														</mat-checkbox>
-													</div>
-												</div>
-											</mat-expansion-panel>
-										</mat-accordion>
-									</ng-container>
-		
-									<ng-template #loader_overlay>
-										<div class="loader-overlay">
-											<app-spinner></app-spinner>
-										</div>
-									</ng-template>
-								</div>
-							</div>
-						</div>
-					</mat-tab>
-				</mat-tab-group>
-			</div>
-		</div>
-	</div>
-	
-	<ng-template #loader>
-		<div class="vh-50 d-flex align-items-center p-5 w-100">
-			<div class="text-center w-100">
-				<app-spinner></app-spinner>
-			</div>
-		</div>
-	</ng-template>
+                            <div
+                                class="load_overlay d-flex align-items-center justify-content-center"
+                                *ngIf="playlist_updating">
+                                <div class="text-center">
+                                    <app-spinner></app-spinner>
+                                    <h5 class="text-primary mt-4">
+                                        Getting Playlist Data, Please Wait . . .
+                                    </h5>
+                                </div>
+                            </div>
+                            <!--temp-->
+                        </div>
+                    </mat-tab>
+                    <mat-tab label="Screens">
+                        <mat-card
+                            class="mt-3"
+                            *ngIf="playlist_screens && playlist_screens.length > 0">
+                            <app-data-table
+                                [table_columns]="screen_table_column"
+                                [table_data]="playlist_screen_table"
+                                [new_table]="true">
+                            </app-data-table>
+                        </mat-card>
+                    </mat-tab>
+
+                    <mat-tab label="Licenses" *ngIf="playlist_host_and_license.length > 0">
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn mr-2 mt-3"
+                            (click)="pushUpdateToSelectedLicenses()"
+                            [disabled]="license_to_update.length == 0 || is_view_only">
+                            Push Updates to Selected Licenses
+                        </button>
+
+                        <div class="row no-gutters">
+                            <div class="col-lg-6">
+                                <div class="mt-3" [ngClass]="playlist_updating ? 'overlay' : null">
+                                    <ng-container *ngIf="!playlist_updating; else loader_overlay">
+                                        <mat-accordion>
+                                            <mat-expansion-panel
+                                                hideToggle
+                                                [expanded]="false"
+                                                *ngFor="let h of playlist_host_and_license">
+                                                <mat-expansion-panel-header>
+                                                    <div class="d-flex w-100">
+                                                        <div>
+                                                            <a
+                                                                [routerLink]="[
+                                                                    host_url,
+                                                                    h.host.hostId
+                                                                ]"
+                                                                target="_blank">
+                                                                <h5
+                                                                    class="sm-text font-weight-bold mb-0">
+                                                                    {{ h.host.name }}
+                                                                </h5>
+                                                            </a>
+                                                        </div>
+                                                        <div class="flex-even text-right sm-text">
+                                                            {{ h.licenses.length }} License<span
+                                                                *ngIf="h.licenses.length > 1"
+                                                                >s</span
+                                                            >
+                                                            <span
+                                                                class="fas fa-arrow-down ml-2"></span>
+                                                        </div>
+                                                    </div>
+                                                </mat-expansion-panel-header>
+
+                                                <div class="px-3 py-3 border-top w-100">
+                                                    <div
+                                                        *ngFor="let l of h.licenses"
+                                                        class="option-license-list w-100 mb-1">
+                                                        <mat-checkbox
+                                                            class="sm-text"
+                                                            (change)="
+                                                                addToLicenseToPush(
+                                                                    $event,
+                                                                    l.licenseId
+                                                                )
+                                                            ">
+                                                            <a
+                                                                [routerLink]="[
+                                                                    license_url,
+                                                                    l.licenseId
+                                                                ]"
+                                                                target="_blank">
+                                                                <h5
+                                                                    class="sm-text font-weight-bold mb-0">
+                                                                    {{ l.alias || l.licenseKey }}
+                                                                </h5>
+                                                            </a>
+                                                        </mat-checkbox>
+                                                    </div>
+                                                </div>
+                                            </mat-expansion-panel>
+                                        </mat-accordion>
+                                    </ng-container>
+
+                                    <ng-template #loader_overlay>
+                                        <div class="loader-overlay">
+                                            <app-spinner></app-spinner>
+                                        </div>
+                                    </ng-template>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-tab>
+                </mat-tab-group>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #loader>
+        <div class="vh-50 d-flex align-items-center p-5 w-100">
+            <div class="text-center w-100">
+                <app-spinner></app-spinner>
+            </div>
+        </div>
+    </ng-template>
 </ng-container>

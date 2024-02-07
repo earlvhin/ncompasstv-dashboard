@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter  } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import Chart from 'chart.js/auto';
 import { Subject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
@@ -6,15 +6,14 @@ import 'chartjs-adapter-moment';
 import * as moment from 'moment';
 
 @Component({
-  selector: 'app-data-statistics-card',
-  templateUrl: './data-statistics-card.component.html',
-  styleUrls: ['./data-statistics-card.component.scss']
+    selector: 'app-data-statistics-card',
+    templateUrl: './data-statistics-card.component.html',
+    styleUrls: ['./data-statistics-card.component.scss'],
 })
 export class DataStatisticsCardComponent implements OnInit {
-
-	@Input() id: string;
-	@Input() sub_title: string;
-	@Input() total: string;
+    @Input() id: string;
+    @Input() sub_title: string;
+    @Input() total: string;
     @Input() label_array: [];
     @Input() value_array: [];
     @Input() month_array: [];
@@ -32,66 +31,66 @@ export class DataStatisticsCardComponent implements OnInit {
     @Input() picker: boolean = false;
 
     start: any;
-    end:any;
+    end: any;
 
-    @Output() click_graph: EventEmitter<any> = new EventEmitter;
-    @Output() no_data: EventEmitter<any> = new EventEmitter;
+    @Output() click_graph: EventEmitter<any> = new EventEmitter();
+    @Output() no_data: EventEmitter<any> = new EventEmitter();
 
     averaging: string;
     generated: boolean = false;
 
-	private chart: Chart;
-	protected _unsubscribe = new Subject<void>();
+    private chart: Chart;
+    protected _unsubscribe = new Subject<void>();
 
-	constructor(
-        private _changeDetector: ChangeDetectorRef
-	) { }
+    constructor(private _changeDetector: ChangeDetectorRef) {}
 
-	ngOnInit() {
+    ngOnInit() {
         this.averaging = this.average;
         this._changeDetector.markForCheck();
-	}
+    }
 
     ngOnChanges() {
-        this.start = moment(this.s_date).format("MMM Do YY");
-        this.end = moment(this.e_date).format("MMM Do YY");
+        this.start = moment(this.s_date).format('MMM Do YY');
+        this.end = moment(this.e_date).format('MMM Do YY');
         this.averaging = this.average;
         this.loading_graph = this.loading_graph;
-        if(this.chart) {
+        if (this.chart) {
             this.chart.destroy();
             this.generateChart();
         }
     }
 
-	ngAfterViewInit() {
-		this.generateChart();
-	}
+    ngAfterViewInit() {
+        this.generateChart();
+    }
 
-	ngOnDestroy() {
-		this.chart.destroy();
-	}
+    ngOnDestroy() {
+        this.chart.destroy();
+    }
 
     time_conversion() {
-        this.s_date = new Date(this.s_date)
-        return this.s_date.getTime()
+        this.s_date = new Date(this.s_date);
+        return this.s_date.getTime();
     }
-    
+
     time_conversion_end() {
-        this.e_date = new Date(this.e_date)
-        return this.e_date.getTime()
+        this.e_date = new Date(this.e_date);
+        return this.e_date.getTime();
     }
 
-	generateChart() {
-        const canvas =  <HTMLCanvasElement> document.getElementById(`stat-${this.id}`) as HTMLCanvasElement;
+    generateChart() {
+        const canvas = (<HTMLCanvasElement>(
+            document.getElementById(`stat-${this.id}`)
+        )) as HTMLCanvasElement;
         const labels = this.label_array;
-		const data = this.value_array;
-        const whole : any = this.whole_data;
+        const data = this.value_array;
+        const whole: any = this.whole_data;
 
-        if(whole) {
+        if (whole) {
             this.no_data.emit(true);
         }
 
-        if(this.installation) {
+        if (this.installation) {
             var min_value = this.time_conversion();
             var max_value = this.time_conversion_end();
 
@@ -102,15 +101,16 @@ export class DataStatisticsCardComponent implements OnInit {
                 type: 'line',
                 data: {
                     labels: labels,
-                    datasets: [{
-                        label: '',
-                        backgroundColor: 'rgb(142, 198, 65)',
-                        borderColor: 'rgb(64, 109, 2)',
-                        data,
-                    },
-                    ]
+                    datasets: [
+                        {
+                            label: '',
+                            backgroundColor: 'rgb(142, 198, 65)',
+                            borderColor: 'rgb(64, 109, 2)',
+                            data,
+                        },
+                    ],
                 },
-                
+
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
@@ -119,28 +119,27 @@ export class DataStatisticsCardComponent implements OnInit {
                             display: false,
                             labels: {
                                 boxWidth: 10,
-                            }
+                            },
                         },
                         tooltip: {
                             callbacks: {
-                                afterTitle: function(val) {
-                                    return "Host: " + whole[val[0].dataIndex].hostName;
+                                afterTitle: function (val) {
+                                    return 'Host: ' + whole[val[0].dataIndex].hostName;
                                 },
-                                beforeBody: function(val) {
-                                    return "Dealer: " + whole[val[0].dataIndex].businessName;
-                                }
-                            }
+                                beforeBody: function (val) {
+                                    return 'Dealer: ' + whole[val[0].dataIndex].businessName;
+                                },
+                            },
                         },
-                    
-                   },
+                    },
                     animations: {
                         tension: {
                             duration: 1000,
                             easing: 'linear',
                             from: 1,
                             to: 0,
-                            loop: false
-                        }
+                            loop: false,
+                        },
                     },
                     scales: {
                         y: {
@@ -150,46 +149,44 @@ export class DataStatisticsCardComponent implements OnInit {
                                 tooltipFormat: 'MMMM, DD, YYYY',
                                 displayFormats: {
                                     day: 'MMM YYYY',
-                                }
-
+                                },
                             },
                             min: min_value,
                             max: max_value,
                             ticks: {
-                                autoSkip: false
-                            }
+                                autoSkip: false,
+                            },
                         },
                         x: {
                             ticks: {
                                 autoSkip: false,
-                                minRotation: 70
-                            }
-                        }
-                    }       
+                                minRotation: 70,
+                            },
+                        },
+                    },
                 },
             });
             canvas.addEventListener('wheel', (e) => {
                 const scale = this.chart.scales.y;
                 const deltaY = e.deltaY;
-              
+
                 const stepSize = (scale.max - scale.min) * 0.05;
                 const newMin = scale.min + (deltaY > 0 ? stepSize : -stepSize);
                 const newMax = scale.max + (deltaY > 0 ? stepSize : -stepSize);
-              
+
                 this.chart.options.animation = false;
                 this.chart.options.scales.y.min = newMin;
                 this.chart.options.scales.y.max = newMax;
                 this.chart.update();
-              
+
                 e.preventDefault();
-              });
-            
+            });
         } else {
             const footer = (tooltipItems) => {
                 let sum = 0;
 
                 tooltipItems.forEach((t) => {
-                    sum = t.dataIndex > 0 ? this.month_array[t.dataIndex] : t.parsed.y
+                    sum = t.dataIndex > 0 ? this.month_array[t.dataIndex] : t.parsed.y;
                 });
                 return 'Added this month: ' + sum;
             };
@@ -198,16 +195,18 @@ export class DataStatisticsCardComponent implements OnInit {
                 type: 'line',
                 data: {
                     labels: labels,
-                    datasets: [{
-                        label: "Overall Total",
-                        backgroundColor: 'rgb(142, 198, 65)',
-                        borderColor: 'rgb(64, 109, 2)',
-                        data
-                    }],
+                    datasets: [
+                        {
+                            label: 'Overall Total',
+                            backgroundColor: 'rgb(142, 198, 65)',
+                            borderColor: 'rgb(64, 109, 2)',
+                            data,
+                        },
+                    ],
                 },
                 options: {
                     onClick: (e: any) => {
-                        if(this.no_click) {
+                        if (this.no_click) {
                         } else {
                             this.click_graph.emit(e.chart.tooltip.dataPoints[0].dataIndex);
                         }
@@ -219,39 +218,39 @@ export class DataStatisticsCardComponent implements OnInit {
                             display: false,
                             labels: {
                                 boxWidth: 10,
-                            }
+                            },
                         },
                         tooltip: {
                             callbacks: {
-                                footer
-                            }
-                        }
-                   },
+                                footer,
+                            },
+                        },
+                    },
                     animations: {
                         tension: {
                             duration: 1000,
                             easing: 'linear',
                             from: 0,
                             to: 0,
-                            loop: false
-                        }
+                            loop: false,
+                        },
                     },
                     scales: {
                         x: {
                             ticks: {
-                                autoSkip: false
-                            }
-                        }
-                    }
+                                autoSkip: false,
+                            },
+                        },
+                    },
                 },
             });
         }
     }
 
     calculate_width(data_length: number): number {
-        const data_point_width = 18
+        const data_point_width = 18;
         const calculated_width = data_point_width * data_length;
         const min_width = 300;
         return Math.max(min_width, calculated_width);
-      }
+    }
 }

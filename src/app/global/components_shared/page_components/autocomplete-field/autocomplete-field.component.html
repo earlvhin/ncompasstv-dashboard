@@ -1,4 +1,6 @@
-<mat-form-field class="full-width custom-autocomplete p-relative" [appearance]="isLocator ? 'fill' : 'standard'">
+<mat-form-field
+    class="full-width custom-autocomplete p-relative"
+    [appearance]="isLocator ? 'fill' : 'standard'">
     <mat-label [ngClass]="white_label ? 'text-white' : ''">{{ label }}</mat-label>
 
     <input
@@ -14,8 +16,7 @@
         [placeholder]="placeholder"
         (keyup)="search($event)"
         (click)="initializeSearch($event)"
-        [required]="required"
-    />
+        [required]="required" />
 
     <input
         id="autocomplete-field"
@@ -30,8 +31,7 @@
         [placeholder]="placeholder"
         (keyup)="search_by_api()"
         (click)="initializeSearch($event)"
-        [required]="required"
-    />
+        [required]="required" />
 
     <div class="ac-options p-absolute full-width material-shadow" (scroll)="onScroll($event)">
         <div *ngIf="loading_search">
@@ -40,15 +40,18 @@
             </div>
         </div>
         <div *ngIf="!loading_search && !disabled" class="skip-blur">
-            <ul class="m-0 playlist-search-padding text-dark list-unstyled" *ngIf="data_reference.length > 0 && !initial_load; else no_results">
+            <ul
+                class="m-0 playlist-search-padding text-dark list-unstyled"
+                *ngIf="data_reference.length > 0 && !initial_load; else no_results">
                 <li
                     class="cursor-pointer p-3"
                     *ngFor="let s of search_result"
                     (click)="dataSelected($event)"
                     [attr.data-text]="s[primary_keyword]"
-                    [attr.data-value]="s[key_of_value]"
-                >
-                    <span *ngIf="display_role">{{ s[role] == 1 ? "A- " : s[role] == 2 ? "D- " : "DA- " }}</span
+                    [attr.data-value]="s[key_of_value]">
+                    <span *ngIf="display_role">{{
+                        s[role] == 1 ? 'A- ' : s[role] == 2 ? 'D- ' : 'DA- '
+                    }}</span
                     >{{ s[primary_keyword] }}
                 </li>
                 <div *ngIf="loading_data">

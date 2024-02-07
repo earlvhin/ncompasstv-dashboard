@@ -1,94 +1,98 @@
 <div class="theme-container">
-	<div class="title-section">
-		<div class="d-flex align-items-center">
-			<div class="flex-even">
-				<h1 class="page-title">Installations</h1>
-			</div>
-		</div>
-		<hr class="my-4" />
-	</div>
+    <div class="title-section">
+        <div class="d-flex align-items-center">
+            <div class="flex-even">
+                <h1 class="page-title">Installations</h1>
+            </div>
+        </div>
+        <hr class="my-4" />
+    </div>
 
-	<div>
-		<div class="row">
-			<div class="col-12 col-lg">
-				<mat-card class="h-100 dealer-card">
-					<app-data-card-count
-						*ngIf="installation_count; else small_loader"
-						[data_value]="installation_count.scheduled"
-						[data_label]="installation_count.scheduled_label"
-						[data_description]="installation_count.scheduled_description">
-					</app-data-card-count>
-				</mat-card>
-			</div>
-			<div class="col-12 col-lg">
-				<mat-card class="h-100 dealer-card">
-					<app-data-card-count
-						*ngIf="installation_count; else small_loader"
-						[data_value]="installation_count.prev"
-						[data_label]="installation_count.prev_label"
-						[data_description]="installation_count.prev_description">
-					</app-data-card-count>
-				</mat-card>
-			</div>
-			<div class="col-12 col-lg">
-				<mat-card class="h-100 dealer-card">
-					<app-data-card-count
-						*ngIf="installation_count; else small_loader"
-						[data_value]="installation_count.current"
-						[data_label]="installation_count.current_label"
-						[data_description]="installation_count.current_description">
-					</app-data-card-count>
-				</mat-card>
-			</div>
-			<div class="col-12 col-lg">
-				<mat-card class="h-100 dealer-card">
-					<app-data-card-count
-						*ngIf="installation_count; else small_loader"
-						[data_value]="installation_count.next"
-						[data_label]="installation_count.next_label"
-						[data_description]="installation_count.next_description">
-					</app-data-card-count>
-				</mat-card>
-			</div>
-		</div>
+    <div>
+        <div class="row">
+            <div class="col-12 col-lg">
+                <mat-card class="h-100 dealer-card">
+                    <app-data-card-count
+                        *ngIf="installation_count; else small_loader"
+                        [data_value]="installation_count.scheduled"
+                        [data_label]="installation_count.scheduled_label"
+                        [data_description]="installation_count.scheduled_description">
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+            <div class="col-12 col-lg">
+                <mat-card class="h-100 dealer-card">
+                    <app-data-card-count
+                        *ngIf="installation_count; else small_loader"
+                        [data_value]="installation_count.prev"
+                        [data_label]="installation_count.prev_label"
+                        [data_description]="installation_count.prev_description">
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+            <div class="col-12 col-lg">
+                <mat-card class="h-100 dealer-card">
+                    <app-data-card-count
+                        *ngIf="installation_count; else small_loader"
+                        [data_value]="installation_count.current"
+                        [data_label]="installation_count.current_label"
+                        [data_description]="installation_count.current_description">
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+            <div class="col-12 col-lg">
+                <mat-card class="h-100 dealer-card">
+                    <app-data-card-count
+                        *ngIf="installation_count; else small_loader"
+                        [data_value]="installation_count.next"
+                        [data_label]="installation_count.next_label"
+                        [data_description]="installation_count.next_description">
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+        </div>
 
-		<hr class="my-4" />
+        <hr class="my-4" />
 
-		<div class="col-lg-12 custom-mat-tab p-0">
-			<mat-tab-group dynamicHeight #tabGroup animationDuration="0ms" (selectedTabChange)="resetCurrentFilters($event)">
-				<ng-container *ngFor="let tab of tabs">
-					<mat-tab [label]="tab.label">
-						<ng-template matTabContent>
-							<app-tab-content
-								[currentFilters]="currentFilters"
-								[filteredData]="filteredData"
-								[isExporting]="isExporting"
-								[initialLoad]="initialLoad"
-								[installation_count]="installation_count"
-								[installations]="installations"
-								[isDatePickerEnabled]="tab.isDatePickerEnabled"
-								[isDatePickerViewEnabled]="tab.isDatePickerViewEnabled"
-								[pagingData]="pagingData"
-								[resetDatePicker]="onResetDatePicker.asObservable()"
-								[searching]="searching"
-								[tableColumns]="installationTableColumns"
-								(onExport)="exportTable(tab.name)"
-								(onLoadInitialData)="loadInstallationsData(tab.name)"
-								(onSearch)="searchInstallations($event, tab.name)"
-								(onSelectDate)="dateSelected($event, tab.name)"
-								(onSelectDateView)="dateViewSelected($event)"
-								(onSelectPage)="pageSelected($event, tab.name)"
-								(onSortByColumnAndOrder)="sortByColumnAndOrder($event, tab.name)"
-								(onTableRefresh)="loadInstallationsData(tab.name)">
-							</app-tab-content>
-						</ng-template>
-					</mat-tab>
-				</ng-container>
-			</mat-tab-group>
-		</div>
-	</div>
+        <div class="col-lg-12 custom-mat-tab p-0">
+            <mat-tab-group
+                dynamicHeight
+                #tabGroup
+                animationDuration="0ms"
+                (selectedTabChange)="resetCurrentFilters($event)">
+                <ng-container *ngFor="let tab of tabs">
+                    <mat-tab [label]="tab.label">
+                        <ng-template matTabContent>
+                            <app-tab-content
+                                [currentFilters]="currentFilters"
+                                [filteredData]="filteredData"
+                                [isExporting]="isExporting"
+                                [initialLoad]="initialLoad"
+                                [installation_count]="installation_count"
+                                [installations]="installations"
+                                [isDatePickerEnabled]="tab.isDatePickerEnabled"
+                                [isDatePickerViewEnabled]="tab.isDatePickerViewEnabled"
+                                [pagingData]="pagingData"
+                                [resetDatePicker]="onResetDatePicker.asObservable()"
+                                [searching]="searching"
+                                [tableColumns]="installationTableColumns"
+                                (onExport)="exportTable(tab.name)"
+                                (onLoadInitialData)="loadInstallationsData(tab.name)"
+                                (onSearch)="searchInstallations($event, tab.name)"
+                                (onSelectDate)="dateSelected($event, tab.name)"
+                                (onSelectDateView)="dateViewSelected($event)"
+                                (onSelectPage)="pageSelected($event, tab.name)"
+                                (onSortByColumnAndOrder)="sortByColumnAndOrder($event, tab.name)"
+                                (onTableRefresh)="loadInstallationsData(tab.name)">
+                            </app-tab-content>
+                        </ng-template>
+                    </mat-tab>
+                </ng-container>
+            </mat-tab-group>
+        </div>
+    </div>
 </div>
 
 <ng-template #small_loader>
-	<div class="py-4 white-bg"><app-spinner [diameter]="60"></app-spinner></div>
+    <div class="py-4 white-bg"><app-spinner [diameter]="60"></app-spinner></div>
 </ng-template>

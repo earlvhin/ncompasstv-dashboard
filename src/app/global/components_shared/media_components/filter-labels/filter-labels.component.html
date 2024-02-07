@@ -1,36 +1,42 @@
-<div class="d-flex align-items-center p-2 bg-gray-2" 
-	*ngIf="filters.filetype || filters.order || filters.user.dealer || filters.user.host || filters.user.advertiser || filters.feedId">
-	<div class="filter-pills">
-		<div class="filetype-pill pill" *ngIf="filters.filetype">
-			File Type: <strong>{{ filters.filetype }}</strong>
-		</div>
+<div
+    class="d-flex align-items-center p-2 bg-gray-2"
+    *ngIf="
+        filters.filetype ||
+        filters.order ||
+        filters.user.dealer ||
+        filters.user.host ||
+        filters.user.advertiser ||
+        filters.feedId
+    ">
+    <div class="filter-pills">
+        <div class="filetype-pill pill" *ngIf="filters.filetype">
+            File Type: <strong>{{ filters.filetype }}</strong>
+        </div>
 
-		<div class="order-pill pill" *ngIf="filters.order">
-			Order: <strong>{{ filters.order }}</strong>
-		</div>
+        <div class="order-pill pill" *ngIf="filters.order">
+            Order: <strong>{{ filters.order }}</strong>
+        </div>
 
-		<div class="dealer-pill pill" *ngIf="filters.user.dealer">
-			Dealer: <strong>{{ filters.user.dealer }}</strong>
-		</div>
+        <div class="dealer-pill pill" *ngIf="filters.user.dealer">
+            Dealer: <strong>{{ filters.user.dealer }}</strong>
+        </div>
 
-		<div class="host-pill pill" *ngIf="filters.user.host">
-			Host: <strong>{{ filters.user.host }}</strong>
-		</div>
+        <div class="host-pill pill" *ngIf="filters.user.host">
+            Host: <strong>{{ filters.user.host }}</strong>
+        </div>
 
-		<div class="advertiser-pill pill" *ngIf="filters.user.advertiser">
-			Advertiser: <strong>{{ filters.user.advertiser }}</strong>
-		</div>
+        <div class="advertiser-pill pill" *ngIf="filters.user.advertiser">
+            Advertiser: <strong>{{ filters.user.advertiser }}</strong>
+        </div>
 
-		<div class="fiiler-pill pill" *ngIf="filters.feedId">
-			Filler: <strong>{{ filters.feedTitle }}</strong>
-		</div>
-	</div>
-	<div class="control flex-even text-right">
-		<button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
-			<span class="button-label">
-				Clear Filter
-			</span>
-			<span class="fas fa-times ml-2 sm-text"></span>
-		</button>
-	</div>
+        <div class="fiiler-pill pill" *ngIf="filters.feedId">
+            Filler: <strong>{{ filters.feedTitle }}</strong>
+        </div>
+    </div>
+    <div class="control flex-even text-right">
+        <button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
+            <span class="button-label"> Clear Filter </span>
+            <span class="fas fa-times ml-2 sm-text"></span>
+        </button>
+    </div>
 </div>

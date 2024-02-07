@@ -1,77 +1,82 @@
 .action-buttons {
-	text-align: center;
+    text-align: center;
 
-	mat-icon {
-		cursor: pointer;
-		font-size: 15px;
-	}
+    mat-icon {
+        cursor: pointer;
+        font-size: 15px;
+    }
 }
 
 .clickable {
-	cursor: pointer;
+    cursor: pointer;
 
-	&:hover {
-		color: #8EC641 !important;
-	}
-
+    &:hover {
+        color: #8ec641 !important;
+    }
 }
 
 .tag-color-text {
-	color: #ffffff;
-	text-shadow: black -1px 0px, black 0px 1px, black 1px 0px, black 0px -1px;
+    color: #ffffff;
+    text-shadow:
+        black -1px 0px,
+        black 0px 1px,
+        black 1px 0px,
+        black 0px -1px;
 }
 
 table {
+    .tags {
+        .tag {
+            margin-right: 5px;
+            margin-bottom: 5px;
+            padding: 1px 5px 1px 7px;
+            font-size: 10px;
+            text-shadow:
+                black -1px 0px,
+                black 0px 1px,
+                black 1px 0px,
+                black 0px -1px;
+            color: white;
+            border: 1px solid gray;
 
-	.tags {
+            &.dealer {
+                border-radius: 5px;
+            }
 
-		.tag {
-			margin-right: 5px;
-			margin-bottom: 5px;
-			padding: 1px 5px 1px 7px;
-			font-size: 10px;
-			text-shadow: black -1px 0px, black 0px 1px, black 1px 0px, black 0px -1px;
-			color: white;
-			border: 1px solid gray;
+            &.clickable {
+                padding: 3px 7px 3px 7px;
+            }
+        }
 
-			&.dealer {
-				border-radius: 5px;
-			}
+        mat-icon {
+            font-size: 12px;
+        }
 
-			&.clickable {
-				padding: 3px 7px 3px 7px;
-			}
-		}
+        .remove-btn {
+            text-align: center;
 
-		mat-icon {
-			font-size: 12px;
-		}
-
-		.remove-btn {
-			text-align: center;
-	
-			mat-icon {
-				line-height: 25px;
-			}
-		}
-	}
+            mat-icon {
+                line-height: 25px;
+            }
+        }
+    }
 }
 
 .owner-name-container {
-	.owner-icon {
-		flex-basis: 20px;
-		font-size: 13px;
-		background-color: black;
-		color: white;
-		border-radius: 50%;
-		width: 20px;
-		height: 20px;
-		text-align: center;
-		line-height: 20px;
-		margin-right: 5px;
-	}
+    .owner-icon {
+        flex-basis: 20px;
+        font-size: 13px;
+        background-color: black;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        text-align: center;
+        line-height: 20px;
+        margin-right: 5px;
+    }
 
-	a {
-		flex-basis: 95%;
-	}
+    a {
+        flex-basis: 95%;
+    }
 }

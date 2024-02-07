@@ -1,3 +1,3 @@
 export const AUTOCOMPLETE_ACTIONS = {
-    static: 'static_display'
-}
+    static: 'static_display',
+};

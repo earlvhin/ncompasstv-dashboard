@@ -1,141 +1,141 @@
 .search-result {
-	background-color: rgba(255, 255, 255, 0.5);
-	padding: 15px;
-	margin-top: 8px;
-	max-height: 425px;
-	overflow: auto;
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 15px;
+    margin-top: 8px;
+    max-height: 425px;
+    overflow: auto;
 }
 
 .host-licenses-list {
-	margin-left: 22px;
+    margin-left: 22px;
 
-	.pi-status {
-		margin-left: 10px;
-		border-radius: 5px;
-		background: #ee5454;
-		font-size: 12px;
-		padding: 1px 7px;
+    .pi-status {
+        margin-left: 10px;
+        border-radius: 5px;
+        background: #ee5454;
+        font-size: 12px;
+        padding: 1px 7px;
 
-		&.online {
-			background: #8ec641;
-		}
-	}
+        &.online {
+            background: #8ec641;
+        }
+    }
 }
 
 .loader-sm-no-text {
-	margin: 0 auto;
+    margin: 0 auto;
 }
 
 .coordinates {
-	color: #777;
+    color: #777;
 }
 
 .float-container {
-	padding: 20px;
-	float: right;
+    padding: 20px;
+    float: right;
 }
 
 .map-status {
-	height: 18px;
+    height: 18px;
 }
 
 .map-header-status {
-	height: 30px;
+    height: 30px;
 }
 
 #wrapper {
-	position: relative;
+    position: relative;
 }
 #over_map {
-	position: absolute;
-	top: 10px;
-	left: 10px;
-	z-index: 99;
-	width: 400px;
-	padding-bottom: 10px;
-	height: 600px;
-	overflow: visible;
-	transition: width 0.5s;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 99;
+    width: 400px;
+    padding-bottom: 10px;
+    height: 600px;
+    overflow: visible;
+    transition: width 0.5s;
 }
 
 .minimize-overlay {
-	width: 0px !important;
-	transition: width 0.5s;
-	overflow: hidden !important;
+    width: 0px !important;
+    transition: width 0.5s;
+    overflow: hidden !important;
 }
 
 .search-button {
-	background: #8ec641;
-	color: #ffffff;
-	width: 38px;
-	height: 44px;
-	justify-content: center;
-	display: flex;
-	align-items: center;
+    background: #8ec641;
+    color: #ffffff;
+    width: 38px;
+    height: 44px;
+    justify-content: center;
+    display: flex;
+    align-items: center;
 }
 
 .search-bar {
-	background-color: rgba(255, 255, 255, 0.8);
-	form {
-		margin-bottom: 10px;
-	}
+    background-color: rgba(255, 255, 255, 0.8);
+    form {
+        margin-bottom: 10px;
+    }
 }
 
 .panelBorder {
-	border-style: solid;
-	border-width: 3px;
-	&.online {
-		border-color: #25a61c;
-	}
-	&.onlinemany {
-		border-color: #83b229;
-	}
-	&.onlinefew {
-		border-color: #ebed1c;
-	}
-	&.offline {
-		border-color: #ec122b;
-	}
+    border-style: solid;
+    border-width: 3px;
+    &.online {
+        border-color: #25a61c;
+    }
+    &.onlinemany {
+        border-color: #83b229;
+    }
+    &.onlinefew {
+        border-color: #ebed1c;
+    }
+    &.offline {
+        border-color: #ec122b;
+    }
 }
 
 .preview {
-	mat-icon {
-		font-size: 12px;
-	}
+    mat-icon {
+        font-size: 12px;
+    }
 
-	.remove-btn {
-		text-align: center;
+    .remove-btn {
+        text-align: center;
 
-		mat-icon {
-			line-height: 25px;
-		}
-	}
+        mat-icon {
+            line-height: 25px;
+        }
+    }
 
-	.dealers-row {
-		.selected-dealers-container {
-			.dealer {
-				margin-right: 5px;
-				margin-bottom: 5px;
-				padding: 1px 5px 1px 7px;
-				font-size: 12px;
-				border-radius: 5px;
-				color: white;
-				border: 1px solid gray;
-				background-color: #8ec641;
-			}
+    .dealers-row {
+        .selected-dealers-container {
+            .dealer {
+                margin-right: 5px;
+                margin-bottom: 5px;
+                padding: 1px 5px 1px 7px;
+                font-size: 12px;
+                border-radius: 5px;
+                color: white;
+                border: 1px solid gray;
+                background-color: #8ec641;
+            }
 
-			.disable-dealer {
-				pointer-events: none;
-				background-color: gray;
-			}
-		}
-	}
+            .disable-dealer {
+                pointer-events: none;
+                background-color: gray;
+            }
+        }
+    }
 }
 
 .pb-20 {
-	padding-bottom: 20px;
+    padding-bottom: 20px;
 }
 
 .text-pending {
-	color: #fa8415;
+    color: #fa8415;
 }

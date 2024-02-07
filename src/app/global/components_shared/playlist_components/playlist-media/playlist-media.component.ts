@@ -4,7 +4,12 @@ import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { API_CONTENT, UI_ROLE_DEFINITION } from 'src/app/global/models';
-import { AuthService, ContentService, FillerService, PlaylistService } from 'src/app/global/services';
+import {
+    AuthService,
+    ContentService,
+    FillerService,
+    PlaylistService,
+} from 'src/app/global/services';
 import { MediaPlaywhereComponent } from '../media-playwhere/media-playwhere.component';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
 
@@ -48,13 +53,16 @@ export class PlaylistMediaComponent implements OnInit {
         private _auth: AuthService,
         private _filler: FillerService,
         private _playlist: PlaylistService,
-        private _currentDialog: MatDialogRef<PlaylistMediaComponent>
+        private _currentDialog: MatDialogRef<PlaylistMediaComponent>,
     ) {}
 
     ngOnInit() {
         // this.checkIfPlaylistHasFillers();
         this.onTabChanged(this.isActiveTab);
-        if (this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.administrator || this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.tech) {
+        if (
+            this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.administrator ||
+            this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.tech
+        ) {
             this.getFloatingContents();
             this.active_filler = 1;
         } else {
@@ -125,7 +133,9 @@ export class PlaylistMediaComponent implements OnInit {
             this.media_files = this.media_files.concat(this.floating_contents);
         } else {
             this.show_floating = e.checked;
-            this.media_files = this.media_files.filter((i) => i.dealerId !== null && i.dealerId !== '');
+            this.media_files = this.media_files.filter(
+                (i) => i.dealerId !== null && i.dealerId !== '',
+            );
         }
     }
 
@@ -136,7 +146,9 @@ export class PlaylistMediaComponent implements OnInit {
         if (e.target.value !== '') {
             this.media_files = this.media_files.filter((i) => {
                 if (i.fileName) {
-                    return this.removeFilenameHandle(i.fileName).toLowerCase().includes(e.target.value.toLowerCase());
+                    return this.removeFilenameHandle(i.fileName)
+                        .toLowerCase()
+                        .includes(e.target.value.toLowerCase());
                 } else if (i.title) {
                     return i.title.toLowerCase().includes(e.target.value.toLowerCase());
                 }
@@ -202,7 +214,10 @@ export class PlaylistMediaComponent implements OnInit {
 
         // for swap content
         if (this.selected_contents.length <= 0) return this.selected_contents.push(e);
-        if (e.playlistContentId === this.selected_contents[0].playlistContentId) return (this.selected_contents = this.selected_contents.filter((content) => content !== e));
+        if (e.playlistContentId === this.selected_contents[0].playlistContentId)
+            return (this.selected_contents = this.selected_contents.filter(
+                (content) => content !== e,
+            ));
     }
 
     removeFilenameHandle(file_name) {
@@ -260,7 +275,7 @@ export class PlaylistMediaComponent implements OnInit {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             )
             .add(() => {
                 //map existing contents to comply with format
@@ -309,11 +324,16 @@ export class PlaylistMediaComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (data: any) => {
-                    if (data) this.openConfirmationModal('success', 'Success!', 'Filler Feed successfully added to playlist.');
+                    if (data)
+                        this.openConfirmationModal(
+                            'success',
+                            'Success!',
+                            'Filler Feed successfully added to playlist.',
+                        );
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 

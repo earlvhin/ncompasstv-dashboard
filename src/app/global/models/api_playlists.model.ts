@@ -4,7 +4,7 @@ export class API_PLAYLIST {
     playlistId: string;
     dealerId: string;
     playlistName?: string;
-	name?: string;
+    name?: string;
     playlistDescription: string;
     playlistType: string;
     dateCreated: string;

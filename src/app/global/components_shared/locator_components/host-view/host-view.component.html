@@ -1,149 +1,169 @@
 <div class="content-section">
-	<div class="col-lg-12 p-0">
-		<div class="row mb-2">
-			<div class="col-lg-5">
-				<mat-form-field class="col-lg-5 full-width content-filter-dropdown">
-					<mat-label>Search Options</mat-label>
-					<mat-select (selectionChange)="onSearchOption($event.value)" [(value)]="currentSearchOption">
-						<mat-option [value]="'host'">Search by Host</mat-option>
-						<mat-option [value]="'state'">Search by State</mat-option>
-						<mat-option [value]="'category'">Search by Category</mat-option>
-					</mat-select>
-				</mat-form-field>
-				<button
-					mat-button
-					mat-raised-button
-					class="theme-btn pi-control sm-text _cool mr-2"
-					(click)="toggleOverMap()"
-					title="{{ status ? 'Show Search Result' : 'Hide Search Results' }}">
-					<span [ngClass]="status ? 'fas fa-eye' : 'fas fa-eye-slash'"></span>
-					<span class="ml-2 button_text_animation">{{ status ? 'Show Search Result' : 'Hide Search Results' }}</span>
-				</button>
-			</div>
-			<div class="col-lg-7 float-right">
-				<div class="col-lg-12 justify-flex p-0 d-flex">
-					<div class="d-flex align-items-center mr-2">
-						<p class="sm-text">LEGEND:</p>
-					</div>
-					<div class="d-flex align-items-center mr-2">
-						<img class="map-status" src="assets/media-files/markers/online_all.png" alt="online-all" />
-						<p class="sm-text ml-1">Online</p>
-					</div>
-					<div class="d-flex align-items-center mr-2">
-						<img class="map-status" src="assets/media-files/markers/pending.png" alt="pending-all" />
-						<p class="sm-text ml-1">Pending</p>
-					</div>
-					<div class="d-flex align-items-center mr-2">
-						<img class="map-status" src="assets/media-files/markers/online_many.png" alt="online-all" />
-						<p class="sm-text ml-1">Up to 75% online</p>
-					</div>
-					<div class="d-flex align-items-center mr-2">
-						<img class="map-status" src="assets/media-files/markers/online_few.png" alt="online-all" />
-						<p class="sm-text ml-1">50% or less online</p>
-					</div>
-					<div class="d-flex align-items-center mr-2">
-						<img class="map-status" src="assets/media-files/markers/offline.png" alt="online-all" />
-						<p class="sm-text ml-1">Offline</p>
-					</div>
-				</div>
-				<div class="col-lg-12 text-right p-0">
-					<p class="sm-text mt-2 p-0 text-danger">
-						Note: If host is displayed but no marker is shown please check the coordinates of that host.
-					</p>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<ng-container [ngSwitch]="currentSearchOption">
-				<ng-container *ngSwitchCase="'category'">
-					<div class="col-lg-12">
-						<app-locator-component
-							*ngIf="categoriesData.length > 0"
-							[search_placeholder]="'Search Category'"
-							[select_placeholder]="'Select Category'"
-							[result_placeholder]="'Category Name(s)'"
-							[data_reference]="categoriesData"
-							[original_reference]="hostsData"
-							[type]="currentSearchOption"
-							[status]="status">
-						</app-locator-component>
-					</div>
-				</ng-container>
-				<ng-container *ngSwitchCase="'state'">
-					<div class="col-lg-12">
-						<app-locator-component
-							*ngIf="statesData.length > 0"
-							[search_placeholder]="'Search State'"
-							[select_placeholder]="'Select State'"
-							[result_placeholder]="'State Name(s)'"
-							[data_reference]="statesData"
-							[original_reference]="hostsData"
-							[type]="currentSearchOption"
-							[status]="status">
-						</app-locator-component>
-					</div>
-				</ng-container>
-				<ng-container *ngSwitchDefault>
-					<div class="col-lg-12">
-						<app-locator-component
-							*ngIf="hostsData.length > 0"
-							[search_placeholder]="'Search Host Name(s)'"
-							[select_placeholder]="'Select Host(s)'"
-							[result_placeholder]="'Host Name(s)'"
-							[data_reference]="hostsData"
-							[type]="currentSearchOption"
-							[status]="status">
-						</app-locator-component>
-					</div>
-				</ng-container>
-			</ng-container>
-		</div>
-	</div>
+    <div class="col-lg-12 p-0">
+        <div class="row mb-2">
+            <div class="col-lg-5">
+                <mat-form-field class="col-lg-5 full-width content-filter-dropdown">
+                    <mat-label>Search Options</mat-label>
+                    <mat-select
+                        (selectionChange)="onSearchOption($event.value)"
+                        [(value)]="currentSearchOption">
+                        <mat-option [value]="'host'">Search by Host</mat-option>
+                        <mat-option [value]="'state'">Search by State</mat-option>
+                        <mat-option [value]="'category'">Search by Category</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn pi-control sm-text _cool mr-2"
+                    (click)="toggleOverMap()"
+                    title="{{ status ? 'Show Search Result' : 'Hide Search Results' }}">
+                    <span [ngClass]="status ? 'fas fa-eye' : 'fas fa-eye-slash'"></span>
+                    <span class="ml-2 button_text_animation">{{
+                        status ? 'Show Search Result' : 'Hide Search Results'
+                    }}</span>
+                </button>
+            </div>
+            <div class="col-lg-7 float-right">
+                <div class="col-lg-12 justify-flex p-0 d-flex">
+                    <div class="d-flex align-items-center mr-2">
+                        <p class="sm-text">LEGEND:</p>
+                    </div>
+                    <div class="d-flex align-items-center mr-2">
+                        <img
+                            class="map-status"
+                            src="assets/media-files/markers/online_all.png"
+                            alt="online-all" />
+                        <p class="sm-text ml-1">Online</p>
+                    </div>
+                    <div class="d-flex align-items-center mr-2">
+                        <img
+                            class="map-status"
+                            src="assets/media-files/markers/pending.png"
+                            alt="pending-all" />
+                        <p class="sm-text ml-1">Pending</p>
+                    </div>
+                    <div class="d-flex align-items-center mr-2">
+                        <img
+                            class="map-status"
+                            src="assets/media-files/markers/online_many.png"
+                            alt="online-all" />
+                        <p class="sm-text ml-1">Up to 75% online</p>
+                    </div>
+                    <div class="d-flex align-items-center mr-2">
+                        <img
+                            class="map-status"
+                            src="assets/media-files/markers/online_few.png"
+                            alt="online-all" />
+                        <p class="sm-text ml-1">50% or less online</p>
+                    </div>
+                    <div class="d-flex align-items-center mr-2">
+                        <img
+                            class="map-status"
+                            src="assets/media-files/markers/offline.png"
+                            alt="online-all" />
+                        <p class="sm-text ml-1">Offline</p>
+                    </div>
+                </div>
+                <div class="col-lg-12 text-right p-0">
+                    <p class="sm-text mt-2 p-0 text-danger">
+                        Note: If host is displayed but no marker is shown please check the
+                        coordinates of that host.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <ng-container [ngSwitch]="currentSearchOption">
+                <ng-container *ngSwitchCase="'category'">
+                    <div class="col-lg-12">
+                        <app-locator-component
+                            *ngIf="categoriesData.length > 0"
+                            [search_placeholder]="'Search Category'"
+                            [select_placeholder]="'Select Category'"
+                            [result_placeholder]="'Category Name(s)'"
+                            [data_reference]="categoriesData"
+                            [original_reference]="hostsData"
+                            [type]="currentSearchOption"
+                            [status]="status">
+                        </app-locator-component>
+                    </div>
+                </ng-container>
+                <ng-container *ngSwitchCase="'state'">
+                    <div class="col-lg-12">
+                        <app-locator-component
+                            *ngIf="statesData.length > 0"
+                            [search_placeholder]="'Search State'"
+                            [select_placeholder]="'Select State'"
+                            [result_placeholder]="'State Name(s)'"
+                            [data_reference]="statesData"
+                            [original_reference]="hostsData"
+                            [type]="currentSearchOption"
+                            [status]="status">
+                        </app-locator-component>
+                    </div>
+                </ng-container>
+                <ng-container *ngSwitchDefault>
+                    <div class="col-lg-12">
+                        <app-locator-component
+                            *ngIf="hostsData.length > 0"
+                            [search_placeholder]="'Search Host Name(s)'"
+                            [select_placeholder]="'Select Host(s)'"
+                            [result_placeholder]="'Host Name(s)'"
+                            [data_reference]="hostsData"
+                            [type]="currentSearchOption"
+                            [status]="status">
+                        </app-locator-component>
+                    </div>
+                </ng-container>
+            </ng-container>
+        </div>
+    </div>
 
-	<ng-template #loader>
-		<div class="vh-50 d-flex align-items-center justify-content-center">
-			<app-spinner></app-spinner>
-		</div>
-	</ng-template>
+    <ng-template #loader>
+        <div class="vh-50 d-flex align-items-center justify-content-center">
+            <app-spinner></app-spinner>
+        </div>
+    </ng-template>
 
-	<ng-template #loader_sm>
-		<div class="text-center py-4">
-			<app-spinner [diameter]="65"></app-spinner>
-			<h5 class="mt-3">Getting License Information. Please Wait.</h5>
-		</div>
-	</ng-template>
+    <ng-template #loader_sm>
+        <div class="text-center py-4">
+            <app-spinner [diameter]="65"></app-spinner>
+            <h5 class="mt-3">Getting License Information. Please Wait.</h5>
+        </div>
+    </ng-template>
 
-	<ng-template #no_record>
-		<mat-card class="vh-50 p-5">
-			<div class="border-dashed d-flex align-items-center h-100 p-5 w-100">
-				<div class="text-center w-100">
-					<span class="fas fa-map fa-2x text-primary mb-3"></span>
-					<h3>Welcome to Locator</h3>
-					<p class="sm-text">Enter a Host name above to start</p>
-				</div>
-			</div>
-		</mat-card>
-	</ng-template>
+    <ng-template #no_record>
+        <mat-card class="vh-50 p-5">
+            <div class="border-dashed d-flex align-items-center h-100 p-5 w-100">
+                <div class="text-center w-100">
+                    <span class="fas fa-map fa-2x text-primary mb-3"></span>
+                    <h3>Welcome to Locator</h3>
+                    <p class="sm-text">Enter a Host name above to start</p>
+                </div>
+            </div>
+        </mat-card>
+    </ng-template>
 
-	<ng-template #no_host_selected>
-		<mat-card class="p-3 mb-4">
-			<div class="border-dashed d-flex align-items-center h-100 p-4 w-100">
-				<div class="text-center w-100">
-					<h3>No Host Selected</h3>
-					<p class="sm-text">Search a Host to get license count</p>
-				</div>
-			</div>
-		</mat-card>
-	</ng-template>
+    <ng-template #no_host_selected>
+        <mat-card class="p-3 mb-4">
+            <div class="border-dashed d-flex align-items-center h-100 p-4 w-100">
+                <div class="text-center w-100">
+                    <h3>No Host Selected</h3>
+                    <p class="sm-text">Search a Host to get license count</p>
+                </div>
+            </div>
+        </mat-card>
+    </ng-template>
 
-	<ng-template #no_host>
-		<div class="align-items-center justify-content-center">
-			<h3>Oh Snap!</h3>
-			<p class="sm-text mb-3">There are no available hosts places at the moment.</p>
-			<button mat-button mat-raised-button class="theme-btn mr-2" (click)="addHostPlace()">
-				Add Host Place
-				<span class="fas fa-map-marker ml-2 sm-text"></span>
-			</button>
-		</div>
-	</ng-template>
+    <ng-template #no_host>
+        <div class="align-items-center justify-content-center">
+            <h3>Oh Snap!</h3>
+            <p class="sm-text mb-3">There are no available hosts places at the moment.</p>
+            <button mat-button mat-raised-button class="theme-btn mr-2" (click)="addHostPlace()">
+                Add Host Place
+                <span class="fas fa-map-marker ml-2 sm-text"></span>
+            </button>
+        </div>
+    </ng-template>
 </div>

@@ -1,15 +1,19 @@
 <div class="content-schedule-card">
-	<div class="row m-0 schedule">
-		<div class="thumbnail">
-			<img [src]="content.thumbnail" alt="thumbnail" />
-		</div>
-		<div class="info-content">
-			<div class="content-title" matTooltip="{{ content.title }}" [matTooltipPosition]="'above'" matTooltipClass="prevent-tooltip-truncate">
-				<b>#{{ index + 1 }} - {{ content.title }}</b>
-			</div>
-			<div><b>Date: </b>{{ schedule.date ? schedule.date : '--' }}</div>
-			<div><b>Days: </b>{{ schedule.days ? schedule.days : '--' }}</div>
-			<div><b>Time: </b>{{ schedule.time ? schedule.time : '--' }}</div>
-		</div>
-	</div>
+    <div class="row m-0 schedule">
+        <div class="thumbnail">
+            <img [src]="content.thumbnail" alt="thumbnail" />
+        </div>
+        <div class="info-content">
+            <div
+                class="content-title"
+                matTooltip="{{ content.title }}"
+                [matTooltipPosition]="'above'"
+                matTooltipClass="prevent-tooltip-truncate">
+                <b>#{{ index + 1 }} - {{ content.title }}</b>
+            </div>
+            <div><b>Date: </b>{{ schedule.date ? schedule.date : '--' }}</div>
+            <div><b>Days: </b>{{ schedule.days ? schedule.days : '--' }}</div>
+            <div><b>Time: </b>{{ schedule.time ? schedule.time : '--' }}</div>
+        </div>
+    </div>
 </div>

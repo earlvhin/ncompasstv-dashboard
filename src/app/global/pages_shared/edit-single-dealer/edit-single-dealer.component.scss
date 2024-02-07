@@ -1,34 +1,34 @@
 button.reassign,
 button.delete {
-	float: right;
+    float: right;
 }
 
 .dialog-heading {
-	gap: 30px;
+    gap: 30px;
 }
 
 .mt-20 {
-	margin-top: 20px;
+    margin-top: 20px;
 }
 
 mat-slide-toggle {
-	margin-left: 15px;
+    margin-left: 15px;
 }
 
 button[type='submit'] {
-	background-color: #8ec641;
+    background-color: #8ec641;
 }
 
 .pw-visibility {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 .status {
-	&.active {
-		color: #8ec641;
-	}
+    &.active {
+        color: #8ec641;
+    }
 
-	&.inactive {
-		color: white;
-	}
+    &.inactive {
+        color: white;
+    }
 }

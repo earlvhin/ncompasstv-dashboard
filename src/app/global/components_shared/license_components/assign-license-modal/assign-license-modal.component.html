@@ -1,68 +1,86 @@
 <ng-container>
-	<div class="assign-license-modal p-2" *ngIf="!no_available_licenses; else no_license">
-		<ng-container *ngIf="!assign_success; else success">
-			<ng-container *ngIf="licenses_loaded; else loading">
-				<h3 class="mb-0">Assign License</h3>
-				<p class="sm-text mb-4">Check the licenses you wish to assign.</p>
-				<ul class="list-unstyled text-left license-list">
-					<li *ngFor="let l of licenses; let i = index" class="mb-2">
-						<mat-checkbox (change)="licenseAssigned(l.licenseId, $event)">
-							<span class="xsm-text mr-2">{{ i + 1 }}</span>
-							<strong class="sm-text">
-								{{ l.alias || l.licenseKey }}
-							</strong>
-						</mat-checkbox>
-					</li>
-				</ul>
+    <div class="assign-license-modal p-2" *ngIf="!no_available_licenses; else no_license">
+        <ng-container *ngIf="!assign_success; else success">
+            <ng-container *ngIf="licenses_loaded; else loading">
+                <h3 class="mb-0">Assign License</h3>
+                <p class="sm-text mb-4">Check the licenses you wish to assign.</p>
+                <ul class="list-unstyled text-left license-list">
+                    <li *ngFor="let l of licenses; let i = index" class="mb-2">
+                        <mat-checkbox (change)="licenseAssigned(l.licenseId, $event)">
+                            <span class="xsm-text mr-2">{{ i + 1 }}</span>
+                            <strong class="sm-text">
+                                {{ l.alias || l.licenseKey }}
+                            </strong>
+                        </mat-checkbox>
+                    </li>
+                </ul>
 
-				<div *ngIf="!is_submitted; else fake_buttons">
-					<button mat-button mat-raised-button (click)="assignLicenses()" [disabled]="assigned_licenses.length == 0" class="theme-btn mr-3">
-						Assign Licenses
-						<span class="fas fa-check ml-2"></span>
-					</button>
-					<button mat-button mat-raised-button mat-dialog-close class="theme-btn">Cancel</button>
-				</div>
+                <div *ngIf="!is_submitted; else fake_buttons">
+                    <button
+                        mat-button
+                        mat-raised-button
+                        (click)="assignLicenses()"
+                        [disabled]="assigned_licenses.length == 0"
+                        class="theme-btn mr-3">
+                        Assign Licenses
+                        <span class="fas fa-check ml-2"></span>
+                    </button>
+                    <button mat-button mat-raised-button mat-dialog-close class="theme-btn">
+                        Cancel
+                    </button>
+                </div>
 
-				<ng-template #fake_buttons>
-					<button mat-button mat-raised-button [disabled]="true" class="theme-btn mr-3">
-						Assign Licenses
-						<span class="fas fa-check ml-2"></span>
-					</button>
-					<button mat-button mat-raised-button mat-dialog-close class="theme-btn">Cancel</button>
-				</ng-template>
-			</ng-container>
-		</ng-container>
-	</div>
+                <ng-template #fake_buttons>
+                    <button mat-button mat-raised-button [disabled]="true" class="theme-btn mr-3">
+                        Assign Licenses
+                        <span class="fas fa-check ml-2"></span>
+                    </button>
+                    <button mat-button mat-raised-button mat-dialog-close class="theme-btn">
+                        Cancel
+                    </button>
+                </ng-template>
+            </ng-container>
+        </ng-container>
+    </div>
 
-	<ng-template #no_license>
-		<div class="text-center d-flex align-items-center justify-content-center">
-			<div class="py-5">
-				<h3 class="mb-0">No Available License</h3>
-				<p class="sm-text mb-4">Purchase a license to continue</p>
-				<button mat-button mat-raised-button mat-dialog-close class="theme-btn mr-3">OK</button>
-			</div>
-		</div>
-	</ng-template>
+    <ng-template #no_license>
+        <div class="text-center d-flex align-items-center justify-content-center">
+            <div class="py-5">
+                <h3 class="mb-0">No Available License</h3>
+                <p class="sm-text mb-4">Purchase a license to continue</p>
+                <button mat-button mat-raised-button mat-dialog-close class="theme-btn mr-3">
+                    OK
+                </button>
+            </div>
+        </div>
+    </ng-template>
 
-	<ng-template #loading>
-		<div class="text-center overflow-hidden d-flex align-items-center justify-content-center py-4">
-			<app-spinner [diameter]="60"></app-spinner>
-		</div>
-	</ng-template>
+    <ng-template #loading>
+        <div
+            class="text-center overflow-hidden d-flex align-items-center justify-content-center py-4">
+            <app-spinner [diameter]="60"></app-spinner>
+        </div>
+    </ng-template>
 
-	<ng-template #success>
-		<div class="text-center d-flex align-items-center justify-content-center">
-			<div class="py-4">
-				<app-success-animation class="mb-2"></app-success-animation>
-				<h3 class="mb-4">License assignment succesful!</h3>
-				<button mat-button mat-raised-button [mat-dialog-close]="true" class="theme-btn mr-3">OK</button>
-			</div>
-		</div>
-	</ng-template>
+    <ng-template #success>
+        <div class="text-center d-flex align-items-center justify-content-center">
+            <div class="py-4">
+                <app-success-animation class="mb-2"></app-success-animation>
+                <h3 class="mb-4">License assignment succesful!</h3>
+                <button
+                    mat-button
+                    mat-raised-button
+                    [mat-dialog-close]="true"
+                    class="theme-btn mr-3">
+                    OK
+                </button>
+            </div>
+        </div>
+    </ng-template>
 </ng-container>
 
 <ng-template #loading>
-	<div class="py-4 white-bg">
-		<app-spinner [diameter]="60"></app-spinner>
-	</div>
+    <div class="py-4 white-bg">
+        <app-spinner [diameter]="60"></app-spinner>
+    </div>
 </ng-template>

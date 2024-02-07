@@ -25,7 +25,7 @@ export class ReleaseNotesViewComponent implements OnInit {
         private _auth: AuthService,
         private _dialog: MatDialog,
         private _release: ReleaseNotesService,
-        ) {}
+    ) {}
 
     ngOnInit() {
         this.getAllNotes();
@@ -50,17 +50,18 @@ export class ReleaseNotesViewComponent implements OnInit {
 
     onAdd(): void {
         const config = { width: '1000px', height: '750px', disableClose: true };
-        this._dialog.open(CreateUpdateDialogComponent, config)
-        .afterClosed().subscribe((response: boolean | API_RELEASE_NOTE) => {
-
-            if (!response) return;
-            const data = response as API_RELEASE_NOTE;
-            const all_releases = [...this.release_notes];
-            data.dateCreated = moment(data.dateCreated).format('MMM DD, YYYY');
-            all_releases.unshift(data);
-            this.setDataForDisplay(all_releases);
-            this.release_expanded_panel_index = 0;
-        });
+        this._dialog
+            .open(CreateUpdateDialogComponent, config)
+            .afterClosed()
+            .subscribe((response: boolean | API_RELEASE_NOTE) => {
+                if (!response) return;
+                const data = response as API_RELEASE_NOTE;
+                const all_releases = [...this.release_notes];
+                data.dateCreated = moment(data.dateCreated).format('MMM DD, YYYY');
+                all_releases.unshift(data);
+                this.setDataForDisplay(all_releases);
+                this.release_expanded_panel_index = 0;
+            });
     }
 
     onEdit(e: Event, release_note_id: string): void {
@@ -68,14 +69,17 @@ export class ReleaseNotesViewComponent implements OnInit {
         const config = { width: '1000px', height: '750px', disableClose: true };
         const dialog = this._dialog.open(CreateUpdateDialogComponent, config);
         dialog.componentInstance.dialogMode = 'update';
-        dialog.componentInstance.note = this.release_notes.filter(note => note.releaseNoteId === release_note_id)[0];
+        dialog.componentInstance.note = this.release_notes.filter(
+            (note) => note.releaseNoteId === release_note_id,
+        )[0];
 
         dialog.afterClosed().subscribe((response: boolean | API_RELEASE_NOTE) => {
-
             if (!response) return;
             const data = response as API_RELEASE_NOTE;
             const all_releases = [...this.release_notes];
-            const indexToReplace = all_releases.findIndex(note => note.releaseNoteId === release_note_id);
+            const indexToReplace = all_releases.findIndex(
+                (note) => note.releaseNoteId === release_note_id,
+            );
             data.dateCreated = moment(data.dateCreated).format('MMM DD, YYYY');
             all_releases[indexToReplace] = data;
             this.setDataForDisplay(all_releases);
@@ -83,7 +87,7 @@ export class ReleaseNotesViewComponent implements OnInit {
         });
     }
 
-    onDelete(e:Event, release_note_id: string): void {
+    onDelete(e: Event, release_note_id: string): void {
         e.stopPropagation();
         this.warningModal(
             'warning',
@@ -91,32 +95,43 @@ export class ReleaseNotesViewComponent implements OnInit {
             'Are you sure you want to delete this note?',
             '',
             'delete-release-note',
-            release_note_id
+            release_note_id,
         );
     }
 
-    warningModal(status: string, message: string, data: string, return_msg: string, action: string, id: any): void {
-        this._dialog.open(ConfirmationModalComponent, {
-            width: '500px',
-            height: '350px',
-            data: { status, message, data, return_msg, action }
-        }).afterClosed().subscribe((result) => {
-            if (result === 'delete-release-note') {
-                this._release.deleteNote(id).pipe(takeUntil(this._unsubscribe))
-                    .subscribe(
-                        () => {
+    warningModal(
+        status: string,
+        message: string,
+        data: string,
+        return_msg: string,
+        action: string,
+        id: any,
+    ): void {
+        this._dialog
+            .open(ConfirmationModalComponent, {
+                width: '500px',
+                height: '350px',
+                data: { status, message, data, return_msg, action },
+            })
+            .afterClosed()
+            .subscribe((result) => {
+                if (result === 'delete-release-note') {
+                    this._release
+                        .deleteNote(id)
+                        .pipe(takeUntil(this._unsubscribe))
+                        .subscribe(() => {
                             const all_releases = this.release_notes;
-                            const indexToDelete = all_releases.findIndex(note => note.releaseNoteId === id);
+                            const indexToDelete = all_releases.findIndex(
+                                (note) => note.releaseNoteId === id,
+                            );
                             all_releases.splice(indexToDelete, 1);
                             this.setDataForDisplay(all_releases);
-                        }
-                    );
-            }
-        });
+                        });
+                }
+            });
     }
 
     private setDataForDisplay(data: API_RELEASE_NOTE[]): void {
-
         if (!data || data.length <= 0) {
             this.release_notes = [];
             return;

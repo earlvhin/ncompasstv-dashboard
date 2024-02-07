@@ -11,8 +11,21 @@ export class UI_DEALER_BILLING {
     billing: object;
     billing_date: object;
     autocharge: object;
-    
-    constructor(index: object, dealer_id: object, dealer_id_alias: object, dealer_name: object, total_licenses: object, billable_licenses: object, price_per_license: object, new_license_price: object, base_fee: object, billing: object, billing_date: object, autocharge:object ) {
+
+    constructor(
+        index: object,
+        dealer_id: object,
+        dealer_id_alias: object,
+        dealer_name: object,
+        total_licenses: object,
+        billable_licenses: object,
+        price_per_license: object,
+        new_license_price: object,
+        base_fee: object,
+        billing: object,
+        billing_date: object,
+        autocharge: object,
+    ) {
         this.index = index;
         this.dealer_id = dealer_id;
         this.dealer_id_alias = dealer_id_alias;

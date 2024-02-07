@@ -1,22 +1,22 @@
 .card-container {
-	display: flex;
-	flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .card {
-	width: 352px;
-	margin-right: 15px;
-	margin-bottom: 15px;
+    width: 352px;
+    margin-right: 15px;
+    margin-bottom: 15px;
 }
 
 .future-schedule {
-	border: 3px orange solid;
+    border: 3px orange solid;
 }
 
 .inactive-schedule {
-	border: 3px blue solid;
+    border: 3px blue solid;
 }
 
 .title {
-	margin-bottom: 20px;
+    margin-bottom: 20px;
 }

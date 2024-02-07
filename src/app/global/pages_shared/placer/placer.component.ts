@@ -41,11 +41,21 @@ export class PlacerComponent implements OnInit {
         { name: 'Longitude', key: 'longitude', no_show: true, hidden: true },
         { name: 'Latitude', key: 'latitude', no_show: true, hidden: true },
         { name: 'Foot Traffic', key: 'footTraffic', sortable: true, column: 'FootTraffic' },
-        { name: 'Average Dwell Time', key: 'averageDwellTime', sortable: true, column: 'AverageDwellTime' },
+        {
+            name: 'Average Dwell Time',
+            key: 'averageDwellTime',
+            sortable: true,
+            column: 'AverageDwellTime',
+        },
         { name: 'Month', key: 'month', sortable: true, column: 'Month' },
         { name: 'Upload Date', key: 'dateUploaded', sortable: true, column: 'DateUploaded' },
         { name: 'Uploaded By', key: 'uploadedBy' },
-        { name: 'Publication Date', key: 'publicationDate', sortable: true, column: 'PublicationDate' },
+        {
+            name: 'Publication Date',
+            key: 'publicationDate',
+            sortable: true,
+            column: 'PublicationDate',
+        },
         { name: 'Source File', key: 'sourceFile' },
         { name: 'Action', sortable: false, no_export: true },
     ];
@@ -85,7 +95,11 @@ export class PlacerComponent implements OnInit {
 
     protected _unsubscribe = new Subject<void>();
 
-    constructor(private _placer: PlacerService, private _date: DatePipe, private _host: HostService) {}
+    constructor(
+        private _placer: PlacerService,
+        private _date: DatePipe,
+        private _host: HostService,
+    ) {}
 
     ngOnInit() {
         if (this.host_id != '') {
@@ -117,7 +131,7 @@ export class PlacerComponent implements OnInit {
                 this.filter.assignee,
                 this.filter.date_from,
                 this.filter.date_to,
-                15
+                15,
             )
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data) => {
@@ -146,7 +160,16 @@ export class PlacerComponent implements OnInit {
     private getPlacerData(page, is_export?) {
         if (!is_export) this.searching_placer_data = true;
         this._placer
-            .get_all_placer(page, this.search_keyword, this.sort_column, this.sort_order, this.filter.assignee, this.filter.date_from, this.filter.date_to, is_export ? 0 : 15)
+            .get_all_placer(
+                page,
+                this.search_keyword,
+                this.sort_column,
+                this.sort_order,
+                this.filter.assignee,
+                this.filter.date_from,
+                this.filter.date_to,
+                is_export ? 0 : 15,
+            )
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data) => {
                 this.searching_placer_data = false;
@@ -186,12 +209,19 @@ export class PlacerComponent implements OnInit {
 
         let rowIndex = 1;
         for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
-            this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+            this.worksheet.getRow(rowIndex).alignment = {
+                vertical: 'middle',
+                horizontal: 'center',
+                wrapText: true,
+            };
         }
 
         this.workbook.xlsx.writeBuffer().then((file: any) => {
-            const blob = new Blob([file], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
-            const filename = this.host_id != '' ? this.host_name + '_placer_data' : 'Placer_Data' + '.xlsx';
+            const blob = new Blob([file], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8',
+            });
+            const filename =
+                this.host_id != '' ? this.host_name + '_placer_data' : 'Placer_Data' + '.xlsx';
             saveAs(blob, filename);
         });
 
@@ -231,15 +261,37 @@ export class PlacerComponent implements OnInit {
                         placername: placer.placerName ? placer.placerName : '',
                     },
                 },
-                { value: `${placer.address}, ${placer.hostCity}, ${placer.hostState} ${placer.postalCode}`, link: null, editable: false, key: false },
+                {
+                    value: `${placer.address}, ${placer.hostCity}, ${placer.hostState} ${placer.postalCode}`,
+                    link: null,
+                    editable: false,
+                    key: false,
+                },
                 { value: placer.footTraffic, link: null, editable: false, key: false },
                 { value: placer.averageDwellTime, link: null, editable: false, key: false },
                 { value: placer.month, link: null, editable: false, key: false },
-                { value: this._date.transform(placer.dateUploaded, 'MMM d, y'), link: null, editable: false, key: false },
+                {
+                    value: this._date.transform(placer.dateUploaded, 'MMM d, y'),
+                    link: null,
+                    editable: false,
+                    key: false,
+                },
                 { value: placer.uploadedBy, link: null, editable: false, key: false },
-                { value: this._date.transform(placer.publicationDate, 'MMM d, y'), link: null, editable: false, key: false },
+                {
+                    value: this._date.transform(placer.publicationDate, 'MMM d, y'),
+                    link: null,
+                    editable: false,
+                    key: false,
+                },
                 { value: placer.sourceFile, link: null, editable: false, key: false },
-                { value: placer.placerDumpId, link: null, editable: false, key: false, hidden: true, no_show: true }
+                {
+                    value: placer.placerDumpId,
+                    link: null,
+                    editable: false,
+                    key: false,
+                    hidden: true,
+                    no_show: true,
+                },
             );
             return table;
         });
@@ -351,7 +403,7 @@ export class PlacerComponent implements OnInit {
                         () => this.ngOnInit(),
                         (error) => {
                             console.error(error);
-                        }
+                        },
                     );
             },
         };
@@ -359,13 +411,23 @@ export class PlacerComponent implements OnInit {
 
     closeDatePickerFrom(event) {
         this.pickerDateFrom = event;
-        this.filterTable(moment(event).format('MMMM YYYY'), moment(event).format('MMMM YYYY'), true, false);
+        this.filterTable(
+            moment(event).format('MMMM YYYY'),
+            moment(event).format('MMMM YYYY'),
+            true,
+            false,
+        );
         this.datePickerFrom.close();
     }
 
     closeDatePickerTo(event) {
         this.pickerDateTo = event;
-        this.filterTable(moment(event).format('MMMM YYYY'), moment(event).format('MMMM YYYY'), false, true);
+        this.filterTable(
+            moment(event).format('MMMM YYYY'),
+            moment(event).format('MMMM YYYY'),
+            false,
+            true,
+        );
         this.datePickerTo.close();
     }
 }

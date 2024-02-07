@@ -1,128 +1,178 @@
 <div class="media-navigation row">
-	<div class="col-lg-9 title">
-		<h3>Media Details</h3>
-	</div>
-	<div class="col-lg-3 text-right p-0">
-		<button class="navi" data-toggle="tooltip" title="Lock Content" *ngIf="is_admin" (click)="onToggleContentProtection($event)">
-			<ng-container [ngSwitch]="file_data.selected.is_protected">
-				<i class="fa fa-unlock" *ngSwitchCase="0"></i>
-				<i class="fa fa-lock" *ngSwitchDefault></i>
-			</ng-container>
-		</button>
-		<button
-			class="navi"
-			data-toggle="tooltip"
-			title="Settings"
-			*ngIf="!file_data.zoneContent && !is_dealer && !file_data.is_advertiser"
-			(click)="reassignMedia()"
-		>
-			<i class="fa fa-cog"></i>
-		</button>
-		<button
-			class="navi"
-			data-toggle="tooltip"
-			title="Delete"
-			*ngIf="!file_data.zoneContent && !file_data.is_advertiser"
-			(click)="onDeleteMedia($event)"
-			[disabled]="is_view_only || (is_dealer && file_data.selected.is_protected === 1)"
-		>
-			<i class="fa fa-trash-alt"></i>
-		</button>
-		<button
-			class="navi"
-			[disabled]="file_data.selected.index === 0"
-			(click)="fetchPrevMedia(file_data.selected.index)"
-			data-toggle="tooltip"
-			title="Prev"
-		>
-			<i class="fa fa-chevron-left"></i>
-		</button>
-		<button
-			class="navi"
-			[disabled]="file_data.selected.index === file_data.content_array.length - 1"
-			(click)="fetchNextMedia(file_data.selected.index)"
-			data-toggle="tooltip"
-			title="Next"
-		>
-			<i class="fa fa-chevron-right"></i>
-		</button>
-		<button [mat-dialog-close]="onCloseMediaViewer()" class="close" data-toggle="tooltip" title="Close">
-			<i class="fa fa-times"></i>
-		</button>
-	</div>
+    <div class="col-lg-9 title">
+        <h3>Media Details</h3>
+    </div>
+    <div class="col-lg-3 text-right p-0">
+        <button
+            class="navi"
+            data-toggle="tooltip"
+            title="Lock Content"
+            *ngIf="is_admin"
+            (click)="onToggleContentProtection($event)">
+            <ng-container [ngSwitch]="file_data.selected.is_protected">
+                <i class="fa fa-unlock" *ngSwitchCase="0"></i>
+                <i class="fa fa-lock" *ngSwitchDefault></i>
+            </ng-container>
+        </button>
+        <button
+            class="navi"
+            data-toggle="tooltip"
+            title="Settings"
+            *ngIf="!file_data.zoneContent && !is_dealer && !file_data.is_advertiser"
+            (click)="reassignMedia()">
+            <i class="fa fa-cog"></i>
+        </button>
+        <button
+            class="navi"
+            data-toggle="tooltip"
+            title="Delete"
+            *ngIf="!file_data.zoneContent && !file_data.is_advertiser"
+            (click)="onDeleteMedia($event)"
+            [disabled]="is_view_only || (is_dealer && file_data.selected.is_protected === 1)">
+            <i class="fa fa-trash-alt"></i>
+        </button>
+        <button
+            class="navi"
+            [disabled]="file_data.selected.index === 0"
+            (click)="fetchPrevMedia(file_data.selected.index)"
+            data-toggle="tooltip"
+            title="Prev">
+            <i class="fa fa-chevron-left"></i>
+        </button>
+        <button
+            class="navi"
+            [disabled]="file_data.selected.index === file_data.content_array.length - 1"
+            (click)="fetchNextMedia(file_data.selected.index)"
+            data-toggle="tooltip"
+            title="Next">
+            <i class="fa fa-chevron-right"></i>
+        </button>
+        <button
+            [mat-dialog-close]="onCloseMediaViewer()"
+            class="close"
+            data-toggle="tooltip"
+            title="Close">
+            <i class="fa fa-times"></i>
+        </button>
+    </div>
 </div>
 <div class="media-viewer">
-	<div class="media-viewer-cont flex full-width">
-		<div class="media-asset height-100">
-			<video
-				[src]="file_data.selected.file_url"
-				*ngIf="file_data.selected.file_type | isvideo"
-				[muted]="true"
-				controls
-				class="full-width height-100 top-0 left-0 p-absolute"
-			></video>
-			<img
-				[src]="file_data.selected.file_url"
-				alt="image-content"
-				*ngIf="file_data.selected.file_type | isimage"
-				class="full-width height-100 p-absolute"
-			/>
-			<div class="frame-wrap" *ngIf="(file_data.selected.file_type | isFeed) && file_data.selected.classification !== 'live_stream'">
-				<img class="full-width height-100 p-absolute" [src]="feed_demo_url + file_data.selected.file_url | sanitize" frameborder="0" />
-			</div>
+    <div class="media-viewer-cont flex full-width">
+        <div class="media-asset height-100">
+            <video
+                [src]="file_data.selected.file_url"
+                *ngIf="file_data.selected.file_type | isvideo"
+                [muted]="true"
+                controls
+                class="full-width height-100 top-0 left-0 p-absolute"></video>
+            <img
+                [src]="file_data.selected.file_url"
+                alt="image-content"
+                *ngIf="file_data.selected.file_type | isimage"
+                class="full-width height-100 p-absolute" />
+            <div
+                class="frame-wrap"
+                *ngIf="
+                    (file_data.selected.file_type | isFeed) &&
+                    file_data.selected.classification !== 'live_stream'
+                ">
+                <img
+                    class="full-width height-100 p-absolute"
+                    [src]="feed_demo_url + file_data.selected.file_url | sanitize"
+                    frameborder="0" />
+            </div>
 
-			<div class="frame-wrap" *ngIf="(file_data.selected.file_type | isFeed) && file_data.selected.classification === 'live_stream'">
-				<iframe class="full-width height-100 p-absolute" [src]="file_data.selected.file_url | sanitize" frameborder="0"></iframe>
-			</div>
-		</div>
-		<div class="media-info text-gray height-100" *ngIf="file_data.selected.owner_name; else spinner">
-			<div class="details p-3">
-				<h4 class="word-break font-weight-bold">{{ file_data.selected.title }}</h4>
-				<p class="sm-text">by {{ file_data.selected.uploaded_by }} on {{ file_data.selected.date_uploaded | date }}</p>
-			</div>
-			<mat-tab-group>
-				<mat-tab label="File Info">
-					<div class="mt-3 p-3 d-flex flex-column">
-						<p class="sm-text"><span class="font-weight-bold">Owner:</span> {{ file_data.selected.owner_name }}</p>
-						<p class="sm-text"><span class="font-weight-bold">Role:</span> {{ file_data.selected.owner_type }}</p>
-						<ng-container *ngIf="file_data.selected.classification === 'filler-v2'; else notFiller">
-							<p class="sm-text"><span class="font-weight-bold">Type:</span> {{ file_data.selected.file_type }} | Filler</p>
-						</ng-container>
+            <div
+                class="frame-wrap"
+                *ngIf="
+                    (file_data.selected.file_type | isFeed) &&
+                    file_data.selected.classification === 'live_stream'
+                ">
+                <iframe
+                    class="full-width height-100 p-absolute"
+                    [src]="file_data.selected.file_url | sanitize"
+                    frameborder="0"></iframe>
+            </div>
+        </div>
+        <div
+            class="media-info text-gray height-100"
+            *ngIf="file_data.selected.owner_name; else spinner">
+            <div class="details p-3">
+                <h4 class="word-break font-weight-bold">{{ file_data.selected.title }}</h4>
+                <p class="sm-text">
+                    by {{ file_data.selected.uploaded_by }} on
+                    {{ file_data.selected.date_uploaded | date }}
+                </p>
+            </div>
+            <mat-tab-group>
+                <mat-tab label="File Info">
+                    <div class="mt-3 p-3 d-flex flex-column">
+                        <p class="sm-text">
+                            <span class="font-weight-bold">Owner:</span>
+                            {{ file_data.selected.owner_name }}
+                        </p>
+                        <p class="sm-text">
+                            <span class="font-weight-bold">Role:</span>
+                            {{ file_data.selected.owner_type }}
+                        </p>
+                        <ng-container
+                            *ngIf="
+                                file_data.selected.classification === 'filler-v2';
+                                else notFiller
+                            ">
+                            <p class="sm-text">
+                                <span class="font-weight-bold">Type:</span>
+                                {{ file_data.selected.file_type }} | Filler
+                            </p>
+                        </ng-container>
 
-						<ng-template #notFiller>
-							<p class="sm-text"><span class="font-weight-bold">Type:</span> {{  file_data.selected.file_type }}</p>
-						</ng-template>
-						<p class="sm-text" *ngIf="!(file_data.selected.file_type | isFeed)">
-							<span class="font-weight-bold">Size:</span> {{ file_size_formatted != null ? file_size_formatted : '--' }}
-						</p>
-						<p class="sm-text">
-							<span class="font-weight-bold">Duration:</span>
-							{{ file_data.selected.duration != null ? file_data.selected.duration : '0' }} s
-						</p>
+                        <ng-template #notFiller>
+                            <p class="sm-text">
+                                <span class="font-weight-bold">Type:</span>
+                                {{ file_data.selected.file_type }}
+                            </p>
+                        </ng-template>
+                        <p class="sm-text" *ngIf="!(file_data.selected.file_type | isFeed)">
+                            <span class="font-weight-bold">Size:</span>
+                            {{ file_size_formatted != null ? file_size_formatted : '--' }}
+                        </p>
+                        <p class="sm-text">
+                            <span class="font-weight-bold">Duration:</span>
+                            {{
+                                file_data.selected.duration != null
+                                    ? file_data.selected.duration
+                                    : '0'
+                            }}
+                            s
+                        </p>
 
-						<div class="set-to-filler-toggle">
-							<ng-container *ngIf="file_data.selected.file_type !== 'feed' && page === 'media-library'">
-								<mat-slide-toggle
-									(change)="onSetContentAsFiller($event)"
-									labelPosition="before"
-									[checked]="file_data.selected.classification === 'filler'"
-									><span class="sm-text font-weight-bold">Set To Filler:</span>
-								</mat-slide-toggle>
-							</ng-container>
-						</div>
-					</div>
-				</mat-tab>
-				<!-- <mat-tab label="Playing Where"> 
+                        <div class="set-to-filler-toggle">
+                            <ng-container
+                                *ngIf="
+                                    file_data.selected.file_type !== 'feed' &&
+                                    page === 'media-library'
+                                ">
+                                <mat-slide-toggle
+                                    (change)="onSetContentAsFiller($event)"
+                                    labelPosition="before"
+                                    [checked]="file_data.selected.classification === 'filler'"
+                                    ><span class="sm-text font-weight-bold">Set To Filler:</span>
+                                </mat-slide-toggle>
+                            </ng-container>
+                        </div>
+                    </div>
+                </mat-tab>
+                <!-- <mat-tab label="Playing Where"> 
                     <div class="mt-3 p-3">
                         Coming Soon .. 
                     </div>
                 </mat-tab> -->
-			</mat-tab-group>
-		</div>
-		<ng-template #spinner>
-			<div class="media-info text-gray height-100 p-3 text-center">
-				<app-spinner [diameter]="65"></app-spinner>
-			</div>
-		</ng-template>
-	</div>
+            </mat-tab-group>
+        </div>
+        <ng-template #spinner>
+            <div class="media-info text-gray height-100 p-3 text-center">
+                <app-spinner [diameter]="65"></app-spinner>
+            </div>
+        </ng-template>
+    </div>
 </div>

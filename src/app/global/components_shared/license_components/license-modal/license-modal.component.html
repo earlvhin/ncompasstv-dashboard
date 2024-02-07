@@ -1,30 +1,41 @@
 <ng-container *ngIf="!license_generated; else success">
-    <div id="generate_license_form" class="generate-license-modal p-4 pb-0 h-100" *ngIf="!is_submitted; else loading">
+    <div
+        id="generate_license_form"
+        class="generate-license-modal p-4 pb-0 h-100"
+        *ngIf="!is_submitted; else loading">
         <ng-container *ngIf="dealers.length > 0; else loading">
             <h3 class="mb-1">Generate License</h3>
             <p class="sm-text mb-4">Choose a dealer and set number of license to generate.</p>
             <app-autocomplete-field
-            [data_reference]="dealers_data"
-            [primary_keyword]="'businessName'"
-            [key_of_value]="'dealerId'"
-            (data_value)="setToDealer($event)"
-            [required]="true"
-            [label]="'Type in a Dealer Business Name'"
-            [paging]="paging"
-            (call_next_page)="searchBoxTrigger($event)"
-            [loading_data]="loading_data"
-            (searched)="searchData($event)"
-            [loading_search]="loading_search">
+                [data_reference]="dealers_data"
+                [primary_keyword]="'businessName'"
+                [key_of_value]="'dealerId'"
+                (data_value)="setToDealer($event)"
+                [required]="true"
+                [label]="'Type in a Dealer Business Name'"
+                [paging]="paging"
+                (call_next_page)="searchBoxTrigger($event)"
+                [loading_data]="loading_data"
+                (searched)="searchData($event)"
+                [loading_search]="loading_search">
             </app-autocomplete-field>
             <form [formGroup]="generate_license_form">
                 <mat-form-field class="full-width">
                     <mat-label>Number of Licenses</mat-label>
-                    <input id="generate_license_quantity" formControlName="number_of_license" matInput placeholder="Number of Licenses" type="number">
+                    <input
+                        id="generate_license_quantity"
+                        formControlName="number_of_license"
+                        matInput
+                        placeholder="Number of Licenses"
+                        type="number" />
                 </mat-form-field>
-                <button mat-button mat-raised-button class="theme-btn mt-4" (click)="generateLicense()" [disabled]="invalid_form">
-                    <span class="button-label">
-                        Generate License
-                    </span>
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn mt-4"
+                    (click)="generateLicense()"
+                    [disabled]="invalid_form">
+                    <span class="button-label"> Generate License </span>
                     <span class="fas fa-plus ml-2 sm-text"></span>
                 </button>
             </form>
@@ -33,20 +44,19 @@
 </ng-container>
 
 <ng-template #loading>
-    <div class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center h-100">
+    <div
+        class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center h-100">
         <app-spinner></app-spinner>
     </div>
 </ng-template>
 
 <ng-template #success>
-    <div class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center h-100">
+    <div
+        class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center h-100">
         <div>
             <app-success-animation class="mb-2"></app-success-animation>
             <h3 class="mb-4">License assignment succesful!</h3>
-            <button mat-button mat-raised-button mat-dialog-close
-            class="theme-btn mr-3">
-                OK
-            </button>
+            <button mat-button mat-raised-button mat-dialog-close class="theme-btn mr-3">OK</button>
         </div>
     </div>
 </ng-template>

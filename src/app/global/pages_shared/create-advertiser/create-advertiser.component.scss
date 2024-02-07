@@ -1,35 +1,35 @@
 .select-image-container {
-	.image-preview {
-		border: dashed;
-		flex-basis: 55%;
-		margin-right: 20px;
+    .image-preview {
+        border: dashed;
+        flex-basis: 55%;
+        margin-right: 20px;
 
-		.image-container {
-			max-width: 500px;
-			max-height: 200px;
+        .image-container {
+            max-width: 500px;
+            max-height: 200px;
 
-			img {
-				height: 100%;
-				width: 100%;
-				object-fit: cover;
-				vertical-align: bottom;
-			}
-		}
-	}
+            img {
+                height: 100%;
+                width: 100%;
+                object-fit: cover;
+                vertical-align: bottom;
+            }
+        }
+    }
 }
 
 .select-image-button {
-	flex-basis: 25%;
-	font-size: 12px;
-	max-width: 160px;
+    flex-basis: 25%;
+    font-size: 12px;
+    max-width: 160px;
 }
 
 .flex-basis-80 {
-	flex-basis: 80%;
+    flex-basis: 80%;
 }
 
 .flex-basis-100 {
-	flex-basis: 100%;
+    flex-basis: 100%;
 }
 
 .business-profile-image {
@@ -42,20 +42,19 @@
     left: 15px;
 }
 
-.google-result-close-wrapper{
-	z-index: 7;
-	border-radius: 5px;
-	background: #c6c4c4;
-	margin: 5px;
-	position: absolute;
-	top: 0;
-	right: 0;
-	button{
-		color : #ffffff;
-		padding-left: 8px;
-		padding-right: 8px;
-		padding-top: 2px;
-		padding-bottom: 1px;
-		
-	}
+.google-result-close-wrapper {
+    z-index: 7;
+    border-radius: 5px;
+    background: #c6c4c4;
+    margin: 5px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    button {
+        color: #ffffff;
+        padding-left: 8px;
+        padding-right: 8px;
+        padding-top: 2px;
+        padding-bottom: 1px;
+    }
 }

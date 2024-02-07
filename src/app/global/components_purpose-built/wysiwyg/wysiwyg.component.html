@@ -1,34 +1,30 @@
 <div id="tinymce-text-editor">
-	<editor
-		[(ngModel)]="tinymce_content"
-		[apiKey]="apiKey"
+    <editor
+        [(ngModel)]="tinymce_content"
+        [apiKey]="apiKey"
         (onKeyUp)="getValue($event)"
         (onChange)="getValue($event)"
         (onPastePostProcess)="getValue($event)"
         (onPostRender)="editorInit()"
-		[init]="{
-			selector: 'textarea',
-			height: 500,
-            indentation : '20px',
-			menubar: false,
-			plugins: [
-				'advlist autolink lists link image charmap print preview anchor',
-				'searchreplace visualblocks code fullscreen',
-				'insertdatetime media table paste code wordcount'
-			],
-			toolbar:
-				'undo redo | formatselect | bold italic fontsizeselect forecolor | \
+        [init]="{
+            selector: 'textarea',
+            height: 500,
+            indentation: '20px',
+            menubar: false,
+            plugins: [
+                'advlist autolink lists link image charmap print preview anchor',
+                'searchreplace visualblocks code fullscreen',
+                'insertdatetime media table paste code wordcount'
+            ],
+            toolbar:
+                'undo redo | formatselect | bold italic fontsizeselect forecolor | \
                 alignleft aligncenter alignright alignjustify | image \
                 bulllist numlist outdent indent',
             fontsize_formats: '8pt 10pt 12pt 14pt 16pt 18pt 24pt 36pt 48pt'
-        }"
-	></editor>
+        }"></editor>
 
-	<!-- <button (click)="saveEditorContent()">Save</button> -->
+    <!-- <button (click)="saveEditorContent()">Save</button> -->
 </div>
-<div
-    *ngIf="!editor_has_been_loaded"
-    class="py-4 white-bg h-400"
->
+<div *ngIf="!editor_has_been_loaded" class="py-4 white-bg h-400">
     <app-spinner></app-spinner>
 </div>

@@ -6,14 +6,18 @@
                 (click)="goToUrl()"
                 [disabled]="no_dealer_values || no_credit_card">
                 <div class="col-lg-10 p-2">SHOP LICENSES NOW!</div>
-                <div class="col-lg-2 p-2 white-bg"><i class="text-dark fas fa-shopping-cart"></i></div>
+                <div class="col-lg-2 p-2 white-bg">
+                    <i class="text-dark fas fa-shopping-cart"></i>
+                </div>
             </button>
         </div>
         <ng-container *ngIf="is_dealer">
             <div class="col-lg-2">
                 <mat-card class="h-100 text-center pt-3" *ngIf="!loading_license; else spinner">
                     <a [routerLink]="['/dealer/licenses/']" target="_blank" class="text-primary">
-                        <span class="font-weight-bold text-primary f-50">{{ license_details.basis }}</span>
+                        <span class="font-weight-bold text-primary f-50">{{
+                            license_details.basis
+                        }}</span>
                         <br />
                         <span class="md-text font-weight-bold text-dark">TOTAL LICENSES</span>
                     </a>
@@ -22,7 +26,9 @@
             <div class="col-lg-2">
                 <mat-card class="h-100 text-center pt-3" *ngIf="!loading_advertiser; else spinner">
                     <a [routerLink]="['/dealer/advertisers/']" target="_blank" class="text-primary">
-                        <span class="font-weight-bold text-primary f-50">{{ advertiser_details.basis }}</span>
+                        <span class="font-weight-bold text-primary f-50">{{
+                            advertiser_details.basis
+                        }}</span>
                         <br />
                         <span class="md-text font-weight-bold text-dark">TOTAL ADVERTISERS</span>
                     </a>
@@ -31,7 +37,9 @@
             <div class="col-lg-2">
                 <mat-card class="h-100 text-center pt-3" *ngIf="!loading_host; else spinner">
                     <a [routerLink]="['/dealer/hosts/']" target="_blank" class="text-primary">
-                        <span class="font-weight-bold text-primary f-50">{{ host_details.basis }}</span>
+                        <span class="font-weight-bold text-primary f-50">{{
+                            host_details.basis
+                        }}</span>
                         <br />
                         <span class="md-text font-weight-bold text-dark">TOTAL HOSTS</span>
                     </a>
@@ -41,21 +49,42 @@
                 <mat-card class="h-100 text-center pt-3" *ngIf="!loading_host; else spinner">
                     <div class="row">
                         <div class="col-lg-4">
-                            <a [routerLink]="['/dealer/media-library/']" target="_blank" class="text-primary">
-                                <span class="font-weight-bold text-primary f-50">{{ content_details.images }}</span>
-                                <span class="md-text font-weight-medium font-italic ml-2 text-dark">IMAGES</span>
+                            <a
+                                [routerLink]="['/dealer/media-library/']"
+                                target="_blank"
+                                class="text-primary">
+                                <span class="font-weight-bold text-primary f-50">{{
+                                    content_details.images
+                                }}</span>
+                                <span class="md-text font-weight-medium font-italic ml-2 text-dark"
+                                    >IMAGES</span
+                                >
                             </a>
                         </div>
                         <div class="col-lg-4">
-                            <a [routerLink]="['/dealer/media-library/']" target="_blank" class="text-primary">
-                                <span class="font-weight-bold text-primary f-50">{{ content_details.videos }}</span>
-                                <span class="md-text font-weight-medium font-italic ml-2 text-dark">VIDEOS</span>
+                            <a
+                                [routerLink]="['/dealer/media-library/']"
+                                target="_blank"
+                                class="text-primary">
+                                <span class="font-weight-bold text-primary f-50">{{
+                                    content_details.videos
+                                }}</span>
+                                <span class="md-text font-weight-medium font-italic ml-2 text-dark"
+                                    >VIDEOS</span
+                                >
                             </a>
                         </div>
                         <div class="col-lg-4">
-                            <a [routerLink]="['/dealer/media-library/']" target="_blank" class="text-primary">
-                                <span class="font-weight-bold text-primary f-50">{{ content_details.videos }}</span>
-                                <span class="md-text font-weight-medium font-italic ml-2 text-dark">FEEDS</span>
+                            <a
+                                [routerLink]="['/dealer/media-library/']"
+                                target="_blank"
+                                class="text-primary">
+                                <span class="font-weight-bold text-primary f-50">{{
+                                    content_details.videos
+                                }}</span>
+                                <span class="md-text font-weight-medium font-italic ml-2 text-dark"
+                                    >FEEDS</span
+                                >
                             </a>
                         </div>
                     </div>
@@ -143,12 +172,14 @@
                         <div class="row">
                             <div class="col-lg-12 ml-2">
                                 <h5>{{ created_by }}</h5>
-                                <h6>{{ date_created | date : 'MMMM d, y' }}</h6>
+                                <h6>{{ date_created | date: 'MMMM d, y' }}</h6>
                             </div>
                         </div>
 
                         <div class="row">
-                            <div class="col-lg-12 pt-4" *ngIf="!initial_load_activity; else loadingContents">
+                            <div
+                                class="col-lg-12 pt-4"
+                                *ngIf="!initial_load_activity; else loadingContents">
                                 <app-single-activity-tab
                                     *ngIf="activity_data.length; else loadingContents"
                                     [activity_data]="activity_data"
@@ -188,4 +219,3 @@
         </div>
     </mat-card>
 </ng-template>
-

@@ -8,36 +8,31 @@ import { LoginLayoutComponent } from './login-layout/login-layout.component';
 import { LOGIN_ROUTES } from './login.routes';
 
 // Material Theme Modules
-import { 
-	MatInputModule, 
-	MatProgressSpinnerModule, 
-	MatCardModule, 
-	MatButtonModule,
-	MatIconModule,
+import {
+    MatInputModule,
+    MatProgressSpinnerModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
 } from '@angular/material';
 
 const MaterialModule = [
-	MatInputModule, 
-	MatProgressSpinnerModule, 
-	MatCardModule, 
-	MatButtonModule,
-	MatIconModule
+    MatInputModule,
+    MatProgressSpinnerModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
 ];
 @NgModule({
-	declarations: [
-		LoginComponent, 
-		LoginFormComponent, 
-		LoginLayoutComponent
-	],
-	imports: [
-		CommonModule,
-		MaterialModule,
-		MatInputModule,
-		MatCardModule,
-		MatButtonModule,
-		ReactiveFormsModule,
-		RouterModule.forChild(LOGIN_ROUTES)
-	]
+    declarations: [LoginComponent, LoginFormComponent, LoginLayoutComponent],
+    imports: [
+        CommonModule,
+        MaterialModule,
+        MatInputModule,
+        MatCardModule,
+        MatButtonModule,
+        ReactiveFormsModule,
+        RouterModule.forChild(LOGIN_ROUTES),
+    ],
 })
-
-export class UserLoginModule { }
+export class UserLoginModule {}

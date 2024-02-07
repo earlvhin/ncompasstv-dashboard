@@ -1,31 +1,31 @@
 <div class="container pt-5">
-	<div class="row justify-content-center">
-		<div class="col-lg-7">
-			<h1 class="page-title">Create New User</h1>
-			<p class="md-text mb-4">Select the user type you wish to create.</p>
-			<div *ngIf="!is_dealer_admin; else dealeradmin_users">
-				<ng-container *ngFor="let r of user_type">
-					<app-user-type
-						*ngIf="r.is_dealer != true"
-						[image_icon]="r.role_icon"
-						[user_type]="r.role"
-						[title]="r.role_name"
-						[description]="r.role_description">
-					</app-user-type>
-				</ng-container>
-			</div>
-			<ng-template #dealeradmin_users>
-				<ng-container *ngFor="let r of user_type">
-					<app-user-type
-						*ngIf="r.is_dealer_admin == true"
-						[image_icon]="r.role_icon"
-						[user_type]="r.role"
-						[title]="r.role_name"
-						[description]="r.role_description">
-					</app-user-type>
-				</ng-container>
-			</ng-template>
-		</div>
-		<router-outlet></router-outlet>
-	</div>
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <h1 class="page-title">Create New User</h1>
+            <p class="md-text mb-4">Select the user type you wish to create.</p>
+            <div *ngIf="!is_dealer_admin; else dealeradmin_users">
+                <ng-container *ngFor="let r of user_type">
+                    <app-user-type
+                        *ngIf="r.is_dealer != true"
+                        [image_icon]="r.role_icon"
+                        [user_type]="r.role"
+                        [title]="r.role_name"
+                        [description]="r.role_description">
+                    </app-user-type>
+                </ng-container>
+            </div>
+            <ng-template #dealeradmin_users>
+                <ng-container *ngFor="let r of user_type">
+                    <app-user-type
+                        *ngIf="r.is_dealer_admin == true"
+                        [image_icon]="r.role_icon"
+                        [user_type]="r.role"
+                        [title]="r.role_name"
+                        [description]="r.role_description">
+                    </app-user-type>
+                </ng-container>
+            </ng-template>
+        </div>
+        <router-outlet></router-outlet>
+    </div>
 </div>

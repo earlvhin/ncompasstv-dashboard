@@ -19,7 +19,8 @@ export const API_ENDPOINTS = {
         api_get_billing_charges: 'billing/get/charges',
         api_get_billing_invoice_charges: 'billing/get/all/charges',
         api_get_billing_purchases: 'billing/get/all/purchases',
-        api_get_blacklisted_by_id: 'blacklistedcontents/getblacklistedbyplaylistcontentid?playlistcontentid=',
+        api_get_blacklisted_by_id:
+            'blacklistedcontents/getblacklistedbyplaylistcontentid?playlistcontentid=',
         api_get_checklist: 'installationchecklists/getallitems',
         api_get_checklist_titles: 'installationchecklists/getall',
         api_get_checklist_by_license_id: 'installationchecklists/getlicensechecklist?licenseid=',
@@ -207,7 +208,8 @@ export const API_ENDPOINTS = {
         license_by_tags: 'license/getByTags',
         license_installation_statistics: 'license/getinstallationstats',
         license_statistics: 'license/getstatisticsbydealerid',
-        license_statistics_by_install_date: 'license/getlicensestatisticsbyinstalldate?installdate=',
+        license_statistics_by_install_date:
+            'license/getlicensestatisticsbyinstalldate?installdate=',
         next_month_installations: 'license/getNextMonthInstall',
         next_week_installations: 'license/getNextWeekInstall',
         outdated_licenses: 'license/GetOutDatedLicenses',
@@ -296,7 +298,8 @@ export const API_ENDPOINTS = {
         filestack_api_key: 'ALjKIdQzT1uQvACcqMCnQz',
         filestack_policy: 'eyJjYWxsIjpbIndyaXRlIiwicmVtb3ZlIl0sImV4cGlyeSI6MTYxMjAyMjQwMH0',
         filestack_signature: '49306a4d1945bffbb381dd90b38be3a69230b2f473543d3d73440c77eeab730d',
-        filestack_screenshot: 'https://cdn.filestackcontent.com/ALjKIdQzT1uQvACcqMCnQz/urlscreenshot=mode:window,height:1080,width:1920/resize=width:600/',
+        filestack_screenshot:
+            'https://cdn.filestackcontent.com/ALjKIdQzT1uQvACcqMCnQz/urlscreenshot=mode:window,height:1080,width:1920/resize=width:600/',
     },
     update: {
         account_permission: 'account/updatepermission',
@@ -331,7 +334,8 @@ export const API_ENDPOINTS = {
         api_update_news_slide_feed: 'feed/update/news',
         api_update_notification_status: 'notification/updateNotificationIsOpened?notificationId=',
         api_update_all_notification_status: 'notification/updateAllNotificationIsOpened',
-        api_update_notification_status_by_dealer: 'notification/updateNotificationIsOpenedByDealerId?dealerId=',
+        api_update_notification_status_by_dealer:
+            'notification/updateNotificationIsOpenedByDealerId?dealerId=',
         api_update_playlist_content: 'playlists/addcontent',
         api_update_playlist_info: 'playlists/updateplaylistinfo',
         api_update_screen: 'screen/edit',

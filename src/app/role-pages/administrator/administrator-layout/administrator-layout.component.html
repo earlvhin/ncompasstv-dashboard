@@ -1,7 +1,13 @@
 <app-navbar [sidebar_state]="toggle"></app-navbar>
 
-<app-sidebar *ngIf="!is_dealer_admin" [routes]="sidebar_routes" (toggleEvent)="receiveToggle($event)"></app-sidebar>
-<app-sidebar *ngIf="is_dealer_admin" [routes]="dealeradmin_sidebar_routes" (toggleEvent)="receiveToggle($event)"></app-sidebar>
+<app-sidebar
+    *ngIf="!is_dealer_admin"
+    [routes]="sidebar_routes"
+    (toggleEvent)="receiveToggle($event)"></app-sidebar>
+<app-sidebar
+    *ngIf="is_dealer_admin"
+    [routes]="dealeradmin_sidebar_routes"
+    (toggleEvent)="receiveToggle($event)"></app-sidebar>
 
 <div class="page" [ngClass]="toggle ? 'sidebar-fully' : 'sidebar-full'">
     <router-outlet></router-outlet>

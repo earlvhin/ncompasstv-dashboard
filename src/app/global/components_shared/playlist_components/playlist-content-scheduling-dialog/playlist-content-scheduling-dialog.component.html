@@ -1,152 +1,178 @@
 <div class="playlist-content-schedule-dialog">
-	<button class="dismiss" mat-button mat-dialog-title [mat-dialog-close]="true"><mat-icon>close</mat-icon></button>
-	<h1 mat-dialog-title class="title">
-		{{ title }}
-	</h1>
+    <button class="dismiss" mat-button mat-dialog-title [mat-dialog-close]="true">
+        <mat-icon>close</mat-icon>
+    </button>
+    <h1 mat-dialog-title class="title">
+        {{ title }}
+    </h1>
 
-	<div class="container-fluid">
-		<form [formGroup]="form" (ngSubmit)="onSubmit()">
-			<div class="row">
-				<div class="col-lg-3">
-					<div class="schedule-type">
-						<h3 class="font-weight-bold mb-4">Type</h3>
-						<mat-radio-group name="frequency-options" formControlName="type">
-							<mat-radio-button
-								*ngFor="let type of types"
-								class="mr-2 md-text text-gray primary-color-ripple"
-								name="frequency_options"
-								[value]="type"
-								(change)="onSelectType(type)"
-								>{{ type.name }}
-							</mat-radio-button>
-						</mat-radio-group>
-					</div>
-				</div>
+    <div class="container-fluid">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="schedule-type">
+                        <h3 class="font-weight-bold mb-4">Type</h3>
+                        <mat-radio-group name="frequency-options" formControlName="type">
+                            <mat-radio-button
+                                *ngFor="let type of types"
+                                class="mr-2 md-text text-gray primary-color-ripple"
+                                name="frequency_options"
+                                [value]="type"
+                                (change)="onSelectType(type)"
+                                >{{ type.name }}
+                            </mat-radio-button>
+                        </mat-radio-group>
+                    </div>
+                </div>
 
-				<div class="col-lg-1 filler"></div>
+                <div class="col-lg-1 filler"></div>
 
-				<div class="col-lg-8">
-					<div class="scheduling">
-						<div *ngIf="is_custom_play" [@fade]>
-							<div class="row">
-								<div class="col-md-12">
-									<h3 class="font-weight-bold">Date</h3>
-								</div>
-							</div>
-							<br />
-							<!-- Date Selection -->
-							<div class="row">
-								<div class="col-md-6">
-									<div class="start-date">
-										<mat-form-field appearance="fill" appDefaultDateFormat>
-											<mat-label>Start Date</mat-label>
-											<input
-												matInput
-												formControlName="from"
-												(dateInput)="onSelectDate($event.value, 'start')"
-												[matDatepicker]="startDatePicker"
-												[min]="yesterday"
-												readonly />
-											<mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
-											<mat-datepicker #startDatePicker></mat-datepicker>
-										</mat-form-field>
-									</div>
-								</div>
-								<div class="col-md-6">
-									<div class="end-date">
-										<mat-form-field appearance="fill" appDefaultDateFormat *ngIf="start_date">
-											<mat-label>End Date</mat-label>
-											<input
-												matInput
-												formControlName="to"
-												(dateInput)="onSelectDate($event.value, 'end')"
-												[matDatepicker]="endDatePicker"
-												[min]="form.controls.from.value"
-												readonly />
-											<mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
-											<mat-datepicker #endDatePicker></mat-datepicker>
-										</mat-form-field>
-									</div>
-								</div>
-							</div>
-							<br />
-							<div class="row">
-								<div class="col-md-6">
-									<h3 class="font-weight-bold">Day of Week</h3>
-								</div>
-								<div class="col-md-6">
-									<mat-slide-toggle [checked]="has_selected_all_days" (change)="onSelectAllDays()">
-										Select All Days
-									</mat-slide-toggle>
-								</div>
-							</div>
-							<!-- Day Selection -->
-							<div class="row">
-								<div class="col-md-12">
-									<div class="checkboxes">
-										<mat-checkbox
-											*ngFor="let day of days_list; let i = index"
-											(change)="onSelectDay($event, i)"
-											[checked]="day.checked">
-											<span class="sm-text mr-2">{{ day.name }}</span>
-										</mat-checkbox>
-									</div>
-								</div>
-							</div>
-							<br />
-							<!-- Alternate Week  -->
-							<div class="row">
-								<div class="col-md-6">
-									<h3 class="font-weight-bold">Alternate Week</h3>
-								</div>
-								<div class="col-md-6">
-									<mat-slide-toggle [checked]="has_alternate_week_set" (change)="onToggleAlternateWeekSetting()">
-										Every other ({{ alternate_week }}) week
-									</mat-slide-toggle>
-								</div>
-							</div>
-							<br />
-							<div class="row">
-								<div class="col-md-6">
-									<h3 class="font-weight-bold">Play Time</h3>
-								</div>
-								<div class="col-md-6">
-									<mat-slide-toggle [checked]="has_selected_all_day_long" (click)="onSelectAllDayLong($event)">
-										All Day Long
-									</mat-slide-toggle>
-								</div>
-							</div>
-							<br />
-							<!-- Play Time -->
-							<div class="row">
-								<div class="col-md-6">
-									<div class="start-time">
-										<h5>Start Time</h5>
-										<ngb-timepicker [spinners]="false" [meridian]="true" formControlName="playTimeStartData"></ngb-timepicker>
-									</div>
-								</div>
-								<div class="col-md-6">
-									<div class="end-time">
-										<h5>End Time</h5>
-										<ngb-timepicker [spinners]="false" [meridian]="true" formControlName="playTimeEndData"></ngb-timepicker>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div *ngIf="is_default_play" [@fade]>
-							<h3>This setting will play the content during business hours</h3>
-						</div>
-						<div *ngIf="is_set_not_to_play" [@fade]>
-							<h3>This will make the content unplayable</h3>
-						</div>
-					</div>
-				</div>
-			</div>
+                <div class="col-lg-8">
+                    <div class="scheduling">
+                        <div *ngIf="is_custom_play" [@fade]>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h3 class="font-weight-bold">Date</h3>
+                                </div>
+                            </div>
+                            <br />
+                            <!-- Date Selection -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="start-date">
+                                        <mat-form-field appearance="fill" appDefaultDateFormat>
+                                            <mat-label>Start Date</mat-label>
+                                            <input
+                                                matInput
+                                                formControlName="from"
+                                                (dateInput)="onSelectDate($event.value, 'start')"
+                                                [matDatepicker]="startDatePicker"
+                                                [min]="yesterday"
+                                                readonly />
+                                            <mat-datepicker-toggle
+                                                matSuffix
+                                                [for]="startDatePicker"></mat-datepicker-toggle>
+                                            <mat-datepicker #startDatePicker></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="end-date">
+                                        <mat-form-field
+                                            appearance="fill"
+                                            appDefaultDateFormat
+                                            *ngIf="start_date">
+                                            <mat-label>End Date</mat-label>
+                                            <input
+                                                matInput
+                                                formControlName="to"
+                                                (dateInput)="onSelectDate($event.value, 'end')"
+                                                [matDatepicker]="endDatePicker"
+                                                [min]="form.controls.from.value"
+                                                readonly />
+                                            <mat-datepicker-toggle
+                                                matSuffix
+                                                [for]="endDatePicker"></mat-datepicker-toggle>
+                                            <mat-datepicker #endDatePicker></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h3 class="font-weight-bold">Day of Week</h3>
+                                </div>
+                                <div class="col-md-6">
+                                    <mat-slide-toggle
+                                        [checked]="has_selected_all_days"
+                                        (change)="onSelectAllDays()">
+                                        Select All Days
+                                    </mat-slide-toggle>
+                                </div>
+                            </div>
+                            <!-- Day Selection -->
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="checkboxes">
+                                        <mat-checkbox
+                                            *ngFor="let day of days_list; let i = index"
+                                            (change)="onSelectDay($event, i)"
+                                            [checked]="day.checked">
+                                            <span class="sm-text mr-2">{{ day.name }}</span>
+                                        </mat-checkbox>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <!-- Alternate Week  -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h3 class="font-weight-bold">Alternate Week</h3>
+                                </div>
+                                <div class="col-md-6">
+                                    <mat-slide-toggle
+                                        [checked]="has_alternate_week_set"
+                                        (change)="onToggleAlternateWeekSetting()">
+                                        Every other ({{ alternate_week }}) week
+                                    </mat-slide-toggle>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h3 class="font-weight-bold">Play Time</h3>
+                                </div>
+                                <div class="col-md-6">
+                                    <mat-slide-toggle
+                                        [checked]="has_selected_all_day_long"
+                                        (click)="onSelectAllDayLong($event)">
+                                        All Day Long
+                                    </mat-slide-toggle>
+                                </div>
+                            </div>
+                            <br />
+                            <!-- Play Time -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="start-time">
+                                        <h5>Start Time</h5>
+                                        <ngb-timepicker
+                                            [spinners]="false"
+                                            [meridian]="true"
+                                            formControlName="playTimeStartData"></ngb-timepicker>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="end-time">
+                                        <h5>End Time</h5>
+                                        <ngb-timepicker
+                                            [spinners]="false"
+                                            [meridian]="true"
+                                            formControlName="playTimeEndData"></ngb-timepicker>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="is_default_play" [@fade]>
+                            <h3>This setting will play the content during business hours</h3>
+                        </div>
+                        <div *ngIf="is_set_not_to_play" [@fade]>
+                            <h3>This will make the content unplayable</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-			<button mat-button mat-raised-button class="submit" type="submit" [disabled]="!type || (this.is_custom_play && invalid_form)">
-				Submit
-			</button>
-		</form>
-	</div>
-	<p class="warning">{{ warning_text }}</p>
+            <button
+                mat-button
+                mat-raised-button
+                class="submit"
+                type="submit"
+                [disabled]="!type || (this.is_custom_play && invalid_form)">
+                Submit
+            </button>
+        </form>
+    </div>
+    <p class="warning">{{ warning_text }}</p>
 </div>

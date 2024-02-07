@@ -1,15 +1,17 @@
-<div class="zone"
-[ngStyle]="{
-'background': zone_background,
-'width.%': zone_width,
-'height.%': zone_height,
-'left.%': zone_pos_x,
-'top.%': zone_pos_y,
-'z-index': zone_order}"
-[ngClass]="is_fullscreen ? 'fullscreen' : ''">
+<div
+    class="zone"
+    [ngStyle]="{
+        background: zone_background,
+        'width.%': zone_width,
+        'height.%': zone_height,
+        'left.%': zone_pos_x,
+        'top.%': zone_pos_y,
+        'z-index': zone_order
+    }"
+    [ngClass]="is_fullscreen ? 'fullscreen' : ''">
     <app-playlist-demo
-    [playlist_id]="zone_playlist_id"
-    [passed_playlist_content]="zone_playlist_content"
-    (is_fullscreen)="setToFullscreen($event)">
+        [playlist_id]="zone_playlist_id"
+        [passed_playlist_content]="zone_playlist_content"
+        (is_fullscreen)="setToFullscreen($event)">
     </app-playlist-demo>
 </div>

@@ -8,18 +8,8 @@ import { HOST_ROUTES } from './host-owner.routes';
 import { AuthGuard } from '../../global/guards/auth/auth.guard';
 
 @NgModule({
-	declarations: [
-		HostLayoutComponent,
-		DashboardComponent
-	],
-	imports: [
-		CommonModule,
-		GlobalModule,
-		RouterModule.forChild(HOST_ROUTES)
-	],
-	providers: [
-		AuthGuard
-	]
+    declarations: [HostLayoutComponent, DashboardComponent],
+    imports: [CommonModule, GlobalModule, RouterModule.forChild(HOST_ROUTES)],
+    providers: [AuthGuard],
 })
-
-export class HostOwnerModule { }
+export class HostOwnerModule {}

@@ -14,8 +14,15 @@ import { UpdateTvBrandDialogComponent } from './components/update-tv-brand-dialo
 
 const MODALS = [AddTagModalComponent, UpdateTvBrandDialogComponent];
 @NgModule({
-	declarations: [SingleLicenseComponent, AnalyticsTabComponent, ResourceTabComponent, InstallationTabComponent, ContentTabComponent, MODALS],
-	imports: [CommonModule, GlobalModule, MatSnackBarModule, RouterModule],
-	entryComponents: [MODALS]
+    declarations: [
+        SingleLicenseComponent,
+        AnalyticsTabComponent,
+        ResourceTabComponent,
+        InstallationTabComponent,
+        ContentTabComponent,
+        MODALS,
+    ],
+    imports: [CommonModule, GlobalModule, MatSnackBarModule, RouterModule],
+    entryComponents: [MODALS],
 })
 export class SingleLicenseModule {}

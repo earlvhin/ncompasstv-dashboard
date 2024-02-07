@@ -1,33 +1,33 @@
 #licenses-page-outdated-tab {
-	.search-field-container {
-		margin-left: auto;
+    .search-field-container {
+        margin-left: auto;
 
-		mat-form-field {
-			width: 400px;
-		}
-	}
+        mat-form-field {
+            width: 400px;
+        }
+    }
 
-	.controls-and-search-container {
-		gap: 2%;
+    .controls-and-search-container {
+        gap: 2%;
 
-		.stats-container {
-			gap: 2%;
+        .stats-container {
+            gap: 2%;
 
-			.stat {
-				flex: 1 1 auto;
-			}
+            .stat {
+                flex: 1 1 auto;
+            }
 
-			.total-outdated-licenses {
-				width: 7rem;
-			}
+            .total-outdated-licenses {
+                width: 7rem;
+            }
 
-			.latest-server-version {
-				width: 10rem;
-			}
+            .latest-server-version {
+                width: 10rem;
+            }
 
-			.latest-ui-version {
-				width: 10rem;
-			}
-		}
-	}
+            .latest-ui-version {
+                width: 10rem;
+            }
+        }
+    }
 }

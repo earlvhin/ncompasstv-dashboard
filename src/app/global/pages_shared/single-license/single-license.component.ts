@@ -69,7 +69,14 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     anydesk_id: string;
     anydesk_restarting = false;
     anydesk_status_text = 'Restarting Anydesk...';
-    apps: { chromium: string; electron: string; puppeteer: string; rpi_model: string; server: string; ui: string };
+    apps: {
+        chromium: string;
+        electron: string;
+        puppeteer: string;
+        rpi_model: string;
+        server: string;
+        ui: string;
+    };
     assets_breakdown = { advertisers: 0, feeds: 0, fillers: 0, hosts: 0, others: 0 };
     background_zone_selected = false;
     businessName: string;
@@ -89,7 +96,14 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     dealerData: API_DEALER;
     dealer_route: string;
     duration_breakdown = { advertisers: 0, feeds: 0, fillers: 0, hosts: 0, others: 0, total: 0 };
-    duration_breakdown_text = { advertisers: '0 sec', feeds: '0s', fillers: '0s', hosts: '0s', others: '0s', total: '0s' };
+    duration_breakdown_text = {
+        advertisers: '0 sec',
+        feeds: '0s',
+        fillers: '0s',
+        hosts: '0s',
+        others: '0s',
+        total: '0s',
+    };
     display_status: number;
     enable_edit_alias = false;
     hasAdminPrivileges = false;
@@ -105,11 +119,18 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     host_route: string;
     hasLoadedLicenseData = false;
     hasLoadedScreenData = false;
-    internet_connection = { downloadMbps: 'N/A', uploadMbps: 'N/A', ping: 'N/A', date: 'N/A', status: 'N/A' };
+    internet_connection = {
+        downloadMbps: 'N/A',
+        uploadMbps: 'N/A',
+        ping: 'N/A',
+        date: 'N/A',
+        status: 'N/A',
+    };
     isCheckingDisplayStatus = false;
     isCurrentUserAdmin = this._auth.current_role === 'administrator';
     isCurrentUserDealerAdmin = this._auth.current_role === 'dealeradmin';
-    isCurrentUserDealer = this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
+    isCurrentUserDealer =
+        this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
     is_editing_tv_brand = false;
     is_view_only = this.currentUser.roleInfo.permission === 'V';
     lastStartup = null;
@@ -213,7 +234,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         private _tag: TagService,
         private _template: TemplateService,
         private _titleCasePipe: TitleCasePipe,
-        private _snackBar: MatSnackBar
+        private _snackBar: MatSnackBar,
     ) {}
 
     @HostListener('window:resize', [])
@@ -267,7 +288,11 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             return_msg: 'Settings saved! Restarting player.',
         };
 
-        const userResponse: boolean = await this.showWarningModal(dialogData.message, dialogData.data, dialogData.return_msg);
+        const userResponse: boolean = await this.showWarningModal(
+            dialogData.message,
+            dialogData.data,
+            dialogData.return_msg,
+        );
 
         if (!userResponse) return;
 
@@ -275,30 +300,51 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         let requests = [];
         let requestNames: string[] = [];
         const controls = this.additional_license_settings_form.controls;
-        const rebootTimeBody: { rebootTime: { rebootTime: string }[]; licenseId: string } = { rebootTime: [], licenseId: this.license_id };
+        const rebootTimeBody: { rebootTime: { rebootTime: string }[]; licenseId: string } = {
+            rebootTime: [],
+            licenseId: this.license_id,
+        };
 
         Object.keys(controls).forEach((key) => {
             const control = controls[key] as FormControl;
 
-            if (control.invalid || (!this.unsaved_additional_settings.bootDelayChanged && !this.unsaved_additional_settings.rebootTimeChanged)) return;
+            if (
+                control.invalid ||
+                (!this.unsaved_additional_settings.bootDelayChanged &&
+                    !this.unsaved_additional_settings.rebootTimeChanged)
+            )
+                return;
 
             if (key === 'bootDelay' && this.unsaved_additional_settings.bootDelayChanged) {
-                const bootDelayBody = { licenseId: this.license_id, bootDelay: this.additional_license_settings_form.controls['bootDelay'].value };
-                requests.push(this._license.update_license_boot_delay(bootDelayBody).pipe(takeUntil(this._unsubscribe)));
+                const bootDelayBody = {
+                    licenseId: this.license_id,
+                    bootDelay: this.additional_license_settings_form.controls['bootDelay'].value,
+                };
+                requests.push(
+                    this._license
+                        .update_license_boot_delay(bootDelayBody)
+                        .pipe(takeUntil(this._unsubscribe)),
+                );
                 requestNames.push(key);
                 return;
             }
 
             if (key.includes('rebootTime') && this.unsaved_additional_settings.rebootTimeChanged) {
                 const rebootTimeValue = control.value as { hour: number; minute: number };
-                rebootTimeBody.rebootTime.push({ rebootTime: `${rebootTimeValue.hour}:${rebootTimeValue.minute}` });
+                rebootTimeBody.rebootTime.push({
+                    rebootTime: `${rebootTimeValue.hour}:${rebootTimeValue.minute}`,
+                });
                 requestNames.push(key);
                 return;
             }
         });
 
         if (this.unsaved_additional_settings.rebootTimeChanged) {
-            requests.push(this._license.update_license_reboot_time(rebootTimeBody).pipe(takeUntil(this._unsubscribe)));
+            requests.push(
+                this._license
+                    .update_license_reboot_time(rebootTimeBody)
+                    .pipe(takeUntil(this._unsubscribe)),
+            );
         }
 
         if (requests.length <= 0) {
@@ -321,7 +367,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             )
             .add(() => (this.saving_license_settings = false));
     }
@@ -360,7 +406,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -376,7 +422,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -392,7 +438,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -404,11 +450,13 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 () => {
-                    alert(`Resource Log Sending ${event.checked ? 'Enabled' : 'Disabled'} for this license`);
+                    alert(
+                        `Resource Log Sending ${event.checked ? 'Enabled' : 'Disabled'} for this license`,
+                    );
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -445,7 +493,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             status: event.checked,
         });
 
-        this.saveActivityLog(event.checked ? ACTIVITY_CODES.monitor_toggled_on : ACTIVITY_CODES.monitor_toggled_off);
+        this.saveActivityLog(
+            event.checked ? ACTIVITY_CODES.monitor_toggled_on : ACTIVITY_CODES.monitor_toggled_off,
+        );
     }
 
     onDeleteLicense(): void {
@@ -476,7 +526,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                     },
                     (error) => {
                         console.error(error);
-                    }
+                    },
                 );
         });
     }
@@ -490,11 +540,13 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 () => {
-                    alert(`Display Control Settings ${event.checked ? 'Enabled' : 'Disabled'} for this license`);
+                    alert(
+                        `Display Control Settings ${event.checked ? 'Enabled' : 'Disabled'} for this license`,
+                    );
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -514,7 +566,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
         // if filter type is used, then replace with selected filter
         // else just add to filters array
-        if (existingFilterType > -1) this.content_filters[existingFilterType] = { type, name: filter };
+        if (existingFilterType > -1)
+            this.content_filters[existingFilterType] = { type, name: filter };
         else this.content_filters.push({ type, name: filter });
 
         this.filterContent();
@@ -553,7 +606,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
     onRemoveContentFilter(data: string): void {
         const filterToRemove = data.toLowerCase();
-        this.content_filters = this.content_filters.filter((filter) => filter.name !== filterToRemove);
+        this.content_filters = this.content_filters.filter(
+            (filter) => filter.name !== filterToRemove,
+        );
 
         if (this.content_filters.length <= 0) {
             this.resetContents();
@@ -569,7 +624,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     }
 
     async onRemoveTag(index: number, data: TAG) {
-        const confirmAction = await this._confirmDialog.warning({ message: 'Remove Tag?', data: 'This will remove the tag from this license' }).toPromise();
+        const confirmAction = await this._confirmDialog
+            .warning({ message: 'Remove Tag?', data: 'This will remove the tag from this license' })
+            .toPromise();
 
         if (!confirmAction) return;
 
@@ -583,13 +640,18 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
     onResetAnydeskID(): void {
         this.anydesk_status_text = 'Resetting Anydesk ID...';
-        this.warningModal('Reset Anydesk ID', 'Proceed? This will disconnect current Anydesk sessions', 'Confirm if you wish to do so', 'reset_anydesk_id');
+        this.warningModal(
+            'Reset Anydesk ID',
+            'Proceed? This will disconnect current Anydesk sessions',
+            'Confirm if you wish to do so',
+            'reset_anydesk_id',
+        );
     }
 
     onResetFilters(): void {
@@ -597,7 +659,11 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         this.content_search_control.disable({ emitEvent: false });
         this.content_search_control.setValue(null, { emitEvent: false });
         this.content_search_control.enable({ emitEvent: false });
-        this.content_per_zone[this.selected_zone_index].contents = [...this.contents_backup.filter((zone) => zone.zone_name === this.current_zone_name_selected)[0].contents];
+        this.content_per_zone[this.selected_zone_index].contents = [
+            ...this.contents_backup.filter(
+                (zone) => zone.zone_name === this.current_zone_name_selected,
+            )[0].contents,
+        ];
         this.filterInactiveContents();
         this.filterActiveContentsPlayingToday();
     }
@@ -617,7 +683,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     }
 
     onUpdateNotificationSettings(event: MatSlideToggleChange, type: string) {
-        let body: { licenseId: string; notificationSettings?: number; emailSettings?: number } = { licenseId: this.license_id };
+        let body: { licenseId: string; notificationSettings?: number; emailSettings?: number } = {
+            licenseId: this.license_id,
+        };
 
         switch (type) {
             case 'notification':
@@ -633,11 +701,14 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 () => {
-                    this.showSuccessModal('Success!', `${this._titleCasePipe.transform(type)} setting updated`);
+                    this.showSuccessModal(
+                        'Success!',
+                        `${this._titleCasePipe.transform(type)} setting updated`,
+                    );
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -649,9 +720,15 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             disableClose: true,
         };
 
-        const modal: MatDialogRef<AddTagModalComponent> = this._dialog.open(AddTagModalComponent, config);
+        const modal: MatDialogRef<AddTagModalComponent> = this._dialog.open(
+            AddTagModalComponent,
+            config,
+        );
         modal.componentInstance.ownerId = this.license_data.licenseId;
-        modal.componentInstance.currentTags = this.license_data.tags as { name: string; tagColor: string }[];
+        modal.componentInstance.currentTags = this.license_data.tags as {
+            name: string;
+            tagColor: string;
+        }[];
 
         modal.afterClosed().subscribe((response) => {
             if (!response) return;
@@ -663,7 +740,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     openEditTagModal(index: number, data: TAG) {
         let dialog: MatDialogRef<EditTagComponent>;
 
-        dialog = this._dialog.open(EditTagComponent, { width: '500px' }) as MatDialogRef<EditTagComponent>;
+        dialog = this._dialog.open(EditTagComponent, {
+            width: '500px',
+        }) as MatDialogRef<EditTagComponent>;
         dialog.componentInstance.page = 'single-license';
         dialog.componentInstance.tag = data as TAG;
         dialog.componentInstance.currentUserId = this.currentUser.user_id;
@@ -744,12 +823,15 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
     updateLicenseAlias(): void {
-        const filter = { licenseId: this.license_data.licenseId, alias: this.updateAliasFormControls.alias.value };
+        const filter = {
+            licenseId: this.license_data.licenseId,
+            alias: this.updateAliasFormControls.alias.value,
+        };
 
         this._license
             .update_alias(filter)
@@ -761,7 +843,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -772,15 +854,30 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     }
 
     pushUpdate(): void {
-        this.warningModal('Push Updates', 'Are you sure you want to push updates?', 'Click OK to push updates for this license', 'update');
+        this.warningModal(
+            'Push Updates',
+            'Are you sure you want to push updates?',
+            'Click OK to push updates for this license',
+            'update',
+        );
     }
 
     refetchPi(): void {
-        this.warningModal('Refetch Content', 'This will refetch all Player Data', 'Click OK to launch refetch', 'refetch');
+        this.warningModal(
+            'Refetch Content',
+            'This will refetch all Player Data',
+            'Click OK to launch refetch',
+            'refetch',
+        );
     }
 
     resetPi(): void {
-        this.warningModal('Reset License', 'This will clear all player data including the license', 'Click OK to launch reset', 'reset');
+        this.warningModal(
+            'Reset License',
+            'This will clear all player data including the license',
+            'Click OK to launch reset',
+            'reset',
+        );
     }
 
     restartAnydesk() {
@@ -791,11 +888,21 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     }
 
     restartPi(): void {
-        this.warningModal('Restart Pi', 'Are you sure you want to restart the pi?', 'Click OK to restart this license', 'pi_restart');
+        this.warningModal(
+            'Restart Pi',
+            'Are you sure you want to restart the pi?',
+            'Click OK to restart this license',
+            'pi_restart',
+        );
     }
 
     restartPlayer(): void {
-        this.warningModal('Restart Player', 'Restart the software not the device itself?', 'Click OK to restart player of this license', 'player_restart');
+        this.warningModal(
+            'Restart Player',
+            'Restart the software not the device itself?',
+            'Click OK to restart player of this license',
+            'player_restart',
+        );
     }
 
     screenShotPi(): void {
@@ -808,7 +915,11 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     toggleFastEdgeTool(e: any) {
         this.fastEdgeSettingsSaving = true;
 
-        const body = { licenseId: this.license_id, fastEdgeMonitoringTool: e.checked ? 1 : 0, ...this.fastEdgeSettings.value };
+        const body = {
+            licenseId: this.license_id,
+            fastEdgeMonitoringTool: e.checked ? 1 : 0,
+            ...this.fastEdgeSettings.value,
+        };
 
         this._license
             .set_fast_edge_tool_status(body)
@@ -816,20 +927,29 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             .subscribe(
                 () => {
                     this.fastEdgeSettingsSaving = false;
-                    this._snackBar.open(`DCP Tool ${e.checked ? 'Enabled' : 'Disabled'} for this license successfully!`, '', {
-                        duration: 3000,
-                    });
+                    this._snackBar.open(
+                        `DCP Tool ${e.checked ? 'Enabled' : 'Disabled'} for this license successfully!`,
+                        '',
+                        {
+                            duration: 3000,
+                        },
+                    );
                 },
                 (error) => {
                     this.fastEdgeSettingsSaving = false;
                     alert(`Failed saving DCP Tool changes, ${error.error}`);
                     console.error(error);
-                }
+                },
             );
     }
 
     updateAndRestart(): void {
-        this.warningModal('Update System and Restart', 'Are you sure you want to update the player and restart the pi?', 'Click OK to update this license', 'system_update');
+        this.warningModal(
+            'Update System and Restart',
+            'Are you sure you want to update the player and restart the pi?',
+            'Click OK to update this license',
+            'system_update',
+        );
     }
 
     upgradeToV2(): void {
@@ -837,7 +957,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             'Update System to Version 2 and Restart',
             'Are you sure you want to upgrade the software to version 2 and restart the pi?',
             'Click OK to upgrade',
-            'system_upgrade'
+            'system_upgrade',
         );
     }
 
@@ -864,7 +984,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
     private breakdownContents(): void {
         const breakdown = { hosts: 0, advertisers: 0, fillers: 0, feeds: 0, others: 0 };
-        const zone = this.content_per_zone.filter((zone) => zone.zone_name === this.current_zone_name_selected)[0];
+        const zone = this.content_per_zone.filter(
+            (zone) => zone.zone_name === this.current_zone_name_selected,
+        )[0];
 
         if (!zone || !zone.contents || zone.contents.length <= 0) {
             this.assets_breakdown = breakdown;
@@ -885,9 +1007,12 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                     if (file_type === 'feed') {
                         breakdown.feeds++;
                     } else {
-                        if (this.isBlank(advertiser_id) && this.isBlank(host_id)) breakdown.others++;
-                        if (!this.isBlank(advertiser_id) && this.isBlank(host_id)) breakdown.advertisers++;
-                        if (!this.isBlank(host_id) && this.isBlank(advertiser_id)) breakdown.hosts++;
+                        if (this.isBlank(advertiser_id) && this.isBlank(host_id))
+                            breakdown.others++;
+                        if (!this.isBlank(advertiser_id) && this.isBlank(host_id))
+                            breakdown.advertisers++;
+                        if (!this.isBlank(host_id) && this.isBlank(advertiser_id))
+                            breakdown.hosts++;
                     }
             }
         });
@@ -897,7 +1022,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
     private breakdownDuration(): void {
         const breakdown = { hosts: 0, advertisers: 0, fillers: 0, feeds: 0, others: 0, total: 0 };
-        const zone = this.content_per_zone.filter((zone) => zone.zone_name === this.current_zone_name_selected)[0];
+        const zone = this.content_per_zone.filter(
+            (zone) => zone.zone_name === this.current_zone_name_selected,
+        )[0];
 
         if (!zone || !zone.contents || zone.contents.length <= 0) {
             this.assets_breakdown = breakdown;
@@ -918,9 +1045,12 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                     if (file_type === 'feed') {
                         breakdown.feeds += duration;
                     } else {
-                        if (this.isBlank(advertiser_id) && this.isBlank(host_id)) breakdown.others += duration;
-                        if (!this.isBlank(advertiser_id) && this.isBlank(host_id)) breakdown.advertisers += duration;
-                        if (!this.isBlank(host_id) && this.isBlank(advertiser_id)) breakdown.hosts += duration;
+                        if (this.isBlank(advertiser_id) && this.isBlank(host_id))
+                            breakdown.others += duration;
+                        if (!this.isBlank(advertiser_id) && this.isBlank(host_id))
+                            breakdown.advertisers += duration;
+                        if (!this.isBlank(host_id) && this.isBlank(advertiser_id))
+                            breakdown.hosts += duration;
                     }
             }
 
@@ -962,11 +1092,14 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     }
 
     private async getLicenseData() {
-        let licenseData: API_SINGLE_LICENSE_PAGE | { message: string } = this._helper.singleLicenseData as API_SINGLE_LICENSE_PAGE;
+        let licenseData: API_SINGLE_LICENSE_PAGE | { message: string } = this._helper
+            .singleLicenseData as API_SINGLE_LICENSE_PAGE;
 
         if (this.isCurrentUserAdmin || this.isCurrentUserDealerAdmin) {
             try {
-                licenseData = (await this._license.get_license_by_id(this.license_id).toPromise()) as API_SINGLE_LICENSE_PAGE;
+                licenseData = (await this._license
+                    .get_license_by_id(this.license_id)
+                    .toPromise()) as API_SINGLE_LICENSE_PAGE;
             } catch (error) {
                 throw new Error();
             }
@@ -1033,7 +1166,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             )
             .add(() => (this.initial_load = false));
     }
@@ -1052,13 +1185,14 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 (response) => {
                     this.pagingData = response;
 
-                    if (!response.entities || response.entities.length <= 0) return (this.hasNoData = true);
+                    if (!response.entities || response.entities.length <= 0)
+                        return (this.hasNoData = true);
                     const images = response.entities as API_HOST_FILE[];
                     this.images = [...images];
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -1097,7 +1231,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (e) => {
                     throw new Error(e);
-                }
+                },
             );
     }
 
@@ -1115,9 +1249,15 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         this._additionalLicenseSettingsFormFields.map((field) => {
             let fieldValue: any = license[field.form_control_name];
 
-            if (field.form_control_name.includes('rebootTime') && license.rebootTime && license.rebootTime.length > 0) {
+            if (
+                field.form_control_name.includes('rebootTime') &&
+                license.rebootTime &&
+                license.rebootTime.length > 0
+            ) {
                 const fieldLength = field.form_control_name.length;
-                const index = parseInt(field.form_control_name.substring(fieldLength - 1, fieldLength));
+                const index = parseInt(
+                    field.form_control_name.substring(fieldLength - 1, fieldLength),
+                );
                 const rebootTimeRaw = rebootTimes[index - 1];
 
                 if (!rebootTimeRaw) {
@@ -1131,12 +1271,16 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             }
 
             Object.assign(form_group_obj, {
-                [field.form_control_name]: [fieldValue, field.required ? Validators.required : null],
+                [field.form_control_name]: [
+                    fieldValue,
+                    field.required ? Validators.required : null,
+                ],
             });
         });
 
         this.additional_license_settings_form = this._form.group(form_group_obj);
-        const { bootDelay, rebootTime1, rebootTime2, rebootTime3, rebootTime4 } = this._form.group(form_group_obj).value;
+        const { bootDelay, rebootTime1, rebootTime2, rebootTime3, rebootTime4 } =
+            this._form.group(form_group_obj).value;
 
         this.initial_additional_settings_value = {
             bootDelay,
@@ -1187,7 +1331,11 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     private filterContent(): void {
         let filteredContents: UI_CONTENT[] = [];
         const classifications = ['filler', 'feed'];
-        const backupContents = [...this.contents_backup.filter((zone) => zone.zone_name === this.current_zone_name_selected)[0].contents];
+        const backupContents = [
+            ...this.contents_backup.filter(
+                (zone) => zone.zone_name === this.current_zone_name_selected,
+            )[0].contents,
+        ];
         const imageFileTypes = ['jpg', 'jpeg', 'png'];
         const videoFileTypes = ['webm'];
 
@@ -1201,19 +1349,28 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                     switch (currentFilter.name) {
                         case 'host':
                             filteredContents = dataToBeFiltered.filter(
-                                (content) => !this.isBlank(content.host_id) && this.isBlank(content.advertiser_id) && !classifications.includes(content.file_type)
+                                (content) =>
+                                    !this.isBlank(content.host_id) &&
+                                    this.isBlank(content.advertiser_id) &&
+                                    !classifications.includes(content.file_type),
                             );
                             break;
 
                         case 'advertiser':
                             filteredContents = dataToBeFiltered.filter(
-                                (content) => !this.isBlank(content.advertiser_id) && this.isBlank(content.host_id) && !classifications.includes(content.file_type)
+                                (content) =>
+                                    !this.isBlank(content.advertiser_id) &&
+                                    this.isBlank(content.host_id) &&
+                                    !classifications.includes(content.file_type),
                             );
                             break;
 
                         default:
                             filteredContents = dataToBeFiltered.filter(
-                                (content) => this.isBlank(content.host_id) && this.isBlank(content.advertiser_id) && !classifications.includes(content.file_type)
+                                (content) =>
+                                    this.isBlank(content.host_id) &&
+                                    this.isBlank(content.advertiser_id) &&
+                                    !classifications.includes(content.file_type),
                             );
                             break;
                     }
@@ -1223,37 +1380,51 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 case 'content_type':
                     switch (currentFilter.name) {
                         case 'filler':
-                            filteredContents = dataToBeFiltered.filter((content) => content.classification === 'filler');
+                            filteredContents = dataToBeFiltered.filter(
+                                (content) => content.classification === 'filler',
+                            );
                             break;
 
                         case 'image':
                             filteredContents = dataToBeFiltered.filter(
-                                (content) => content.classification !== 'filler' && imageFileTypes.includes(content.file_type.toLowerCase())
+                                (content) =>
+                                    content.classification !== 'filler' &&
+                                    imageFileTypes.includes(content.file_type.toLowerCase()),
                             );
                             break;
 
                         case 'video':
                             filteredContents = dataToBeFiltered.filter(
-                                (content) => content.classification !== 'filler' && videoFileTypes.includes(content.file_type.toLowerCase())
+                                (content) =>
+                                    content.classification !== 'filler' &&
+                                    videoFileTypes.includes(content.file_type.toLowerCase()),
                             );
 
                             break;
 
                         default:
-                            filteredContents = dataToBeFiltered.filter((content) => content.file_type === 'feed' && content.classification !== 'filler');
+                            filteredContents = dataToBeFiltered.filter(
+                                (content) =>
+                                    content.file_type === 'feed' &&
+                                    content.classification !== 'filler',
+                            );
                     }
 
                     break;
 
                 default: // schedule_status
-                    filteredContents = dataToBeFiltered.filter((content) => content.schedule_status === currentFilter.name);
+                    filteredContents = dataToBeFiltered.filter(
+                        (content) => content.schedule_status === currentFilter.name,
+                    );
             }
         });
 
         // remove duplicates
         filteredContents = [...new Set(filteredContents)];
         this.content_per_zone[this.selected_zone_index].contents = [...filteredContents];
-        const activeFilterIndex = this.content_filters.findIndex((filter) => filter.name === 'active');
+        const activeFilterIndex = this.content_filters.findIndex(
+            (filter) => filter.name === 'active',
+        );
         if (activeFilterIndex === -1) return;
         this.filterActiveContentsPlayingToday();
     }
@@ -1298,21 +1469,50 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     private generateAssetsBreakdownChart(): void {
         const breakdown = this.assets_breakdown;
         const { advertisers, feeds, fillers, hosts, others } = breakdown;
-        const labels = [`Hosts: ${hosts}`, `Advertisers: ${advertisers}`, `Fillers: ${fillers}`, `Feeds: ${feeds}`, `Others: ${others}`];
+        const labels = [
+            `Hosts: ${hosts}`,
+            `Advertisers: ${advertisers}`,
+            `Fillers: ${fillers}`,
+            `Feeds: ${feeds}`,
+            `Others: ${others}`,
+        ];
         const data = [hosts, advertisers, fillers, feeds, others];
-        const currentZone = this.screen_zone ? this.screen_zone.zone : this.content_per_zone[0].zone_name;
+        const currentZone = this.screen_zone
+            ? this.screen_zone.zone
+            : this.content_per_zone[0].zone_name;
         const description = `${currentZone} Zone: ${this.number_of_contents} items`;
         const title = ['Assets Breakdown', description];
         const canvas = document.getElementById('assetsBreakdown') as HTMLCanvasElement;
 
         // colors
         const hostColor = { background: 'rgba(215, 39, 39, 0.8)', border: 'rgba(215, 39, 39, 1)' };
-        const advertiserColor = { background: 'rgba(147, 103, 188, 0.8)', border: 'rgba(147, 103, 188, 1)' };
-        const fillerColor = { background: 'rgba(31, 119, 182, 0.8)', border: 'rgba(31, 119, 182, 1)' };
-        const feedColor = { background: 'rgba(254, 128, 12, 0.8)', border: 'rgba(254, 128, 12, 1)' };
+        const advertiserColor = {
+            background: 'rgba(147, 103, 188, 0.8)',
+            border: 'rgba(147, 103, 188, 1)',
+        };
+        const fillerColor = {
+            background: 'rgba(31, 119, 182, 0.8)',
+            border: 'rgba(31, 119, 182, 1)',
+        };
+        const feedColor = {
+            background: 'rgba(254, 128, 12, 0.8)',
+            border: 'rgba(254, 128, 12, 1)',
+        };
         const otherColor = { background: 'rgba(43, 160, 43, 0.8)', border: 'rgba(43, 160, 43, 1)' };
-        const backgroundColor = [hostColor.background, advertiserColor.background, fillerColor.background, feedColor.border, otherColor.background];
-        const borderColor = [hostColor.border, advertiserColor.border, fillerColor.border, feedColor.border, otherColor.border];
+        const backgroundColor = [
+            hostColor.background,
+            advertiserColor.background,
+            fillerColor.background,
+            feedColor.border,
+            otherColor.background,
+        ];
+        const borderColor = [
+            hostColor.border,
+            advertiserColor.border,
+            fillerColor.border,
+            feedColor.border,
+            otherColor.border,
+        ];
 
         const chart = new Chart(canvas, {
             type: 'doughnut',
@@ -1351,12 +1551,33 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
         // colors
         const hostColor = { background: 'rgba(215, 39, 39, 0.8)', border: 'rgba(215, 39, 39, 1)' };
-        const advertiserColor = { background: 'rgba(147, 103, 188, 0.8)', border: 'rgba(147, 103, 188, 1)' };
-        const fillerColor = { background: 'rgba(31, 119, 182, 0.8)', border: 'rgba(31, 119, 182, 1)' };
-        const feedColor = { background: 'rgba(254, 128, 12, 0.8)', border: 'rgba(254, 128, 12, 1)' };
+        const advertiserColor = {
+            background: 'rgba(147, 103, 188, 0.8)',
+            border: 'rgba(147, 103, 188, 1)',
+        };
+        const fillerColor = {
+            background: 'rgba(31, 119, 182, 0.8)',
+            border: 'rgba(31, 119, 182, 1)',
+        };
+        const feedColor = {
+            background: 'rgba(254, 128, 12, 0.8)',
+            border: 'rgba(254, 128, 12, 1)',
+        };
         const otherColor = { background: 'rgba(43, 160, 43, 0.8)', border: 'rgba(43, 160, 43, 1)' };
-        const backgroundColor = [hostColor.background, advertiserColor.background, fillerColor.background, feedColor.border, otherColor.background];
-        const borderColor = [hostColor.border, advertiserColor.border, fillerColor.border, feedColor.border, otherColor.border];
+        const backgroundColor = [
+            hostColor.background,
+            advertiserColor.background,
+            fillerColor.background,
+            feedColor.border,
+            otherColor.background,
+        ];
+        const borderColor = [
+            hostColor.border,
+            advertiserColor.border,
+            fillerColor.border,
+            feedColor.border,
+            otherColor.border,
+        ];
 
         const chart = new Chart(canvas, {
             type: 'doughnut',
@@ -1384,7 +1605,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
                 let mappedContents = this.mapZoneContentToUI(response).map((zone) => {
                     zone.contents = zone.contents.map((content) => {
-                        content.schedule_status = this.setContentScheduleStatus(content.playlist_content_schedule);
+                        content.schedule_status = this.setContentScheduleStatus(
+                            content.playlist_content_schedule,
+                        );
 
                         //modifyFillerURL to be fixed on API Soon since URL is doubledfilename
                         if (content.classification == 'filler-v2' && content.file_type == 'webm') {
@@ -1407,7 +1630,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                     playlistId: response[0].screenTemplateZonePlaylist.playlistId,
                 };
 
-                if (this.content_per_zone[0].zone_name && this.content_per_zone[0].zone_name === 'Background') {
+                if (
+                    this.content_per_zone[0].zone_name &&
+                    this.content_per_zone[0].zone_name === 'Background'
+                ) {
                     this.background_zone_selected = true;
                 }
 
@@ -1415,7 +1641,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 this.has_playlist = true;
                 this.breakdownContents();
                 this.breakdownDuration();
-                this.number_of_contents = this.content_per_zone[this.selected_zone_index].contents.length;
+                this.number_of_contents =
+                    this.content_per_zone[this.selected_zone_index].contents.length;
                 this.playlist_route = `/${this.roleRoute}/playlists/${this.screen_zone.playlistId}`;
 
                 // filter inactive contents without altering the original
@@ -1434,7 +1661,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -1484,7 +1711,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                     this.no_screen_assigned = true;
                     this.hasLoadedScreenData = true;
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -1510,7 +1737,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -1528,12 +1755,17 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                     const zones = response[0].templateZones;
                     this.subscribeToZoneSelect();
 
-                    const backgroundZoneIndex = zones.findIndex((zone) => zone.name === 'Background');
+                    const backgroundZoneIndex = zones.findIndex(
+                        (zone) => zone.name === 'Background',
+                    );
 
                     if (backgroundZoneIndex > -1) {
                         selectedZoneName = 'Background';
-                        selectedZone = this.content_per_zone.filter((content) => content.zone_name === 'Background')[0];
-                        if (typeof selectedZone === 'undefined' || !selectedZone) selectedZone = this.content_per_zone[0];
+                        selectedZone = this.content_per_zone.filter(
+                            (content) => content.zone_name === 'Background',
+                        )[0];
+                        if (typeof selectedZone === 'undefined' || !selectedZone)
+                            selectedZone = this.content_per_zone[0];
                         else this.has_background_zone = true;
                     } else {
                         selectedZoneName = response[0].templateZones[0].name;
@@ -1555,7 +1787,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -1567,8 +1799,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         return data.map((content) => {
             let fileThumbnailUrl = '';
 
-            if (content.fileType === 'webm' || content.fileType === 'mp4') fileThumbnailUrl = this.renameWebmThumb(content.url);
-            else if (content.fileType === 'feed') fileThumbnailUrl = content.thumbnail + content.url;
+            if (content.fileType === 'webm' || content.fileType === 'mp4')
+                fileThumbnailUrl = this.renameWebmThumb(content.url);
+            else if (content.fileType === 'feed')
+                fileThumbnailUrl = content.thumbnail + content.url;
             else fileThumbnailUrl = content.url;
 
             const mappedContent = new UI_CONTENT(
@@ -1597,7 +1831,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 content.createdByName,
                 content.ownerRoleId,
                 content.classification,
-                content.seq
+                content.seq,
             );
 
             return mappedContent;
@@ -1617,20 +1851,27 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             data.template.name != null ? data.template.name : '',
             `${data.createdBy.firstName} ${data.createdBy.lastName}`,
             this.mapScreenZoneToUI(data.screenZonePlaylistsContents),
-            []
+            [],
         );
     }
 
-    private mapScreenZoneToUI(data: API_SCREEN_ZONE_PLAYLISTS_CONTENTS[]): UI_SCREEN_ZONE_PLAYLIST[] {
+    private mapScreenZoneToUI(
+        data: API_SCREEN_ZONE_PLAYLISTS_CONTENTS[],
+    ): UI_SCREEN_ZONE_PLAYLIST[] {
         return data.map((s: API_SCREEN_ZONE_PLAYLISTS_CONTENTS) => {
-            return new UI_SCREEN_ZONE_PLAYLIST(this.mapZonePlaylistToUI(s.screenTemplateZonePlaylist), this.mapPlaylistContentToUI(s.contents));
+            return new UI_SCREEN_ZONE_PLAYLIST(
+                this.mapZonePlaylistToUI(s.screenTemplateZonePlaylist),
+                this.mapPlaylistContentToUI(s.contents),
+            );
         });
     }
 
     private mapZoneContentToUI(data: API_SCREEN_ZONE_PLAYLISTS_CONTENTS[]): UI_CONTENT_PER_ZONE[] {
         return data
             .sort((a, b) => {
-                return a.screenTemplateZonePlaylist.order.toString().localeCompare(b.screenTemplateZonePlaylist.order.toString());
+                return a.screenTemplateZonePlaylist.order
+                    .toString()
+                    .localeCompare(b.screenTemplateZonePlaylist.order.toString());
             })
             .map((content) => {
                 this.contents_array.push(content.contents.length);
@@ -1642,7 +1883,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                     content.screenTemplateZonePlaylist.order,
                     contents,
                     content.screenTemplateZonePlaylist.playlistName,
-                    content.screenTemplateZonePlaylist.playlistId
+                    content.screenTemplateZonePlaylist.playlistId,
                 );
             });
     }
@@ -1660,7 +1901,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             data.playlistName,
             data.name,
             data.description,
-            data.order
+            data.order,
         );
     }
 
@@ -1668,28 +1909,44 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         return `${source.substring(0, source.lastIndexOf('.') + 1)}jpg`;
     }
 
-    private setBusinessHours(data: UI_OPERATION_DAYS[]): { day: string; periods: string[]; selected: boolean }[] {
+    private setBusinessHours(
+        data: UI_OPERATION_DAYS[],
+    ): { day: string; periods: string[]; selected: boolean }[] {
         let result: { day: string; periods: string[]; selected: boolean }[] = [];
         const timezoneDay = this.getHostTimezoneDay();
 
         data.forEach((operation, index) => {
-            result.push({ day: operation.day, periods: [], selected: operation.day === timezoneDay ? true : false });
+            result.push({
+                day: operation.day,
+                periods: [],
+                selected: operation.day === timezoneDay ? true : false,
+            });
 
             if (!operation.periods || !operation.status) result[index].periods.push('CLOSED');
             else
                 result[index].periods = operation.periods.map((period) => {
-                    if ((!period.open && !period.close) || (period.open === '12:00 AM' && period.close === '11:59 PM')) return 'Open 24 hours';
+                    if (
+                        (!period.open && !period.close) ||
+                        (period.open === '12:00 AM' && period.close === '11:59 PM')
+                    )
+                        return 'Open 24 hours';
                     return `${period.open} - ${period.close}`;
                 });
 
-            if (operation.day === timezoneDay) this.current_operation = { day: result[index].day, period: result[index].periods[0] };
+            if (operation.day === timezoneDay)
+                this.current_operation = {
+                    day: result[index].day,
+                    period: result[index].periods[0],
+                };
         });
 
         return result;
     }
 
     private resetContents(): void {
-        const originalContents = this.contents_backup.filter((zone) => zone.zone_name === this.current_zone_name_selected)[0].contents;
+        const originalContents = this.contents_backup.filter(
+            (zone) => zone.zone_name === this.current_zone_name_selected,
+        )[0].contents;
         this.content_per_zone[this.selected_zone_index].contents = [...originalContents];
         this.filterInactiveContents();
     }
@@ -1708,7 +1965,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 () => this.getLicenseActivity(),
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -1722,7 +1979,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
             case 3:
                 const currentDate = moment(new Date(), 'MM/DD/YYYY hh:mm A');
-                const startDate = moment(`${data.from} ${data.playTimeStart}`, 'MM/DD/YYYY hh:mm A');
+                const startDate = moment(
+                    `${data.from} ${data.playTimeStart}`,
+                    'MM/DD/YYYY hh:mm A',
+                );
                 const endDate = moment(`${data.to} ${data.playTimeEnd}`, 'MM/DD/YYYY hh:mm A');
 
                 if (currentDate.isBefore(startDate)) status = 'future';
@@ -1750,13 +2010,19 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     private setLicenseDetails(data: API_LICENSE_PROPS): void {
         this.license_key = data.licenseKey;
         this.lastStartup = this.setDefaultDateTimeFormat(data.timeIn, 'MMMM DD, YYYY, h:mm:ss A');
-        this.lastDisconnect = this.setDefaultDateTimeFormat(data.timeOut, 'MMMM DD, YYYY, h:mm:ss A');
+        this.lastDisconnect = this.setDefaultDateTimeFormat(
+            data.timeOut,
+            'MMMM DD, YYYY, h:mm:ss A',
+        );
         this.tags = data.tags as { name: string; tagColor: string }[];
         this.display_status = data.piStatus === 1 ? data.displayStatus : 0;
         this.cec_status = data.piStatus === 1 ? data.isCecEnabled === 1 : false;
         this.pi_status = data.piStatus === 1;
         this.player_status = data.playerStatus === 1;
-        this.content_time_update = this.setDefaultDateTimeFormat(data.contentsUpdated, 'YYYY-MM-DDThh:mm:ssTZD');
+        this.content_time_update = this.setDefaultDateTimeFormat(
+            data.contentsUpdated,
+            'YYYY-MM-DDThh:mm:ssTZD',
+        );
         this.screen_type = data.screenType ? data.screenType : null;
         this.apps = data.appVersion ? JSON.parse(data.appVersion) : null;
         this.anydesk_id = data.anydeskId;
@@ -1769,7 +2035,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             const ping = JSON.parse(data.internetInfo).ping;
             const date = JSON.parse(data.internetInfo).date;
 
-            this.internet_connection.downloadMbps = download ? `${download.toFixed(2)} Mbps` : 'N/A';
+            this.internet_connection.downloadMbps = download
+                ? `${download.toFixed(2)} Mbps`
+                : 'N/A';
             this.internet_connection.uploadMbps = upload ? `${upload.toFixed(2)} Mbps` : 'N/A';
             this.internet_connection.ping = ping ? `${ping.toFixed(2)} ms` : 'N/A';
             this.internet_connection.date = date ? `${date}` : 'N/A';
@@ -1777,8 +2045,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         }
 
         if (this.license_data.internetType) {
-            if (this.license_data.internetType.charAt(0) === 'e') this.license_data.internetType = 'Lan';
-            else if (this.license_data.internetType.charAt(0) === 'w') this.license_data.internetType = 'Wi-fi';
+            if (this.license_data.internetType.charAt(0) === 'e')
+                this.license_data.internetType = 'Lan';
+            else if (this.license_data.internetType.charAt(0) === 'w')
+                this.license_data.internetType = 'Wi-fi';
             else this.license_data.internetType == this.license_data.internetType;
         }
 
@@ -1817,9 +2087,34 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         this.zone_playlists = [];
 
         const zonePlaylists = data.map((contents) => {
-            const { screenId, description, height, name, order, playlistId, playlistName, templateId, width, xPos, yPos } = contents.screenTemplateZonePlaylist;
+            const {
+                screenId,
+                description,
+                height,
+                name,
+                order,
+                playlistId,
+                playlistName,
+                templateId,
+                width,
+                xPos,
+                yPos,
+            } = contents.screenTemplateZonePlaylist;
 
-            const playlist = new UI_ZONE_PLAYLIST(screenId, templateId, '', xPos, yPos, height, width, playlistId, playlistName, name, description, order);
+            const playlist = new UI_ZONE_PLAYLIST(
+                screenId,
+                templateId,
+                '',
+                xPos,
+                yPos,
+                height,
+                width,
+                playlistId,
+                playlistName,
+                name,
+                description,
+                order,
+            );
 
             playlist.link = `/${this.roleRoute}/playlists/${playlistId}`;
             return playlist;
@@ -1872,11 +2167,14 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     }
 
     private socketOnGetAnydeskId() {
-        this._socket.on('SS_anydesk_id_result', (license: { license_id: string; anydesk: string }) => {
-            if (this.license_id !== license.license_id) return;
-            this.anydesk_id = license.anydesk;
-            this.anydesk_restarting = false;
-        });
+        this._socket.on(
+            'SS_anydesk_id_result',
+            (license: { license_id: string; anydesk: string }) => {
+                if (this.license_id !== license.license_id) return;
+                this.anydesk_id = license.anydesk;
+                this.anydesk_restarting = false;
+            },
+        );
     }
 
     private socketOnPiOnline() {
@@ -1902,7 +2200,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     private socketOnPlayerOffline() {
         this._socket.once('SS_offline_player', (licenseId: string) => {
             if (this.license_id !== licenseId) return;
-            this.displayPopup('Oh snap! Your player with this license is currently offline', 'error');
+            this.displayPopup(
+                'Oh snap! Your player with this license is currently offline',
+                'error',
+            );
             this.player_status = false;
         });
     }
@@ -1924,54 +2225,63 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     }
 
     private socketOnResetAnydeskId(): void {
-        this._socket.on('SS_reset_anydesk_id_response', (response: { hasReset: boolean; newAnydeskId: string; licenseId: string }) => {
-            if (response.licenseId !== response.licenseId) {
+        this._socket.on(
+            'SS_reset_anydesk_id_response',
+            (response: { hasReset: boolean; newAnydeskId: string; licenseId: string }) => {
+                if (response.licenseId !== response.licenseId) {
+                    this.anydesk_restarting = false;
+                    return;
+                }
+
+                const { newAnydeskId } = response;
+                const updatedLicense = this.license_data;
+
+                updatedLicense.anydeskId = newAnydeskId;
+                this.license_data = { ...updatedLicense };
+                this.anydesk_id = newAnydeskId;
                 this.anydesk_restarting = false;
-                return;
-            }
-
-            const { newAnydeskId } = response;
-            const updatedLicense = this.license_data;
-
-            updatedLicense.anydeskId = newAnydeskId;
-            this.license_data = { ...updatedLicense };
-            this.anydesk_id = newAnydeskId;
-            this.anydesk_restarting = false;
-        });
+            },
+        );
     }
 
     private socketOnCecCheck(): void {
-        this._socket.on('SS_cec_status_check_response', (response: { licenseId: string; status: boolean }) => {
-            if (response.licenseId !== this.license_id) return;
-            this.socketEmitMonitorCheck();
+        this._socket.on(
+            'SS_cec_status_check_response',
+            (response: { licenseId: string; status: boolean }) => {
+                if (response.licenseId !== this.license_id) return;
+                this.socketEmitMonitorCheck();
 
-            const { licenseId, status } = response;
-            const parsedStatus = status ? 1 : 0;
-            this.updateCECStatus({ licenseId, status: parsedStatus });
-        });
+                const { licenseId, status } = response;
+                const parsedStatus = status ? 1 : 0;
+                this.updateCECStatus({ licenseId, status: parsedStatus });
+            },
+        );
     }
 
     private socketOnMonitorCheck(): void {
-        this._socket.on('SS_monitor_status_response', (data: { licenseId: string; monitorStatus: number; tvCecAvailability: boolean }) => {
-            if (this.license_id !== data.licenseId) return;
+        this._socket.on(
+            'SS_monitor_status_response',
+            (data: { licenseId: string; monitorStatus: number; tvCecAvailability: boolean }) => {
+                if (this.license_id !== data.licenseId) return;
 
-            let displayStatus = data.monitorStatus;
+                let displayStatus = data.monitorStatus;
 
-            // remove after play server 2.8.6 has been released
-            if (this.apps && this.apps.server === '2.8.51') displayStatus = 1;
+                // remove after play server 2.8.6 has been released
+                if (this.apps && this.apps.server === '2.8.51') displayStatus = 1;
 
-            this.display_status = displayStatus;
-            this.cec_status = data.tvCecAvailability;
+                this.display_status = displayStatus;
+                this.cec_status = data.tvCecAvailability;
 
-            const statusForSubmission = displayStatus === 2 ? 0 : displayStatus;
+                const statusForSubmission = displayStatus === 2 ? 0 : displayStatus;
 
-            const displayStatusData = {
-                licenseId: this.license_id,
-                displayStatus: statusForSubmission,
-            };
+                const displayStatusData = {
+                    licenseId: this.license_id,
+                    displayStatus: statusForSubmission,
+                };
 
-            this.updateDisplayStatus(displayStatusData);
-        });
+                this.updateDisplayStatus(displayStatusData);
+            },
+        );
     }
 
     private socketOnScreenshotFailed(): void {
@@ -1979,7 +2289,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             if (this.license_id !== licenseId) return;
 
             setTimeout(() => {
-                this.displayPopup("Screenshot error! There's a problem getting a screenshot with this license", 'error');
+                this.displayPopup(
+                    "Screenshot error! There's a problem getting a screenshot with this license",
+                    'error',
+                );
                 this.screenshot_timeout = false;
             }, 2000);
         });
@@ -2035,7 +2348,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                     () => {},
                     (error) => {
                         console.error(error);
-                    }
+                    },
                 );
         });
     }
@@ -2054,7 +2367,14 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         });
     }
 
-    private showInformationModal(width: string, height: string, title: string, contents: any, type: string, character_limit?: number): void {
+    private showInformationModal(
+        width: string,
+        height: string,
+        title: string,
+        contents: any,
+        type: string,
+        character_limit?: number,
+    ): void {
         this._dialog.open(InformationModalComponent, {
             width: width,
             height: height,
@@ -2078,56 +2398,74 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     }
 
     private subscribeToAdditionalSettingsFormChanges() {
-        this.additional_license_settings_form.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(
-            (response: { bootDelay: number | string; rebootTime1: UI_REBOOT_TIME; rebootTime2: UI_REBOOT_TIME; rebootTime3: UI_REBOOT_TIME; rebootTime4: UI_REBOOT_TIME }) => {
-                let bootDelayChanged = false;
-                let rebootTimeChanged = false;
-                const currentValue = response;
+        this.additional_license_settings_form.valueChanges
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe(
+                (response: {
+                    bootDelay: number | string;
+                    rebootTime1: UI_REBOOT_TIME;
+                    rebootTime2: UI_REBOOT_TIME;
+                    rebootTime3: UI_REBOOT_TIME;
+                    rebootTime4: UI_REBOOT_TIME;
+                }) => {
+                    let bootDelayChanged = false;
+                    let rebootTimeChanged = false;
+                    const currentValue = response;
 
-                Object.keys(this.initial_additional_settings_value).forEach((key) => {
-                    const initialValue = this.initial_additional_settings_value;
+                    Object.keys(this.initial_additional_settings_value).forEach((key) => {
+                        const initialValue = this.initial_additional_settings_value;
 
-                    if (key === 'bootDelay') {
-                        if (parseInt(initialValue['bootDelay']) !== parseInt(currentValue['bootDelay'] as string)) bootDelayChanged = true;
-                    } else {
-                        if (initialValue[key] !== currentValue[key]) rebootTimeChanged = true;
-                    }
-                });
+                        if (key === 'bootDelay') {
+                            if (
+                                parseInt(initialValue['bootDelay']) !==
+                                parseInt(currentValue['bootDelay'] as string)
+                            )
+                                bootDelayChanged = true;
+                        } else {
+                            if (initialValue[key] !== currentValue[key]) rebootTimeChanged = true;
+                        }
+                    });
 
-                this.unsaved_additional_settings = { bootDelayChanged, rebootTimeChanged };
-                this.has_unsaved_additional_settings = bootDelayChanged || rebootTimeChanged;
-            },
-            (error) => {
-                console.error(error);
-            }
-        );
+                    this.unsaved_additional_settings = { bootDelayChanged, rebootTimeChanged };
+                    this.has_unsaved_additional_settings = bootDelayChanged || rebootTimeChanged;
+                },
+                (error) => {
+                    console.error(error);
+                },
+            );
     }
 
     private subscribeToContentSearch(): void {
-        this.content_search_control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(200)).subscribe((response: string) => {
-            const currentContents = [...this.content_per_zone[this.selected_zone_index].contents];
+        this.content_search_control.valueChanges
+            .pipe(takeUntil(this._unsubscribe), debounceTime(200))
+            .subscribe((response: string) => {
+                const currentContents = [
+                    ...this.content_per_zone[this.selected_zone_index].contents,
+                ];
 
-            if (!response || response.length === 0) {
-                if (this.content_filters.length === 0) {
-                    this.content_per_zone[this.selected_zone_index].contents = [
-                        ...this.contents_backup.filter((zone) => zone.zone_name === this.current_zone_name_selected)[0].contents,
-                    ];
-                    return;
-                } else {
-                    this.filterContent();
-                    return;
+                if (!response || response.length === 0) {
+                    if (this.content_filters.length === 0) {
+                        this.content_per_zone[this.selected_zone_index].contents = [
+                            ...this.contents_backup.filter(
+                                (zone) => zone.zone_name === this.current_zone_name_selected,
+                            )[0].contents,
+                        ];
+                        return;
+                    } else {
+                        this.filterContent();
+                        return;
+                    }
                 }
-            }
 
-            const searchResults = currentContents.filter((content) => {
-                const fileName = content.file_name ? content.file_name : '';
-                const title = content.title ? content.title : '';
-                const haystack = `${fileName}${title}`;
-                return haystack.toLowerCase().includes(response.toLowerCase());
+                const searchResults = currentContents.filter((content) => {
+                    const fileName = content.file_name ? content.file_name : '';
+                    const title = content.title ? content.title : '';
+                    const haystack = `${fileName}${title}`;
+                    return haystack.toLowerCase().includes(response.toLowerCase());
+                });
+
+                this.content_per_zone[this.selected_zone_index].contents = [...searchResults];
             });
-
-            this.content_per_zone[this.selected_zone_index].contents = [...searchResults];
-        });
     }
 
     private subscribeToZoneSelect(): void {
@@ -2143,19 +2481,29 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             },
             (error) => {
                 console.error(error);
-            }
+            },
         );
     }
 
     private updateAssetsChart(): void {
-        const chart = this.charts.filter((chart) => chart.canvas.id === 'assetsBreakdown')[0] as Chart;
+        const chart = this.charts.filter(
+            (chart) => chart.canvas.id === 'assetsBreakdown',
+        )[0] as Chart;
         const { advertisers, feeds, fillers, hosts, others } = this.assets_breakdown;
-        const currentZone = this.screen_zone ? this.screen_zone.zone : this.content_per_zone[0].zone_name;
+        const currentZone = this.screen_zone
+            ? this.screen_zone.zone
+            : this.content_per_zone[0].zone_name;
         const description = `${currentZone} Zone: ${this.number_of_contents} items`;
         const title = ['Assets Breakdown', description];
 
         chart.options.plugins.title = { display: true, text: title };
-        chart.data.labels = [`Hosts: ${hosts}`, `Advertisers: ${advertisers}`, `Fillers: ${fillers}`, `Feeds: ${feeds}`, `Others: ${others}`];
+        chart.data.labels = [
+            `Hosts: ${hosts}`,
+            `Advertisers: ${advertisers}`,
+            `Fillers: ${fillers}`,
+            `Feeds: ${feeds}`,
+            `Others: ${others}`,
+        ];
         chart.data.datasets[0].data = [hosts, advertisers, fillers, feeds, others];
         chart.update();
     }
@@ -2179,7 +2527,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -2191,12 +2539,14 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 () => {},
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
     private updateDurationChart(): void {
-        const chart = this.charts.filter((chart) => chart.canvas.id === 'durationBreakdown')[0] as Chart;
+        const chart = this.charts.filter(
+            (chart) => chart.canvas.id === 'durationBreakdown',
+        )[0] as Chart;
         const { advertisers, feeds, fillers, hosts, others } = this.duration_breakdown;
         const description = `Total playtime: ${this.duration_breakdown_text.total}`;
         const title = ['Duration Breakdown', description];
@@ -2218,7 +2568,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     }
 
     private updateTvBrand(data: string) {
-        return this._license.update_tv_brand(this.license_id, data).pipe(takeUntil(this._unsubscribe));
+        return this._license
+            .update_tv_brand(this.license_id, data)
+            .pipe(takeUntil(this._unsubscribe));
     }
 
     private warningModal(message: string, data: string, return_msg: string, action: string): void {
@@ -2309,7 +2661,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         this.breakdownContents();
         this.breakdownDuration();
         this.updateCharts();
-        this.selected_zone_index = this.content_per_zone.findIndex((content) => content.zone_name === name);
+        this.selected_zone_index = this.content_per_zone.findIndex(
+            (content) => content.zone_name === name,
+        );
 
         if (this.selected_zone_index === -1) {
             this.screen_zone = { playlistName: 'No Playlist', playlistId: null, zone: name };
@@ -2317,11 +2671,17 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             return;
         }
 
-        const selectedZone = this.content_per_zone.filter((content) => content.zone_name === name)[0];
+        const selectedZone = this.content_per_zone.filter(
+            (content) => content.zone_name === name,
+        )[0];
         const { zone_order, zone_name, playlist_name, playlist_id } = selectedZone;
 
         this.number_of_contents = this.content_per_zone[this.selected_zone_index].contents.length;
-        this.screen_zone = { playlistName: playlist_name, playlistId: playlist_id, zone: zone_name };
+        this.screen_zone = {
+            playlistName: playlist_name,
+            playlistId: playlist_id,
+            zone: zone_name,
+        };
         this.playlist_route = `/${this.roleRoute}/playlists/${playlist_id}`;
         this.content_filters = [];
         this.content_search_control.disable({ emitEvent: false });
@@ -2370,7 +2730,15 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 value: null,
                 viewType: null,
             },
-            { label: 'Reboot Time 4', form_control_name: 'rebootTime4', type: 'time', width: 'col-lg-6', required: true, value: null, viewType: null },
+            {
+                label: 'Reboot Time 4',
+                form_control_name: 'rebootTime4',
+                type: 'time',
+                width: 'col-lg-6',
+                required: true,
+                value: null,
+                viewType: null,
+            },
         ];
     }
 

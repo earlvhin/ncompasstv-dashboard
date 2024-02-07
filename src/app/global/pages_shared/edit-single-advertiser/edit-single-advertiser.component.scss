@@ -1,13 +1,13 @@
 .dialog-heading {
-	gap: 30px;
+    gap: 30px;
 }
 
 .status {
-	&.active {
-		color: #8ec641;
-	}
+    &.active {
+        color: #8ec641;
+    }
 
-	&.inactive {
-		color: white;
-	}
+    &.inactive {
+        color: white;
+    }
 }

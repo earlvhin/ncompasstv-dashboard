@@ -6,5 +6,5 @@ export class UI_TABLE_ADVERTISERS_CONTENT {
     name?: TABLE_ROW_FORMAT;
     type?: TABLE_ROW_FORMAT;
     uploadedBy?: TABLE_ROW_FORMAT;
-	uploadDate?: TABLE_ROW_FORMAT;
+    uploadDate?: TABLE_ROW_FORMAT;
 }

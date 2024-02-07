@@ -1,164 +1,230 @@
 <div class="col-lg-12 flex mt-3 pl-0 pr-0">
-	<div class="col-lg-4 white-bg p-3" *ngIf="!is_dealer">
-		<h3 class="text-center text-primary">CHECKLIST CONTROL</h3>
-		<hr />
-		<div class="col-lg-12 mt-3">
-			<!-- <form [formGroup]="create_checklist" class=""> -->
-			<form [formGroup]="form">
-				<span class="sm-text mb-2"> Fill up this section if the title you are looking for is not existing on the available title list. </span>
-				<h5 class="mt-3">Add Title:</h5>
-				<span class="sm-text text-danger"> Note: This will be the headline per checklist. </span>
-				<div class="col-lg-12 p-0 flex">
-					<mat-form-field class="col-lg-10 p-0">
-						<mat-label>Title:</mat-label>
-						<input formControlName="categoryName" matInput placeholder="Ex: Day 1 - Installation" type="text" />
-					</mat-form-field>
-					<div class="col-lg-2 text-center pt-3 text-primary clickable">
-						<button mat-button class="theme-btn _info mb-2 mr-2 sm-text" (click)="saveTitle()">Save Title</button>
-					</div>
-				</div>
-				<div class="col-md-12 h-200 overflow-y-auto">
-					<h5 class="mb-3">Available Titles:</h5>
-					<ul class="col-lg-12" *ngIf="titles.length > 0; else no_title">
-						<div *ngFor="let title of titles" class="col-lg-12 flex p-2">
-							<li class="md-text text-primary col-lg-11">
-								{{ title.title }}
-							</li>
-							<div class="col-lg-1 text-center sm-text clickable" (click)="updateTitle(title)">
-								<span class="fas fa-edit" title="Edit Title"></span>
-							</div>
-							<div
-								class="col-lg-1 text-center text-danger sm-text clickable"
-								(click)="deleteChecklistId(title.installationChecklistId)">
-								<span class="fas fa-trash" title="Delete Title"></span>
-							</div>
-						</div>
-					</ul>
-					<ng-template #no_title>
-						<span class="italic md-text text-primary">No available title yet.</span>
-					</ng-template>
-				</div>
+    <div class="col-lg-4 white-bg p-3" *ngIf="!is_dealer">
+        <h3 class="text-center text-primary">CHECKLIST CONTROL</h3>
+        <hr />
+        <div class="col-lg-12 mt-3">
+            <!-- <form [formGroup]="create_checklist" class=""> -->
+            <form [formGroup]="form">
+                <span class="sm-text mb-2">
+                    Fill up this section if the title you are looking for is not existing on the
+                    available title list.
+                </span>
+                <h5 class="mt-3">Add Title:</h5>
+                <span class="sm-text text-danger">
+                    Note: This will be the headline per checklist.
+                </span>
+                <div class="col-lg-12 p-0 flex">
+                    <mat-form-field class="col-lg-10 p-0">
+                        <mat-label>Title:</mat-label>
+                        <input
+                            formControlName="categoryName"
+                            matInput
+                            placeholder="Ex: Day 1 - Installation"
+                            type="text" />
+                    </mat-form-field>
+                    <div class="col-lg-2 text-center pt-3 text-primary clickable">
+                        <button
+                            mat-button
+                            class="theme-btn _info mb-2 mr-2 sm-text"
+                            (click)="saveTitle()">
+                            Save Title
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 h-200 overflow-y-auto">
+                    <h5 class="mb-3">Available Titles:</h5>
+                    <ul class="col-lg-12" *ngIf="titles.length > 0; else no_title">
+                        <div *ngFor="let title of titles" class="col-lg-12 flex p-2">
+                            <li class="md-text text-primary col-lg-11">
+                                {{ title.title }}
+                            </li>
+                            <div
+                                class="col-lg-1 text-center sm-text clickable"
+                                (click)="updateTitle(title)">
+                                <span class="fas fa-edit" title="Edit Title"></span>
+                            </div>
+                            <div
+                                class="col-lg-1 text-center text-danger sm-text clickable"
+                                (click)="deleteChecklistId(title.installationChecklistId)">
+                                <span class="fas fa-trash" title="Delete Title"></span>
+                            </div>
+                        </div>
+                    </ul>
+                    <ng-template #no_title>
+                        <span class="italic md-text text-primary">No available title yet.</span>
+                    </ng-template>
+                </div>
 
-				<hr />
+                <hr />
 
-				<span class="sm-text mb-2">
-					For existing title, click Add Task button to add a checklist item, then click Save Task to publish.
-				</span>
-				<div class="col-lg-12 p-0" *ngIf="task_field_open">
-					<h5>Add Task Lists:</h5>
-					<span class="sm-text text-danger"> Note: This will be the task to be checked on the checklist. </span>
+                <span class="sm-text mb-2">
+                    For existing title, click Add Task button to add a checklist item, then click
+                    Save Task to publish.
+                </span>
+                <div class="col-lg-12 p-0" *ngIf="task_field_open">
+                    <h5>Add Task Lists:</h5>
+                    <span class="sm-text text-danger">
+                        Note: This will be the task to be checked on the checklist.
+                    </span>
 
-					<app-autocomplete-field
-						(data_value)="setTitle($event)"
-						[data_reference]="titles"
-						[key_of_value]="'installationChecklistId'"
-						[label]="'Choose A Title'"
-						[placeholder]="'Choose A Title'"
-						[primary_keyword]="'title'"
-						[search_keyword]="'title'"
-						[new_value]="current_checklist_title">
-					</app-autocomplete-field>
-				</div>
+                    <app-autocomplete-field
+                        (data_value)="setTitle($event)"
+                        [data_reference]="titles"
+                        [key_of_value]="'installationChecklistId'"
+                        [label]="'Choose A Title'"
+                        [placeholder]="'Choose A Title'"
+                        [primary_keyword]="'title'"
+                        [search_keyword]="'title'"
+                        [new_value]="current_checklist_title">
+                    </app-autocomplete-field>
+                </div>
 
-				<div formArrayName="tasks">
-					<div *ngFor="let task of form.get('tasks')['controls']; let i = index" [formGroupName]="i" class="col-lg-12 p-0 flex">
-						<mat-form-field class="col-lg-11 p-0">
-							<input matInput formControlName="task" placeholder="Ex. Call Customer" />
-						</mat-form-field>
-						<div class="col-lg-1 text-center pt-3">
-							<span class="fas fa-times text-danger clickable" (click)="removeTaskItems(i)" title="Remove Task"></span>
-						</div>
-					</div>
-				</div>
-				<!-- [disabled]="!section_title" -->
-				<button mat-button class="theme-btn _info mb-2 mr-2 sm-text" (click)="addTaskItems()" [disabled]="titles.length == 0">
-					Add Task
-				</button>
-				<button mat-button class="theme-btn _primary mt-4 text-center sm-text" (click)="getFormValues()" [disabled]="!task_items.value">
-					Save Tasks
-				</button>
-				<!-- </form> -->
-			</form>
-		</div>
-	</div>
-	<div class="px-0" [ngClass]="!is_dealer ? 'col-lg-8' : 'col-lg-12'">
-		<div class="col-lg-12 white-bg p-3">
-			<div>
-				<div class="col-lg-12 flex">
-					<h3 class="text-primary" [ngClass]="!is_dealer ? 'col-lg-10 pl-4 text-left' : 'col-lg-12 text-center'">INSTALLATION CHECKLIST</h3>
-					<div class="col-lg-2" *ngIf="!is_dealer">
-						<button class="sm-text theme-btn btn full-width" (click)="editMode()" [disabled]="checklist_items.length == 0">
-							{{ edit_tasks ? 'Exit Edit Mode' : 'Edit Tasks' }}
-						</button>
-					</div>
-				</div>
+                <div formArrayName="tasks">
+                    <div
+                        *ngFor="let task of form.get('tasks')['controls']; let i = index"
+                        [formGroupName]="i"
+                        class="col-lg-12 p-0 flex">
+                        <mat-form-field class="col-lg-11 p-0">
+                            <input
+                                matInput
+                                formControlName="task"
+                                placeholder="Ex. Call Customer" />
+                        </mat-form-field>
+                        <div class="col-lg-1 text-center pt-3">
+                            <span
+                                class="fas fa-times text-danger clickable"
+                                (click)="removeTaskItems(i)"
+                                title="Remove Task"></span>
+                        </div>
+                    </div>
+                </div>
+                <!-- [disabled]="!section_title" -->
+                <button
+                    mat-button
+                    class="theme-btn _info mb-2 mr-2 sm-text"
+                    (click)="addTaskItems()"
+                    [disabled]="titles.length == 0">
+                    Add Task
+                </button>
+                <button
+                    mat-button
+                    class="theme-btn _primary mt-4 text-center sm-text"
+                    (click)="getFormValues()"
+                    [disabled]="!task_items.value">
+                    Save Tasks
+                </button>
+                <!-- </form> -->
+            </form>
+        </div>
+    </div>
+    <div class="px-0" [ngClass]="!is_dealer ? 'col-lg-8' : 'col-lg-12'">
+        <div class="col-lg-12 white-bg p-3">
+            <div>
+                <div class="col-lg-12 flex">
+                    <h3
+                        class="text-primary"
+                        [ngClass]="
+                            !is_dealer ? 'col-lg-10 pl-4 text-left' : 'col-lg-12 text-center'
+                        ">
+                        INSTALLATION CHECKLIST
+                    </h3>
+                    <div class="col-lg-2" *ngIf="!is_dealer">
+                        <button
+                            class="sm-text theme-btn btn full-width"
+                            (click)="editMode()"
+                            [disabled]="checklist_items.length == 0">
+                            {{ edit_tasks ? 'Exit Edit Mode' : 'Edit Tasks' }}
+                        </button>
+                    </div>
+                </div>
 
-				<div class="col-lg-12">
-					<ul class="no-style col-lg-12">
-						<li class="col-lg-12" *ngFor="let title of checklist_items">
-							<mat-accordion>
-								<mat-expansion-panel class="mt-3 p-3" [expanded]="true">
-									<mat-expansion-panel-header>
-										<mat-panel-title>
-											<h4 class="text-primary">{{ title.installationChecklist.title }}</h4>
-										</mat-panel-title>
-										<mat-panel-description>
-											<div class="col-lg-12 p-0 flex">
-												<div class="col-lg-3 p-0">Progress</div>
-												<div class="progress col-lg-9 p-0 mt-1">
-													<div
-														class="progress-bar bg-primary"
-														[style.width.%]="title.percentage"
-														role="progressbar"
-														aria-valuenow="title.percentage"
-														aria-valuemin="0"
-														aria-valuemax="100">
-														{{ title.percentage }}%
-													</div>
-												</div>
-											</div>
-										</mat-panel-description>
-									</mat-expansion-panel-header>
-									<ul class="no-style col-lg-12">
-										<li
-											class="col-lg-12 flex"
-											*ngFor="let items of title.installationChecklistItems; let even = even"
-											[ngClass]="even ? 'p-3' : 'odd'">
-											<div class="col-lg-10 pl-0">
-												<mat-checkbox
-													[checked]="items.isDone"
-													(change)="checkItem($event.checked, items)"
-													[disabled]="edit_tasks">
-													<span [ngClass]="items.isDone ? 'strike' : 'non-strike'">{{
-														items.titleToChange ? items.titleToChange : items.title
-													}}</span>
-												</mat-checkbox>
-											</div>
-											<div class="col-lg-1 text-center sm-text clickable" (click)="updateItem(items)" *ngIf="edit_tasks">
-												<span class="fas fa-edit" title="Edit Item Title"></span>
-											</div>
-											<div
-												class="col-lg-1 text-center text-danger sm-text clickable"
-												*ngIf="edit_tasks"
-												(click)="deleteItem(items)">
-												<span class="fas fa-trash" title="Delete Item Title"></span>
-											</div>
-										</li>
-									</ul>
-								</mat-expansion-panel>
-							</mat-accordion>
-						</li>
-					</ul>
-				</div>
+                <div class="col-lg-12">
+                    <ul class="no-style col-lg-12">
+                        <li class="col-lg-12" *ngFor="let title of checklist_items">
+                            <mat-accordion>
+                                <mat-expansion-panel class="mt-3 p-3" [expanded]="true">
+                                    <mat-expansion-panel-header>
+                                        <mat-panel-title>
+                                            <h4 class="text-primary">
+                                                {{ title.installationChecklist.title }}
+                                            </h4>
+                                        </mat-panel-title>
+                                        <mat-panel-description>
+                                            <div class="col-lg-12 p-0 flex">
+                                                <div class="col-lg-3 p-0">Progress</div>
+                                                <div class="progress col-lg-9 p-0 mt-1">
+                                                    <div
+                                                        class="progress-bar bg-primary"
+                                                        [style.width.%]="title.percentage"
+                                                        role="progressbar"
+                                                        aria-valuenow="title.percentage"
+                                                        aria-valuemin="0"
+                                                        aria-valuemax="100">
+                                                        {{ title.percentage }}%
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </mat-panel-description>
+                                    </mat-expansion-panel-header>
+                                    <ul class="no-style col-lg-12">
+                                        <li
+                                            class="col-lg-12 flex"
+                                            *ngFor="
+                                                let items of title.installationChecklistItems;
+                                                let even = even
+                                            "
+                                            [ngClass]="even ? 'p-3' : 'odd'">
+                                            <div class="col-lg-10 pl-0">
+                                                <mat-checkbox
+                                                    [checked]="items.isDone"
+                                                    (change)="checkItem($event.checked, items)"
+                                                    [disabled]="edit_tasks">
+                                                    <span
+                                                        [ngClass]="
+                                                            items.isDone ? 'strike' : 'non-strike'
+                                                        "
+                                                        >{{
+                                                            items.titleToChange
+                                                                ? items.titleToChange
+                                                                : items.title
+                                                        }}</span
+                                                    >
+                                                </mat-checkbox>
+                                            </div>
+                                            <div
+                                                class="col-lg-1 text-center sm-text clickable"
+                                                (click)="updateItem(items)"
+                                                *ngIf="edit_tasks">
+                                                <span
+                                                    class="fas fa-edit"
+                                                    title="Edit Item Title"></span>
+                                            </div>
+                                            <div
+                                                class="col-lg-1 text-center text-danger sm-text clickable"
+                                                *ngIf="edit_tasks"
+                                                (click)="deleteItem(items)">
+                                                <span
+                                                    class="fas fa-trash"
+                                                    title="Delete Item Title"></span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </mat-expansion-panel>
+                            </mat-accordion>
+                        </li>
+                    </ul>
+                </div>
 
-				<ng-template #no_checklist>
-					<span class="pl-5 italic md-text text-primary">No available checklist item yet.</span>
-				</ng-template>
-			</div>
-		</div>
-	</div>
+                <ng-template #no_checklist>
+                    <span class="pl-5 italic md-text text-primary"
+                        >No available checklist item yet.</span
+                    >
+                </ng-template>
+            </div>
+        </div>
+    </div>
 </div>
 
 <ng-template #spinner>
-	<app-spinner [diameter]="20"></app-spinner>
+    <app-spinner [diameter]="20"></app-spinner>
 </ng-template>

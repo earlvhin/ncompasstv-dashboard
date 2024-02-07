@@ -9,8 +9,7 @@
                 [refresh_banner]="true"
                 [page]="'single-dealer'"
                 [page_data]="dealer_and_user_data"
-                (update_info)="ngOnInit()"
-            >
+                (update_info)="ngOnInit()">
             </app-banner>
 
             <div class="select-dealer-field text-white position-absolute">
@@ -29,8 +28,7 @@
                     [new_value]="dealer_name"
                     [initial_value]="dealer_name"
                     [loading_data]="loading_data"
-                    [loading_search]="loading_search"
-                >
+                    [loading_search]="loading_search">
                 </app-autocomplete-field>
 
                 <span class="fas fa-search icon text-white"></span>
@@ -66,8 +64,7 @@
                                 [breakdown5_value]="license_card.breakdown5_value"
                                 [breakdown5_label]="license_card.breakdown5_label"
                                 [fourth_value]="license_card.fourth_value"
-                                [fourth_value_label]="license_card.fourth_value_label"
-                            >
+                                [fourth_value_label]="license_card.fourth_value_label">
                             </app-data-card-graph>
                         </mat-card>
                     </div>
@@ -81,8 +78,7 @@
                                 [active_label]="host_card.good_value_label"
                                 [inactive]="host_card.bad_value"
                                 [inactive_label]="host_card.bad_value_label"
-                                [icon]="'fas fa-briefcase'"
-                            >
+                                [icon]="'fas fa-briefcase'">
                             </app-data-quick-stats>
                         </ng-container>
                     </div>
@@ -95,8 +91,7 @@
                             [active_label]="advertiser_card.good_value_label"
                             [inactive]="advertiser_card.bad_value"
                             [inactive_label]="advertiser_card.bad_value_label"
-                            [icon]="'fas fa-ad'"
-                        >
+                            [icon]="'fas fa-ad'">
                         </app-data-quick-stats>
                     </div>
                 </div>
@@ -106,7 +101,10 @@
         <div class="theme-container top-90 pb-5">
             <div class="row">
                 <div class="col-lg-12 custom-mat-tab">
-                    <mat-tab-group dynamicHeight (selectedTabChange)="onSelectTab($event)" [selectedIndex]="selected_index">
+                    <mat-tab-group
+                        dynamicHeight
+                        (selectedTabChange)="onSelectTab($event)"
+                        [selectedIndex]="selected_index">
                         <!-- LICENSES TAB -->
                         <mat-tab label="Licenses">
                             <div *ngIf="current_tab === 'licenses'">
@@ -115,52 +113,152 @@
                                         <!-- BUTTONS ROW -->
                                         <div class="row mt-4">
                                             <div class="col-lg-8">
-                                                <button mat-button mat-raised-button class="theme-btn sm-text mr-2 h-45" [matMenuTriggerFor]="licenseStatus">
+                                                <button
+                                                    mat-button
+                                                    mat-raised-button
+                                                    class="theme-btn sm-text mr-2 h-45"
+                                                    [matMenuTriggerFor]="licenseStatus">
                                                     <span class="button-label">License Status</span>
                                                     <span class="fas fa-circle xsm-text"></span>
                                                 </button>
                                                 <mat-menu #licenseStatus="matMenu">
-                                                    <button class="md-text" mat-menu-item (click)="filterTable('assigned', 'true')" [matMenuTriggerFor]="assignedSubMenu">
-                                                        <span class="fas fa-user text-primary mr-3"></span>Assigned
+                                                    <button
+                                                        class="md-text"
+                                                        mat-menu-item
+                                                        (click)="filterTable('assigned', 'true')"
+                                                        [matMenuTriggerFor]="assignedSubMenu">
+                                                        <span
+                                                            class="fas fa-user text-primary mr-3"></span
+                                                        >Assigned
                                                     </button>
-                                                    <button class="md-text" mat-menu-item (click)="filterTable('assigned', 'false')">
-                                                        <span class="fas fa-user-alt-slash text-gray mr-3"></span>Unassigned
+                                                    <button
+                                                        class="md-text"
+                                                        mat-menu-item
+                                                        (click)="filterTable('assigned', 'false')">
+                                                        <span
+                                                            class="fas fa-user-alt-slash text-gray mr-3"></span
+                                                        >Unassigned
                                                     </button>
-                                                    <button class="md-text" mat-menu-item (click)="filterTable('activated', '1')">
-                                                        <span class="fas fa-user text-light-gray mr-3"></span>Inactive
+                                                    <button
+                                                        class="md-text"
+                                                        mat-menu-item
+                                                        (click)="filterTable('activated', '1')">
+                                                        <span
+                                                            class="fas fa-user text-light-gray mr-3"></span
+                                                        >Inactive
                                                     </button>
                                                 </mat-menu>
 
                                                 <mat-menu #assignedSubMenu="matMenu">
-                                                    <button class="md-text" mat-menu-item (click)="filterTable('status', '1')">
-                                                        <span class="fas fa-circle text-primary mr-3"></span>Online
+                                                    <button
+                                                        class="md-text"
+                                                        mat-menu-item
+                                                        (click)="filterTable('status', '1')">
+                                                        <span
+                                                            class="fas fa-circle text-primary mr-3"></span
+                                                        >Online
                                                     </button>
-                                                    <button class="md-text" mat-menu-item (click)="filterTable('status', '0')" [matMenuTriggerFor]="offlineSubMenu">
-                                                        <span class="fas fa-circle text-danger mr-3"></span>Offline
+                                                    <button
+                                                        class="md-text"
+                                                        mat-menu-item
+                                                        (click)="filterTable('status', '0')"
+                                                        [matMenuTriggerFor]="offlineSubMenu">
+                                                        <span
+                                                            class="fas fa-circle text-danger mr-3"></span
+                                                        >Offline
                                                     </button>
-                                                    <button class="md-text" mat-menu-item (click)="filterTable('pending', 'true')">
-                                                        <span class="fas fa-circle text-orange mr-3"></span>Pending
+                                                    <button
+                                                        class="md-text"
+                                                        mat-menu-item
+                                                        (click)="filterTable('pending', 'true')">
+                                                        <span
+                                                            class="fas fa-circle text-orange mr-3"></span
+                                                        >Pending
                                                     </button>
                                                 </mat-menu>
 
                                                 <mat-menu #offlineSubMenu="matMenu">
-                                                    <button class="md-text" mat-menu-item (click)="filterTable('days_offline', '0', '5', '5 days')">5 Days</button>
-                                                    <button class="md-text" mat-menu-item (click)="filterTable('days_offline', '6', '30', '30 days')">6 - 30 Days</button>
-                                                    <button class="md-text" mat-menu-item (click)="filterTable('days_offline', '31', '365', 'Long Time')">> 30 Days</button>
+                                                    <button
+                                                        class="md-text"
+                                                        mat-menu-item
+                                                        (click)="
+                                                            filterTable(
+                                                                'days_offline',
+                                                                '0',
+                                                                '5',
+                                                                '5 days'
+                                                            )
+                                                        ">
+                                                        5 Days
+                                                    </button>
+                                                    <button
+                                                        class="md-text"
+                                                        mat-menu-item
+                                                        (click)="
+                                                            filterTable(
+                                                                'days_offline',
+                                                                '6',
+                                                                '30',
+                                                                '30 days'
+                                                            )
+                                                        ">
+                                                        6 - 30 Days
+                                                    </button>
+                                                    <button
+                                                        class="md-text"
+                                                        mat-menu-item
+                                                        (click)="
+                                                            filterTable(
+                                                                'days_offline',
+                                                                '31',
+                                                                '365',
+                                                                'Long Time'
+                                                            )
+                                                        ">
+                                                        > 30 Days
+                                                    </button>
                                                 </mat-menu>
 
-                                                <button mat-button mat-raised-button class="theme-btn sm-text mr-2 h-45" [matMenuTriggerFor]="timezone">
+                                                <button
+                                                    mat-button
+                                                    mat-raised-button
+                                                    class="theme-btn sm-text mr-2 h-45"
+                                                    [matMenuTriggerFor]="timezone">
                                                     <span class="button-label">Timezone</span>
                                                     <span class="fas fa-sort xsm-text"></span>
                                                 </button>
                                                 <mat-menu #timezone="matMenu">
-                                                    <button class="md-text" mat-menu-item (click)="filterTable('zone', 'Central')">Central</button>
-                                                    <button class="md-text" mat-menu-item (click)="filterTable('zone', 'Eastern')">Eastern</button>
-                                                    <button class="md-text" mat-menu-item (click)="filterTable('zone', 'Mountain')">Mountain</button>
-                                                    <button class="md-text" mat-menu-item (click)="filterTable('zone', 'Pacific')">Pacific</button>
+                                                    <button
+                                                        class="md-text"
+                                                        mat-menu-item
+                                                        (click)="filterTable('zone', 'Central')">
+                                                        Central
+                                                    </button>
+                                                    <button
+                                                        class="md-text"
+                                                        mat-menu-item
+                                                        (click)="filterTable('zone', 'Eastern')">
+                                                        Eastern
+                                                    </button>
+                                                    <button
+                                                        class="md-text"
+                                                        mat-menu-item
+                                                        (click)="filterTable('zone', 'Mountain')">
+                                                        Mountain
+                                                    </button>
+                                                    <button
+                                                        class="md-text"
+                                                        mat-menu-item
+                                                        (click)="filterTable('zone', 'Pacific')">
+                                                        Pacific
+                                                    </button>
                                                 </mat-menu>
 
-                                                <button mat-button mat-raised-button class="theme-btn sm-text mr-2 h-45" (click)="sortByUser()">
+                                                <button
+                                                    mat-button
+                                                    mat-raised-button
+                                                    class="theme-btn sm-text mr-2 h-45"
+                                                    (click)="sortByUser()">
                                                     <span class="button-label">User</span>
                                                     <span class="fas fa-user xsm-text"></span>
                                                 </button>
@@ -171,10 +269,11 @@
                                                     class="theme-btn pi-control sm-text mr-2"
                                                     [disabled]="searching_license"
                                                     (click)="reloadLicense()"
-                                                    title="Reload"
-                                                >
+                                                    title="Reload">
                                                     <span class="fas fa-sync-alt"></span>
-                                                    <span class="ml-2 button_text_animation">Reload</span>
+                                                    <span class="ml-2 button_text_animation"
+                                                        >Reload</span
+                                                    >
                                                 </button>
 
                                                 <button
@@ -182,14 +281,25 @@
                                                     mat-raised-button
                                                     class="theme-btn pi-control _cool sm-text mr-2"
                                                     [matMenuTriggerFor]="orderSort"
-                                                    title="Order by License Status"
-                                                >
+                                                    title="Order by License Status">
                                                     <span class="fas fa-sort"></span>
-                                                    <span class="ml-2 button_text_animation">Order by License Status</span>
+                                                    <span class="ml-2 button_text_animation"
+                                                        >Order by License Status</span
+                                                    >
                                                 </button>
                                                 <mat-menu #orderSort="matMenu">
-                                                    <button mat-menu-item (click)="sortList('desc')"><span class="fas fa-circle text-primary xsm-text mr-3"></span>Online</button>
-                                                    <button mat-menu-item (click)="sortList('asc')"><span class="fas fa-circle xsm-text text-danger mr-3"></span>Offline</button>
+                                                    <button
+                                                        mat-menu-item
+                                                        (click)="sortList('desc')">
+                                                        <span
+                                                            class="fas fa-circle text-primary xsm-text mr-3"></span
+                                                        >Online
+                                                    </button>
+                                                    <button mat-menu-item (click)="sortList('asc')">
+                                                        <span
+                                                            class="fas fa-circle xsm-text text-danger mr-3"></span
+                                                        >Offline
+                                                    </button>
                                                 </mat-menu>
 
                                                 <ng-container *ngIf="show_admin_buttons">
@@ -220,40 +330,58 @@
                                                     <button
                                                         mat-button
                                                         mat-raised-button
-                                                        *ngIf="!screenshot_disabled; else disabled_screenshot"
+                                                        *ngIf="
+                                                            !screenshot_disabled;
+                                                            else disabled_screenshot
+                                                        "
                                                         class="theme-btn pi-control sm-text _teal mr-2"
-                                                        [disabled]="remote_reboot_disabled || !licenses"
+                                                        [disabled]="
+                                                            remote_reboot_disabled || !licenses
+                                                        "
                                                         (click)="screenshotDealer()"
-                                                        title="Screenshot"
-                                                    >
+                                                        title="Screenshot">
                                                         <span class="fas fa-camera"></span>
-                                                        <span class="ml-2 button_text_animation">Screenshot</span>
+                                                        <span class="ml-2 button_text_animation"
+                                                            >Screenshot</span
+                                                        >
                                                     </button>
 
                                                     <button
                                                         mat-button
                                                         mat-raised-button
-                                                        *ngIf="!remote_reboot_disabled; else disabled_remote_reboot_player"
+                                                        *ngIf="
+                                                            !remote_reboot_disabled;
+                                                            else disabled_remote_reboot_player
+                                                        "
                                                         class="theme-btn pi-control sm-text _warning mr-2"
-                                                        [disabled]="remote_reboot_disabled || !licenses"
+                                                        [disabled]="
+                                                            remote_reboot_disabled || !licenses
+                                                        "
                                                         (click)="rebootPlayer()"
-                                                        title="Reboot Player"
-                                                    >
+                                                        title="Reboot Player">
                                                         <span class="fas fa-power-off"></span>
-                                                        <span class="ml-2 button_text_animation">Reboot Player (Software)</span>
+                                                        <span class="ml-2 button_text_animation"
+                                                            >Reboot Player (Software)</span
+                                                        >
                                                     </button>
 
                                                     <button
                                                         mat-button
                                                         mat-raised-button
-                                                        *ngIf="!remote_reboot_disabled; else disabled_remote_reboot_pi"
+                                                        *ngIf="
+                                                            !remote_reboot_disabled;
+                                                            else disabled_remote_reboot_pi
+                                                        "
                                                         class="theme-btn pi-control sm-text _caution mr-2"
-                                                        [disabled]="remote_reboot_disabled || !licenses"
+                                                        [disabled]="
+                                                            remote_reboot_disabled || !licenses
+                                                        "
                                                         (click)="rebootPi()"
-                                                        title="Reboot Pi"
-                                                    >
+                                                        title="Reboot Pi">
                                                         <span class="fas fa-power-off"></span>
-                                                        <span class="ml-2 button_text_animation">Reboot Pi (Device)</span>
+                                                        <span class="ml-2 button_text_animation"
+                                                            >Reboot Pi (Device)</span
+                                                        >
                                                     </button>
 
                                                     <ng-template #disabled_remote_reboot_player>
@@ -262,10 +390,11 @@
                                                             mat-raised-button
                                                             class="theme-btn pi-control sm-text _warning mr-2"
                                                             [disabled]="true"
-                                                            [title]="timeout_message"
-                                                        >
+                                                            [title]="timeout_message">
                                                             <span class="fas fa-power-off"></span>
-                                                            <span class="ml-2 button_text_animation">Reboot Player (Software)</span>
+                                                            <span class="ml-2 button_text_animation"
+                                                                >Reboot Player (Software)</span
+                                                            >
                                                         </button>
                                                     </ng-template>
 
@@ -274,11 +403,14 @@
                                                             mat-button
                                                             mat-raised-button
                                                             class="theme-btn pi-control sm-text _teal mr-2"
-                                                            [disabled]="remote_reboot_disabled || !licenses"
-                                                            title="timeout_message"
-                                                        >
+                                                            [disabled]="
+                                                                remote_reboot_disabled || !licenses
+                                                            "
+                                                            title="timeout_message">
                                                             <span class="fas fa-camera"></span>
-                                                            <span class="ml-2 button_text_animation">Screenshot</span>
+                                                            <span class="ml-2 button_text_animation"
+                                                                >Screenshot</span
+                                                            >
                                                         </button>
                                                     </ng-template>
 
@@ -288,10 +420,11 @@
                                                             mat-raised-button
                                                             class="theme-btn pi-control sm-text _caution mr-2"
                                                             [disabled]="true"
-                                                            [title]="timeout_message"
-                                                        >
+                                                            [title]="timeout_message">
                                                             <span class="fas fa-power-off"></span>
-                                                            <span class="ml-2 button_text_animation">Reboot Pi (Device)</span>
+                                                            <span class="ml-2 button_text_animation"
+                                                                >Reboot Pi (Device)</span
+                                                            >
                                                         </button>
                                                     </ng-template>
 
@@ -299,16 +432,47 @@
                                                         mat-button
                                                         mat-raised-button
                                                         class="theme-btn pi-control sm-text mr-2"
-                                                        [ngClass]="array_to_delete.length > 0 ? '_danger' : ''"
+                                                        [ngClass]="
+                                                            array_to_delete.length > 0
+                                                                ? '_danger'
+                                                                : ''
+                                                        "
                                                         [disabled]="array_to_delete.length == 0"
                                                         (click)="multipleDeleteLicense()"
-                                                        title="Multiple Delete"
-                                                    >
-                                                        <span class="fas fa-trash-alt" [ngStyle]="{ color: array_to_delete.length > 0 ? '#fff' : '#222' }"></span>
-                                                        <span class="ml-2 button_text_animation" [ngStyle]="{ color: array_to_delete.length > 0 ? '#fff' : '#222' }">
+                                                        title="Multiple Delete">
+                                                        <span
+                                                            class="fas fa-trash-alt"
+                                                            [ngStyle]="{
+                                                                color:
+                                                                    array_to_delete.length > 0
+                                                                        ? '#fff'
+                                                                        : '#222'
+                                                            }"></span>
+                                                        <span
+                                                            class="ml-2 button_text_animation"
+                                                            [ngStyle]="{
+                                                                color:
+                                                                    array_to_delete.length > 0
+                                                                        ? '#fff'
+                                                                        : '#222'
+                                                            }">
                                                             Multiple Delete
-                                                            <span class="xsm-text" *ngIf="array_to_delete.length > 1">({{ array_to_delete.length }} licenses)</span>
-                                                            <span class="xsm-text" *ngIf="array_to_delete.length === 1">({{ array_to_delete.length }} license)</span>
+                                                            <span
+                                                                class="xsm-text"
+                                                                *ngIf="array_to_delete.length > 1"
+                                                                >({{
+                                                                    array_to_delete.length
+                                                                }}
+                                                                licenses)</span
+                                                            >
+                                                            <span
+                                                                class="xsm-text"
+                                                                *ngIf="array_to_delete.length === 1"
+                                                                >({{
+                                                                    array_to_delete.length
+                                                                }}
+                                                                license)</span
+                                                            >
                                                         </span>
                                                     </button>
 
@@ -318,55 +482,107 @@
                                                         class="theme-btn pi-control sm-text _primary mr-2"
                                                         (click)="exportTable('Licenses')"
                                                         [disabled]="workbook_generation"
-                                                        title="Export to CSV"
-                                                    >
+                                                        title="Export to CSV">
                                                         <span
-                                                            class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
-                                                            [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"
-                                                        ></span>
-                                                        <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">{{
-                                                            !workbook_generation ? "Export" : "Generating CSV"
-                                                        }}</span>
+                                                            class="{{
+                                                                !workbook_generation
+                                                                    ? 'fas fa-file-excel'
+                                                                    : 'fas fa-spinner fa-spin'
+                                                            }}"
+                                                            [ngStyle]="{
+                                                                color: workbook_generation
+                                                                    ? '#222'
+                                                                    : 'white'
+                                                            }"></span>
+                                                        <span
+                                                            class="ml-2 button_text_animation"
+                                                            [ngStyle]="{
+                                                                color: workbook_generation
+                                                                    ? '#222'
+                                                                    : 'white'
+                                                            }"
+                                                            >{{
+                                                                !workbook_generation
+                                                                    ? 'Export'
+                                                                    : 'Generating CSV'
+                                                            }}</span
+                                                        >
                                                     </button>
                                                 </ng-container>
                                             </div>
                                             <div class="col-lg-4">
                                                 <app-search-field
                                                     *ngIf="!initial_load_license"
-                                                    [form_title]="'Search License Alias, Host Name, Anydesk or #Tag'"
+                                                    [form_title]="
+                                                        'Search License Alias, Host Name, Anydesk or #Tag'
+                                                    "
                                                     [placeholder]="'Example: License #100'"
                                                     [data_reference]="license_data"
                                                     [primary_keyword]="'alias'"
                                                     [secondary_keyword]="'host_name'"
                                                     (searched)="licenseFilterData($event)"
-                                                    [api_search]="true"
-                                                ></app-search-field>
+                                                    [api_search]="true"></app-search-field>
                                             </div>
                                         </div>
-                                        <div class="row" *ngIf="filters.label_status || filters.label_zone || filters.label_dealer || filters.label_host">
+                                        <div
+                                            class="row"
+                                            *ngIf="
+                                                filters.label_status ||
+                                                filters.label_zone ||
+                                                filters.label_dealer ||
+                                                filters.label_host
+                                            ">
                                             <div class="col-lg-12">
-                                                <div class="d-flex align-items-center p-2 bg-gray-2">
+                                                <div
+                                                    class="d-flex align-items-center p-2 bg-gray-2">
                                                     <div class="filter-pills">
-                                                        <div class="filetype-pill pill" *ngIf="filters.label_status">
-                                                            License Status: <strong>{{ filters.label_status }}</strong>
+                                                        <div
+                                                            class="filetype-pill pill"
+                                                            *ngIf="filters.label_status">
+                                                            License Status:
+                                                            <strong>{{
+                                                                filters.label_status
+                                                            }}</strong>
                                                         </div>
 
-                                                        <div class="order-pill pill" *ngIf="filters.label_zone">
-                                                            Timezone: <strong>{{ filters.label_zone }}</strong>
+                                                        <div
+                                                            class="order-pill pill"
+                                                            *ngIf="filters.label_zone">
+                                                            Timezone:
+                                                            <strong>{{
+                                                                filters.label_zone
+                                                            }}</strong>
                                                         </div>
 
-                                                        <div class="dealer-pill pill" *ngIf="filters.label_dealer">
-                                                            Dealer: <strong>{{ filters.label_dealer }}</strong>
+                                                        <div
+                                                            class="dealer-pill pill"
+                                                            *ngIf="filters.label_dealer">
+                                                            Dealer:
+                                                            <strong>{{
+                                                                filters.label_dealer
+                                                            }}</strong>
                                                         </div>
 
-                                                        <div class="host-pill pill" *ngIf="filters.label_host">
-                                                            Host: <strong>{{ filters.label_host }}</strong>
+                                                        <div
+                                                            class="host-pill pill"
+                                                            *ngIf="filters.label_host">
+                                                            Host:
+                                                            <strong>{{
+                                                                filters.label_host
+                                                            }}</strong>
                                                         </div>
                                                     </div>
                                                     <div class="control flex-even text-right">
-                                                        <button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
-                                                            <span class="button-label"> Clear Filter </span>
-                                                            <span class="fas fa-times ml-2 sm-text"></span>
+                                                        <button
+                                                            mat-button
+                                                            mat-raised-button
+                                                            class="theme-btn"
+                                                            (click)="clearFilter()">
+                                                            <span class="button-label">
+                                                                Clear Filter
+                                                            </span>
+                                                            <span
+                                                                class="fas fa-times ml-2 sm-text"></span>
                                                         </button>
                                                     </div>
                                                 </div>
@@ -374,8 +590,13 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-lg-12">
-                                                <ng-container *ngIf="!searching_license; else loader">
-                                                    <mat-card *ngIf="license_filtered_data.length > 0; else no_data">
+                                                <ng-container
+                                                    *ngIf="!searching_license; else loader">
+                                                    <mat-card
+                                                        *ngIf="
+                                                            license_filtered_data.length > 0;
+                                                            else no_data
+                                                        ">
                                                         <app-data-table
                                                             id="licenseTable"
                                                             [table_columns]="license_table_columns"
@@ -385,19 +606,26 @@
                                                             [ctrl_toggle]="true"
                                                             [new_table]="true"
                                                             [license_status_column]="true"
-                                                            (toggle_triggered)="toggleActivateDeactivate($event)"
+                                                            (toggle_triggered)="
+                                                                toggleActivateDeactivate($event)
+                                                            "
                                                             (update_info)="reloadLicense()"
                                                             [license_delete]="true"
                                                             [paging_details]="paging_data_license"
-                                                            (page_triggered)="getLicensesofDealer($event)"
+                                                            (page_triggered)="
+                                                                getLicensesofDealer($event)
+                                                            "
                                                             [multiple_delete]="true"
-                                                            (delete_selected)="getMultipleDeleteData($event)"
-                                                            (to_sort_column)="getColumnsAndOrder($event)"
+                                                            (delete_selected)="
+                                                                getMultipleDeleteData($event)
+                                                            "
+                                                            (to_sort_column)="
+                                                                getColumnsAndOrder($event)
+                                                            "
                                                             [active_tab]="sort_column"
                                                             [sort_column]="sort_column"
                                                             [sort_order]="sort_order"
-                                                            [dealer_id]="dealer_id"
-                                                        >
+                                                            [dealer_id]="dealer_id">
                                                         </app-data-table>
                                                     </mat-card>
                                                 </ng-container>
@@ -414,20 +642,49 @@
                                 <div *ngIf="!initial_load; else loader">
                                     <div class="d-flex mt-3 table-controls">
                                         <div class="status-filter-container">
-                                            <button mat-button mat-raised-button class="theme-btn status-filter-btn sm-text mr-2 h-45" [matMenuTriggerFor]="hostStatusList">
-                                                <span class="button-label">Host Status: {{ current_host_status_filter | titlecase }}</span>
-                                                <ng-container *ngIf="current_host_status_filter !== 'all'">
-                                                    <span class="fas fa-circle" [ngClass]="current_host_status_filter === 'active' ? 'text-primary' : 'text-gray'"> </span>
+                                            <button
+                                                mat-button
+                                                mat-raised-button
+                                                class="theme-btn status-filter-btn sm-text mr-2 h-45"
+                                                [matMenuTriggerFor]="hostStatusList">
+                                                <span class="button-label"
+                                                    >Host Status:
+                                                    {{
+                                                        current_host_status_filter | titlecase
+                                                    }}</span
+                                                >
+                                                <ng-container
+                                                    *ngIf="current_host_status_filter !== 'all'">
+                                                    <span
+                                                        class="fas fa-circle"
+                                                        [ngClass]="
+                                                            current_host_status_filter === 'active'
+                                                                ? 'text-primary'
+                                                                : 'text-gray'
+                                                        ">
+                                                    </span>
                                                 </ng-container>
                                             </button>
                                             <mat-menu #hostStatusList="matMenu">
-                                                <button mat-menu-item (click)="filterHostsByStatus('active')">
-                                                    <span class="fas fa-circle text-primary mr-2 xsm-text"></span>Active
+                                                <button
+                                                    mat-menu-item
+                                                    (click)="filterHostsByStatus('active')">
+                                                    <span
+                                                        class="fas fa-circle text-primary mr-2 xsm-text"></span
+                                                    >Active
                                                 </button>
-                                                <button mat-menu-item (click)="filterHostsByStatus('inactive')">
-                                                    <span class="fas fa-circle text-gray mr-2 xsm-text"></span>Inactive
+                                                <button
+                                                    mat-menu-item
+                                                    (click)="filterHostsByStatus('inactive')">
+                                                    <span
+                                                        class="fas fa-circle text-gray mr-2 xsm-text"></span
+                                                    >Inactive
                                                 </button>
-                                                <button mat-menu-item (click)="filterHostsByStatus('all')"><span class="text-gray mr-2 xsm-text"></span>All</button>
+                                                <button
+                                                    mat-menu-item
+                                                    (click)="filterHostsByStatus('all')">
+                                                    <span class="text-gray mr-2 xsm-text"></span>All
+                                                </button>
                                             </mat-menu>
                                         </div>
                                         <button
@@ -436,34 +693,51 @@
                                             class="theme-btn pi-control sm-text _primary mr-2"
                                             (click)="exportTable('Hosts')"
                                             [disabled]="workbook_generation"
-                                            title="Export to CSV"
-                                        >
+                                            title="Export to CSV">
                                             <span
-                                                class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
-                                                [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"
-                                            ></span>
-                                            <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">{{
-                                                !workbook_generation ? "Export" : "Generating CSV"
-                                            }}</span>
+                                                class="{{
+                                                    !workbook_generation
+                                                        ? 'fas fa-file-excel'
+                                                        : 'fas fa-spinner fa-spin'
+                                                }}"
+                                                [ngStyle]="{
+                                                    color: workbook_generation ? '#222' : 'white'
+                                                }"></span>
+                                            <span
+                                                class="ml-2 button_text_animation"
+                                                [ngStyle]="{
+                                                    color: workbook_generation ? '#222' : 'white'
+                                                }"
+                                                >{{
+                                                    !workbook_generation
+                                                        ? 'Export'
+                                                        : 'Generating CSV'
+                                                }}</span
+                                            >
                                         </button>
                                         <div class="search-field">
                                             <app-search-field
                                                 *ngIf="!initial_load"
-                                                [form_title]="'Search Host Name, Address, City, Postal Code, or #Tag'"
+                                                [form_title]="
+                                                    'Search Host Name, Address, City, Postal Code, or #Tag'
+                                                "
                                                 [placeholder]="'Example: N-Compass'"
                                                 [data_reference]="host_data"
                                                 [primary_keyword]="'host_name'"
                                                 [secondary_keyword]="'host_name'"
                                                 (searched)="hostFilterData($event)"
-                                                [api_search]="true"
-                                            >
+                                                [api_search]="true">
                                             </app-search-field>
                                         </div>
                                     </div>
                                     <div class="row" *ngIf="!initial_load">
                                         <div class="col-lg-12">
                                             <ng-container *ngIf="!searching; else loader">
-                                                <mat-card *ngIf="host_filtered_data.length > 0; else no_data">
+                                                <mat-card
+                                                    *ngIf="
+                                                        host_filtered_data.length > 0;
+                                                        else no_data
+                                                    ">
                                                     <app-data-table
                                                         [table_columns]="host_table_col"
                                                         [table_data]="host_filtered_data"
@@ -474,8 +748,9 @@
                                                         [sort_order]="sort_order_hosts"
                                                         [page]="'single-dealer-host-tab'"
                                                         (page_triggered)="getDealerHost($event)"
-                                                        (to_sort_column)="getHostsColumnsAndOrder($event)"
-                                                    >
+                                                        (to_sort_column)="
+                                                            getHostsColumnsAndOrder($event)
+                                                        ">
                                                     </app-data-table>
                                                 </mat-card>
                                             </ng-container>
@@ -491,9 +766,26 @@
                                 <div *ngIf="!initial_load_advertiser; else loader">
                                     <div class="d-flex pt-2 table-controls">
                                         <div class="status-filter-container">
-                                            <button mat-button mat-raised-button class="theme-btn status-filter-btn sm-text mr-2 h-45" [matMenuTriggerFor]="advertiserStatusList">
-                                                <span class="button-label"> Advertiser Status: {{ current_advertiser_status_filter | titlecase }} </span>
-                                                <span class="fas fa-circle" [ngClass]="current_advertiser_status_filter === 'active' ? 'text-primary' : 'text-gray'"> </span>
+                                            <button
+                                                mat-button
+                                                mat-raised-button
+                                                class="theme-btn status-filter-btn sm-text mr-2 h-45"
+                                                [matMenuTriggerFor]="advertiserStatusList">
+                                                <span class="button-label">
+                                                    Advertiser Status:
+                                                    {{
+                                                        current_advertiser_status_filter | titlecase
+                                                    }}
+                                                </span>
+                                                <span
+                                                    class="fas fa-circle"
+                                                    [ngClass]="
+                                                        current_advertiser_status_filter ===
+                                                        'active'
+                                                            ? 'text-primary'
+                                                            : 'text-gray'
+                                                    ">
+                                                </span>
                                             </button>
                                             <button
                                                 mat-button
@@ -501,43 +793,73 @@
                                                 class="theme-btn pi-control sm-text _primary mr-2"
                                                 (click)="exportTable('Advertisers')"
                                                 [disabled]="workbook_generation"
-                                                title="Export to CSV"
-                                            >
+                                                title="Export to CSV">
                                                 <span
-                                                    class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
-                                                    [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"
-                                                ></span>
-                                                <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">{{
-                                                    !workbook_generation ? "Export" : "Generating CSV"
-                                                }}</span>
+                                                    class="{{
+                                                        !workbook_generation
+                                                            ? 'fas fa-file-excel'
+                                                            : 'fas fa-spinner fa-spin'
+                                                    }}"
+                                                    [ngStyle]="{
+                                                        color: workbook_generation
+                                                            ? '#222'
+                                                            : 'white'
+                                                    }"></span>
+                                                <span
+                                                    class="ml-2 button_text_animation"
+                                                    [ngStyle]="{
+                                                        color: workbook_generation
+                                                            ? '#222'
+                                                            : 'white'
+                                                    }"
+                                                    >{{
+                                                        !workbook_generation
+                                                            ? 'Export'
+                                                            : 'Generating CSV'
+                                                    }}</span
+                                                >
                                             </button>
                                             <mat-menu #advertiserStatusList="matMenu">
-                                                <button mat-menu-item (click)="filterAdvertisersByStatus('active')">
-                                                    <span class="fas fa-circle text-primary mr-2 xsm-text"></span>Active
+                                                <button
+                                                    mat-menu-item
+                                                    (click)="filterAdvertisersByStatus('active')">
+                                                    <span
+                                                        class="fas fa-circle text-primary mr-2 xsm-text"></span
+                                                    >Active
                                                 </button>
-                                                <button mat-menu-item (click)="filterAdvertisersByStatus('inactive')">
-                                                    <span class="fas fa-circle text-gray mr-2 xsm-text"></span>Inactive
+                                                <button
+                                                    mat-menu-item
+                                                    (click)="filterAdvertisersByStatus('inactive')">
+                                                    <span
+                                                        class="fas fa-circle text-gray mr-2 xsm-text"></span
+                                                    >Inactive
                                                 </button>
                                             </mat-menu>
                                         </div>
                                         <div class="search-field">
                                             <app-search-field
                                                 *ngIf="!initial_load_advertiser"
-                                                [form_title]="'Search Business Name, Address, City, State, Postal Code, or #Tag'"
+                                                [form_title]="
+                                                    'Search Business Name, Address, City, State, Postal Code, or #Tag'
+                                                "
                                                 [placeholder]="'Example: N-Compass'"
                                                 [data_reference]="advertiser_data"
                                                 [primary_keyword]="'name'"
                                                 [secondary_keyword]="'name'"
                                                 (searched)="advertiserFilterData($event)"
-                                                [api_search]="true"
-                                            >
+                                                [api_search]="true">
                                             </app-search-field>
                                         </div>
                                     </div>
                                     <div class="row" *ngIf="!initial_load_advertiser">
                                         <div class="col-lg-12">
-                                            <ng-container *ngIf="!searching_advertiser; else loader">
-                                                <mat-card *ngIf="advertiser_filtered_data.length > 0; else no_data">
+                                            <ng-container
+                                                *ngIf="!searching_advertiser; else loader">
+                                                <mat-card
+                                                    *ngIf="
+                                                        advertiser_filtered_data.length > 0;
+                                                        else no_data
+                                                    ">
                                                     <app-data-table
                                                         [table_columns]="adv_table_col"
                                                         [table_data]="advertiser_filtered_data"
@@ -548,10 +870,13 @@
                                                         [sort_column]="sort_column_advertisers"
                                                         [sort_order]="sort_order_advertisers"
                                                         [page]="'advertisers'"
-                                                        (page_triggered)="getDealerAdvertiser($event)"
+                                                        (page_triggered)="
+                                                            getDealerAdvertiser($event)
+                                                        "
                                                         (update_info)="reloadAdvertiser()"
-                                                        (to_sort_column)="getAdvertisersColumnsAndOrder($event)"
-                                                    >
+                                                        (to_sort_column)="
+                                                            getAdvertisersColumnsAndOrder($event)
+                                                        ">
                                                     </app-data-table>
                                                 </mat-card>
                                             </ng-container>
@@ -577,22 +902,29 @@
                                                     [primary_keyword]="'licenseKey'"
                                                     [secondary_keyword]="'licenseAlias'"
                                                     (searched)="licenseZoneFilterData($event)"
-                                                    [api_search]="true"
-                                                >
+                                                    [api_search]="true">
                                                 </app-search-field>
                                             </div>
                                         </div>
                                         <div class="row" *ngIf="!initial_load_zone">
                                             <div class="col-lg-12">
-                                                <ng-container *ngIf="!searching_license_zone; else loader">
-                                                    <mat-card *ngIf="license_zone_filtered_data.length > 0; else no_data">
+                                                <ng-container
+                                                    *ngIf="!searching_license_zone; else loader">
+                                                    <mat-card
+                                                        *ngIf="
+                                                            license_zone_filtered_data.length > 0;
+                                                            else no_data
+                                                        ">
                                                         <app-data-table
-                                                            [table_data]="license_zone_filtered_data"
+                                                            [table_data]="
+                                                                license_zone_filtered_data
+                                                            "
                                                             [table_columns]="license_zone_table_col"
                                                             [new_table]="true"
                                                             [paging_details]="paging_data_zone"
-                                                            (page_triggered)="getDealerLicenseZone($event)"
-                                                        >
+                                                            (page_triggered)="
+                                                                getDealerLicenseZone($event)
+                                                            ">
                                                         </app-data-table>
                                                     </mat-card>
                                                 </ng-container>
@@ -609,12 +941,14 @@
                                 <div class="row">
                                     <div class="col-lg-12 ml-2 pt-4">
                                         <h5>{{ createdBy }}</h5>
-                                        <h6>{{ dateCreated | date : "MMMM d, y" }}</h6>
+                                        <h6>{{ dateCreated | date: 'MMMM d, y' }}</h6>
                                     </div>
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-lg-12" *ngIf="!initial_load_activity; else loader_activity">
+                                    <div
+                                        class="col-lg-12"
+                                        *ngIf="!initial_load_activity; else loader_activity">
                                         <app-single-activity-tab
                                             *ngIf="activity_data.length; else loader_activity"
                                             [activity_data]="activity_data"
@@ -630,8 +964,7 @@
                                             [owner_data]="dealer_data"
                                             [reload_data]="reload_data"
                                             (pageChanged)="getDealerActivity($event)"
-                                            (sortColumnEvent)="getActivityColumnsAndOrder($event)"
-                                        >
+                                            (sortColumnEvent)="getActivityColumnsAndOrder($event)">
                                         </app-single-activity-tab>
                                     </div>
                                 </div>
@@ -643,10 +976,13 @@
                             <div class="row mt-4">
                                 <div class="col-lg-7">
                                     <h3>Remote Terminal</h3>
-                                    <p class="sm-text mb-3">Write a short script and send it to all online players.</p>
+                                    <p class="sm-text mb-3">
+                                        Write a short script and send it to all online players.
+                                    </p>
 
                                     <div class="terminal-area mt-4">
-                                        <app-remote-terminal (run)="runTerminalScript($event)"></app-remote-terminal>
+                                        <app-remote-terminal
+                                            (run)="runTerminalScript($event)"></app-remote-terminal>
                                     </div>
                                 </div>
                             </div>
@@ -656,7 +992,10 @@
                             <div class="col-lg-12 p-0" *ngIf="current_tab === 'billing'">
                                 <div class="row">
                                     <div class="col-lg-12">
-                                        <app-single-billings [dealer]="dealer_id" [reload]="reload_billing"> </app-single-billings>
+                                        <app-single-billings
+                                            [dealer]="dealer_id"
+                                            [reload]="reload_billing">
+                                        </app-single-billings>
                                     </div>
                                 </div>
                             </div>
@@ -674,7 +1013,9 @@
                     <i class="text-gray fa-5x far fa-file-alt"></i>
                 </div>
                 <h3 class="text-gray col-lg-12">No Results Found.</h3>
-                <span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
+                <span class="text-gray col-lg-12"
+                    >Try adjusting your search to find what you're looking for.</span
+                >
             </mat-card>
         </div>
     </ng-template>

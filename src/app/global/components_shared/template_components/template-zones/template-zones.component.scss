@@ -18,24 +18,23 @@
 
     &.is-focus {
         animation: example 1s infinite;
-	}
-	
-	&.is-interactive {
-		cursor: pointer;
+    }
 
-		&.is-selected, &:hover {
-			background: #8ec641 !important;
-			opacity: 90%;
-		}
+    &.is-interactive {
+        cursor: pointer;
 
-	}
-	
+        &.is-selected,
+        &:hover {
+            background: #8ec641 !important;
+            opacity: 90%;
+        }
+    }
 }
 
 @keyframes example {
     0% {
         box-shadow: inset 0 0 20px #000;
-      }
+    }
     50% {
         box-shadow: inset 0 0 50px #000;
     }

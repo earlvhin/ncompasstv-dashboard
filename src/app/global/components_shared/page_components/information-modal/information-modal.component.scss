@@ -1,45 +1,45 @@
 .good {
-	color: #8ec641;
+    color: #8ec641;
 }
 
 .bad {
-	color: #ee5454;
+    color: #ee5454;
 }
 
 .information-modal {
-	.contents {
-		text-align: justify;
-	}
+    .contents {
+        text-align: justify;
+    }
 
-	.text-break {
-		white-space: pre-line;
-		height: 250px;
-	}
+    .text-break {
+        white-space: pre-line;
+        height: 250px;
+    }
 
-	button.dismiss {
-		position: absolute;
-		top: 15px;
-		right: 15px;
-		padding: 5px;
-		line-height: 14px;
-		min-width: auto;
-	}
+    button.dismiss {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        padding: 5px;
+        line-height: 14px;
+        min-width: auto;
+    }
 
-	.business-hours {
-		ul {
-			list-style: none;
-		}
-	}
+    .business-hours {
+        ul {
+            list-style: none;
+        }
+    }
 
-	.ticket {
-		overflow-x: hidden;
-		overflow-y: auto;
-		height: 250px;
-	
-		p {
-			word-wrap: break-word;
-			white-space: -moz-pre-wrap;
-			white-space: pre-wrap;
-		}
-	}
+    .ticket {
+        overflow-x: hidden;
+        overflow-y: auto;
+        height: 250px;
+
+        p {
+            word-wrap: break-word;
+            white-space: -moz-pre-wrap;
+            white-space: pre-wrap;
+        }
+    }
 }

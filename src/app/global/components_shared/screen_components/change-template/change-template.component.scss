@@ -1,42 +1,42 @@
 .heading {
-	.mat-dialog-title {
-		margin-bottom: 0;
-	}
+    .mat-dialog-title {
+        margin-bottom: 0;
+    }
 }
 
 .mat-dialog-content {
-	padding-bottom: 30px;
+    padding-bottom: 30px;
 
-	.template {
-		min-width: 300px;
+    .template {
+        min-width: 300px;
 
-		&.current-template {
-			max-width: 350px;
-		}
-	}
+        &.current-template {
+            max-width: 350px;
+        }
+    }
 }
 
 .margin-left-auto {
-	margin-left: auto;
+    margin-left: auto;
 }
 
 .current-template {
-	.playlist-zones {
-		.zone-name {
-			margin-right: 20px;
-			font-size: 14px;
-		}
+    .playlist-zones {
+        .zone-name {
+            margin-right: 20px;
+            font-size: 14px;
+        }
 
-		.playlist-name {
-			font-size: 12px;
-		}
-	}
+        .playlist-name {
+            font-size: 12px;
+        }
+    }
 }
 
 .mat-dialog-actions {
-	margin-top: 105px;
+    margin-top: 105px;
 
-	button.submit {
-		color: white;
-	}
+    button.submit {
+        color: white;
+    }
 }

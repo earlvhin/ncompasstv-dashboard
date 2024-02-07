@@ -17,14 +17,23 @@
         <div class="row">
             <div class="col-lg-8">
                 <mat-accordion>
-                    <mat-expansion-panel *ngFor="let release of release_notes; index as i" [expanded]="i === release_expanded_panel_index">
+                    <mat-expansion-panel
+                        *ngFor="let release of release_notes; index as i"
+                        [expanded]="i === release_expanded_panel_index">
                         <mat-expansion-panel-header>
-                            <mat-panel-title *ngIf="is_current_user_admin; else non_admin_panel_title">
+                            <mat-panel-title
+                                *ngIf="is_current_user_admin; else non_admin_panel_title">
                                 <h4 class="col-4">{{ release.version }}</h4>
                                 <div class="col-4 text-center">{{ release.dateCreated }}</div>
                                 <div class="col-4 text-right">
-                                    <i class="clickable text-gray fa fa-edit mr-3" title="Edit Note" (click)="onEdit($event, release.releaseNoteId)"></i>
-                                    <i class="clickable text-danger fas fa-trash" title="Delete Note" (click)="onDelete($event, release.releaseNoteId)"></i>
+                                    <i
+                                        class="clickable text-gray fa fa-edit mr-3"
+                                        title="Edit Note"
+                                        (click)="onEdit($event, release.releaseNoteId)"></i>
+                                    <i
+                                        class="clickable text-danger fas fa-trash"
+                                        title="Delete Note"
+                                        (click)="onDelete($event, release.releaseNoteId)"></i>
                                 </div>
                             </mat-panel-title>
                             <ng-template #non_admin_panel_title>

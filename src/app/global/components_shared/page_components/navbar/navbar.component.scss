@@ -1,99 +1,99 @@
 .notification-panel {
-  max-height: 500px;
+    max-height: 500px;
 }
 
 .notification-item {
-  border-bottom: 1px solid #f0f0f0;
-  cursor: pointer;
-  padding: 15px;
-  width: 100%;
-  transition: 0.2s linear;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    padding: 15px;
+    width: 100%;
+    transition: 0.2s linear;
 
-  &:last-child {
-    border-bottom: none;
-  }
+    &:last-child {
+        border-bottom: none;
+    }
 
-  &:hover {
-    background: #eaeaea;
-  }
+    &:hover {
+        background: #eaeaea;
+    }
 }
 
 .mat-menu-custom-width {
-  width: 340px;
-  height: 400px !important;
+    width: 340px;
+    height: 400px !important;
 }
 
 .notif-count {
-  background-color: rgb(238, 89, 89);
-  color: white;
-  font-size: 12px;
+    background-color: rgb(238, 89, 89);
+    color: white;
+    font-size: 12px;
 }
 
 .alert-icon {
-  font-size: 18px !important;
+    font-size: 18px !important;
 
-  &.has-alerts {
-    color: rgb(226, 172, 21);
-    animation: shake-animation 4.72s ease infinite;
-    transform-origin: 50% 50%;
-  }
+    &.has-alerts {
+        color: rgb(226, 172, 21);
+        animation: shake-animation 4.72s ease infinite;
+        transform-origin: 50% 50%;
+    }
 }
 
 .notif-count {
-  position: absolute;
-  top: -8px;
-  left: 22%;
-  padding: 1px 8px;
-  border-radius: 10px;
-  line-height: normal;
+    position: absolute;
+    top: -8px;
+    left: 22%;
+    padding: 1px 8px;
+    border-radius: 10px;
+    line-height: normal;
 }
 
 .see-all {
-  background-color: #ffffff;
-  border-bottom: 1px solid #ddd;
-  display: inline-block;
-  padding: 10px;
-  position: sticky;
-  top: 0;
-  left: 0;
-  width: 100%;
+    background-color: #ffffff;
+    border-bottom: 1px solid #ddd;
+    display: inline-block;
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
 }
 
 @keyframes shake-animation {
-  0% {
-    transform: translate(0, 0);
-  }
-  1.78571% {
-    transform: translate(5px, 0);
-  }
-  3.57143% {
-    transform: translate(0, 0);
-  }
-  5.35714% {
-    transform: translate(5px, 0);
-  }
-  7.14286% {
-    transform: translate(0, 0);
-  }
-  8.92857% {
-    transform: translate(5px, 0);
-  }
-  10.71429% {
-    transform: translate(0, 0);
-  }
-  11.78571% {
-    transform: translate(5px, 0);
-  }
-  13.57143% {
-    transform: translate(0, 0);
-  }
-  15.35714% {
-    transform: translate(5px, 0);
-  }
-  18.92857% {
-    transform: translate(0, 0);
-  }
-  100% {
-    transform: translate(0, 0);
-  }
+    0% {
+        transform: translate(0, 0);
+    }
+    1.78571% {
+        transform: translate(5px, 0);
+    }
+    3.57143% {
+        transform: translate(0, 0);
+    }
+    5.35714% {
+        transform: translate(5px, 0);
+    }
+    7.14286% {
+        transform: translate(0, 0);
+    }
+    8.92857% {
+        transform: translate(5px, 0);
+    }
+    10.71429% {
+        transform: translate(0, 0);
+    }
+    11.78571% {
+        transform: translate(5px, 0);
+    }
+    13.57143% {
+        transform: translate(0, 0);
+    }
+    15.35714% {
+        transform: translate(5px, 0);
+    }
+    18.92857% {
+        transform: translate(0, 0);
+    }
+    100% {
+        transform: translate(0, 0);
+    }
 }

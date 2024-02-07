@@ -3,12 +3,15 @@
         <div class="col-lg-9">
             <mat-card>
                 <app-new-admin *ngIf="this.current_role === userRole.administrator"></app-new-admin>
-                <app-new-dealer-admin *ngIf="this.current_role === userRole.dealeradmin"></app-new-dealer-admin>
+                <app-new-dealer-admin
+                    *ngIf="this.current_role === userRole.dealeradmin"></app-new-dealer-admin>
                 <app-new-techrep *ngIf="this.current_role === userRole.tech"></app-new-techrep>
                 <app-new-dealer *ngIf="this.current_role === userRole.dealer"></app-new-dealer>
                 <app-new-host-user *ngIf="this.current_role === userRole.host"></app-new-host-user>
-                <app-new-advertiser *ngIf="this.current_role === userRole.advertiser"></app-new-advertiser>
-                <app-new-sub-dealer *ngIf="this.current_role === userRole['sub-dealer']"></app-new-sub-dealer>
+                <app-new-advertiser
+                    *ngIf="this.current_role === userRole.advertiser"></app-new-advertiser>
+                <app-new-sub-dealer
+                    *ngIf="this.current_role === userRole['sub-dealer']"></app-new-sub-dealer>
             </mat-card>
         </div>
     </div>

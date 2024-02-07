@@ -1,4 +1,12 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {
+    Component,
+    ElementRef,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output,
+    ViewChild,
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs/operators';
@@ -29,10 +37,14 @@ export class AutocompleteComponent implements OnInit {
 
     ngOnInit() {
         this.filteredOptions = this.autoCompleteControl.valueChanges.pipe(
-            startWith(this.field_data.initialValue && this.field_data.initialValue.length ? this.field_data.initialValue[0].value : ''),
+            startWith(
+                this.field_data.initialValue && this.field_data.initialValue.length
+                    ? this.field_data.initialValue[0].value
+                    : '',
+            ),
             debounceTime(this.field_data.allowSearchTrigger ? 1000 : 0),
             distinctUntilChanged(),
-            map((keyword) => this._filter(keyword))
+            map((keyword) => this._filter(keyword)),
         );
     }
 
@@ -66,8 +78,12 @@ export class AutocompleteComponent implements OnInit {
     private _filter(keyword: any) {
         if (this.staticVal) return;
 
-        const filterValue = keyword.hasOwnProperty('value') ? keyword.value.toLowerCase() : keyword.toLowerCase();
-        let filterResult = this.field_data.data.filter((option) => option.value.toLowerCase().includes(filterValue));
+        const filterValue = keyword.hasOwnProperty('value')
+            ? keyword.value.toLowerCase()
+            : keyword.toLowerCase();
+        let filterResult = this.field_data.data.filter((option) =>
+            option.value.toLowerCase().includes(filterValue),
+        );
 
         // In an event that the keyword search returned does not have a result
         // then we trigger no_data_found event back so the parent can do something about it.
@@ -82,7 +98,9 @@ export class AutocompleteComponent implements OnInit {
             // This means that the field_data.data source has been changed by the parent
             // and we need to fire it again for the existing search.
             if (this.field_data.allowSearchTrigger) {
-                filterResult = this.field_data.data.filter((option) => option.value.toLowerCase().includes(filterValue));
+                filterResult = this.field_data.data.filter((option) =>
+                    option.value.toLowerCase().includes(filterValue),
+                );
 
                 if (!filterResult.length && this.field_data.data.length) {
                     filterResult = this.field_data.data;

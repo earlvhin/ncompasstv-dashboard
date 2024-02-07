@@ -1,7 +1,7 @@
 <div class="p-5 user-form">
     <div class="d-flex align-items-center mb-5">
         <div class="mr-3">
-            <img src="/assets/media-files/host-icon.png" class="user-icon" alt="dealer-icon">
+            <img src="/assets/media-files/host-icon.png" class="user-icon" alt="dealer-icon" />
         </div>
         <div class="flex-even">
             <h3 class="mb-0">New Host Owner</h3>
@@ -14,62 +14,110 @@
             </a>
         </div>
     </div>
-    <form [formGroup]="new_host_form"  #formDirective="ngForm"  (ngSubmit)="createNewHost(formDirective)" class="text-left"  *ngIf="!host_loading; else loader">
+    <form
+        [formGroup]="new_host_form"
+        #formDirective="ngForm"
+        (ngSubmit)="createNewHost(formDirective)"
+        class="text-left"
+        *ngIf="!host_loading; else loader">
         <div class="row mb-4" *ngIf="!no_host_place; else no_host">
             <ng-container *ngFor="let f of form_fields_view">
                 <div class="{{ f.width }}">
-                    <mat-form-field class="full-width" *ngIf="!f.is_autocomplete; else autocomplete">
+                    <mat-form-field
+                        class="full-width"
+                        *ngIf="!f.is_autocomplete; else autocomplete">
                         <mat-label>{{ f.label }}</mat-label>
-                        <input *ngIf="f.type !== 'password'; else passwordField" formControlName="{{ f.control }}" matInput type="{{ f.type }}" placeholder="{{ f.placeholder }}">
+                        <input
+                            *ngIf="f.type !== 'password'; else passwordField"
+                            formControlName="{{ f.control }}"
+                            matInput
+                            type="{{ f.type }}"
+                            placeholder="{{ f.placeholder }}" />
 
-						<ng-template #passwordField>
-							<div class="password-container" *ngIf="f.control === 'password'">
-								<div class="field">
-									<input formControlName="{{ f.control }}" matInput placeholder="{{ f.placeholder }}" [type]="is_password_field_type ? 'password' : 'text'">
-									<mat-icon class="pw-visibility" matSuffix (click)="togglePasswordFieldType()">{{ is_password_field_type ? 'visibility_off' : 'visibility' }}</mat-icon>
-								</div>
-							</div>
+                        <ng-template #passwordField>
+                            <div class="password-container" *ngIf="f.control === 'password'">
+                                <div class="field">
+                                    <input
+                                        formControlName="{{ f.control }}"
+                                        matInput
+                                        placeholder="{{ f.placeholder }}"
+                                        [type]="is_password_field_type ? 'password' : 'text'" />
+                                    <mat-icon
+                                        class="pw-visibility"
+                                        matSuffix
+                                        (click)="togglePasswordFieldType()"
+                                        >{{
+                                            is_password_field_type ? 'visibility_off' : 'visibility'
+                                        }}</mat-icon
+                                    >
+                                </div>
+                            </div>
 
-							<div class="password-container" *ngIf="f.control === 're_password'">
-								<div class="field">
-									<input formControlName="{{ f.control }}" matInput placeholder="{{ f.placeholder }}" [type]="is_retype_password_field_type ? 'password' : 'text'">
-									<mat-icon class="pw-visibility" matSuffix (click)="toggleRetypePasswordFieldType()">{{ is_retype_password_field_type ? 'visibility_off' : 'visibility' }}</mat-icon>
-								</div>
-							</div>
-						</ng-template>
-
+                            <div class="password-container" *ngIf="f.control === 're_password'">
+                                <div class="field">
+                                    <input
+                                        formControlName="{{ f.control }}"
+                                        matInput
+                                        placeholder="{{ f.placeholder }}"
+                                        [type]="
+                                            is_retype_password_field_type ? 'password' : 'text'
+                                        " />
+                                    <mat-icon
+                                        class="pw-visibility"
+                                        matSuffix
+                                        (click)="toggleRetypePasswordFieldType()"
+                                        >{{
+                                            is_retype_password_field_type
+                                                ? 'visibility_off'
+                                                : 'visibility'
+                                        }}</mat-icon
+                                    >
+                                </div>
+                            </div>
+                        </ng-template>
                     </mat-form-field>
 
-					<div class="validation" *ngIf="f.type === 'password'">
-						<span *ngIf="f.password_field" class="validation_msg sm-text" [ngClass]="password_is_valid ? 'success' : 'error'">
-							{{ password_is_valid_msg }}
-						</span>
+                    <div class="validation" *ngIf="f.type === 'password'">
+                        <span
+                            *ngIf="f.password_field"
+                            class="validation_msg sm-text"
+                            [ngClass]="password_is_valid ? 'success' : 'error'">
+                            {{ password_is_valid_msg }}
+                        </span>
 
-						<span *ngIf="f.re_password_field" class="validation_msg sm-text" [ngClass]="password_is_match ? 'success' : 'error'">
-							{{ password_match_msg }}
-						</span>
-					</div>
+                        <span
+                            *ngIf="f.re_password_field"
+                            class="validation_msg sm-text"
+                            [ngClass]="password_is_match ? 'success' : 'error'">
+                            {{ password_match_msg }}
+                        </span>
+                    </div>
 
                     <ng-template #autocomplete>
                         <app-autocomplete-field
-							(data_value)="hostSelected($event)"
-							[key_of_value]="'hostId'"
-							[placeholder]="f.placeholder"
-							[label]="f.label"
-							[data_reference]="hosts_data"
-							[search_keyword]="keywords.search"
-							[primary_keyword]="keywords.primary"
-							[paging]="paging"
-							(call_next_page)="searchBoxTrigger($event)"
-							[loading_data]="loading_data"
-							(searched)="searchData($event)"
-							[loading_search]="loading_search">
+                            (data_value)="hostSelected($event)"
+                            [key_of_value]="'hostId'"
+                            [placeholder]="f.placeholder"
+                            [label]="f.label"
+                            [data_reference]="hosts_data"
+                            [search_keyword]="keywords.search"
+                            [primary_keyword]="keywords.primary"
+                            [paging]="paging"
+                            (call_next_page)="searchBoxTrigger($event)"
+                            [loading_data]="loading_data"
+                            (searched)="searchData($event)"
+                            [loading_search]="loading_search">
                         </app-autocomplete-field>
                     </ng-template>
                 </div>
             </ng-container>
         </div>
-        <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="form_invalid" *ngIf="!no_host_place">
+        <button
+            mat-button
+            mat-raised-button
+            class="theme-btn mr-2"
+            [disabled]="form_invalid"
+            *ngIf="!no_host_place">
             Create Host Owner
         </button>
     </form>
@@ -81,16 +129,20 @@
     <ng-template #no_host>
         <div class="align-items-center justify-content-center">
             <h3>Oh Snap!</h3>
-			<p class="sm-text mb-3">
-				There are no available hosts places at the moment.
-			</p>
-			<button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="[create_host_link]">
-				Add Host Place
-				<span class="fas fa-map-marker ml-2 sm-text"></span>
+            <p class="sm-text mb-3">There are no available hosts places at the moment.</p>
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn mr-2"
+                [routerLink]="[create_host_link]">
+                Add Host Place
+                <span class="fas fa-map-marker ml-2 sm-text"></span>
             </button>
         </div>
     </ng-template>
-    <div class="submit-on-load d-flex align-items-center justify-content-center" *ngIf="is_submitted">
+    <div
+        class="submit-on-load d-flex align-items-center justify-content-center"
+        *ngIf="is_submitted">
         <app-spinner></app-spinner>
     </div>
 </div>

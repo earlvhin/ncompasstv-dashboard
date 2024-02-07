@@ -1,156 +1,195 @@
 <div class="theme-banner bg-dark-light" [ngClass]="is_host_page && 'host-padding'">
-	<div class="theme-container">
-		<div class="d-flex align-items-center">
-			<app-update-profile-photo
-				*ngIf="page === 'single-dealer'; else singleHostImage"
-				[page_data]="page_data.dealer"
-				[dealer]="true"
-				(refresh_image)="refreshInfo()">
-			</app-update-profile-photo>
+    <div class="theme-container">
+        <div class="d-flex align-items-center">
+            <app-update-profile-photo
+                *ngIf="page === 'single-dealer'; else singleHostImage"
+                [page_data]="page_data.dealer"
+                [dealer]="true"
+                (refresh_image)="refreshInfo()">
+            </app-update-profile-photo>
 
-			<!-- to be deleted if edit host image is implemented -->
-			<ng-template #singleHostImage>
-				<div class="single-image mr-3">
-					<img class="host-image" [src]="image" />
-				</div>
-			</ng-template>
-			<div class="single-info flex-even">
-				<div class="d-flex align-items-center">
-					<h3 class="text-white">{{ title | titlecase }}</h3>
-					<span class="sm-text ml-3" [ngClass]="status === 'active' ? 'active text-primary' : 'inactive text-white'">
-						<span class="fas fa-circle xsm-text mr-2"> </span>
-						<span>{{ status | titlecase }}</span>
-					</span>
-				</div>
-				<ng-container *ngIf="page === 'single-dealer'">
-					<div class="d-flex align-items-baseline">
-						<h5 class="text-white sm-text mb-1"><span class="font-italic">Dealer Alias: </span>{{ page_data.dealer.dealerIdAlias }}</h5>
-					</div>
-				</ng-container>
-				<ng-container *ngIf="page === 'single-host' && (is_admin || is_dealer_admin)">
-					<h4 class="d-inline-block sm-text mb-0 text-white">
-						<a class="text-white" [routerLink]="[dealer_url]" target="_blank">{{ business_name }}</a>
-						<span class="mx-2">|</span>
-					</h4>
-				</ng-container>
-				<ng-container *ngIf="category">
-					<h4 class="d-inline-block sm-text text-white mb-1">
-						<i>{{ category }}</i>
-					</h4>
-				</ng-container>
-				<h5 class="text-white sm-text mb-1">{{ description }}</h5>
-				<div class="d-flex tag-pills mt-1">
-					<ng-container *ngIf="tags && tags.length > 0">
-						<div class="d-flex tags-container">
-							<div
-								*ngFor="let tag of tags"
-								class="d-inline tag"
-								[ngClass]="{ dealer: tag.role === 2 }"
-								[style.backgroundColor]="tag.tagColor ? tag.tagColor : 'gray'">
-								<div class="name">{{ tag.name }}</div>
-							</div>
-						</div>
-					</ng-container>
-				</div>
-				<ng-container *ngIf="page === 'single-host'">
-					<ng-container *ngIf="business_hours; else openHours">
-						<div class="md-text mb-0">
-							<div class="cursor-pointer text-white" (click)="onShowBusinessHours()">
-								<strong>Business Hours:</strong>
-								<span class="ml-2" *ngIf="!show_hours">{{ current_operations.day }} - {{ current_operations.period }}</span>
-								<i *ngIf="!show_hours" class="ml-3 fa fa-caret-down"></i>
-								<i *ngIf="show_hours" class="ml-3 fa fa-caret-up"></i>
-							</div>
-							<div [ngClass]="show_hours ? 'transition' : 'hidden_hours'">
-								<div
-									*ngFor="let hours of business_hours; let i = index"
-									[ngClass]="current_business_day === hours.day ? 'text-primary' : 'text-white'">
-									{{ hours.day }}
-									<ng-container *ngIf="hours.status; else close">
-										<ng-container *ngFor="let periods of hours.periods; let period_index = index">
-											<span *ngIf="period_index > 0"> & </span>
-											<span *ngIf="isOpenAllDay(hours, period_index)">- Open 24 hours</span>
-											<span *ngIf="periods.open == '' && periods.close == '' && !hours.status">- Closed</span>
-											<span *ngIf="isOpenButNotAllDay(hours, period_index)">
-												- {{ periods.open }} <span *ngIf="periods.open != '' && periods.close != ''">-</span>
-												{{ periods.close }}
-											</span>
-										</ng-container>
-									</ng-container>
-									<ng-template #close> - CLOSED </ng-template>
-								</div>
-							</div>
-						</div>
-					</ng-container>
-				</ng-container>
-				<ng-template #openHours>
-					<div class="text-white mt-1 md-text mb-0"><strong>Business Hours:</strong> <span class="ml-2">CLOSED</span></div>
-				</ng-template>
-				<ng-container *ngIf="page === 'single-host' && !is_current_user_dealer">
-					<div class="mt-1 md-text mb-0">
-						<div class="cursor-pointer text-white" (click)="onShowNotes('notes')">
-							<strong>Notes: </strong>
-							<span class="ml-2">{{ partialNotes('notes') }}</span>
-							<i class="ml-3 fa fa-external-link"></i>
-						</div>
-					</div>
-				</ng-container>
-				<ng-container *ngIf="page === 'single-host'">
-					<div class="mt-1 md-text mb-0">
-						<div class="cursor-pointer text-white" (click)="onShowNotes('others')">
-							<strong>Others: </strong>
-							<span class="ml-2">{{ partialNotes('others') }}</span>
-							<i class="ml-3 fa fa-external-link"></i>
-						</div>
-					</div>
-				</ng-container>
-			</div>
-			<ng-container *ngIf="has_host_controls && host_license_count">
-				<div class="col-lg-4 license_count">
-					<mat-card class="h-100">
-						<app-data-card-graph
-							[id]="'license-statistics'"
-							[compare_basis]="host_license_count.total_count"
-							[compare_basis_label]="host_license_count.total_count_label"
-							[label_array]="license_stats_label"
-							[value_array]="license_stats_array">
-						</app-data-card-graph>
-					</mat-card>
-				</div>
-			</ng-container>
-			<div class="flex-even text-center px-3">
-				<ng-container *ngIf="page === 'single-host'">
-					<div class="control-buttons">
-						<button
-							mat-button
-							mat-raised-button
-							class="theme-btn mb-2"
-							[class.disabled]="!editable"
-							(click)="onAssignLicense()"
-							[disabled]="!editable"
-							id="assignLicenseButton">
-							<span class="button-label">Assign License</span>
-							<span class="fas fa-barcode"></span>
-						</button>
-						<button
-							mat-button
-							mat-raised-button
-							class="theme-btn"
-							[class.disabled]="!editable"
-							(click)="onCreateScreen(dealer.dealerId, host.hostId)"
-							[disabled]="!editable"
-							id="createScreenButton">
-							<span class="button-label">Create Screen</span>
-							<span class="fas fa-tv"></span>
-						</button>
-					</div>
-				</ng-container>
-			</div>
-		</div>
-	</div>
-	<ng-container *ngIf="editable">
-		<button class="settings-btn text-white" (click)="onClickModify()">
-			<span class="md-text"><strong>Modify</strong> <span class="fas fa-cog ml-2"></span></span>
-		</button>
-	</ng-container>
+            <!-- to be deleted if edit host image is implemented -->
+            <ng-template #singleHostImage>
+                <div class="single-image mr-3">
+                    <img class="host-image" [src]="image" />
+                </div>
+            </ng-template>
+            <div class="single-info flex-even">
+                <div class="d-flex align-items-center">
+                    <h3 class="text-white">{{ title | titlecase }}</h3>
+                    <span
+                        class="sm-text ml-3"
+                        [ngClass]="
+                            status === 'active' ? 'active text-primary' : 'inactive text-white'
+                        ">
+                        <span class="fas fa-circle xsm-text mr-2"> </span>
+                        <span>{{ status | titlecase }}</span>
+                    </span>
+                </div>
+                <ng-container *ngIf="page === 'single-dealer'">
+                    <div class="d-flex align-items-baseline">
+                        <h5 class="text-white sm-text mb-1">
+                            <span class="font-italic">Dealer Alias: </span
+                            >{{ page_data.dealer.dealerIdAlias }}
+                        </h5>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="page === 'single-host' && (is_admin || is_dealer_admin)">
+                    <h4 class="d-inline-block sm-text mb-0 text-white">
+                        <a class="text-white" [routerLink]="[dealer_url]" target="_blank">{{
+                            business_name
+                        }}</a>
+                        <span class="mx-2">|</span>
+                    </h4>
+                </ng-container>
+                <ng-container *ngIf="category">
+                    <h4 class="d-inline-block sm-text text-white mb-1">
+                        <i>{{ category }}</i>
+                    </h4>
+                </ng-container>
+                <h5 class="text-white sm-text mb-1">{{ description }}</h5>
+                <div class="d-flex tag-pills mt-1">
+                    <ng-container *ngIf="tags && tags.length > 0">
+                        <div class="d-flex tags-container">
+                            <div
+                                *ngFor="let tag of tags"
+                                class="d-inline tag"
+                                [ngClass]="{ dealer: tag.role === 2 }"
+                                [style.backgroundColor]="tag.tagColor ? tag.tagColor : 'gray'">
+                                <div class="name">{{ tag.name }}</div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+                <ng-container *ngIf="page === 'single-host'">
+                    <ng-container *ngIf="business_hours; else openHours">
+                        <div class="md-text mb-0">
+                            <div class="cursor-pointer text-white" (click)="onShowBusinessHours()">
+                                <strong>Business Hours:</strong>
+                                <span class="ml-2" *ngIf="!show_hours"
+                                    >{{ current_operations.day }} -
+                                    {{ current_operations.period }}</span
+                                >
+                                <i *ngIf="!show_hours" class="ml-3 fa fa-caret-down"></i>
+                                <i *ngIf="show_hours" class="ml-3 fa fa-caret-up"></i>
+                            </div>
+                            <div [ngClass]="show_hours ? 'transition' : 'hidden_hours'">
+                                <div
+                                    *ngFor="let hours of business_hours; let i = index"
+                                    [ngClass]="
+                                        current_business_day === hours.day
+                                            ? 'text-primary'
+                                            : 'text-white'
+                                    ">
+                                    {{ hours.day }}
+                                    <ng-container *ngIf="hours.status; else close">
+                                        <ng-container
+                                            *ngFor="
+                                                let periods of hours.periods;
+                                                let period_index = index
+                                            ">
+                                            <span *ngIf="period_index > 0"> & </span>
+                                            <span *ngIf="isOpenAllDay(hours, period_index)"
+                                                >- Open 24 hours</span
+                                            >
+                                            <span
+                                                *ngIf="
+                                                    periods.open == '' &&
+                                                    periods.close == '' &&
+                                                    !hours.status
+                                                "
+                                                >- Closed</span
+                                            >
+                                            <span *ngIf="isOpenButNotAllDay(hours, period_index)">
+                                                - {{ periods.open }}
+                                                <span
+                                                    *ngIf="
+                                                        periods.open != '' && periods.close != ''
+                                                    "
+                                                    >-</span
+                                                >
+                                                {{ periods.close }}
+                                            </span>
+                                        </ng-container>
+                                    </ng-container>
+                                    <ng-template #close> - CLOSED </ng-template>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </ng-container>
+                <ng-template #openHours>
+                    <div class="text-white mt-1 md-text mb-0">
+                        <strong>Business Hours:</strong> <span class="ml-2">CLOSED</span>
+                    </div>
+                </ng-template>
+                <ng-container *ngIf="page === 'single-host' && !is_current_user_dealer">
+                    <div class="mt-1 md-text mb-0">
+                        <div class="cursor-pointer text-white" (click)="onShowNotes('notes')">
+                            <strong>Notes: </strong>
+                            <span class="ml-2">{{ partialNotes('notes') }}</span>
+                            <i class="ml-3 fa fa-external-link"></i>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="page === 'single-host'">
+                    <div class="mt-1 md-text mb-0">
+                        <div class="cursor-pointer text-white" (click)="onShowNotes('others')">
+                            <strong>Others: </strong>
+                            <span class="ml-2">{{ partialNotes('others') }}</span>
+                            <i class="ml-3 fa fa-external-link"></i>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+            <ng-container *ngIf="has_host_controls && host_license_count">
+                <div class="col-lg-4 license_count">
+                    <mat-card class="h-100">
+                        <app-data-card-graph
+                            [id]="'license-statistics'"
+                            [compare_basis]="host_license_count.total_count"
+                            [compare_basis_label]="host_license_count.total_count_label"
+                            [label_array]="license_stats_label"
+                            [value_array]="license_stats_array">
+                        </app-data-card-graph>
+                    </mat-card>
+                </div>
+            </ng-container>
+            <div class="flex-even text-center px-3">
+                <ng-container *ngIf="page === 'single-host'">
+                    <div class="control-buttons">
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn mb-2"
+                            [class.disabled]="!editable"
+                            (click)="onAssignLicense()"
+                            [disabled]="!editable"
+                            id="assignLicenseButton">
+                            <span class="button-label">Assign License</span>
+                            <span class="fas fa-barcode"></span>
+                        </button>
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn"
+                            [class.disabled]="!editable"
+                            (click)="onCreateScreen(dealer.dealerId, host.hostId)"
+                            [disabled]="!editable"
+                            id="createScreenButton">
+                            <span class="button-label">Create Screen</span>
+                            <span class="fas fa-tv"></span>
+                        </button>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+    <ng-container *ngIf="editable">
+        <button class="settings-btn text-white" (click)="onClickModify()">
+            <span class="md-text"
+                ><strong>Modify</strong> <span class="fas fa-cog ml-2"></span
+            ></span>
+        </button>
+    </ng-container>
 </div>

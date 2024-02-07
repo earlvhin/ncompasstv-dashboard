@@ -8,18 +8,8 @@ import { TECHNICAL_ROUTES } from './technical.routes';
 import { AuthGuard } from '../../global/guards/auth/auth.guard';
 
 @NgModule({
-	declarations: [
-		TechnicalLayoutComponent,
-		DashboardComponent
-	],
-	imports: [
-		CommonModule,
-		GlobalModule,
-		RouterModule.forChild(TECHNICAL_ROUTES)
-	],
-	providers: [
-		AuthGuard
-	]
+    declarations: [TechnicalLayoutComponent, DashboardComponent],
+    imports: [CommonModule, GlobalModule, RouterModule.forChild(TECHNICAL_ROUTES)],
+    providers: [AuthGuard],
 })
-
-export class TechnicalModule { }
+export class TechnicalModule {}

@@ -6,30 +6,37 @@
     <div class="demo-wrapper">
         <ng-container *ngFor="let f of feed_items; let i = index">
             <div [ngClass]="i == 0 ? 'active' : 'hidden'">
-                <img class="banner-image" *ngIf="banner_image_data" [src]="banner_image_data" alt="banner-image">
+                <img
+                    class="banner-image"
+                    *ngIf="banner_image_data"
+                    [src]="banner_image_data"
+                    alt="banner-image" />
 
-                <img class="responsive-size" [src]="f.image.file_url" [alt]="f.image.filename">
+                <img class="responsive-size" [src]="f.image.file_url" [alt]="f.image.filename" />
 
-                <div class="item-text"
-                [ngStyle]="{ 
-                    'border-top' : '5px solid ' + global_settings.headlineBackground,
-                    'background' : global_settings.overlay,
-                    'color' : global_settings.fontColor
-                }">
-                    <div class="headline"
+                <div
+                    class="item-text"
                     [ngStyle]="{
-                        'background' : global_settings.headlineBackground,
-                        'color' : global_settings.headlineColor
+                        'border-top': '5px solid ' + global_settings.headlineBackground,
+                        background: global_settings.overlay,
+                        color: global_settings.fontColor
                     }">
+                    <div
+                        class="headline"
+                        [ngStyle]="{
+                            background: global_settings.headlineBackground,
+                            color: global_settings.headlineColor
+                        }">
                         <h2 class="item-text-heading">
                             {{ f.context.heading }}
                         </h2>
                     </div>
                     <div class="text-wrap">
-                        <p class="item-text-paragraph"
-                        [ngStyle]="{
-                            'text-align' : global_settings.textAlign
-                        }">
+                        <p
+                            class="item-text-paragraph"
+                            [ngStyle]="{
+                                'text-align': global_settings.textAlign
+                            }">
                             {{ f.context.paragraph }}
                         </p>
                     </div>

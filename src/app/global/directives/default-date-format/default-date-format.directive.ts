@@ -15,10 +15,6 @@ export const FORMAT = {
 
 @Directive({
     selector: '[appDefaultDateFormat]',
-    providers: [
-        { provide: MAT_DATE_FORMATS, useValue: FORMAT },
-    ],
+    providers: [{ provide: MAT_DATE_FORMATS, useValue: FORMAT }],
 })
-
-export class DefaultDateFormatDirective {
-}
+export class DefaultDateFormatDirective {}

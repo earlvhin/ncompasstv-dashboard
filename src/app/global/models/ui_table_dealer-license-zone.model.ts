@@ -18,12 +18,26 @@ export class UI_DEALER_LICENSE_ZONE {
     mainTotalFeedPercentage: object;
     mainTotalOther: object;
     mainTotalOtherPercentage: object;
-    constructor(    licenseId: object, index: object, licenseKey: object, licenseAlias: object, mainDuration: object, 
-    verticalDuration: object, horizontalDuration: object, backgroundDuration: object,
-    mainTotalAsset: object, mainTotalHost: object, mainTotalHostPercentage: object,
-    mainTotalAdvertiser: object, mainTotalAdvertiserPercentage: object, mainTotalFiller: object,
-    mainTotalFillerPercentage: object, mainTotalFeed: object, mainTotalFeedPercentage: object,
-    mainTotalOther: object, mainTotalOtherPercentage: object
+    constructor(
+        licenseId: object,
+        index: object,
+        licenseKey: object,
+        licenseAlias: object,
+        mainDuration: object,
+        verticalDuration: object,
+        horizontalDuration: object,
+        backgroundDuration: object,
+        mainTotalAsset: object,
+        mainTotalHost: object,
+        mainTotalHostPercentage: object,
+        mainTotalAdvertiser: object,
+        mainTotalAdvertiserPercentage: object,
+        mainTotalFiller: object,
+        mainTotalFillerPercentage: object,
+        mainTotalFeed: object,
+        mainTotalFeedPercentage: object,
+        mainTotalOther: object,
+        mainTotalOtherPercentage: object,
     ) {
         this.licenseId = licenseId;
         this.index = index;

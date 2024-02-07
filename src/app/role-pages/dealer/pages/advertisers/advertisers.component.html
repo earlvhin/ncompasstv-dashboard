@@ -14,8 +14,7 @@
                         class="theme-btn pi-control _cool sm-text"
                         [routerLink]="[base_url + '/create-advertiser']"
                         [disabled]="is_view_only"
-                        title="Add Advertiser Profile"
-                    >
+                        title="Add Advertiser Profile">
                         <span class="fas fa-user"></span>
                         <span class="ml-2 button_text_animation">Create Advertiser Profile</span>
                     </button>
@@ -35,8 +34,7 @@
                     [good_value]="advertiser_stats.good_value"
                     [good_value_label]="advertiser_stats.good_value_label"
                     [bad_value]="advertiser_stats.bad_value"
-                    [bad_value_label]="advertiser_stats.bad_value_label"
-                >
+                    [bad_value_label]="advertiser_stats.bad_value_label">
                 </app-data-card-compare>
             </mat-card>
         </div>
@@ -46,8 +44,7 @@
                     *ngIf="advertiser_stats; else small_loader"
                     [data_value]="advertiser_stats.new_this_week_value"
                     [data_label]="advertiser_stats.new_this_week_label"
-                    [data_description]="advertiser_stats.new_this_week_description"
-                >
+                    [data_description]="advertiser_stats.new_this_week_description">
                 </app-data-card-count>
             </mat-card>
         </div>
@@ -57,8 +54,7 @@
                     *ngIf="advertiser_stats; else small_loader"
                     [data_value]="advertiser_stats.new_last_week_value"
                     [data_label]="advertiser_stats.new_last_week_label"
-                    [data_description]="advertiser_stats.new_last_week_description"
-                >
+                    [data_description]="advertiser_stats.new_last_week_description">
                 </app-data-card-count>
             </mat-card>
         </div>
@@ -75,15 +71,19 @@
                         class="theme-btn pi-control sm-text _primary mr-2"
                         (click)="exportTable()"
                         [disabled]="workbook_generation"
-                        title="Export to CSV"
-                    >
+                        title="Export to CSV">
                         <span
-                            class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
+                            class="{{
+                                !workbook_generation
+                                    ? 'fas fa-file-excel'
+                                    : 'fas fa-spinner fa-spin'
+                            }}"
+                            [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
+                        <span
+                            class="ml-2 button_text_animation"
                             [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"
-                        ></span>
-                        <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">{{
-                            !workbook_generation ? "Export" : "Generating CSV"
-                        }}</span>
+                            >{{ !workbook_generation ? 'Export' : 'Generating CSV' }}</span
+                        >
                     </button>
                     <button
                         mat-button
@@ -91,28 +91,41 @@
                         class="theme-btn pi-control sm-text _teal mr-2"
                         (click)="exportAdvertisersTable('All Advertisers')"
                         [disabled]="export_all_workbook_generation"
-                        title="Export to CSV"
-                    >
+                        title="Export to CSV">
                         <span
-                            class="{{ !export_all_workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
-                            [ngStyle]="{ color: export_all_workbook_generation ? '#222' : 'white' }"
-                        ></span>
-                        <span class="ml-2 button_text_animation" [ngStyle]="{ color: export_all_workbook_generation ? '#222' : 'white' }">
-                            {{ !export_all_workbook_generation ? "Export All Advetisers" : "Generating CSV" }}
+                            class="{{
+                                !export_all_workbook_generation
+                                    ? 'fas fa-file-excel'
+                                    : 'fas fa-spinner fa-spin'
+                            }}"
+                            [ngStyle]="{
+                                color: export_all_workbook_generation ? '#222' : 'white'
+                            }"></span>
+                        <span
+                            class="ml-2 button_text_animation"
+                            [ngStyle]="{
+                                color: export_all_workbook_generation ? '#222' : 'white'
+                            }">
+                            {{
+                                !export_all_workbook_generation
+                                    ? 'Export All Advetisers'
+                                    : 'Generating CSV'
+                            }}
                         </span>
                     </button>
                 </div>
                 <div class="col-lg-4">
                     <app-search-field
                         *ngIf="!initial_load_advertiser"
-                        [form_title]="'Search Business Name, Address, City, State, Postal Code, or #Tag'"
+                        [form_title]="
+                            'Search Business Name, Address, City, State, Postal Code, or #Tag'
+                        "
                         [placeholder]="'Example: N-Compass'"
                         [data_reference]="table.data"
                         [primary_keyword]="'name'"
                         [secondary_keyword]="'name'"
                         (searched)="onSearchAdvertiser($event)"
-                        [api_search]="true"
-                    ></app-search-field>
+                        [api_search]="true"></app-search-field>
                 </div>
             </div>
             <div class="row" *ngIf="!initial_load_advertiser">
@@ -125,8 +138,7 @@
                                 [new_table]="true"
                                 [paging_details]="paging_data"
                                 [is_view_only]="is_view_only"
-                                (page_triggered)="getAdvertiserByDealer($event)"
-                            >
+                                (page_triggered)="getAdvertiserByDealer($event)">
                             </app-data-table>
                         </mat-card>
                     </ng-container>
@@ -139,7 +151,12 @@
         <mat-card class="p-5">
             <h3>What the!?</h3>
             <p class="sm-text mb-3">There are no available advertisers at the moment.</p>
-            <button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="[base_url + '/create-advertiser']" [disabled]="is_view_only">
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn mr-2"
+                [routerLink]="[base_url + '/create-advertiser']"
+                [disabled]="is_view_only">
                 Add Advertiser Profile
                 <span class="fas fa-plus ml-2 sm-text"></span>
             </button>
@@ -153,7 +170,9 @@
                     <i class="text-gray fa-5x far fa-file-alt"></i>
                 </div>
                 <h3 class="text-gray col-lg-12">No Results Found.</h3>
-                <span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
+                <span class="text-gray col-lg-12"
+                    >Try adjusting your search to find what you're looking for.</span
+                >
             </mat-card>
         </div>
     </ng-template>

@@ -3,15 +3,27 @@ export class UI_DEALER_HOSTS {
     index: object;
     name: object;
     address: object;
-    city:object;
-    postal_code:object;
+    city: object;
+    postal_code: object;
     totalLicenses: object;
     tag: object;
     status: object;
     notes?: object;
     others?: object;
 
-    constructor(id: object, index: object, name: object, address: object, city: object, postal_code: object, totalLicenses: object, tag: object, status: object, notes?: object, others?: object ) {
+    constructor(
+        id: object,
+        index: object,
+        name: object,
+        address: object,
+        city: object,
+        postal_code: object,
+        totalLicenses: object,
+        tag: object,
+        status: object,
+        notes?: object,
+        others?: object,
+    ) {
         this.id = id;
         this.index = index;
         this.name = name;

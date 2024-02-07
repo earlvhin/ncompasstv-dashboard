@@ -1,36 +1,38 @@
 <div class="theme-container" id="reports">
-	<div class="title-section">
-		<h1 class="page-title">{{ title }}</h1>
-		<hr class="my-4" />
-	</div>
-	<div class="custom-mat-tab">
-		<!-- Added selected index to lprevent initialization of other tabs component -->
-		<mat-tab-group dynamicHeight #tabGroup>
-			<mat-tab label="Hosts" #hostsTab>
-				<div class="col-lg-12 pt-4 pl-0 pr-0 pb-4">
-					<app-hosts-tab *ngIf="tabGroup.selectedIndex === 0"></app-hosts-tab>
-				</div>
-			</mat-tab>
-			<mat-tab label="Content" #contentsTab>
-				<div class="col-lg-12 pt-4 pl-0 pr-0 pb-4">
-					<app-contents-tab *ngIf="tabGroup.selectedIndex === 1"></app-contents-tab>
-				</div>
-			</mat-tab>
-			<mat-tab label="Licenses" #licensesTab>
-				<div class="col-lg-12 pt-4 pl-0 pr-0 pb-4">
-					<app-licenses-tab-reports *ngIf="tabGroup.selectedIndex === 2"></app-licenses-tab-reports>
-				</div>
-			</mat-tab>
-			<mat-tab label="Installations" #installationsTab>
-				<div class="col-lg-12 pt-4 pl-0 pr-0 pb-4">
-					<app-installations-tab *ngIf="tabGroup.selectedIndex === 3"></app-installations-tab>
-				</div>
-			</mat-tab>
-			<mat-tab label="Exports" #exportsTab>
-				<div class="col-lg-12 pt-4 pl-0 pr-0 pb-4">
-					<app-exports-tab *ngIf="tabGroup.selectedIndex === 4"></app-exports-tab>
-				</div>
-			</mat-tab>
-		</mat-tab-group>
-	</div>
+    <div class="title-section">
+        <h1 class="page-title">{{ title }}</h1>
+        <hr class="my-4" />
+    </div>
+    <div class="custom-mat-tab">
+        <!-- Added selected index to lprevent initialization of other tabs component -->
+        <mat-tab-group dynamicHeight #tabGroup>
+            <mat-tab label="Hosts" #hostsTab>
+                <div class="col-lg-12 pt-4 pl-0 pr-0 pb-4">
+                    <app-hosts-tab *ngIf="tabGroup.selectedIndex === 0"></app-hosts-tab>
+                </div>
+            </mat-tab>
+            <mat-tab label="Content" #contentsTab>
+                <div class="col-lg-12 pt-4 pl-0 pr-0 pb-4">
+                    <app-contents-tab *ngIf="tabGroup.selectedIndex === 1"></app-contents-tab>
+                </div>
+            </mat-tab>
+            <mat-tab label="Licenses" #licensesTab>
+                <div class="col-lg-12 pt-4 pl-0 pr-0 pb-4">
+                    <app-licenses-tab-reports
+                        *ngIf="tabGroup.selectedIndex === 2"></app-licenses-tab-reports>
+                </div>
+            </mat-tab>
+            <mat-tab label="Installations" #installationsTab>
+                <div class="col-lg-12 pt-4 pl-0 pr-0 pb-4">
+                    <app-installations-tab
+                        *ngIf="tabGroup.selectedIndex === 3"></app-installations-tab>
+                </div>
+            </mat-tab>
+            <mat-tab label="Exports" #exportsTab>
+                <div class="col-lg-12 pt-4 pl-0 pr-0 pb-4">
+                    <app-exports-tab *ngIf="tabGroup.selectedIndex === 4"></app-exports-tab>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
 </div>

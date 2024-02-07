@@ -1,47 +1,51 @@
 <div id="tags-page" class="theme-container">
-	<div class="title-section">
-		<div class="d-flex align-items-center">
-			<div class="flex-even">
-				<h1 class="page-title">{{ title }}</h1>
-			</div>
-		</div>
-	</div>
-	<hr class="my-4" />
+    <div class="title-section">
+        <div class="d-flex align-items-center">
+            <div class="flex-even">
+                <h1 class="page-title">{{ title }}</h1>
+            </div>
+        </div>
+    </div>
+    <hr class="my-4" />
 
-	<div class="row cards">
-		<div class="col-lg" *ngIf="!_isDealer()">
-			<div *ngIf="!isLoadingCount; else loading">
-				<app-data-card-count [data_value]="count.dealer" [data_label]="'Dealers'"> </app-data-card-count>
-			</div>
-		</div>
+    <div class="row cards">
+        <div class="col-lg" *ngIf="!_isDealer()">
+            <div *ngIf="!isLoadingCount; else loading">
+                <app-data-card-count [data_value]="count.dealer" [data_label]="'Dealers'">
+                </app-data-card-count>
+            </div>
+        </div>
 
-		<div class="col-lg">
-			<div *ngIf="!isLoadingCount; else loading">
-				<app-data-card-count [data_value]="count.host" [data_label]="'Hosts'"> </app-data-card-count>
-			</div>
-		</div>
+        <div class="col-lg">
+            <div *ngIf="!isLoadingCount; else loading">
+                <app-data-card-count [data_value]="count.host" [data_label]="'Hosts'">
+                </app-data-card-count>
+            </div>
+        </div>
 
-		<div class="col-lg">
-			<div *ngIf="!isLoadingCount; else loading">
-				<app-data-card-count [data_value]="count.advertiser" [data_label]="'Advertisers'"> </app-data-card-count>
-			</div>
-		</div>
+        <div class="col-lg">
+            <div *ngIf="!isLoadingCount; else loading">
+                <app-data-card-count [data_value]="count.advertiser" [data_label]="'Advertisers'">
+                </app-data-card-count>
+            </div>
+        </div>
 
-		<div class="col-lg">
-			<div *ngIf="!isLoadingCount; else loading">
-				<app-data-card-count [data_value]="count.license" [data_label]="'Licenses'"> </app-data-card-count>
-			</div>
-		</div>
-	</div>
+        <div class="col-lg">
+            <div *ngIf="!isLoadingCount; else loading">
+                <app-data-card-count [data_value]="count.license" [data_label]="'Licenses'">
+                </app-data-card-count>
+            </div>
+        </div>
+    </div>
 
-	<ng-container *ngTemplateOutlet="tags_normal_view"> </ng-container>
-	<!-- <mat-tab-group class="full-width custom-mat-tab mt-5" dynamicHeight *ngIf="!_isDealer(); else tags_normal_view">
+    <ng-container *ngTemplateOutlet="tags_normal_view"> </ng-container>
+    <!-- <mat-tab-group class="full-width custom-mat-tab mt-5" dynamicHeight *ngIf="!_isDealer(); else tags_normal_view">
 		<mat-tab label="Admin">
 			<ng-container *ngTemplateOutlet="tags_normal_view"> </ng-container>
 		</mat-tab> -->
 
-	<!-- DEALER TAB -->
-	<!-- <mat-tab label="Dealer">
+    <!-- DEALER TAB -->
+    <!-- <mat-tab label="Dealer">
 			<div class="mt-5 row d-flex">
 				<div class="col-lg-4">
 					<ng-container *ngIf="isContentReady; else loading">
@@ -74,37 +78,37 @@
 </div>
 
 <ng-template #tags_normal_view>
-	<div class="mt-5 row">
-		<div class="col-lg-4">
-			<ng-container *ngIf="isContentReady; else loading">
-				<app-tags-section
-					[columns]="tagsTableSettings.columns"
-					[currentTagType]="currentTagType"
-					[currentUserId]="currentUserId"
-					[currentUserRole]="currentUserRole"
-					[tab]="'admin'"
-					[tagTypes]="tagTypes"
-					(onClickTagName)="clickedTagName($event)">
-				</app-tags-section>
-			</ng-container>
-		</div>
+    <div class="mt-5 row">
+        <div class="col-lg-4">
+            <ng-container *ngIf="isContentReady; else loading">
+                <app-tags-section
+                    [columns]="tagsTableSettings.columns"
+                    [currentTagType]="currentTagType"
+                    [currentUserId]="currentUserId"
+                    [currentUserRole]="currentUserRole"
+                    [tab]="'admin'"
+                    [tagTypes]="tagTypes"
+                    (onClickTagName)="clickedTagName($event)">
+                </app-tags-section>
+            </ng-container>
+        </div>
 
-		<div class="col-lg-8">
-			<ng-container *ngIf="isContentReady; else loading">
-				<app-tag-owners-section
-					[columns]="tagOwnersTableSettings.columns"
-					[currentUserId]="currentUserId"
-					[currentUserRole]="currentUserRole"
-					[tab]="'admin'"
-					[tagTypes]="tagTypesMutated">
-				</app-tag-owners-section>
-			</ng-container>
-		</div>
-	</div>
+        <div class="col-lg-8">
+            <ng-container *ngIf="isContentReady; else loading">
+                <app-tag-owners-section
+                    [columns]="tagOwnersTableSettings.columns"
+                    [currentUserId]="currentUserId"
+                    [currentUserRole]="currentUserRole"
+                    [tab]="'admin'"
+                    [tagTypes]="tagTypesMutated">
+                </app-tag-owners-section>
+            </ng-container>
+        </div>
+    </div>
 </ng-template>
 
 <ng-template #loading>
-	<mat-card class="py-4">
-		<app-spinner [diameter]="100"></app-spinner>
-	</mat-card>
+    <mat-card class="py-4">
+        <app-spinner [diameter]="100"></app-spinner>
+    </mat-card>
 </ng-template>

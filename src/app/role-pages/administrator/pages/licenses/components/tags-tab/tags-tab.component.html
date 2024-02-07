@@ -1,43 +1,45 @@
 <div id="licenses-page-tags-tab" class="content d-flex flex-column">
-	<div class="search-field-container">
-		<mat-form-field id="tags-tab-search-field" class="full-width">
-			<mat-label>
-				<span class="fas fa-search sm-text mr-2"></span>
-				Search Licenses by # Tags...
-			</mat-label>
-			<input matInput [formControl]="searchFormControl">
-		</mat-form-field>
-	</div>
+    <div class="search-field-container">
+        <mat-form-field id="tags-tab-search-field" class="full-width">
+            <mat-label>
+                <span class="fas fa-search sm-text mr-2"></span>
+                Search Licenses by # Tags...
+            </mat-label>
+            <input matInput [formControl]="searchFormControl" />
+        </mat-form-field>
+    </div>
 
-	<mat-card>
-		<ng-container *ngIf="isPageReady; else loader;">
-			<app-data-table
-				[table_data]="tableData"
-				[table_columns]="tableColumns"
-				[new_table]="true"
-				[paging_details]="pagingData"
-				(page_triggered)="onClickPageNumber($event)">
-			</app-data-table>
-		</ng-container>
-	</mat-card>
+    <mat-card>
+        <ng-container *ngIf="isPageReady; else loader">
+            <app-data-table
+                [table_data]="tableData"
+                [table_columns]="tableColumns"
+                [new_table]="true"
+                [paging_details]="pagingData"
+                (page_triggered)="onClickPageNumber($event)">
+            </app-data-table>
+        </ng-container>
+    </mat-card>
 </div>
 
 <ng-template #loader>
-	<ng-container *ngIf="!hasNoData; else noData">
-		<div class="py-4 white-bg h-500">
-			<app-spinner></app-spinner>
-		</div>
-	</ng-container>
+    <ng-container *ngIf="!hasNoData; else noData">
+        <div class="py-4 white-bg h-500">
+            <app-spinner></app-spinner>
+        </div>
+    </ng-container>
 </ng-template>
 
 <ng-template #noData>
-	<div class="col-lg-12 pl-0 pr-0">
-		<mat-card class="pt-5 pb-5 col-lg-12 text-center">
-			<div class="mb-4">
-				<i class="text-gray fa-5x far fa-file-alt"></i>
-			</div>
-			<h3 class="text-gray col-lg-12">No Results Found.</h3>
-			<span class="text-gray col-lg-12">Try adjusting your search or filter to find what you're looking for.</span>
-		</mat-card>
-	</div>
+    <div class="col-lg-12 pl-0 pr-0">
+        <mat-card class="pt-5 pb-5 col-lg-12 text-center">
+            <div class="mb-4">
+                <i class="text-gray fa-5x far fa-file-alt"></i>
+            </div>
+            <h3 class="text-gray col-lg-12">No Results Found.</h3>
+            <span class="text-gray col-lg-12"
+                >Try adjusting your search or filter to find what you're looking for.</span
+            >
+        </mat-card>
+    </div>
 </ng-template>

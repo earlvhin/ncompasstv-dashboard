@@ -28,7 +28,16 @@ import {
     UI_STORE_HOUR_PERIOD,
 } from 'src/app/global/models';
 
-import { AuthService, DealerService, FastEdgeService, CategoryService, HelperService, HostService, MapService, LocationService } from 'src/app/global/services';
+import {
+    AuthService,
+    DealerService,
+    FastEdgeService,
+    CategoryService,
+    HelperService,
+    HostService,
+    MapService,
+    LocationService,
+} from 'src/app/global/services';
 import { CITIES_STATE } from '../../models/api_cities_state.model';
 import { AUTOCOMPLETE_ACTIONS } from '../../constants/autocomplete';
 import { STATES_PROVINCES } from '../../constants/states';
@@ -117,7 +126,7 @@ export class CreateHostComponent implements OnInit {
         private _router: Router,
         private _titlecase: TitleCasePipe,
         private _location: LocationService,
-        private _timezone: TimezoneService
+        private _timezone: TimezoneService,
     ) {}
 
     ngOnInit() {
@@ -193,7 +202,7 @@ export class CreateHostComponent implements OnInit {
             },
             (error) => {
                 console.error(error);
-            }
+            },
         );
     }
 
@@ -230,7 +239,13 @@ export class CreateHostComponent implements OnInit {
         });
 
         if (this.form_invalid) {
-            this.openWarningModal('error', 'Failed to create host', 'Kindly verify that all business hours opening should have closing time.', null, null);
+            this.openWarningModal(
+                'error',
+                'Failed to create host',
+                'Kindly verify that all business hours opening should have closing time.',
+                null,
+                null,
+            );
             return;
         }
 
@@ -268,12 +283,22 @@ export class CreateHostComponent implements OnInit {
                 .pipe(takeUntil(this._unsubscribe))
                 .subscribe(
                     (data: any) => {
-                        this.openConfirmationModal('success', 'Host Place Created!', 'Hurray! You successfully created a Host Place', data.hostId);
+                        this.openConfirmationModal(
+                            'success',
+                            'Host Place Created!',
+                            'Hurray! You successfully created a Host Place',
+                            data.hostId,
+                        );
                     },
                     (error) => {
                         this.is_creating_host = false;
-                        this.openConfirmationModal('error', 'Host Place Creation Failed', 'An error occured while saving your data', null);
-                    }
+                        this.openConfirmationModal(
+                            'error',
+                            'Host Place Creation Failed',
+                            'An error occured while saving your data',
+                            null,
+                        );
+                    },
                 );
         }
     }
@@ -290,7 +315,9 @@ export class CreateHostComponent implements OnInit {
         }
 
         this._fastedge
-            .get_google_business_profile(this.googlePlaceFormControls.location.value + ', ' + country)
+            .get_google_business_profile(
+                this.googlePlaceFormControls.location.value + ', ' + country,
+            )
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (data) => {
@@ -303,7 +330,7 @@ export class CreateHostComponent implements OnInit {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
         this.isListVisible = true;
     }
@@ -314,8 +341,16 @@ export class CreateHostComponent implements OnInit {
         const defaultHours = { opening: '12:00 AM', closing: '11:59 PM' };
         const openingHour = moment(defaultHours.opening, 'hh:mm A').format('HH:mm').split(':');
         const closingHour = moment(defaultHours.closing, 'hh:mm A').format('HH:mm').split(':');
-        const openingHourData = { hour: parseInt(openingHour[0]), minute: parseInt(openingHour[1]), second: 0 };
-        const closingHourData = { hour: parseInt(closingHour[0]), minute: parseInt(closingHour[1]), second: 0 };
+        const openingHourData = {
+            hour: parseInt(openingHour[0]),
+            minute: parseInt(openingHour[1]),
+            second: 0,
+        };
+        const closingHourData = {
+            hour: parseInt(closingHour[0]),
+            minute: parseInt(closingHour[1]),
+            second: 0,
+        };
 
         const hours = {
             id: uuid.v4(),
@@ -330,7 +365,13 @@ export class CreateHostComponent implements OnInit {
         data.periods.push(hours);
     }
 
-    openWarningModal(status: string, message: string, data: string, return_msg: string, action: string): void {
+    openWarningModal(
+        status: string,
+        message: string,
+        data: string,
+        return_msg: string,
+        action: string,
+    ): void {
         this._dialog.closeAll();
 
         const dialogRef = this._dialog.open(ConfirmationModalComponent, {
@@ -392,7 +433,11 @@ export class CreateHostComponent implements OnInit {
         const central = 'Central';
         const mountain = 'Mountain';
 
-        if (data.address.includes('USA') || data.address.includes('Canada') || data.address.includes('United States')) {
+        if (
+            data.address.includes('USA') ||
+            data.address.includes('Canada') ||
+            data.address.includes('United States')
+        ) {
             country = sliced_address[sliced_address.length - 1];
         }
 
@@ -418,7 +463,8 @@ export class CreateHostComponent implements OnInit {
             address = sliced_address[0];
         }
 
-        let state_region: { state: string; abbreviation: string; region: string } = this.searchStateAndRegion(state);
+        let state_region: { state: string; abbreviation: string; region: string } =
+            this.searchStateAndRegion(state);
 
         // Set Address Value
         this.newHostFormControls.address.setValue(`${sliced_address[0]}`);
@@ -451,7 +497,9 @@ export class CreateHostComponent implements OnInit {
                 // Set the value based on the detected timezone
                 switch (timezone) {
                     case pacific:
-                        const pacific_zone = this.timezone.filter((data) => data.name == 'US/Pacific');
+                        const pacific_zone = this.timezone.filter(
+                            (data) => data.name == 'US/Pacific',
+                        );
                         this.setTimezone(pacific_zone[0].id, pacific_zone[0].name);
                         this.newHostFormControls.timezone.setValue(pacific_zone[0].name);
                         break;
@@ -473,7 +521,7 @@ export class CreateHostComponent implements OnInit {
             },
             (error) => {
                 console.error('Error getting timezone:', error);
-            }
+            },
         );
     }
 
@@ -483,21 +531,33 @@ export class CreateHostComponent implements OnInit {
 
     setZipValidatorRule(googleAddress: string) {
         const zipLength = googleAddress.includes('Canada') ? 6 : 5;
-        this.newHostFormControls.zip.setValidators([Validators.required, Validators.maxLength(zipLength), Validators.maxLength(zipLength)]);
+        this.newHostFormControls.zip.setValidators([
+            Validators.required,
+            Validators.maxLength(zipLength),
+            Validators.maxLength(zipLength),
+        ]);
     }
 
     searchStateAndRegion(state: string) {
-        return this.state_provinces.filter((s) => state.toLowerCase() == s.state.toLowerCase() || state.toLowerCase() == s.abbreviation.toLowerCase())[0];
+        return this.state_provinces.filter(
+            (s) =>
+                state.toLowerCase() == s.state.toLowerCase() ||
+                state.toLowerCase() == s.abbreviation.toLowerCase(),
+        )[0];
     }
 
     setToGeneralCategory(event: string) {
         this.no_category2 = true;
-        this.newHostFormControls.category2.setValue(this._titlecase.transform(event).replace(/_/g, ' '));
+        this.newHostFormControls.category2.setValue(
+            this._titlecase.transform(event).replace(/_/g, ' '),
+        );
     }
 
     setToCategory(event: string) {
         this.no_category = true;
-        this.newHostFormControls.category.setValue(this._titlecase.transform(event).replace(/_/g, ' '));
+        this.newHostFormControls.category.setValue(
+            this._titlecase.transform(event).replace(/_/g, ' '),
+        );
         this.getGeneralCategory(event);
     }
 
@@ -514,13 +574,14 @@ export class CreateHostComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (data) => {
-                    if (data.paging.entities && data.paging.entities.length > 0) this.dealers_data = data.paging.entities;
+                    if (data.paging.entities && data.paging.entities.length > 0)
+                        this.dealers_data = data.paging.entities;
                     else this.dealers_data = [];
                     this.paging = data.paging;
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             )
             .add(() => {
                 this.loading_search = false;
@@ -543,7 +604,11 @@ export class CreateHostComponent implements OnInit {
     private formatTime(data: number): string {
         const parsed = `${data}`;
         let time = new Date(`January 1, 1990 ${parsed.slice(0, 2)}:${parsed.slice(2, 4)}`);
-        let options = { hour: 'numeric', minute: 'numeric', hour12: true } as Intl.DateTimeFormatOptions;
+        let options = {
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true,
+        } as Intl.DateTimeFormatOptions;
         return time.toLocaleString('en-US', options);
     }
 
@@ -562,7 +627,7 @@ export class CreateHostComponent implements OnInit {
                     },
                     (error) => {
                         console.error(error);
-                    }
+                    },
                 );
         } else {
             if (this.is_search) this.loading_search = true;
@@ -579,7 +644,7 @@ export class CreateHostComponent implements OnInit {
                     },
                     (error) => {
                         console.error(error);
-                    }
+                    },
                 );
         }
     }
@@ -648,7 +713,9 @@ export class CreateHostComponent implements OnInit {
                     });
 
                     this.gen_categories_data = genCategories.map((category) => {
-                        category.generalCategory = this._titlecase.transform(category.generalCategory);
+                        category.generalCategory = this._titlecase.transform(
+                            category.generalCategory,
+                        );
                         return category;
                     });
 
@@ -661,7 +728,7 @@ export class CreateHostComponent implements OnInit {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -671,7 +738,14 @@ export class CreateHostComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((response) => {
                 this.cities_state_data = response.map((city) => {
-                    return new CITIES_STATE_DATA(city.id, city.city, city.abbreviation, city.state, city.region, city.country);
+                    return new CITIES_STATE_DATA(
+                        city.id,
+                        city.city,
+                        city.abbreviation,
+                        city.state,
+                        city.region,
+                        city.country,
+                    );
                 });
             });
     }
@@ -732,7 +806,7 @@ export class CreateHostComponent implements OnInit {
                             })
                             .filter((data) => data),
                     ];
-                }
+                },
             );
     }
 
@@ -760,7 +834,7 @@ export class CreateHostComponent implements OnInit {
                     },
                     (error) => {
                         console.error(error);
-                    }
+                    },
                 );
         } else {
             let sliced_address = data.split(', ');
@@ -786,7 +860,7 @@ export class CreateHostComponent implements OnInit {
                     },
                     (error) => {
                         console.error(error);
-                    }
+                    },
                 );
         } else {
             this._location
@@ -800,12 +874,14 @@ export class CreateHostComponent implements OnInit {
                     },
                     (error) => {
                         console.error(error);
-                    }
+                    },
                 );
         }
     }
 
-    private mapOperationHours(data: { close: { day: number; time: number }; open: { day: number; time: number } }[]): void {
+    private mapOperationHours(
+        data: { close: { day: number; time: number }; open: { day: number; time: number } }[],
+    ): void {
         this.operation_hours = data.map((hours) => {
             const hour = {
                 id: uuid.v4(),
@@ -850,13 +926,24 @@ export class CreateHostComponent implements OnInit {
                 id: h.id,
                 label: h.label,
                 day: h.day,
-                periods: this.operation_hours.filter((t) => t.day_id == h.id || (t.open === '12:00 AM' && t.close === '11:59 PM')),
-                status: this.operation_hours.filter((t) => (t.open === '12:00 AM' && t.close === '11:59 PM') || t.day_id == h.id).length !== 0,
+                periods: this.operation_hours.filter(
+                    (t) => t.day_id == h.id || (t.open === '12:00 AM' && t.close === '11:59 PM'),
+                ),
+                status:
+                    this.operation_hours.filter(
+                        (t) =>
+                            (t.open === '12:00 AM' && t.close === '11:59 PM') || t.day_id == h.id,
+                    ).length !== 0,
             };
         });
     }
 
-    private openConfirmationModal(status: string, message: string, data: string, hostId: string): void {
+    private openConfirmationModal(
+        status: string,
+        message: string,
+        data: string,
+        hostId: string,
+    ): void {
         const dialogRef = this._dialog.open(ConfirmationModalComponent, {
             width: '500px',
             height: '350px',
@@ -874,8 +961,12 @@ export class CreateHostComponent implements OnInit {
             operation.periods = operation.periods.map((period) => {
                 const opening = period.openingHourData;
                 const closing = period.closingHourData;
-                period.open = moment(`${opening.hour} ${opening.minute}`, 'HH:mm').format('hh:mm A');
-                period.close = moment(`${closing.hour} ${closing.minute}`, 'HH:mm').format('hh:mm A');
+                period.open = moment(`${opening.hour} ${opening.minute}`, 'HH:mm').format(
+                    'hh:mm A',
+                );
+                period.close = moment(`${closing.hour} ${closing.minute}`, 'HH:mm').format(
+                    'hh:mm A',
+                );
 
                 return period;
             });

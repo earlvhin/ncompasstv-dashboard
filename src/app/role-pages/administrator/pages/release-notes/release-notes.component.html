@@ -20,7 +20,12 @@
             <div class="table-container">
                 <mat-card>
                     <ng-container *ngIf="notesTableData.length > 0; else no_data">
-                        <app-data-table page="release-notes" [table_columns]="notesTableColumns" [table_data]="notesTableData" [new_table]="true"> </app-data-table>
+                        <app-data-table
+                            page="release-notes"
+                            [table_columns]="notesTableColumns"
+                            [table_data]="notesTableData"
+                            [new_table]="true">
+                        </app-data-table>
                     </ng-container>
 
                     <ng-template #no_data>

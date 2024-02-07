@@ -1,62 +1,102 @@
 <div class="theme-container">
-    <div class="row justify-content-center mt-4" *ngIf="notifications; else loading;">
+    <div class="row justify-content-center mt-4" *ngIf="notifications; else loading">
         <div class="col-lg-8">
             <mat-card class="p-4">
-				<div class="notification-header">
-					<h3 class="mb-0">Notifications</h3>
-					<p class="sm-text">All unresolved offline licenses notification. Click "Mark as Resolved" to hide resolved issues.</p>
-					<button class="mark-as-resolved" *ngIf="all_unresolved" (click)="updateAllNotifStatus()">Mark all as resolved</button>
-				</div>
+                <div class="notification-header">
+                    <h3 class="mb-0">Notifications</h3>
+                    <p class="sm-text">
+                        All unresolved offline licenses notification. Click "Mark as Resolved" to
+                        hide resolved issues.
+                    </p>
+                    <button
+                        class="mark-as-resolved"
+                        *ngIf="all_unresolved"
+                        (click)="updateAllNotifStatus()">
+                        Mark all as resolved
+                    </button>
+                </div>
 
-                <hr class="my-3">
-                
-                <div class="notification-item position-relative" *ngFor="let n of notification_items; let i = index">
-                    <button class="mark-as-resolved" *ngIf="n.isOpened == 0; else resolved" (click)="updateNotifStatus(n.notificationId)">Mark as resolved</button>
+                <hr class="my-3" />
+
+                <div
+                    class="notification-item position-relative"
+                    *ngFor="let n of notification_items; let i = index">
+                    <button
+                        class="mark-as-resolved"
+                        *ngIf="n.isOpened == 0; else resolved"
+                        (click)="updateNotifStatus(n.notificationId)">
+                        Mark as resolved
+                    </button>
 
                     <ng-template #resolved>
                         <div class="mark-as-resolved bg-primary text-white">Resolved</div>
                     </ng-template>
 
-					<div class="notification-content">
-						<h6 class="text-gray font-italic">#{{ i + 1}}</h6>
+                    <div class="notification-content">
+                        <h6 class="text-gray font-italic">#{{ i + 1 }}</h6>
 
-						<div *ngIf="is_admin">
-							<p class="mt-0 mb-1">
-								<a class="font-italic" [routerLink]="[route + '/licenses', n.licenseId]" target="_blank">
-									<strong *ngIf="n.licenseAlias">{{ n.hostName }} - {{ n.licenseAlias }}</strong>
-									<strong *ngIf="!n.licenseAlias">{{ n.hostName }}</strong>
-							</a> 
-								of <a [routerLink]="[route + '/dealers', n.dealerId]" target="_blank"><strong class="font-italic">{{ n.businessName }}</strong></a> 
-								has been offline for more than an hour now.
-							</p>
-							<p class="sm-text m-0">{{ n.dateTime | date:'MMM d, y, h:mm:ss a' }} - {{ n.timeZone }}</p>
-						</div>
-					</div>
+                        <div *ngIf="is_admin">
+                            <p class="mt-0 mb-1">
+                                <a
+                                    class="font-italic"
+                                    [routerLink]="[route + '/licenses', n.licenseId]"
+                                    target="_blank">
+                                    <strong *ngIf="n.licenseAlias"
+                                        >{{ n.hostName }} - {{ n.licenseAlias }}</strong
+                                    >
+                                    <strong *ngIf="!n.licenseAlias">{{ n.hostName }}</strong>
+                                </a>
+                                of
+                                <a [routerLink]="[route + '/dealers', n.dealerId]" target="_blank"
+                                    ><strong class="font-italic">{{ n.businessName }}</strong></a
+                                >
+                                has been offline for more than an hour now.
+                            </p>
+                            <p class="sm-text m-0">
+                                {{ n.dateTime | date: 'MMM d, y, h:mm:ss a' }} - {{ n.timeZone }}
+                            </p>
+                        </div>
+                    </div>
 
                     <div *ngIf="is_dealer">
                         <p class="mt-0 mb-1">
-                            <a class="font-italic" [routerLink]="[route + '/licenses', n.licenseId]" target="_blank">
-                                <strong *ngIf="n.licenseAlias">{{ n.hostName }} - {{ n.licenseAlias }}</strong>
+                            <a
+                                class="font-italic"
+                                [routerLink]="[route + '/licenses', n.licenseId]"
+                                target="_blank">
+                                <strong *ngIf="n.licenseAlias"
+                                    >{{ n.hostName }} - {{ n.licenseAlias }}</strong
+                                >
                                 <strong *ngIf="!n.licenseAlias">{{ n.hostName }}</strong>
-                            </a> 
+                            </a>
                             has been offline for more than an hour now.
                         </p>
-                        <p class="sm-text m-0">{{ n.dateTime | date:'MMM d, y, h:mm:ss a' }} - {{ n.timeZone }}</p>
+                        <p class="sm-text m-0">
+                            {{ n.dateTime | date: 'MMM d, y, h:mm:ss a' }} - {{ n.timeZone }}
+                        </p>
                     </div>
                 </div>
 
                 <div *ngIf="notifications.hasNextPage; else no_more">
-                    <button class="w-100 see-more" (click)="getNotifications(true)" *ngIf="!getting_notification_data; else loader">
+                    <button
+                        class="w-100 see-more"
+                        (click)="getNotifications(true)"
+                        *ngIf="!getting_notification_data; else loader">
                         <span class="sm-text">Show More</span>
                     </button>
 
                     <ng-template #loader>
                         <div class="text-center">
-                            <div class="lds-ellipsis" *ngIf="getting_notification_data"><div></div><div></div><div></div><div></div></div>
+                            <div class="lds-ellipsis" *ngIf="getting_notification_data">
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                            </div>
                         </div>
                     </ng-template>
                 </div>
-                
+
                 <ng-template #no_more>
                     <div class="text-center pt-3">
                         <span class="sm-text">No more data to show</span>

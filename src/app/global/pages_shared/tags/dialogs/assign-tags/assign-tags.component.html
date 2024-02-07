@@ -1,110 +1,136 @@
 <div class="create-dialog p-2" id="assign-tags-dialog">
-	<div class="d-flex heading">
-		<div class="flex-even">
-			<h3 class="p-0 col-lg-12">{{ title }}</h3>
-			<p class="sm-text mb-4">{{ description }}</p>
-		</div>
-		<div>
-			<button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
-				<span class="fas fa-times"></span>
-			</button>
-		</div>
-	</div>
+    <div class="d-flex heading">
+        <div class="flex-even">
+            <h3 class="p-0 col-lg-12">{{ title }}</h3>
+            <p class="sm-text mb-4">{{ description }}</p>
+        </div>
+        <div>
+            <button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
+                <span class="fas fa-times"></span>
+            </button>
+        </div>
+    </div>
 
-	<div class="sections-container d-flex flex-column">
-		<!-- FORM SECTION -->
-		<div class="form-section">
-			<form [formGroup]="form" (ngSubmit)="onSubmit()">
-				<div class="fields d-flex flex-column">
-					<!-- OWNERS SELECT SEARCH -->
-					<mat-form-field class="full-width owner-select-search">
-						<mat-select #ownerMultiSelect formControlName="selectedOwners" [placeholder]="'Choose an asignee'" [multiple]="true">
-							<mat-option>
-								<ngx-mat-select-search
-									noEntriesFoundLabel="No results"
-									[formControl]="ownerFilterControl"
-									[placeholderLabel]="'Search an assignee'"
-									[clearSearchInput]="false"
-									[searching]="isSearchingOwners">
-									<mat-icon class="clear" ngxMatSelectSearchClear>close</mat-icon>
-								</ngx-mat-select-search>
-							</mat-option>
+    <div class="sections-container d-flex flex-column">
+        <!-- FORM SECTION -->
+        <div class="form-section">
+            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                <div class="fields d-flex flex-column">
+                    <!-- OWNERS SELECT SEARCH -->
+                    <mat-form-field class="full-width owner-select-search">
+                        <mat-select
+                            #ownerMultiSelect
+                            formControlName="selectedOwners"
+                            [placeholder]="'Choose an asignee'"
+                            [multiple]="true">
+                            <mat-option>
+                                <ngx-mat-select-search
+                                    noEntriesFoundLabel="No results"
+                                    [formControl]="ownerFilterControl"
+                                    [placeholderLabel]="'Search an assignee'"
+                                    [clearSearchInput]="false"
+                                    [searching]="isSearchingOwners">
+                                    <mat-icon class="clear" ngxMatSelectSearchClear>close</mat-icon>
+                                </ngx-mat-select-search>
+                            </mat-option>
 
-							<mat-option *ngFor="let owner of filteredOwners | async" [value]="owner">
-								<div class="display-name">
-									<span>({{ owner.prefix }})</span> {{ owner.displayName | titlecase }}
-								</div>
-							</mat-option>
-						</mat-select>
-					</mat-form-field>
+                            <mat-option
+                                *ngFor="let owner of filteredOwners | async"
+                                [value]="owner">
+                                <div class="display-name">
+                                    <span>({{ owner.prefix }})</span>
+                                    {{ owner.displayName | titlecase }}
+                                </div>
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
 
-					<!-- TAGS SELECT SEARCH -->
-					<mat-form-field class="full-width">
-						<mat-select #tagMultiSelect formControlName="selectedTags" [placeholder]="'Choose a tag'" [multiple]="true">
-							<mat-option>
-								<ngx-mat-select-search
-									noEntriesFoundLabel="No results"
-									[formControl]="tagFilterControl"
-									[placeholderLabel]="'Search a tag'"
-									[clearSearchInput]="false"
-									[searching]="isSearchingTags">
-									<mat-icon class="clear" ngxMatSelectSearchClear>close</mat-icon>
-								</ngx-mat-select-search>
-							</mat-option>
+                    <!-- TAGS SELECT SEARCH -->
+                    <mat-form-field class="full-width">
+                        <mat-select
+                            #tagMultiSelect
+                            formControlName="selectedTags"
+                            [placeholder]="'Choose a tag'"
+                            [multiple]="true">
+                            <mat-option>
+                                <ngx-mat-select-search
+                                    noEntriesFoundLabel="No results"
+                                    [formControl]="tagFilterControl"
+                                    [placeholderLabel]="'Search a tag'"
+                                    [clearSearchInput]="false"
+                                    [searching]="isSearchingTags">
+                                    <mat-icon class="clear" ngxMatSelectSearchClear>close</mat-icon>
+                                </ngx-mat-select-search>
+                            </mat-option>
 
-							<mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
-								<div class="tag">{{ tag.name }} ({{ tag.count }})</div>
-							</mat-option>
-						</mat-select>
-					</mat-form-field>
-				</div>
+                            <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
+                                <div class="tag">{{ tag.name }} ({{ tag.count }})</div>
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
 
-				<div class="preview">
-					<!-- OWNERS ROW -->
-					<div class="owners-row d-flex">
-						<h4>Owners:</h4>
+                <div class="preview">
+                    <!-- OWNERS ROW -->
+                    <div class="owners-row d-flex">
+                        <h4>Owners:</h4>
 
-						<!-- OWNERS LIST -->
-						<div
-							class="selected-owners-container d-flex flex-row align-items-start flex-wrap"
-							*ngIf="selectedOwnersControl.value.length > 0">
-							<div *ngFor="let owner of selectedOwnersControl.value; let i = index" class="owner d-flex align-items-center">
-								<div class="business-name">{{ owner.displayName }}</div>
-								<div class="remove-btn cursor-pointer" (click)="onRemoveOwner(i)"><mat-icon>close</mat-icon></div>
-							</div>
-						</div>
-					</div>
+                        <!-- OWNERS LIST -->
+                        <div
+                            class="selected-owners-container d-flex flex-row align-items-start flex-wrap"
+                            *ngIf="selectedOwnersControl.value.length > 0">
+                            <div
+                                *ngFor="let owner of selectedOwnersControl.value; let i = index"
+                                class="owner d-flex align-items-center">
+                                <div class="business-name">{{ owner.displayName }}</div>
+                                <div class="remove-btn cursor-pointer" (click)="onRemoveOwner(i)">
+                                    <mat-icon>close</mat-icon>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-					<!-- TAGS ROW -->
-					<div class="tags-row d-flex">
-						<h4>Tags:</h4>
+                    <!-- TAGS ROW -->
+                    <div class="tags-row d-flex">
+                        <h4>Tags:</h4>
 
-						<!-- TAGS-LIST -->
-						<div class="selected-tags-container d-flex flex-row align-items-start flex-wrap" *ngIf="selectedTagsControl.value.length > 0">
-							<div
-								*ngFor="let tag of selectedTagsControl.value; let i = index"
-								class="tag d-flex align-items-center"
-								[ngClass]="{ dealer: tag.role === 2 }"
-								[style.backgroundColor]="tag.tagColor">
-								<div class="name">{{ tag.name }}</div>
-								<div class="remove-btn cursor-pointer" (click)="onRemoveTag(i)"><mat-icon>close</mat-icon></div>
-							</div>
-						</div>
-					</div>
-				</div>
+                        <!-- TAGS-LIST -->
+                        <div
+                            class="selected-tags-container d-flex flex-row align-items-start flex-wrap"
+                            *ngIf="selectedTagsControl.value.length > 0">
+                            <div
+                                *ngFor="let tag of selectedTagsControl.value; let i = index"
+                                class="tag d-flex align-items-center"
+                                [ngClass]="{ dealer: tag.role === 2 }"
+                                [style.backgroundColor]="tag.tagColor">
+                                <div class="name">{{ tag.name }}</div>
+                                <div class="remove-btn cursor-pointer" (click)="onRemoveTag(i)">
+                                    <mat-icon>close</mat-icon>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-				<!-- SUBMIT BUTTON -->
-				<div mat-dialog-actions>
-					<button mat-button mat-raised-button class="submit theme-btn _primary" type="submit" [disabled]="form.invalid">Submit</button>
-				</div>
-			</form>
-		</div>
-	</div>
+                <!-- SUBMIT BUTTON -->
+                <div mat-dialog-actions>
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="submit theme-btn _primary"
+                        type="submit"
+                        [disabled]="form.invalid">
+                        Submit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 <ng-template #selectOwner>
-	<mat-form-field class="full-width">
-		<mat-label>Select Owner</mat-label>
-		<input matInput disabled />
-	</mat-form-field>
+    <mat-form-field class="full-width">
+        <mat-label>Select Owner</mat-label>
+        <input matInput disabled />
+    </mat-form-field>
 </ng-template>

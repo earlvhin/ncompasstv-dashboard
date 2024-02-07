@@ -1,15 +1,15 @@
 .image-holder-container {
-	height: fit-content;
+    height: fit-content;
 }
 
 .image-holder {
-	img {
-		width: 150px;
-		height: 150px;
-		object-fit: cover;
-	}
+    img {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+    }
 }
 
 .selected-image {
-	box-shadow: 2px 2px 5px #8ec641;
+    box-shadow: 2px 2px 5px #8ec641;
 }

@@ -1,67 +1,112 @@
 <div class="p-5 user-form">
     <div class="d-flex align-items-center mb-5">
         <div class="mr-3">
-            <img src="/assets/media-files/tech-icon.png" class="user-icon" alt="dealer-icon">
+            <img src="/assets/media-files/tech-icon.png" class="user-icon" alt="dealer-icon" />
         </div>
         <div class="flex-even">
             <h3 class="mb-0">{{ form_title }}</h3>
             <p class="sm-text mb-0">{{ form_description }}</p>
         </div>
         <div class="text-right">
-            <a class="sm-text font-weight-bold text-primary" [routerLink]="['/administrator/users/create-user']">
+            <a
+                class="sm-text font-weight-bold text-primary"
+                [routerLink]="['/administrator/users/create-user']">
                 <span class="fas fa-angle-left mr-2"></span>
                 Select User Type
             </a>
         </div>
     </div>
 
-    <form [formGroup]="new_tech_form" (ngSubmit)="createNewTech(formDirective)" class="text-left" #formDirective="ngForm">
+    <form
+        [formGroup]="new_tech_form"
+        (ngSubmit)="createNewTech(formDirective)"
+        class="text-left"
+        #formDirective="ngForm">
         <div class="row mb-4">
             <div *ngFor="let f of form_fields_view" class="{{ f.width }}">
                 <mat-form-field class="full-width">
                     <mat-label>{{ f.label }}</mat-label>
-                    <input *ngIf="f.type !== 'password'; else passwordField" formControlName="{{ f.control }}" matInput type="{{ f.type }}" placeholder="{{ f.placeholder }}">
+                    <input
+                        *ngIf="f.type !== 'password'; else passwordField"
+                        formControlName="{{ f.control }}"
+                        matInput
+                        type="{{ f.type }}"
+                        placeholder="{{ f.placeholder }}" />
 
-					<ng-template #passwordField>
-						<div class="password-container" *ngIf="f.control === 'password'">
-							<div class="field">
-								<input formControlName="{{ f.control }}" matInput placeholder="{{ f.placeholder }}" [type]="is_password_field_type ? 'password' : 'text'">
-								<mat-icon class="pw-visibility" matSuffix (click)="togglePasswordFieldType()">{{ is_password_field_type ? 'visibility_off' : 'visibility' }}</mat-icon>
-							</div>
-						</div>
+                    <ng-template #passwordField>
+                        <div class="password-container" *ngIf="f.control === 'password'">
+                            <div class="field">
+                                <input
+                                    formControlName="{{ f.control }}"
+                                    matInput
+                                    placeholder="{{ f.placeholder }}"
+                                    [type]="is_password_field_type ? 'password' : 'text'" />
+                                <mat-icon
+                                    class="pw-visibility"
+                                    matSuffix
+                                    (click)="togglePasswordFieldType()"
+                                    >{{
+                                        is_password_field_type ? 'visibility_off' : 'visibility'
+                                    }}</mat-icon
+                                >
+                            </div>
+                        </div>
 
-						<div class="password-container" *ngIf="f.control === 're_password'">
-							<div class="field">
-								<input formControlName="{{ f.control }}" matInput placeholder="{{ f.placeholder }}" [type]="is_retype_password_field_type ? 'password' : 'text'">
-								<mat-icon class="pw-visibility" matSuffix (click)="toggleRetypePasswordFieldType()">{{ is_retype_password_field_type ? 'visibility_off' : 'visibility' }}</mat-icon>
-							</div>
-						</div>
-					</ng-template>
-
+                        <div class="password-container" *ngIf="f.control === 're_password'">
+                            <div class="field">
+                                <input
+                                    formControlName="{{ f.control }}"
+                                    matInput
+                                    placeholder="{{ f.placeholder }}"
+                                    [type]="is_retype_password_field_type ? 'password' : 'text'" />
+                                <mat-icon
+                                    class="pw-visibility"
+                                    matSuffix
+                                    (click)="toggleRetypePasswordFieldType()"
+                                    >{{
+                                        is_retype_password_field_type
+                                            ? 'visibility_off'
+                                            : 'visibility'
+                                    }}</mat-icon
+                                >
+                            </div>
+                        </div>
+                    </ng-template>
                 </mat-form-field>
 
-				<div class="validation" *ngIf="f.type === 'password'">
-					<span *ngIf="f.password_field" class="validation_msg sm-text" [ngClass]="password_is_valid ? 'success' : 'error'">
-						{{ password_is_valid_msg }}
-					</span>
+                <div class="validation" *ngIf="f.type === 'password'">
+                    <span
+                        *ngIf="f.password_field"
+                        class="validation_msg sm-text"
+                        [ngClass]="password_is_valid ? 'success' : 'error'">
+                        {{ password_is_valid_msg }}
+                    </span>
 
-					<span *ngIf="f.re_password_field" class="validation_msg sm-text" [ngClass]="password_is_match ? 'success' : 'error'">
-						{{ password_match_msg }}
-					</span>
-				</div>
-				
+                    <span
+                        *ngIf="f.re_password_field"
+                        class="validation_msg sm-text"
+                        [ngClass]="password_is_match ? 'success' : 'error'">
+                        {{ password_match_msg }}
+                    </span>
+                </div>
             </div>
         </div>
         <div class="d-flex">
             <div class="flex-even">
-                <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="form_invalid">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn mr-2"
+                    [disabled]="form_invalid">
                     Create Technical Officer
                 </button>
             </div>
         </div>
     </form>
 
-    <div class="submit-on-load d-flex align-items-center justify-content-center" *ngIf="is_submitted">
+    <div
+        class="submit-on-load d-flex align-items-center justify-content-center"
+        *ngIf="is_submitted">
         <app-spinner></app-spinner>
     </div>
 </div>
