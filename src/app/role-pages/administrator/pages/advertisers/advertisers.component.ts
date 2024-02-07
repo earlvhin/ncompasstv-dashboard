@@ -5,7 +5,7 @@ import { saveAs } from 'file-saver';
 import { takeUntil } from 'rxjs/operators';
 
 import { DEALER_UI_TABLE_ADVERTISERS, UI_DEALER_ADVERTISERS } from 'src/app/global/models';
-import { AdvertiserService, AuthService, DealerService, HelperService } from 'src/app/global/services';
+import { AdvertiserService, AuthService, DealerService, ExportService, HelperService } from 'src/app/global/services';
 import { API_EXPORT_ADVERTISER } from 'src/app/global/models/api_export-advertiser.model';
 
 @Component({
@@ -59,7 +59,13 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
 
     protected _unsubscribe = new Subject<void>();
 
-    constructor(private _auth: AuthService, private _advertiser: AdvertiserService, private _dealer: DealerService, private _helper: HelperService) {}
+    constructor(
+        private _auth: AuthService,
+        private _advertiser: AdvertiserService,
+        private _dealer: DealerService,
+        private _export: ExportService,
+        private _helper: HelperService
+    ) {}
 
     ngOnInit() {
         this.pageRequested(1);
@@ -96,6 +102,8 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
     }
 
     private getAdvertiserDataForExport(data): void {
+        const columns = this.advertiser_table_column_for_export;
+
         const filters = {
             sortColumn: this.sort_column_advertisers,
             sortOrder: this.sort_order_advertisers,
@@ -109,30 +117,38 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
                     bold: false,
                 };
             });
-            this.setExportAdvertisersData(data);
+
+            this.onExportData(data, columns, this.all_advertisers_to_export);
         });
+    }
+
+    private getAdvertiserDataForExportDealerAdmin(data): void {
+        const columns = this.advertiser_table_column_for_export;
+
+        this._advertiser.export_all_advertisers_dealer_admin().subscribe((response) => {
+            this.all_advertisers_to_export = response;
+            this.all_advertisers_to_export.forEach((item, i) => {
+                this.modifyItem(item, data);
+                this.worksheet.addRow(item).font = {
+                    bold: false,
+                };
+            });
+
+            this.onExportData(data, columns, this.all_advertisers_to_export);
+        });
+    }
+
+    onExportData(name: string, columns: any, data: any) {
+        this.export_all_workbook_generation = false;
+        const config = [{ name: name, columns, data: data }];
+
+        this._export.generate('all-advertisers', config);
     }
 
     modifyItem(item, data) {
         item.contentsCount = item.contentCount;
 
-        if (item.contents && item.contents.length > 0) {
-            item.contentsFormatted = item.contents.join(', ');
-        }
-    }
-
-    setExportAdvertisersData(data) {
-        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-        let rowIndex = 1;
-        for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
-            this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-        }
-        this.workbook.xlsx.writeBuffer().then((file: any) => {
-            const blob = new Blob([file], { type: EXCEL_TYPE });
-            const filename = `All ${data}.xlsx`;
-            saveAs(blob, filename);
-        });
-        this.export_all_workbook_generation = false;
+        if (item.contents && item.contents.length > 0) item.contentsFormatted = item.contents.join(', ');
     }
 
     getColumnsAndOrder(data) {
@@ -362,7 +378,8 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
         });
 
         this.worksheet.columns = header;
-        this.getAdvertiserDataForExport(data);
+
+        this.userIsAdmin ? this.getAdvertiserDataForExport(data) : this.getAdvertiserDataForExportDealerAdmin(data);
     }
 
     getDataForExport() {

@@ -98,6 +98,7 @@ export * from './ui_host-locator.model';
 export * from './ui_host-support';
 export * from './ui_license_by_tags.model';
 export * from './ui_operation-hours.model';
+export * from './ui_placer.model';
 export * from './ui_reboot-time.model';
 export * from './ui_release-note.model';
 export * from './ui_role-definition.model';

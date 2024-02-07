@@ -212,6 +212,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         { name: 'Address', sortable: true, column: 'Address', key: 'address' },
         { name: 'City', sortable: true, column: 'City', key: 'city' },
         { name: 'State', sortable: true, column: 'State', key: 'state' },
+        { name: 'Latitude', sortable: true, key: 'latitude', no_show: true, hidden: true },
+        { name: 'Longitude', sortable: true, key: 'longitude', no_show: true, hidden: true },
         { name: 'Postal Code', sortable: true, column: 'PostalCode', key: 'postalCode' },
         { name: 'License Count', sortable: true, column: 'TotalLicences', key: 'totalLicences' },
         { name: 'Vistar Venue ID', no_show: true, key: 'vistarVenueId' },
@@ -1642,6 +1644,26 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 item.storeHoursParse = this.getStoreHourseParse(item);
                 item.generalCategory = item.generalCategory ? item.generalCategory : 'Other';
                 item.businessName = this.dealer.businessName;
+                //To Set AVG Dwell Time and Foot Traffic Default Value to 0
+                for (let i = 1; i < 13; i++) {
+                    var average_dwell_time_with_index = 'averageDwellTime-' + i;
+                    var foot_traffic_with_index = 'footTraffic-' + i;
+                    item[average_dwell_time_with_index] = 0;
+                    item[foot_traffic_with_index] = 0;
+                }
+
+                //To Overwrite Dwell Time and Foot Traffic to available months only
+                if (item.placerDump) {
+                    item.placerDump.map((dump) => {
+                        let dissected_month = dump.month.split(' ');
+                        let month_index = moment().month(dissected_month[0]).format('M');
+                        var average_dwell_time_with_index = 'averageDwellTime-' + month_index[0];
+                        var foot_traffic_with_index = 'footTraffic-' + month_index[0];
+                        item[average_dwell_time_with_index] = dump.averageDwellTime;
+                        item[foot_traffic_with_index] = dump.footTraffic;
+                    });
+                }
+
                 break;
 
             case 'Advertisers':
@@ -1744,6 +1766,12 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 header.push({ header: 'Activated', key: 'isActivated', width: 30, style: { font: { name: 'Arial', bold: true, color: '8EC641' } } });
                 break;
             case 'Hosts':
+                for (let i = 1; i < 13; i++) {
+                    this.host_table_col.push(
+                        { name: moment(i, 'M').format('MMM') + ' - Average Dwell Time', no_show: true, hidden: true, key: 'averageDwellTime-' + i },
+                        { name: moment(i, 'M').format('MMM') + ' - Foot Traffic', no_show: true, hidden: true, key: 'footTraffic-' + i }
+                    );
+                }
                 Object.keys(this.host_table_col).forEach((key) => {
                     if (this.host_table_col[key].name && !this.host_table_col[key].no_export) {
                         header.push({

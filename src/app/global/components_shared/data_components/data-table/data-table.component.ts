@@ -15,6 +15,7 @@ import {
     HelperService,
     HostService,
     LicenseService,
+    PlacerService,
     PlaylistService,
     ReleaseNotesService,
     ScreenService,
@@ -54,6 +55,7 @@ export class DataTableComponent implements OnInit {
     @Input() fillers: boolean;
     @Input() has_action = false;
     @Input() has_timestamp_beside_image = true;
+    @Input() host_data = [];
     @Input() is_dealer: boolean;
     @Input() is_delete_enabled = false;
     @Input() is_view_only = false;
@@ -64,6 +66,7 @@ export class DataTableComponent implements OnInit {
     @Input() new_table: boolean;
     @Input() page? = '';
     @Input() paging_details: any;
+    @Input() placer_delete: boolean;
     @Input() playlist_delete: boolean;
     @Input() preview_column: boolean;
     @Input() preview_column_label: string;
@@ -128,7 +131,8 @@ export class DataTableComponent implements OnInit {
         private _router: Router,
         private _screen: ScreenService,
         private _user: UserService,
-        private _dealer: DealerService
+        private _dealer: DealerService,
+        private _placer: PlacerService
     ) {}
 
     ngOnInit() {
@@ -363,6 +367,10 @@ export class DataTableComponent implements OnInit {
         });
     }
 
+    deletePlacer(id) {
+        this.warningModal('warning', 'Delete Placer Record', 'Are you sure you want to delete this placer record?', '', 'delete', id);
+    }
+
     viewReceipt(link): void {
         // window.location.href = link;
     }
@@ -410,77 +418,75 @@ export class DataTableComponent implements OnInit {
     warningModal(status: string, message: string, data: string, return_msg: string, action: string, id: any): void {
         const deleteLicenseActivity = new ACTIVITY_LOGS(this.dealer_id, 'deleted_license', this._auth.current_user_value.user_id);
         const deleteAdvertiser = new ACTIVITY_LOGS(this.dealer_id, 'deleted_advertiser', this._auth.current_user_value.user_id);
-
-        const dialogRef = this._dialog.open(ConfirmationModalComponent, {
-            width: '500px',
-            height: '350px',
-            data: { status, message, data, return_msg, action },
-        });
-
-        dialogRef.afterClosed().subscribe((result) => {
-            switch (result) {
-                case 'screen_delete':
-                    var array_to_delete = [];
-                    array_to_delete.push(id);
-                    this.postDeleteScreen(array_to_delete);
-                    break;
-                case 'feed_delete':
-                    this.postDeleteFeed(id);
-                    break;
-                case 'fillers_delete':
-                    this.postDeleteFillerFeed([id]);
-                    break;
-                case 'license_delete':
-                    var array_to_delete = [];
-                    array_to_delete.push(id);
-                    this.licenseDelete(array_to_delete);
-
-                    this.createActivity(deleteLicenseActivity);
-                    break;
-                case 'playlist_delete':
-                    this.playlistDelete(id);
-                    break;
-                case 'advertiser_delete':
-                    this.advertiserDelete(id, 0);
-                    this.createActivity(deleteAdvertiser);
-
-                    break;
-                case 'advertiser_delete_force':
-                    this.advertiserDelete(id, 1);
-                    break;
-                case 'user_delete':
-                    this.deleteUser(id);
-                    break;
-                case 'delete-host-file':
-                    this._host.delete_file(id).subscribe(() => {
-                        switch (this.page) {
-                            case 'single-host-images-tab':
-                                this._helper.onRefreshSingleHostImagesTab.next();
-                                break;
-
-                            case 'single-host-documents-tab':
-                                this._helper.onRefreshSingleHostDocumentsTab.next();
-                                break;
-                        }
-                    });
-
-                    break;
-
-                case 'push_update_all_licenses':
-                    this.pushAllLicenseUpdates(id);
-                    break;
-
-                case 'delete-release-note':
-                    this._release.onDeleteNoteFromDataTable.next({ releaseNoteId: id });
-                    break;
-
-                case 'ticket_delete':
-                    this.ticketDelete(id);
-                    break;
-
-                default:
-            }
-        });
+        this._dialog
+            .open(ConfirmationModalComponent, {
+                width: '500px',
+                height: '350px',
+                data: { status, message, data, return_msg, action },
+            })
+            .afterClosed()
+            .subscribe((result) => {
+                switch (result) {
+                    case 'screen_delete':
+                        var array_to_delete = [];
+                        array_to_delete.push(id);
+                        this.postDeleteScreen(array_to_delete);
+                        break;
+                    case 'feed_delete':
+                        this.postDeleteFeed(id);
+                        break;
+                    case 'fillers_delete':
+                        this.postDeleteFillerFeed([id]);
+                        break;
+                    case 'license_delete':
+                        var array_to_delete = [];
+                        array_to_delete.push(id);
+                        this.licenseDelete(array_to_delete);
+                        this.createActivity(deleteLicenseActivity);
+                        break;
+                    case 'playlist_delete':
+                        this.playlistDelete(id);
+                        break;
+                    case 'playlist_delete_normal':
+                        this.playlistDelete(id);
+                        break;
+                    case 'advertiser_delete':
+                        this.advertiserDelete(id, 0);
+                        this.createActivity(deleteAdvertiser);
+                        break;
+                    case 'advertiser_delete_force':
+                        this.advertiserDelete(id, 1);
+                        break;
+                    case 'user_delete':
+                        this.deleteUser(id);
+                        break;
+                    case 'delete-host-file':
+                        this._host.delete_file(id).subscribe(() => {
+                            switch (this.page) {
+                                case 'single-host-images-tab':
+                                    this._helper.onRefreshSingleHostImagesTab.next();
+                                    break;
+                                case 'single-host-documents-tab':
+                                    this._helper.onRefreshSingleHostDocumentsTab.next();
+                                    break;
+                            }
+                        });
+                        break;
+                    case 'push_update_all_licenses':
+                        this.pushAllLicenseUpdates(id);
+                        break;
+                    case 'delete-release-note':
+                        this._release.onDeleteNoteFromDataTable.next({ releaseNoteId: id });
+                        break;
+                    case 'ticket_delete':
+                        this.ticketDelete(id);
+                        break;
+                    case 'delete':
+                        this.deletePlacerDump(id);
+                        break;
+                    default:
+                }
+            });
     }
 
     createActivity(activity) {
@@ -521,6 +527,17 @@ export class DataTableComponent implements OnInit {
         );
     }
 
+    deletePlacerDump(id): void {
+        this._placer.delete_placer_dump(id).subscribe(
+            (data) => {
+                this.update_info.emit(true);
+            },
+            (error) => {
+                console.error(error);
+            }
+        );
+    }
+
     advertiserDelete(id, force) {
         this.subscription.add(
             this._advertiser.remove_advertiser(id, force).subscribe(
@@ -538,11 +555,8 @@ export class DataTableComponent implements OnInit {
         this.subscription.add(
             this._playlist.remove_playlist(id, 0).subscribe(
                 (data) => {
-                    if (!data.screens) {
-                        this.update_info.emit(true);
-                    } else {
-                        this.deletePlaylistModal({ screens: data.screens, playlist_id: id });
-                    }
+                    if (!data.screens) this.update_info.emit(true);
+                    else this.deletePlaylistModal({ screens: data.screens, playlist_id: id });
                 },
                 (error) => {
                     console.error(error);
@@ -585,19 +599,14 @@ export class DataTableComponent implements OnInit {
     }
 
     editField(fields: any, label: string, value: any): void {
-        let width = '500px';
-
+        let width = '600px';
         const dialogParams: any = { width, data: { status: fields, message: label, data: value } };
-
-        if (fields.dropdown_edit) dialogParams.height = '220px';
-
+        if (label === 'Hosts') dialogParams.data.hostsData = this.host_data;
         const dialog = this._dialog.open(EditableFieldModalComponent, dialogParams);
-
         const close = dialog.afterClosed().subscribe(
-            (response: string) => {
+            (response: any) => {
                 close.unsubscribe();
                 if (!response || response === '--') return;
-
                 switch (label) {
                     case 'License Alias':
                         this.subscription.add(
@@ -638,7 +647,6 @@ export class DataTableComponent implements OnInit {
                                 }
                             )
                         );
-
                     case 'Host Document Alias':
                     case 'Host Photo Alias':
                         this._host
@@ -646,7 +654,13 @@ export class DataTableComponent implements OnInit {
                             .pipe(takeUntil(this._unsubscribe))
                             .subscribe(() => this.openConfirmationModal('success', 'Success!', 'Alias changed'));
                         break;
-
+                    case 'Placer Name':
+                    case 'Hosts':
+                        this._placer
+                            .update_placer_host(response.hostId, response.placerId, response.placername)
+                            .pipe(takeUntil(this._unsubscribe))
+                            .subscribe(() => this.openConfirmationModal('success', 'Success!', 'Placer Record Updated'));
+                        break;
                     default:
                 }
             },

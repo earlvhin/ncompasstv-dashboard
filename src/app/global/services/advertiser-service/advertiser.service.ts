@@ -68,6 +68,14 @@ export class AdvertiserService extends BaseService {
         return this.getRequest(url);
     }
 
+    export_all_advertisers_dealer(): Observable<API_EXPORT_ADVERTISER[]> {
+        return this.getRequest(`${this.getters.export_advertiser_dealer}`);
+    }
+
+    export_all_advertisers_dealer_admin(): Observable<API_EXPORT_ADVERTISER[]> {
+        return this.getRequest(`${this.getters.export_advertiser_dealer_admin}`);
+    }
+
     get_advertiser_by_id(id: string): Observable<{ message?: string; advertiser?: any; tags?: TAG[] }> {
         const url = `${this.getters.api_get_advertisers_by_id}${id}`;
         const request = this.getRequest(url);

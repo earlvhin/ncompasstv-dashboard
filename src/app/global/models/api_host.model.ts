@@ -113,3 +113,13 @@ export class API_USER_HOST {
 	others?: string;
 	logo?: string;
 }
+
+export interface API_HOST_MINIFIED {
+    hostId: string;
+    name: string;
+    address: string;
+    city: string;
+    longitude: string;
+    latitude: string;
+    dateCreated: string;
+}

@@ -149,7 +149,7 @@
                                             </ng-container>
                                         </a>
                                     </ng-container>
-									
+
                                     <ng-template #isGlobalLink>
                                         <a
                                             class="cursor-pointer table-row-url with-link-support"
@@ -176,7 +176,7 @@
                                                             </ng-container>
                                                         </div>
                                                     </span>
-									  
+
                                                     <ng-template #shortened_tooltip>
                                                         <span [title]="data[d].value">
                                                             {{ data[d].value | substring : 10 }}
@@ -393,13 +393,13 @@
                         </ng-template>
 
                         <!-- EDIT BUTTON -->
-                        <div class="ml-2" *ngIf="data[d].editable && !is_view_only" (click)="editField(data[d], data[d].label, data[d].value)">
+                        <button class="naked-btn ml-2" *ngIf="data[d].editable && !is_view_only" (click)="editField(data[d], data[d].label, data[d].value)">
                             <i class="clickable fa fa-pencil text-gray" title="Edit {{ data[d].label }}"></i>
-                        </div>
+                        </button>
 
-                        <div class="ml-2" *ngIf="data[d].popview && data[d].value > 0" (click)="viewListModal(data[d], data[d].label, data[d].value)">
+                        <button class="naked-btn ml-2" *ngIf="data[d].popview && data[d].value > 0" (click)="viewListModal(data[d], data[d].label, data[d].value)">
                             <i class="clickable fa fa-search-plus text-gray" title="View all {{ data[d].label }}"></i>
-                        </div>
+                        </button>
                     </span>
                 </td>
 
@@ -444,12 +444,16 @@
                 </td>
 
                 <td class="p-3 control-toggle" *ngIf="advertiser_delete">
-                    <i class="fas fa-trash cursor-pointer" title="Delete Advertiser" (click)="deleteAdvertiser(data.advertiserId.value)"></i>
+                    <i class="fas fa-trash cursor-pointer text-danger" title="Delete Advertiser" (click)="deleteAdvertiser(data.advertiserId.value)"></i>
                 </td>
 
                 <td class="p-3 control-toggle" *ngIf="billing_action">
                     <i class="fas fa-money-bill-alt disabled xlg-text text-light-gray" title="Charge Account"></i>
                     <!-- <i class="fas fa-money-bill-alt cursor-pointer xlg-text text-danger" title="Charge Account" (click)="autoCharge(data.id.value)"></i> -->
+                </td>
+
+                <td class="p-3 control-toggle" *ngIf="placer_delete">
+                    <button class="fas fa-trash naked-btn text-danger" title="Delete Placer Record" (click)="deletePlacer(data.placer_dump_id.value)"></button>
                 </td>
 
                 <td class="p-3 control-toggle" *ngIf="order_action">
@@ -505,7 +509,6 @@
                 <div class="d-flex justify-content-center" *ngIf="actions_column">
                     <td class="p-3 md-text control-toggle text-center">
                         <i class="fas fa-edit text-primary cursor-pointer mr-2" data-toggle="tooltip" title="Edit Ticket" (click)="editTicket(data)"></i>
-
                         <i class="fas fa-trash text-danger cursor-pointer" data-toggle="tooltip" title="Delete Ticket" (click)="deleteTicket(data.ticketId.value)"></i>
                     </td>
                 </div>
@@ -555,7 +558,6 @@
                 <pagination-controls (pageChange)="onPageChange($event)" class="sm-text"> </pagination-controls>
             </div>
         </div>
-
         <app-pagination-field [paging_data]="paging_details" (get_page)="getPage($event)"> </app-pagination-field>
     </ng-container>
 </div>

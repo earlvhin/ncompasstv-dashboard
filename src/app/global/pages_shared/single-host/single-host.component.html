@@ -1,117 +1,126 @@
 <ng-container *ngIf="isBannerDataReady; else loaderSmall">
-	<app-banner
-		[current_user_data]="currentUser"
-		[image]="currentImage"
-		[title]="hostName"
-		[description]="address"
-		[single_host_data]="singleHostData"
-		[host_license_count]="hostLicenseStatistics"
-		[has_host_controls]="true"
-		(single_host_assign_license)="openAssignLicenseModal()"
-		(toggle_margin_top)="toggledHours($event)"
-		(toggle_margin_top_notes)="toggledNotes($event)"
-		[editable]="!isViewOnly"
-		(update_info)="ngOnInit()"
-		[page]="'single-host'"
-		[page_data]="host"
-		[refresh_banner]="true"
-		[is_host_page]="true">
-	</app-banner>
+    <app-banner
+        [current_user_data]="currentUser"
+        [image]="currentImage"
+        [title]="hostName"
+        [description]="address"
+        [single_host_data]="singleHostData"
+        [host_license_count]="hostLicenseStatistics"
+        [has_host_controls]="true"
+        (single_host_assign_license)="openAssignLicenseModal()"
+        (toggle_margin_top)="toggledHours($event)"
+        (toggle_margin_top_notes)="toggledNotes($event)"
+        [editable]="!isViewOnly"
+        (update_info)="ngOnInit()"
+        [page]="'single-host'"
+        [page_data]="host"
+        [refresh_banner]="true"
+        [is_host_page]="true"
+    >
+    </app-banner>
 </ng-container>
 
 <div class="theme-container">
-	<div class="content-section">
-		<div class="row">
-			<div class="col-lg-12 custom-mat-tab">
-				<mat-tab-group animationDuration="0ms" dynamicHeight>
-					<!-- LICENSES TAB -->
-					<mat-tab label="Licenses">
-						<ng-template matTabContent>
-							<app-licenses-tab [socket]="_socket" [currentRole]="currentRole" [currentUser]="currentUser" [hostId]="hostId">
-							</app-licenses-tab>
-						</ng-template>
-					</mat-tab>
-					<!-- CONTENTS TAB -->
-					<mat-tab label="Contents">
-						<ng-template matTabContent>
-							<app-host-contents-tab [currentRole]="currentRole" [hostId]="hostId"> </app-host-contents-tab>
-						</ng-template>
-					</mat-tab>
-					<!-- PICS TAB -->
-					<mat-tab label="Pics">
-						<ng-template matTabContent>
-							<app-images-tab [currentUser]="currentUser" [currentRole]="currentRole" [hostId]="hostId"> </app-images-tab>
-						</ng-template>
-					</mat-tab>
-					<!-- MAP TAB -->
-					<mat-tab label="Map">
-						<ng-template matTabContent>
-							<app-map-tab [latitude]="lat" [longitude]="long"> </app-map-tab>
-						</ng-template>
-					</mat-tab>
-					<!-- DOCUMENTS TAB -->
-					<mat-tab label="Docs">
-						<ng-template matTabContent>
-							<app-documents-tab [currentUser]="currentUser" [currentRole]="currentRole" [hostId]="hostId"> </app-documents-tab>
-						</ng-template>
-					</mat-tab>
-					<!-- SUPPORT TAB -->
-					<mat-tab label="Support" *ngIf="is_admin">
-						<ng-template matTabContent>
-							<app-support-tab [currentUser]="currentUser" [hostId]="hostId"> </app-support-tab>
-						</ng-template>
-					</mat-tab>
-					<!-- ACTIVITY TAB -->
-					<mat-tab label="Activity">
-						<ng-template matTabContent>
-							<app-activity-tab [currentUser]="currentUser" [currentRole]="currentRole" [hostId]="hostId"> </app-activity-tab>
-						</ng-template>
-					</mat-tab>
-					<!-- Terminal -->
-					<mat-tab label="Terminal" *ngIf="is_admin">
-						<div class="row mt-4">
-							<div class="col-lg-7">
-								<h3>Remote Terminal</h3>
-								<p class="sm-text mb-3">Write a short script and send it to all online players.</p>
+    <div class="content-section">
+        <div class="row">
+            <div class="col-lg-12 custom-mat-tab">
+                <mat-tab-group animationDuration="0ms" dynamicHeight>
+                    <!-- LICENSES TAB -->
+                    <mat-tab label="Licenses">
+                        <ng-template matTabContent>
+                            <app-licenses-tab [socket]="_socket" [currentRole]="currentRole" [currentUser]="currentUser" [hostId]="hostId"> </app-licenses-tab>
+                        </ng-template>
+                    </mat-tab>
+                    <!-- CONTENTS TAB -->
+                    <mat-tab label="Contents">
+                        <ng-template matTabContent>
+                            <app-host-contents-tab [currentRole]="currentRole" [hostId]="hostId"> </app-host-contents-tab>
+                        </ng-template>
+                    </mat-tab>
+                    <!-- PICS TAB -->
+                    <mat-tab label="Pics">
+                        <ng-template matTabContent>
+                            <app-images-tab [currentUser]="currentUser" [currentRole]="currentRole" [hostId]="hostId"> </app-images-tab>
+                        </ng-template>
+                    </mat-tab>
+                    <!-- MAP TAB -->
+                    <mat-tab label="Map">
+                        <ng-template matTabContent>
+                            <app-map-tab [latitude]="lat" [longitude]="long"> </app-map-tab>
+                        </ng-template>
+                    </mat-tab>
+                    <!-- DOCUMENTS TAB -->
+                    <mat-tab label="Docs">
+                        <ng-template matTabContent>
+                            <app-documents-tab [currentUser]="currentUser" [currentRole]="currentRole" [hostId]="hostId"> </app-documents-tab>
+                        </ng-template>
+                    </mat-tab>
+                    <!-- SUPPORT TAB -->
+                    <mat-tab label="Support" *ngIf="is_admin">
+                        <ng-template matTabContent>
+                            <app-support-tab [currentUser]="currentUser" [hostId]="hostId"> </app-support-tab>
+                        </ng-template>
+                    </mat-tab>
+                    <!-- ACTIVITY TAB -->
+                    <mat-tab label="Activity">
+                        <ng-template matTabContent>
+                            <app-activity-tab [currentUser]="currentUser" [currentRole]="currentRole" [hostId]="hostId"> </app-activity-tab>
+                        </ng-template>
+                    </mat-tab>
+                    <!-- Terminal -->
+                    <mat-tab label="Terminal" *ngIf="is_admin">
+                        <div class="row mt-4">
+                            <div class="col-lg-7">
+                                <h3>Remote Terminal</h3>
+                                <p class="sm-text mb-3">Write a short script and send it to all online players.</p>
 
-								<div class="terminal-area mt-4">
-									<app-remote-terminal (run)="runTerminalScript($event)"></app-remote-terminal>
-								</div>
-							</div>
-						</div>
-					</mat-tab>
-				</mat-tab-group>
-			</div>
-		</div>
-	</div>
-	<ng-template #no_data>
-		<mat-card class="p-5">
-			<h3>What the!?</h3>
-			<p class="sm-text mb-3">There are no available licenses at the moment.</p>
-		</mat-card>
-	</ng-template>
+                                <div class="terminal-area mt-4">
+                                    <app-remote-terminal (run)="runTerminalScript($event)"></app-remote-terminal>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-tab>
 
-	<ng-template #nodata>
-		<div class="col-lg-12 pl-0 pr-0">
-			<mat-card class="pt-5 pb-5 col-lg-12 text-center">
-				<div class="mb-4">
-					<i class="text-gray fa-5x far fa-file-alt"></i>
-				</div>
-				<h3 class="text-gray col-lg-12">No Results Found.</h3>
-				<span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
-			</mat-card>
-		</div>
-	</ng-template>
+                    <!-- Placer AI Tab -->
+                    <mat-tab label="Placer Data" *ngIf="is_admin">
+                        <div class="flex pb-4">
+                            <div class="full-width">
+                                <app-placer [host_id]="hostId"> </app-placer>
+                            </div>
+                        </div>
+                    </mat-tab>
+                </mat-tab-group>
+            </div>
+        </div>
+    </div>
+    <ng-template #no_data>
+        <mat-card class="p-5">
+            <h3>What the!?</h3>
+            <p class="sm-text mb-3">There are no available licenses at the moment.</p>
+        </mat-card>
+    </ng-template>
 
-	<ng-template #loader>
-		<div class="py-4 white-bg">
-			<app-spinner [diameter]="60"></app-spinner>
-		</div>
-	</ng-template>
+    <ng-template #nodata>
+        <div class="col-lg-12 pl-0 pr-0">
+            <mat-card class="pt-5 pb-5 col-lg-12 text-center">
+                <div class="mb-4">
+                    <i class="text-gray fa-5x far fa-file-alt"></i>
+                </div>
+                <h3 class="text-gray col-lg-12">No Results Found.</h3>
+                <span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
+            </mat-card>
+        </div>
+    </ng-template>
 
-	<ng-template #loaderSmall>
-		<div class="py-4 white-bg">
-			<app-spinner [diameter]="60"></app-spinner>
-		</div>
-	</ng-template>
+    <ng-template #loader>
+        <div class="py-4 white-bg">
+            <app-spinner [diameter]="60"></app-spinner>
+        </div>
+    </ng-template>
+
+    <ng-template #loaderSmall>
+        <div class="py-4 white-bg">
+            <app-spinner [diameter]="60"></app-spinner>
+        </div>
+    </ng-template>
 </div>

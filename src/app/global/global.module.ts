@@ -147,6 +147,7 @@ import { OptionsComponent } from './components_shared/playlist_components/option
 import { OrdersComponent } from './pages_shared/orders/orders.component';
 import { PaginationFieldComponent } from './components_shared/page_components/pagination-field/pagination-field.component';
 import { PaymentSettingComponent } from './pages_shared/profile-setting/payment-setting/payment-setting.component';
+import { PlacerComponent } from './pages_shared/placer/placer.component';
 import { PlayWhereComponent } from './components_shared/playlist_components/play-where/play-where.component';
 import { PlaylistContentComponent } from './components_shared/playlist_components/playlist-content/playlist-content.component';
 import { PlaylistContentPanelComponent } from './components_shared/playlist_components/playlist-content-panel/playlist-content-panel.component';
@@ -376,6 +377,7 @@ const ngComponents = [
     OrdersComponent,
     PaginationFieldComponent,
     PaymentSettingComponent,
+    PlacerComponent,
     PlayWhereComponent,
     PlaylistContentComponent,
     PlaylistContentPanelComponent,

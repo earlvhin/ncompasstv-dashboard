@@ -44,9 +44,7 @@ export class HostCustomFieldsComponent implements OnInit {
 		this._host.get_field_by_id(id).subscribe(
 			(data: FieldsAPI) => {
 				this.edit_mode = true;
-
 				this.field_group_name = this.custom_fields[index].fieldGroupName;
-
 				data.fields.map((i) => {
 					this.custom_host_fields.push(new Fields(i.fieldName, i.fieldType, i.fieldLength));
 				});

@@ -18,6 +18,7 @@ export * from './host-service/host.service';
 export * from './license-service/license.service';
 export * from './notification-service/notification.service';
 export * from './map-service/map.service';
+export * from './placer-service/placer.service';
 export * from './playlist-service/playlist.service';
 export * from './release-notes/release-notes.service';
 export * from './role-service/role.service';

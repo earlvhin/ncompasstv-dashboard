@@ -1,4 +1,4 @@
-<div class="single-license-page-wrapper">
+<div class="single-license-page">
     <div class="theme-container" *ngIf="host && timezone && businessName; else loaderMain">
         <div class="popup" *ngIf="show_popup" [ngClass]="setPopupBackground()">{{ popup_message }} <span class="fas fa-times" (click)="dismissPopup()"></span></div>
         <div class="d-flex align-items-center mb-2 content-section">
@@ -15,17 +15,17 @@
                             <mat-icon class="save-alias" *ngIf="enable_edit_alias && !is_view_only" (click)="updateLicenseAlias()" matTooltip="Save license alias"> save </mat-icon>
                         </ng-template>
                     </ng-container>
-                </div>
 
-                <ng-container *ngIf="license_data">
-                    <div class="d-flex align-items-center mb-2">
-                        <p class="sm-text mb-0">{{ license_key }}</p>
-                        <ng-container>
-                            <mat-icon class="copy-icon" (click)="copyToClipboard(license_key)" [matTooltip]="tooltipMessage" matTooltipPosition="above">file_copy</mat-icon>
-                            <mat-icon class="add-tag" (click)="openAddTagModal()" matTooltip="Add tag to this license" matTooltipPosition="above">new_label</mat-icon>
-                        </ng-container>
-                    </div>
-                </ng-container>
+                    <ng-container *ngIf="license_data">
+                        <div class="d-flex align-items-center mb-2">
+                            <p class="sm-text mb-0">{{ license_key }}</p>
+                            <ng-container>
+                                <mat-icon class="copy-icon" (click)="copyToClipboard(license_key)" [matTooltip]="tooltipMessage" matTooltipPosition="above">file_copy</mat-icon>
+                                <mat-icon class="add-tag" (click)="openAddTagModal()" matTooltip="Add tag to this license" matTooltipPosition="above">new_label</mat-icon>
+                            </ng-container>
+                        </div>
+                    </ng-container>
+                </div>
 
                 <div class="d-flex gap-30">
                     <div class="d-flex flex-column">
@@ -198,6 +198,7 @@
                 </button>
             </div>
         </div>
+
         <hr class="mb-1 mt-0" />
 
         <!-- TABS -->
@@ -945,6 +946,7 @@
                                                 >
                                                     Run <span class="fas fa-play sm-text ml-2"></span>
                                                 </button>
+                                                <app-spinner *ngIf="saving_license_settings" [diameter]="20"></app-spinner>
                                             </div>
                                         </div>
                                     </div>
@@ -1174,88 +1176,88 @@
                 </mat-tab-group>
             </div>
         </div>
+
+        <ng-template #loader>
+            <div class="loader text-center py-5 d-flex align-items-center vh-50">
+                <div class="w-100">
+                    <mat-spinner></mat-spinner>
+                    <h3 class="mt-4 mb-2">Please Wait</h3>
+                    <p class="sm-text">Retrieving license data ...</p>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template #loading>
+            <div class="loader text-center py-5 d-flex align-items-center vh-50" *ngIf="!no_screen_assigned; else no_screen">
+                <div class="w-100">
+                    <mat-spinner></mat-spinner>
+                    <h3 class="mt-4 mb-2">Please Wait</h3>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template #no_data>
+            <div class="col-lg-12 text-center">
+                <div class="loader text-center py-5 d-flex align-items-center vh-50">
+                    <div class="w-100">
+                        <h3 class="mt-4 mb-2">No Data Found</h3>
+                        <p class="sm-text">There are no recorded plays of content during this date.</p>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template #no_zone>
+            <div class="col-lg-12 text-center">
+                <div class="loader text-center py-5 d-flex align-items-center vh-50">
+                    <div class="w-100">
+                        <h3 class="mt-4 mb-2">No Data Found</h3>
+                        <p class="sm-text">Assign a screen first, to see its contents.</p>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template #no_screen>
+            <div class="no-screen vh-50 row align-items-center justify-content-center">
+                <div class="col-lg-12 text-center">
+                    <span class="fa fa-tv"></span>
+                    <br />
+                    <div class="captions mt-3">No Screen Assigned</div>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template #noHostOrScreenData>
+            <div class="no-screen vh-50 row align-items-center justify-content-center">
+                <div class="col-lg-12 text-center">
+                    <span class="fa fa-tv"></span>
+                    <br />
+                    <div class="captions mt-3">
+                        {{ license_data ? "No Host or Screen Assigned" : "No License Data" }}
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template #noLicenseActivity>
+            <div class="no-screen vh-50 row align-items-center justify-content-center">
+                <div class="col-lg-12 text-center">
+                    <span class="fa fa-tv"></span>
+                    <br />
+                    <div class="captions mt-3">No License Activity</div>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template #loaderSmall>
+            <app-spinner [diameter]="60"></app-spinner>
+        </ng-template>
     </div>
-
-    <ng-template #loader>
-        <div class="loader text-center py-5 d-flex align-items-center vh-50">
-            <div class="w-100">
-                <mat-spinner></mat-spinner>
-                <h3 class="mt-4 mb-2">Please Wait</h3>
-                <p class="sm-text">Retrieving license data ...</p>
-            </div>
-        </div>
-    </ng-template>
-
-    <ng-template #loading>
-        <div class="loader text-center py-5 d-flex align-items-center vh-50" *ngIf="!no_screen_assigned; else no_screen">
-            <div class="w-100">
-                <mat-spinner></mat-spinner>
-                <h3 class="mt-4 mb-2">Please Wait</h3>
-            </div>
-        </div>
-    </ng-template>
-
-    <ng-template #no_data>
-        <div class="col-lg-12 text-center">
-            <div class="loader text-center py-5 d-flex align-items-center vh-50">
-                <div class="w-100">
-                    <h3 class="mt-4 mb-2">No Data Found</h3>
-                    <p class="sm-text">There are no recorded plays of content during this date.</p>
-                </div>
-            </div>
-        </div>
-    </ng-template>
-
-    <ng-template #no_zone>
-        <div class="col-lg-12 text-center">
-            <div class="loader text-center py-5 d-flex align-items-center vh-50">
-                <div class="w-100">
-                    <h3 class="mt-4 mb-2">No Data Found</h3>
-                    <p class="sm-text">Assign a screen first, to see its contents.</p>
-                </div>
-            </div>
-        </div>
-    </ng-template>
-
-    <ng-template #no_screen>
-        <div class="no-screen vh-50 row align-items-center justify-content-center">
-            <div class="col-lg-12 text-center">
-                <span class="fa fa-tv"></span>
-                <br />
-                <div class="captions mt-3">No Screen Assigned</div>
-            </div>
-        </div>
-    </ng-template>
-
-    <ng-template #noHostOrScreenData>
-        <div class="no-screen vh-50 row align-items-center justify-content-center">
-            <div class="col-lg-12 text-center">
-                <span class="fa fa-tv"></span>
-                <br />
-                <div class="captions mt-3">
-                    {{ license_data ? "No Host or Screen Assigned" : "No License Data" }}
-                </div>
-            </div>
-        </div>
-    </ng-template>
-
-    <ng-template #noLicenseActivity>
-        <div class="no-screen vh-50 row align-items-center justify-content-center">
-            <div class="col-lg-12 text-center">
-                <span class="fa fa-tv"></span>
-                <br />
-                <div class="captions mt-3">No License Activity</div>
-            </div>
-        </div>
-    </ng-template>
 
     <ng-template #loaderMain>
         <div class="h-80 d-flex justify-content-center align-items-center">
             <app-spinner></app-spinner>
         </div>
-    </ng-template>
-
-    <ng-template #loaderSmall>
-        <app-spinner [diameter]="60"></app-spinner>
     </ng-template>
 </div>
