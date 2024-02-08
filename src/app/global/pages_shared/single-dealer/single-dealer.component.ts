@@ -254,6 +254,34 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         { name: 'Dealer', sortable: true, key: 'dealer', hidden: true, no_show: true },
         { name: 'Host', sortable: true, column: 'HostName', key: 'hostName' },
         { name: 'Alias', sortable: true, column: 'Alias', key: 'alias' },
+        {
+            name: 'Address',
+            sortable: false,
+            key: 'hostAddress',
+            hidden: true,
+            no_show: true,
+        },
+        {
+            name: 'City',
+            sortable: false,
+            key: 'city',
+            hidden: true,
+            no_show: true,
+        },
+        {
+            name: 'State',
+            sortable: false,
+            key: 'state',
+            hidden: true,
+            no_show: true,
+        },
+        {
+            name: 'Business Hours',
+            sortable: false,
+            key: 'storeHoursParse',
+            hidden: true,
+            no_show: true,
+        },
         { name: 'Last Push', sortable: true, column: 'ContentsUpdated', key: 'contentsUpdated' },
         { name: 'Last Disconnect', sortable: true, column: 'TimeOut', key: 'timeIn' },
         {
@@ -1827,8 +1855,14 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';
                 item.piStatus = item.piStatus == 0 ? 'Offline' : 'Online';
                 item.screenType = this._titlecase.transform(item.screenType);
-                item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
-                item.timeIn = item.timeIn ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a') : '';
+                item.contentsUpdated = this._date.transform(
+                    item.contentsUpdated,
+                    'MMM dd, yyyy h:mm a',
+                );
+                item.timeIn = item.timeIn
+                    ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a')
+                    : '';
+                item.storeHoursParse = this.getStoreHourseParse(item);
                 item.installDate = this._date.transform(item.installDate, 'MMM dd, yyyy');
                 item.dateCreated = this._date.transform(item.dateCreated, 'MMM dd, yyyy');
                 item.internetType = this.getInternetType(item.internetType);

@@ -791,6 +791,8 @@ export class LicensesComponent implements OnInit {
                                 license.upload = Math.round(license.internetInfo.uploadMbps * 100) / 100 + ' mbps';
                                 license.download = Math.round(license.internetInfo.downloadMbps * 100) / 100 + ' mbps';
                             }
+
+                            if (license.storeHours) this.getStoreHourseParse(license);
                         });
 
                         this.licenses_to_export = data.licenses;
@@ -1130,6 +1132,31 @@ export class LicensesComponent implements OnInit {
         this.favorite_view = true;
     }
 
+    getStoreHourseParse(data) {
+        let days = [];
+        if (data.storeHours) {
+            let storehours = JSON.parse(data.storeHours);
+            storehours = storehours.sort((a, b) => {
+                return a.id - b.id;
+            });
+            storehours.map((day) => {
+                if (day.status) {
+                    day.periods.map((period) => {
+                        if (period.open == '' && period.close == '') {
+                            days.push(day.day + ' : Open 24 hrs');
+                        } else {
+                            days.push(day.day + ' : ' + period.open + ' - ' + period.close);
+                        }
+                    });
+                } else {
+                    days.push(day.day + ' : ' + 'Closed');
+                }
+            });
+            data.storeHoursParsed = days.toString();
+            data.storeHoursParsed = data.storeHoursParsed.split(',').join('\n');
+        }
+    }
+
     private getInternetType(value: string): string {
         if (!value) return;
 
@@ -1405,6 +1432,34 @@ export class LicensesComponent implements OnInit {
             { name: 'Dealer', sortable: true, column: 'BusinessName', key: 'businessName' },
             { name: 'Host', sortable: true, column: 'HostName', key: 'hostName' },
             { name: 'Alias', sortable: true, column: 'Alias', key: 'alias' },
+            {
+                name: 'Address',
+                sortable: false,
+                key: 'hostAddress',
+                hidden: true,
+                no_show: true,
+            },
+            {
+                name: 'City',
+                sortable: false,
+                key: 'city',
+                hidden: true,
+                no_show: true,
+            },
+            {
+                name: 'State',
+                sortable: false,
+                key: 'state',
+                hidden: true,
+                no_show: true,
+            },
+            {
+                name: 'Business Hours',
+                sortable: false,
+                key: 'storeHoursParsed',
+                hidden: true,
+                no_show: true,
+            },
             {
                 name: 'Last Push',
                 sortable: true,

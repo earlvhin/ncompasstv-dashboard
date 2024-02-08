@@ -83,6 +83,34 @@ export class LicensesComponent implements OnInit {
         { name: 'Type', sortable: true, key: 'screenType', column: 'ScreenType' },
         { name: 'Host', sortable: true, key: 'hostName', column: 'HostName' },
         { name: 'Alias', sortable: true, key: 'alias', column: 'Alias' },
+        {
+            name: 'Address',
+            sortable: false,
+            key: 'hostAddress',
+            hidden: true,
+            no_show: true,
+        },
+        {
+            name: 'City',
+            sortable: false,
+            key: 'city',
+            hidden: true,
+            no_show: true,
+        },
+        {
+            name: 'State',
+            sortable: false,
+            key: 'state',
+            hidden: true,
+            no_show: true,
+        },
+        {
+            name: 'Business Hours',
+            sortable: false,
+            key: 'storeHours',
+            hidden: true,
+            no_show: true,
+        },
         { name: 'Last Push', sortable: true, key: 'contentsUpdated', column: 'ContentsUpdated' },
         { name: 'Last Disconnect', sortable: true, key: 'timeIn', column: 'TimeIn' },
         { name: 'Net Type', sortable: true, key: 'internetType', column: 'InternetType' },
@@ -691,6 +719,7 @@ export class LicensesComponent implements OnInit {
         item.displayStatus = item.displayStatus == 1 ? 'ON' : 'OFF';
         item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';
         item.tagsToString = item.tags.join(',');
+        item.storeHours = this.getStoreHourseParse(item);
     }
 
     getZoneHours(data) {
@@ -961,6 +990,32 @@ export class LicensesComponent implements OnInit {
             this.favorites_list = this.favorites_list_cache;
             this.no_favorites = false;
             this.favorite_view = true;
+        }
+    }
+
+    getStoreHourseParse(data) {
+        let days = [];
+        if (data.storeHours) {
+            let storehours = JSON.parse(data.storeHours);
+            storehours = storehours.sort((a, b) => {
+                return a.id - b.id;
+            });
+            storehours.map((day) => {
+                if (day.status) {
+                    day.periods.map((period) => {
+                        if (period.open == '' && period.close == '') {
+                            days.push(day.day + ' : Open 24 hrs');
+                        } else {
+                            days.push(day.day + ' : ' + period.open + ' - ' + period.close);
+                        }
+                    });
+                } else {
+                    days.push(day.day + ' : ' + 'Closed');
+                }
+            });
+            data.storeHoursParsed = days.toString();
+            data.storeHoursParsed = data.storeHoursParsed.split(',').join('\n');
+            return data.storeHoursParsed;
         }
     }
 
