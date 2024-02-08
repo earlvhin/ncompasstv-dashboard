@@ -62,11 +62,7 @@ export class AuthService {
     //Login - Authenticate User
     authenticate_user(data) {
         return this._http
-            .post<USER_LOGIN>(
-                `${environment.base_uri}${environment.auth.api_login}`,
-                data,
-                this.http_options,
-            )
+            .post<USER_LOGIN>(`${environment.base_uri}${environment.auth.api_login}`, data, this.http_options)
             .pipe(
                 map((current_user) => {
                     let currentUser = new UI_CURRENT_USER();
@@ -113,19 +109,14 @@ export class AuthService {
     startRefreshTokenTimer() {
         if (this.current_user_value) {
             //parse object to get jwt token expiry
-            const jwtTokenExpiry = JSON.parse(
-                atob(this.current_user_value.jwt.token.split('.')[1]),
-            ).exp;
+            const jwtTokenExpiry = JSON.parse(atob(this.current_user_value.jwt.token.split('.')[1])).exp;
             const expires = new Date(0);
             expires.setUTCSeconds(jwtTokenExpiry);
             const dateNow = new Date();
             const timeout = expires.getTime() - dateNow.getTime();
             //1 minute before the expiration
             const expiresTime = timeout - 60000;
-            this.refreshTokenTimeout = setTimeout(
-                () => this.refresh_token().subscribe(),
-                expiresTime,
-            );
+            this.refreshTokenTimeout = setTimeout(() => this.refresh_token().subscribe(), expiresTime);
         }
     }
 

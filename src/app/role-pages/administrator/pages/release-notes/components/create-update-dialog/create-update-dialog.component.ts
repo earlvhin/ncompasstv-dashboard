@@ -5,11 +5,7 @@ import { debounceTime, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { API_RELEASE_NOTE, UI_CONFIRMATION_MODAL } from 'src/app/global/models';
-import {
-    AuthService,
-    ConfirmationDialogService,
-    ReleaseNotesService,
-} from 'src/app/global/services';
+import { AuthService, ConfirmationDialogService, ReleaseNotesService } from 'src/app/global/services';
 // import { SafeHtmlPipe } from 'src/app/global/pipes/safe-html.pipe';
 
 @Component({
@@ -94,8 +90,7 @@ export class CreateUpdateDialogComponent implements OnInit, OnDestroy {
         const config: any = {};
 
         this._fieldControls.forEach((control) => {
-            const configValue =
-                this.dialogMode === 'create' ? [control.value] : [this.note[control.name]];
+            const configValue = this.dialogMode === 'create' ? [control.value] : [this.note[control.name]];
             if (control.is_required) configValue.push(Validators.required);
             config[control.name] = configValue;
             if (this.dialogMode != 'create') {

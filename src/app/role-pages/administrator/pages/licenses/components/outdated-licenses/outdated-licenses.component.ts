@@ -331,26 +331,24 @@ export class OutdatedLicensesComponent implements OnInit, OnDestroy {
     private subscribeToLicenseSearch() {
         const control = this.searchControl;
 
-        control.valueChanges
-            .pipe(takeUntil(this._unsubscribe), debounceTime(1000))
-            .subscribe((keyword: string) => {
-                this.hasNoData = false;
-                this.isPageReady = false;
+        control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe((keyword: string) => {
+            this.hasNoData = false;
+            this.isPageReady = false;
+            this.resetFilters();
+
+            if (!keyword || keyword.trim().length === 0) {
+                delete this.filters.search;
+                this.currentTableData = [...this.queuedForReset];
                 this.resetFilters();
-
-                if (!keyword || keyword.trim().length === 0) {
-                    delete this.filters.search;
-                    this.currentTableData = [...this.queuedForReset];
-                    this.resetFilters();
-                    this.preloadLicenses();
-                    setTimeout(() => (this.isPageReady = true), 1000);
-                    return;
-                }
-
-                this.filters.search = keyword;
-                this.searchOutdatedLicenses();
                 this.preloadLicenses();
-            });
+                setTimeout(() => (this.isPageReady = true), 1000);
+                return;
+            }
+
+            this.filters.search = keyword;
+            this.searchOutdatedLicenses();
+            this.preloadLicenses();
+        });
     }
 
     protected get _workSheetConfig(): WORKSHEET[] {

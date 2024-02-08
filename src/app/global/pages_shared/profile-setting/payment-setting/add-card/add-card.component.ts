@@ -102,11 +102,7 @@ export class AddCardComponent implements OnInit {
     }
 
     addCard() {
-        const addCard = new ACTIVITY_LOGS(
-            this.dealer_id,
-            'added_card',
-            this._auth.current_user_value.user_id,
-        );
+        const addCard = new ACTIVITY_LOGS(this.dealer_id, 'added_card', this._auth.current_user_value.user_id);
         this.processing = true;
         var card_to_add = {
             dealerId: this._dialog_data.id,
@@ -122,11 +118,7 @@ export class AddCardComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (response) => {
-                    this.openConfirmationModal(
-                        'success',
-                        'Success!',
-                        'Credit card successfully saved.',
-                    );
+                    this.openConfirmationModal('success', 'Success!', 'Credit card successfully saved.');
                     this.createActivity(addCard);
                 },
                 (error: HttpErrorResponse) => {

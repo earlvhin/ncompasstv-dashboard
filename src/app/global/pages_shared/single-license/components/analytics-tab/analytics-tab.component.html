@@ -16,23 +16,16 @@
 
             <mat-form-field class="mr-3" appearance="fill">
                 <mat-label>Select Display Mode</mat-label>
-                <mat-select
-                    [(value)]="selected_display_mode"
-                    (selectionChange)="onSelectDisplayMode($event.value)">
+                <mat-select [(value)]="selected_display_mode" (selectionChange)="onSelectDisplayMode($event.value)">
                     <mat-option *ngFor="let mode of display_mode" [value]="mode.value">
                         {{ mode.viewValue }}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
 
-            <mat-form-field
-                class="mr-3"
-                appearance="fill"
-                *ngIf="selected_display_mode === 'monthly'">
+            <mat-form-field class="mr-3" appearance="fill" *ngIf="selected_display_mode === 'monthly'">
                 <mat-label>Select Month</mat-label>
-                <mat-select
-                    [(value)]="selected_month"
-                    (selectionChange)="onSelectMonth($event.value)">
+                <mat-select [(value)]="selected_month" (selectionChange)="onSelectMonth($event.value)">
                     <mat-option *ngFor="let month of months" [value]="month.value">
                         {{ month.viewValue }}
                     </mat-option>
@@ -67,21 +60,13 @@
                                             cc.fileType !== 'webm'
                                                 ? cc.thumbnail
                                                 : cc.url +
-                                                  cc.fileName.substr(
-                                                      0,
-                                                      cc.fileName.lastIndexOf('.') + 1
-                                                  ) +
+                                                  cc.fileName.substr(0, cc.fileName.lastIndexOf('.') + 1) +
                                                   'jpg'
                                         "
                                         alt="content-thumbnail" />
                                 </div>
                                 <div>
-                                    <a
-                                        [routerLink]="[
-                                            '/administrator/media-library/',
-                                            cc.contentId
-                                        ]"
-                                        target="_blank">
+                                    <a [routerLink]="['/administrator/media-library/', cc.contentId]" target="_blank">
                                         <h5
                                             *ngIf="cc.fileType != 'feed'; else is_feed"
                                             [title]="cc.fileName | nohandle">
@@ -125,22 +110,13 @@
                                     [src]="
                                         cc.fileType !== 'webm'
                                             ? cc.thumbnail
-                                            : cc.url +
-                                              cc.fileName.substr(
-                                                  0,
-                                                  cc.fileName.lastIndexOf('.') + 1
-                                              ) +
-                                              'jpg'
+                                            : cc.url + cc.fileName.substr(0, cc.fileName.lastIndexOf('.') + 1) + 'jpg'
                                     "
                                     alt="content-thumbnail" />
                             </div>
                             <div>
-                                <a
-                                    [routerLink]="['/administrator/media-library/', cc.contentId]"
-                                    target="_blank">
-                                    <h5
-                                        *ngIf="cc.fileType != 'feed'; else is_feed_y"
-                                        [title]="cc.fileName | nohandle">
+                                <a [routerLink]="['/administrator/media-library/', cc.contentId]" target="_blank">
+                                    <h5 *ngIf="cc.fileType != 'feed'; else is_feed_y" [title]="cc.fileName | nohandle">
                                         {{ cc.fileName | nohandle | substring: 20 }}
                                     </h5>
 
@@ -183,21 +159,13 @@
                                             cc.fileType !== 'webm'
                                                 ? cc.thumbnail
                                                 : cc.url +
-                                                  cc.fileName.substr(
-                                                      0,
-                                                      cc.fileName.lastIndexOf('.') + 1
-                                                  ) +
+                                                  cc.fileName.substr(0, cc.fileName.lastIndexOf('.') + 1) +
                                                   'jpg'
                                         "
                                         alt="content-thumbnail" />
                                 </div>
                                 <div>
-                                    <a
-                                        [routerLink]="[
-                                            '/administrator/media-library/',
-                                            cc.contentId
-                                        ]"
-                                        target="_blank">
+                                    <a [routerLink]="['/administrator/media-library/', cc.contentId]" target="_blank">
                                         <h5
                                             *ngIf="cc.fileType != 'feed'; else is_feed_d"
                                             [title]="cc.fileName | nohandle">

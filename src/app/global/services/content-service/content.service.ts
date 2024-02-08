@@ -3,12 +3,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import 'rxjs/add/operator/map';
 
-import {
-    API_CONTENT,
-    CREDITS_TO_SUBMIT,
-    PAGING,
-    PlaylistContentSchedule,
-} from 'src/app/global/models';
+import { API_CONTENT, CREDITS_TO_SUBMIT, PAGING, PlaylistContentSchedule } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { BaseService } from '../base.service';
 
@@ -35,14 +30,7 @@ export class ContentService extends BaseService {
         return this.getRequest(`${this.getters.api_get_assets}` + '?pageSize=0');
     }
 
-    get_contents_temp(
-        page: string,
-        type: string,
-        sort: string,
-        dealerId: string,
-        key: string,
-        floating: boolean,
-    ) {
+    get_contents_temp(page: string, type: string, sort: string, dealerId: string, key: string, floating: boolean) {
         return this.getRequest(
             `${this.getters.api_get_assets}` +
                 '?pageSize=30&page=' +
@@ -96,9 +84,7 @@ export class ContentService extends BaseService {
     }
 
     get_contents_playing_where(id) {
-        return this.getRequest(
-            `${this.getters.api_get_content_playing_where}` + '?contentid=' + `${id}`,
-        );
+        return this.getRequest(`${this.getters.api_get_content_playing_where}` + '?contentid=' + `${id}`);
     }
 
     get_unused_contents(id, type = '', key?) {
@@ -115,9 +101,7 @@ export class ContentService extends BaseService {
     }
 
     get_contents_history(id, page) {
-        return this.getRequest(
-            `${this.getters.api_get_content_history}${id}` + '&page=' + `${page}`,
-        );
+        return this.getRequest(`${this.getters.api_get_content_history}${id}` + '&page=' + `${page}`);
     }
 
     get_contents_total() {
@@ -147,11 +131,7 @@ export class ContentService extends BaseService {
         pageSize?,
     ): Observable<{ contents?: API_CONTENT[]; paging?: PAGING; message?: string }> {
         return this.getRequest(
-            `${this.getters.api_get_content_by_dealer_id}${data}` +
-                '&page=' +
-                `${page}` +
-                '&pageSize=' +
-                `${pageSize}`,
+            `${this.getters.api_get_content_by_dealer_id}${data}` + '&page=' + `${page}` + '&pageSize=' + `${pageSize}`,
         );
     }
 

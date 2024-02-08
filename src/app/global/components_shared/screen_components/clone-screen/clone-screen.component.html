@@ -47,22 +47,14 @@
                 </app-autocomplete-field>
 
                 <ng-container *ngIf="no_host_available">
-                    <span class="sm-text text-danger font-weight-bold ml-3"
-                        >This dealer has no available hosts.</span
-                    >
+                    <span class="sm-text text-danger font-weight-bold ml-3">This dealer has no available hosts.</span>
                 </ng-container>
 
                 <ng-template #dealer_selected>
                     <h6 class="sm-text text-muted mb-2">Selected Dealer</h6>
-                    <div
-                        class="auto-complete-selected mb-3 px-3 py-2"
-                        *ngFor="let dealer of selected_dealer">
-                        <span class="sm-text text-white font-weight-bold mr-3">{{
-                            dealer.businessName
-                        }}</span>
-                        <a (click)="deselectDealer()"
-                            ><span class="fas fa-times text-white"></span
-                        ></a>
+                    <div class="auto-complete-selected mb-3 px-3 py-2" *ngFor="let dealer of selected_dealer">
+                        <span class="sm-text text-white font-weight-bold mr-3">{{ dealer.businessName }}</span>
+                        <a (click)="deselectDealer()"><span class="fas fa-times text-white"></span></a>
                     </div>
                 </ng-template>
             </div>
@@ -120,40 +112,22 @@
 
                 <ng-template #host_selected>
                     <h6 class="sm-text text-muted mb-2">Selected Host</h6>
-                    <div
-                        class="auto-complete-selected px-3 py-2"
-                        *ngFor="let host of selected_host">
-                        <span class="sm-text text-white font-weight-bold mr-3">{{
-                            host.name
-                        }}</span>
-                        <a (click)="deselectHost()"
-                            ><span class="fas fa-times text-white"></span
-                        ></a>
+                    <div class="auto-complete-selected px-3 py-2" *ngFor="let host of selected_host">
+                        <span class="sm-text text-white font-weight-bold mr-3">{{ host.name }}</span>
+                        <a (click)="deselectHost()"><span class="fas fa-times text-white"></span></a>
                     </div>
                 </ng-template>
             </div>
 
-            <button
-                mat-button
-                mat-raised-button
-                class="theme-btn mt-4 mr-2"
-                [disabled]="form_valid">
-                Submit
-            </button>
-            <button
-                mat-button
-                mat-raised-button
-                class="theme-btn mt-4 bg-danger"
-                [mat-dialog-close]="false">
+            <button mat-button mat-raised-button class="theme-btn mt-4 mr-2" [disabled]="form_valid">Submit</button>
+            <button mat-button mat-raised-button class="theme-btn mt-4 bg-danger" [mat-dialog-close]="false">
                 Cancel
             </button>
         </form>
     </div>
 
     <ng-template #loading>
-        <div
-            class="d-flex align-items-center justify-content-center w-100 h-100 py-5"
-            *ngIf="!clone_success">
+        <div class="d-flex align-items-center justify-content-center w-100 h-100 py-5" *ngIf="!clone_success">
             <div class="py-5">
                 <app-spinner></app-spinner>
                 <h5 class="mt-4 text-center">Please wait...</h5>
@@ -166,9 +140,7 @@
             <app-success-animation></app-success-animation>
             <h3 class="mb-1">Screen Cloned Successfully!</h3>
             <p class="mb-0 sm-text font-weight-md">Click the button below to continue</p>
-            <button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="true">
-                Continue
-            </button>
+            <button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="true">Continue</button>
         </div>
     </ng-container>
 </ng-container>

@@ -8,12 +8,7 @@ import { ReplaySubject, Subject } from 'rxjs';
 import { saveAs } from 'file-saver';
 import * as moment from 'moment';
 
-import {
-    API_DEALER,
-    API_HOST,
-    API_LICENSE_PROPS,
-    UI_HOST_LOCATOR_MARKER_DEALER_MODE,
-} from 'src/app/global/models';
+import { API_DEALER, API_HOST, API_LICENSE_PROPS, UI_HOST_LOCATOR_MARKER_DEALER_MODE } from 'src/app/global/models';
 import { AuthService, DealerService, LicenseService } from 'src/app/global/services';
 
 @Component({
@@ -136,13 +131,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
             });
 
             const locatorAddress =
-                license.address +
-                ', ' +
-                license.city +
-                ', ' +
-                license.state +
-                ' ' +
-                license.postalCode;
+                license.address + ', ' + license.city + ', ' + license.state + ' ' + license.postalCode;
             const businessName = this.selectedDealers.find(
                 (dealer) => dealer.dealerId === license.dealerId,
             ).businessName;
@@ -187,13 +176,9 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 
         this.selectedDealers = dealersCopy.map((dealer) => {
             dealer.totalLicenseCount = 0;
-            const hostsCopy = Array.from(this.unfilteredHosts).filter(
-                (host) => host.dealerId === dealer.dealerId,
-            );
+            const hostsCopy = Array.from(this.unfilteredHosts).filter((host) => host.dealerId === dealer.dealerId);
             dealer.hosts = hostsCopy.map((host) => {
-                host.licenses = Array.from(this.unfilteredLicenses).filter(
-                    (license) => license.hostId === host.hostId,
-                );
+                host.licenses = Array.from(this.unfilteredLicenses).filter((license) => license.hostId === host.hostId);
                 return host;
             });
             dealer.hosts.forEach((host) => {
@@ -230,9 +215,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 
         this.selectedDealers = dealersCopy.map((dealer) => {
             dealer.totalLicenseCount = 0;
-            const hostsCopy = Array.from(this.unfilteredHosts).filter(
-                (host) => host.dealerId === dealer.dealerId,
-            );
+            const hostsCopy = Array.from(this.unfilteredHosts).filter((host) => host.dealerId === dealer.dealerId);
             dealer.hosts = hostsCopy
                 .map((host) => {
                     const licensesCopy = Array.from(this.unfilteredLicenses);
@@ -314,9 +297,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
                     const merged = this.selectedDealersControl.value.concat(dealers);
                     const unique = merged.filter(
                         (dealer, index, merged) =>
-                            merged.findIndex(
-                                (mergedDealer) => mergedDealer.dealerId === dealer.dealerId,
-                            ) === index,
+                            merged.findIndex((mergedDealer) => mergedDealer.dealerId === dealer.dealerId) === index,
                     );
                     this.dealers = unique;
                     this.filteredDealers.next(unique);
@@ -357,8 +338,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 
                     this.hostLicenses = response;
 
-                    if (this.filterStatus)
-                        this.hostLicenses.filter((x) => x.piStatus === this.filterStatus);
+                    if (this.filterStatus) this.hostLicenses.filter((x) => x.piStatus === this.filterStatus);
 
                     this.hostLicenses.forEach((license) => {
                         if (license.piStatus == 1) online += 1;
@@ -433,10 +413,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
                     );
 
                     host.licenses = host.licenses.map((license) => {
-                        license.status = this.setLicenseStatus(
-                            license.installDate,
-                            license.piStatus,
-                        );
+                        license.status = this.setLicenseStatus(license.installDate, license.piStatus);
 
                         switch (license.status) {
                             case 'online':
@@ -471,8 +448,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
                 })
                 .filter((host) => host.licenses.length > 0);
 
-            if (this.hasStatusFilter)
-                dealer.hosts = dealer.hosts.filter((host) => host.licenses.length > 0);
+            if (this.hasStatusFilter) dealer.hosts = dealer.hosts.filter((host) => host.licenses.length > 0);
 
             this.selectedHosts = this.selectedHosts.concat(dealer.hosts);
 
@@ -504,9 +480,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
                     const merged = this.selectedDealersControl.value.concat(dealers);
                     const unique = merged.filter(
                         (dealer, index, merged) =>
-                            merged.findIndex(
-                                (mergedDealer) => mergedDealer.dealerId === dealer.dealerId,
-                            ) === index,
+                            merged.findIndex((mergedDealer) => mergedDealer.dealerId === dealer.dealerId) === index,
                     );
                     this.dealers = unique;
                     this.filteredDealers.next(unique);
@@ -558,11 +532,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
                     else this.getDealers(1);
                 }),
             )
-            .subscribe(
-                () =>
-                    (this.dealerMultiSelect.compareWith = (a, b) =>
-                        a && b && a.dealerId === b.dealerId),
-            );
+            .subscribe(() => (this.dealerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId));
     }
 
     private subscribeToDealerSelect() {
@@ -576,8 +546,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
                 (dealer) => (this.unfilteredHosts = this.unfilteredHosts.concat(dealer.hosts)),
             );
             Array.from(this.unfilteredDealers).forEach(
-                (dealer) =>
-                    (this.unfilteredLicenses = this.unfilteredLicenses.concat(dealer.licenses)),
+                (dealer) => (this.unfilteredLicenses = this.unfilteredLicenses.concat(dealer.licenses)),
             );
             this.onSelectDealer();
         });

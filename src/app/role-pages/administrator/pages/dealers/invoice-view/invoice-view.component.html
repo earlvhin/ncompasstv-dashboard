@@ -12,12 +12,8 @@
                     <span class="fas fa-sort xsm-text"></span>
                 </button>
                 <mat-menu #type="matMenu">
-                    <button class="md-text" mat-menu-item (click)="filterBillingDate('1st')">
-                        1st
-                    </button>
-                    <button class="md-text" mat-menu-item (click)="filterBillingDate('15th')">
-                        15th
-                    </button>
+                    <button class="md-text" mat-menu-item (click)="filterBillingDate('1st')">1st</button>
+                    <button class="md-text" mat-menu-item (click)="filterBillingDate('15th')">15th</button>
                 </mat-menu>
 
                 <button
@@ -30,15 +26,9 @@
                     <span class="fas fa-sort xsm-text"></span>
                 </button>
                 <mat-menu #status="matMenu">
-                    <button class="md-text" mat-menu-item (click)="filterStatus('paid')">
-                        Paid
-                    </button>
-                    <button class="md-text" mat-menu-item (click)="filterStatus('unpaid')">
-                        Unpaid
-                    </button>
-                    <button class="md-text" mat-menu-item (click)="filterStatus('rejected')">
-                        Rejected
-                    </button>
+                    <button class="md-text" mat-menu-item (click)="filterStatus('paid')">Paid</button>
+                    <button class="md-text" mat-menu-item (click)="filterStatus('unpaid')">Unpaid</button>
+                    <button class="md-text" mat-menu-item (click)="filterStatus('rejected')">Rejected</button>
                 </mat-menu>
             </div>
             <div class="col-lg-4">

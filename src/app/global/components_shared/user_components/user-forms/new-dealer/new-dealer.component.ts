@@ -11,10 +11,7 @@ import { AuthService } from '../../../../services/auth-service/auth.service';
 import { City, State } from '../../../../models/ui_city_state_region.model';
 import { ConfirmationModalComponent } from '../../../page_components/confirmation-modal/confirmation-modal.component';
 import { LocationService } from '../../../../services/data-service/location.service';
-import {
-    UI_ROLE_DEFINITION,
-    UI_ROLE_DEFINITION_TEXT,
-} from '../../../../models/ui_role-definition.model';
+import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../../../models/ui_role-definition.model';
 import { UserService, DealerService } from 'src/app/global/services';
 
 @Component({
@@ -168,8 +165,7 @@ export class NewDealerComponent implements OnInit, OnDestroy {
         return {
             storeTo: {
                 location: 's3',
-                container:
-                    'nctv-images-' + folder + '/logo/dealers/' + this.current_dealer_id + '/',
+                container: 'nctv-images-' + folder + '/logo/dealers/' + this.current_dealer_id + '/',
                 region: 'us-east-1',
             },
             accept: ['image/jpg', 'image/jpeg', 'image/png'],
@@ -185,12 +181,7 @@ export class NewDealerComponent implements OnInit, OnDestroy {
                     logo: logo,
                 };
                 this._dealer.update_dealer_logo(dealer_info).subscribe(() => {
-                    this.openConfirmationModal(
-                        'success',
-                        'Success!',
-                        'Profile picture successfully updated.',
-                        true,
-                    );
+                    this.openConfirmationModal('success', 'Success!', 'Profile picture successfully updated.', true);
                 });
             },
         };
@@ -354,10 +345,7 @@ export class NewDealerComponent implements OnInit, OnDestroy {
         });
 
         this.f.re_password.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
-            if (
-                this.f.password.value == this.f.re_password.value &&
-                this.f.password.value.length !== 0
-            ) {
+            if (this.f.password.value == this.f.re_password.value && this.f.password.value.length !== 0) {
                 this.password_is_match = true;
                 this.password_match_msg = 'Password matches';
             } else {

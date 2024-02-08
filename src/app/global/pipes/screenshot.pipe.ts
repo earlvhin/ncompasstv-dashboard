@@ -13,9 +13,7 @@ export class ScreenshotPipe extends DatePipe implements PipeTransform {
         let s_time = handle_removed.substring(handle_removed.indexOf('--') + 2);
         (s_time = s_time.split('_')), (s_time = s_time.slice(0, 2));
         s_time = s_time.join(':');
-        let valid_time = s_time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [
-            s_time,
-        ];
+        let valid_time = s_time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [s_time];
 
         if (valid_time.length > 1) {
             // If valid_time format correct

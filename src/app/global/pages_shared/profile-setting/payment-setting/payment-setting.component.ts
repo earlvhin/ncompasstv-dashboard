@@ -6,12 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import {
-    ACTIVITY_LOGS,
-    API_CREDIT_CARD_DETAILS,
-    UI_CREDIT_CARD_DETAILS,
-    UI_CURRENT_USER,
-} from '../../../models';
+import { ACTIVITY_LOGS, API_CREDIT_CARD_DETAILS, UI_CREDIT_CARD_DETAILS, UI_CURRENT_USER } from '../../../models';
 import { AuthService, DealerService } from '../../../services';
 import { BillingService } from '../../../services/billing-service/billing-service';
 import { AddCardComponent } from '../../../pages_shared/profile-setting/payment-setting/add-card/add-card.component';
@@ -38,13 +33,7 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
     paymentSettingForm: FormGroup;
 
     actualCreditCardDetails: any = [];
-    addressFormFields = [
-        'AddressLine1',
-        'AddressLine2',
-        'AddressCity',
-        'AddressState',
-        'AddressZip',
-    ];
+    addressFormFields = ['AddressLine1', 'AddressLine2', 'AddressCity', 'AddressState', 'AddressZip'];
     protected _unsubscribe = new Subject<void>();
 
     constructor(
@@ -109,11 +98,7 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((response) => {
                 if (response) {
-                    this.openConfirmationModal(
-                        'success',
-                        'Success!',
-                        'Billing Address successfully saved.',
-                    );
+                    this.openConfirmationModal('success', 'Success!', 'Billing Address successfully saved.');
                     this.createActivity(updateBillingAddress);
                 }
             });
@@ -140,14 +125,7 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
         );
     }
 
-    warningModal(
-        status: string,
-        message: string,
-        data: string,
-        return_msg: string,
-        action: string,
-        id: any,
-    ): void {
+    warningModal(status: string, message: string, data: string, return_msg: string, action: string, id: any): void {
         const deleteCardActivity = new ACTIVITY_LOGS(
             this.dealerId,
             'delete_card',
@@ -172,20 +150,12 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
                         .pipe(takeUntil(this._unsubscribe))
                         .subscribe(
                             (response) => {
-                                this.openConfirmationModal(
-                                    'success',
-                                    'Success!',
-                                    'Credit card successfully deleted.',
-                                );
+                                this.openConfirmationModal('success', 'Success!', 'Credit card successfully deleted.');
                                 this.createActivity(deleteCardActivity);
                             },
                             (error: HttpErrorResponse) => {
                                 if (error.status === 400) {
-                                    this.openConfirmationModal(
-                                        'error',
-                                        'Failed!',
-                                        error.error.message,
-                                    );
+                                    this.openConfirmationModal('error', 'Failed!', error.error.message);
                                 }
                             },
                         );
@@ -216,11 +186,7 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (response) => {
-                    this.openConfirmationModal(
-                        'success',
-                        'Success!',
-                        'Credit card details successfully updated.',
-                    );
+                    this.openConfirmationModal('success', 'Success!', 'Credit card details successfully updated.');
                     this.createActivity(updateCardActivity);
                 },
                 (error: HttpErrorResponse) => {
@@ -305,9 +271,7 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
                         //     return;
                         // }
                         if (response.addressBook && response.addressBook.length > 0) {
-                            this.billingDetails = response.addressBook.filter(
-                                (address) => address.typeId === 1,
-                            );
+                            this.billingDetails = response.addressBook.filter((address) => address.typeId === 1);
                             this.populateBillingAddress();
                         } else {
                             this.billingDetails = [];
@@ -359,8 +323,7 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
             let validators: any[] = [];
             if (field.is_required) validators.push(Validators.required);
             if (field.name === 'Cvc') validators.push(Validators.minLength(3));
-            if (this.addressFormFields.includes(field.name))
-                dealerAddressFormGroup[field.name] = [null, validators];
+            if (this.addressFormFields.includes(field.name)) dealerAddressFormGroup[field.name] = [null, validators];
             paymentSettingFormGroup[field.name] = [value, validators];
             cardFormGroup[field.name] = [value, validators];
         });

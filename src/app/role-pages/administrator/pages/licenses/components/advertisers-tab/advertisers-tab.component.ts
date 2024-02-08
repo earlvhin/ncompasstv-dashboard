@@ -3,12 +3,7 @@ import { FormControl } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil, debounceTime } from 'rxjs/operators';
 
-import {
-    API_ADVERTISER,
-    API_FILTERS,
-    DEALER_UI_TABLE_ADVERTISERS,
-    PAGING,
-} from 'src/app/global/models';
+import { API_ADVERTISER, API_FILTERS, DEALER_UI_TABLE_ADVERTISERS, PAGING } from 'src/app/global/models';
 import { AdvertiserService, ExportService } from 'src/app/global/services';
 
 @Component({
@@ -166,26 +161,24 @@ export class AdvertisersTabComponent implements OnInit, OnDestroy {
     private subscribeToAdvertiserSearch() {
         const control = this.searchControl;
 
-        control.valueChanges
-            .pipe(takeUntil(this._unsubscribe), debounceTime(1000))
-            .subscribe((keyword: string) => {
-                this.hasNoData = false;
-                this.isPageReady = false;
+        control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe((keyword: string) => {
+            this.hasNoData = false;
+            this.isPageReady = false;
+            this.resetFilters();
+
+            if (!keyword || keyword.trim().length === 0) {
+                delete this.filters.search;
+                this.currentTableData = [...this.queuedForReset];
                 this.resetFilters();
-
-                if (!keyword || keyword.trim().length === 0) {
-                    delete this.filters.search;
-                    this.currentTableData = [...this.queuedForReset];
-                    this.resetFilters();
-                    this.preloadAdvertisers();
-                    this.isPageReady = true;
-                    return;
-                }
-
-                this.filters.search = keyword;
-                this.searchAdvertisers();
                 this.preloadAdvertisers();
-            });
+                this.isPageReady = true;
+                return;
+            }
+
+            this.filters.search = keyword;
+            this.searchAdvertisers();
+            this.preloadAdvertisers();
+        });
     }
 
     protected get _exportConfig() {

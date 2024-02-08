@@ -1,12 +1,4 @@
-import {
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    OnInit,
-    Output,
-    ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { API_CONTENT } from '../../../../global/models/api_content.model';
@@ -79,10 +71,7 @@ export class FillerFormComponent implements OnInit {
         /** Loop through form fields object and prepare for group */
         this.filler_fields.map((i) => {
             Object.assign(form_group_obj, {
-                [i.form_control_name]: [
-                    i.value ? i.value : null,
-                    i.required ? Validators.required : null,
-                ],
+                [i.form_control_name]: [i.value ? i.value : null, i.required ? Validators.required : null],
             });
         });
 
@@ -178,17 +167,13 @@ export class FillerFormComponent implements OnInit {
 
     removeFillerItem(i?: API_CONTENT, bulk?: boolean) {
         if (i && i.contentId) {
-            this.filler_items_structured = this.filler_items_structured.filter(
-                (f) => f.contentId !== i.contentId,
-            );
+            this.filler_items_structured = this.filler_items_structured.filter((f) => f.contentId !== i.contentId);
             this.filler_items = this.filler_items.filter((f) => f.contentId !== i.contentId);
         }
 
         if (bulk) {
             this.selected_items.forEach((s) => {
-                this.filler_items_structured = this.filler_items_structured.filter(
-                    (f) => f.contentId !== s,
-                );
+                this.filler_items_structured = this.filler_items_structured.filter((f) => f.contentId !== s);
                 this.filler_items = this.filler_items.filter((f) => f.contentId !== s);
             });
 

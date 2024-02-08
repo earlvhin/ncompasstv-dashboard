@@ -16,19 +16,13 @@
                     [ngClass]="classification === 'filler-v2' ? 'text-warning' : 'text-primary'"
                     *ngIf="filetype == 'webm' || filetype == 'mp4'"
                     title="Video"></i>
-                <i
-                    class="fas fa-rss-square text-primary mr-1"
-                    *ngIf="filetype == 'feed'"
-                    title="Feed"></i>
+                <i class="fas fa-rss-square text-primary mr-1" *ngIf="filetype == 'feed'" title="Feed"></i>
                 <i
                     class="fas fa-user-circle mr-1"
                     [ngClass]="dealer === '' || dealer === null ? 'text-gray' : 'text-primary'"
                     [title]="dealer === '' || dealer === null ? 'Unassigned' : 'Assigned'"
                     *ngIf="!is_filler"></i>
-                <i
-                    class="fas fa-expand text-primary"
-                    *ngIf="is_fullscreen == 1"
-                    title="Fullscreen"></i>
+                <i class="fas fa-expand text-primary" *ngIf="is_fullscreen == 1" title="Fullscreen"></i>
                 <ng-container *ngIf="is_scheduled_content">
                     <i class="fas fa-clock text-primary mr-1 float-right" title="Is scheduled"></i>
                 </ng-container>
@@ -44,19 +38,14 @@
                 ((is_protected === 0 && is_dealer) || is_admin) &&
                 !is_filler
             ">
-            <i
-                class="fas fa-times text-danger"
-                (click)="deleteMedia($event)"
-                title="Delete Content"></i>
+            <i class="fas fa-times text-danger" (click)="deleteMedia($event)" title="Delete Content"></i>
         </div>
 
         <div class="type-icon trash-icon sm-text" *ngIf="is_filler">
             <i class="fas fa-times text-danger" (click)="deleteFiller()" title="Delete Filler"></i>
         </div>
 
-        <div
-            class="type-icon select-icon text-right sm-text"
-            *ngIf="!zone_content && multiple_delete">
+        <div class="type-icon select-icon text-right sm-text" *ngIf="!zone_content && multiple_delete">
             <mat-checkbox
                 (change)="deleteContentArray($event, content_id)"
                 [checked]="is_checked"
@@ -68,10 +57,7 @@
     <img [src]="image_uri" *ngIf="(filetype | isimage) && file_url" alt="thumbnail" />
 
     <!-- is converting -->
-    <img
-        *ngIf="(filetype | isvideo) && is_converted == 0"
-        src="assets/media-files/placeholder.png"
-        alt="placeholder" />
+    <img *ngIf="(filetype | isvideo) && is_converted == 0" src="assets/media-files/placeholder.png" alt="placeholder" />
 
     <!-- mp4 -->
     <img
@@ -80,10 +66,7 @@
         alt="thumbnail" />
 
     <!-- converted -->
-    <img
-        [src]="image_uri"
-        *ngIf="filetype === 'webm' && file_url && is_converted == 1"
-        alt="thumbnail" />
+    <img [src]="image_uri" *ngIf="filetype === 'webm' && file_url && is_converted == 1" alt="thumbnail" />
 
     <!-- alternate preview -->
     <img [src]="image_uri | sanitize" *ngIf="filetype | isFeed" alt="thumbnail" />
@@ -91,20 +74,14 @@
     <div class="thumbnail-title">
         <div class="d-flex">
             <span class="sequence">{{ sequence }}</span>
-            <a
-                (click)="routeToMedia(!is_filler ? filename : file_url)"
-                class="flex-even text-center"
-                target="_blank">
+            <a (click)="routeToMedia(!is_filler ? filename : file_url)" class="flex-even text-center" target="_blank">
                 <span>{{ filename | filename }}</span>
             </a>
         </div>
     </div>
 
     <ng-template #video_placeholder>
-        <img
-            *ngIf="filetype | isvideo"
-            src="assets/media-files/placeholder.png"
-            alt="placeholder" />
+        <img *ngIf="filetype | isvideo" src="assets/media-files/placeholder.png" alt="placeholder" />
     </ng-template>
 
     <div

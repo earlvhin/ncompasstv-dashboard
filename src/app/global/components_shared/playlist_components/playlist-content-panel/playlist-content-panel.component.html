@@ -21,11 +21,7 @@
             </div>
         </div>
         <div>
-            <button
-                mat-button
-                mat-raised-button
-                class="theme-btn flex-even mx-1"
-                (click)="openPlaylistDemo()">
+            <button mat-button mat-raised-button class="theme-btn flex-even mx-1" (click)="openPlaylistDemo()">
                 Playlist Demo
                 <span class="fas fa-play ml-2 sm-text"></span>
             </button>
@@ -46,9 +42,7 @@
                 mat-raised-button
                 class="theme-btn flex-even mx-1"
                 (click)="openPlaylistMedia('swap')"
-                [disabled]="
-                    is_view_only || !is_bulk_selecting || selected_playlist_content_ids.length !== 1
-                ">
+                [disabled]="is_view_only || !is_bulk_selecting || selected_playlist_content_ids.length !== 1">
                 Swap Content
                 <span class="fas fa-exchange-alt ml-2 sm-text"></span>
             </button>
@@ -70,17 +64,12 @@
         <div class="flex-even">
             <div class="d-flex align-items-center">
                 <div>
-                    <mat-slide-toggle
-                        [(ngModel)]="bulk_toggle"
-                        (change)="isMarking($event)"
-                        [disabled]="is_view_only">
+                    <mat-slide-toggle [(ngModel)]="bulk_toggle" (change)="isMarking($event)" [disabled]="is_view_only">
                     </mat-slide-toggle>
                 </div>
                 <div class="ml-2 flex-even">
                     <h5 class="mb-0">Mark Contents</h5>
-                    <p class="xsm-text mb-0">
-                        Dragging will be disabled during bulk action marking.
-                    </p>
+                    <p class="xsm-text mb-0">Dragging will be disabled during bulk action marking.</p>
                 </div>
             </div>
         </div>
@@ -98,11 +87,7 @@
             </button>
 
             <!-- LIST/GRID VIEW BUTTON -->
-            <button
-                mat-button
-                mat-raised-button
-                class="theme-btn flex-even mx-1"
-                (click)="onViewContentList()">
+            <button mat-button mat-raised-button class="theme-btn flex-even mx-1" (click)="onViewContentList()">
                 <span *ngIf="!list_view_mode; else grid">
                     List View
                     <span class="fas fa-list ml-2 sm-text"></span>
@@ -116,11 +101,7 @@
             </button>
 
             <!-- VIEW SCHEDULES BUTTON -->
-            <button
-                mat-button
-                mat-raised-button
-                class="theme-btn flex-even mx-1"
-                (click)="onViewSchedule()">
+            <button mat-button mat-raised-button class="theme-btn flex-even mx-1" (click)="onViewSchedule()">
                 Schedules
                 <span class="fas fa-calendar ml-2 sm-text"></span>
             </button>
@@ -171,17 +152,12 @@
                         {{ currentStatusFilter.label }}
                     </span>
                     <ng-container *ngIf="currentStatusFilter.key !== 'default'">
-                        <span
-                            class="fas fa-circle xsm-text"
-                            [ngClass]="currentStatusFilter.key"></span>
+                        <span class="fas fa-circle xsm-text" [ngClass]="currentStatusFilter.key"></span>
                     </ng-container>
                 </button>
                 <mat-menu #statusFilters="matMenu">
                     <ng-container *ngFor="let filter of statusFilterOptions">
-                        <button
-                            class="md-text"
-                            mat-menu-item
-                            (click)="filterContentByStatus(filter.key)">
+                        <button class="md-text" mat-menu-item (click)="filterContentByStatus(filter.key)">
                             {{ filter.label }}
                             <ng-container *ngIf="filter.key !== 'default'">
                                 <span class="fas fa-circle xsm-text" [ngClass]="filter.key"></span>
@@ -204,10 +180,7 @@
                 </button>
                 <mat-menu #fileTypeFilters="matMenu">
                     <ng-container *ngFor="let filter of contentFileTypes">
-                        <button
-                            class="md-text"
-                            mat-menu-item
-                            (click)="filterContentByFileType(filter)">
+                        <button class="md-text" mat-menu-item (click)="filterContentByFileType(filter)">
                             {{ filter | titlecase }}
                         </button>
                     </ng-container>
@@ -215,10 +188,7 @@
             </div>
         </div>
         <mat-form-field class="w-50" appearance="fill">
-            <mat-label
-                ><span class="fas fa-search mr-2" font-weight-bold></span> Search Playlist
-                Content</mat-label
-            >
+            <mat-label><span class="fas fa-search mr-2" font-weight-bold></span> Search Playlist Content</mat-label>
             <input
                 type="text"
                 placeholder="Enter Content Name"
@@ -233,11 +203,8 @@
             <div class="content-stats d-flex xsm-text mb-0 flex-float-left">
                 <div class="total-contents" (click)="filterContentByFileType('all')">
                     Total
-                    {{
-                        currentStatusFilter.label === 'All'
-                            ? 'Contents'
-                            : currentStatusFilter.label
-                    }}: <b>{{ playlist_contents.length }}</b>
+                    {{ currentStatusFilter.label === 'All' ? 'Contents' : currentStatusFilter.label }}:
+                    <b>{{ playlist_contents.length }}</b>
                 </div>
                 |
                 <div class="total-contents video-contents">

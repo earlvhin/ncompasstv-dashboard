@@ -76,9 +76,7 @@ export class TagsComponent implements OnInit, OnDestroy {
                         dateCreated: null,
                         status: null,
                     });
-                    this.currentTagType = response.tag_types.filter(
-                        (type) => type.name.toLowerCase() === 'dealer',
-                    )[0];
+                    this.currentTagType = response.tag_types.filter((type) => type.name.toLowerCase() === 'dealer')[0];
                 },
                 (error) => {
                     console.error(error);
@@ -116,9 +114,7 @@ export class TagsComponent implements OnInit, OnDestroy {
             .subscribe(
                 (response: {}[]) => {
                     response.forEach((data) =>
-                        Object.keys(data).forEach(
-                            (key) => (this.count[key.toLowerCase()] = data[key]),
-                        ),
+                        Object.keys(data).forEach((key) => (this.count[key.toLowerCase()] = data[key])),
                     );
                 },
                 (error) => {
@@ -129,8 +125,6 @@ export class TagsComponent implements OnInit, OnDestroy {
     }
 
     private subscribeToTagsCountRefresh() {
-        this._tag.onRefreshTagsCount
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(() => this.getTagsCount());
+        this._tag.onRefreshTagsCount.pipe(takeUntil(this._unsubscribe)).subscribe(() => this.getTagsCount());
     }
 }

@@ -102,8 +102,7 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
             return true;
         }
 
-        this.is_date_valid =
-            this.calculateDateDifference(this.start_date, date.toISOString()) <= 365;
+        this.is_date_valid = this.calculateDateDifference(this.start_date, date.toISOString()) <= 365;
         return this.is_date_valid;
     };
 

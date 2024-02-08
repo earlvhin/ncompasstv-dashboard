@@ -29,11 +29,7 @@ export class UpdateService {
      * @param data - Add App Version Form Data
      */
     add_app(data: any) {
-        return this._http.post<any>(
-            `${environment.base_uri}${environment.create.api_new_app}`,
-            data,
-            this.httpOptions,
-        );
+        return this._http.post<any>(`${environment.base_uri}${environment.create.api_new_app}`, data, this.httpOptions);
     }
 
     /**
@@ -54,10 +50,7 @@ export class UpdateService {
      * API GET Method to AWS
      */
     get_apps(): Observable<API_PLAYER_APP[]> {
-        return this._http.get<any>(
-            `${environment.base_uri}${environment.getters.api_apps}`,
-            this.httpOptions,
-        );
+        return this._http.get<any>(`${environment.base_uri}${environment.getters.api_apps}`, this.httpOptions);
     }
 
     /**
@@ -77,10 +70,7 @@ export class UpdateService {
      * API GET Method to AWS
      */
     get_app_versions() {
-        return this._http.get<any>(
-            `${environment.base_uri}${environment.getters.api_apps_versions}`,
-            this.httpOptions,
-        );
+        return this._http.get<any>(`${environment.base_uri}${environment.getters.api_apps_versions}`, this.httpOptions);
     }
 
     /**

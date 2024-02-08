@@ -79,9 +79,7 @@ export class DataStatisticsCardComponent implements OnInit {
     }
 
     generateChart() {
-        const canvas = (<HTMLCanvasElement>(
-            document.getElementById(`stat-${this.id}`)
-        )) as HTMLCanvasElement;
+        const canvas = (<HTMLCanvasElement>document.getElementById(`stat-${this.id}`)) as HTMLCanvasElement;
         const labels = this.label_array;
         const data = this.value_array;
         const whole: any = this.whole_data;

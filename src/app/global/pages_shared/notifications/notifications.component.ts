@@ -51,11 +51,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
         switch (this.currentRole) {
             case 'dealer':
             case 'sub-dealer':
-                request = this._notification.getByDealerId(
-                    this.currentUser.roleInfo.dealerId,
-                    1,
-                    0,
-                );
+                request = this._notification.getByDealerId(this.currentUser.roleInfo.dealerId, 1, 0);
                 break;
 
             default:
@@ -107,11 +103,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
         switch (this.currentRole) {
             case 'dealer':
             case 'sub-dealer':
-                request = this._notification.getByDealerId(
-                    this.currentUser.roleInfo.dealerId,
-                    1,
-                    0,
-                );
+                request = this._notification.getByDealerId(this.currentUser.roleInfo.dealerId, 1, 0);
                 break;
 
             default:

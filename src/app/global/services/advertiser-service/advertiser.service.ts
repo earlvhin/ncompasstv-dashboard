@@ -17,9 +17,7 @@ export class AdvertiserService extends BaseService {
         return this.postRequest(url, data);
     }
 
-    get_advertisers(
-        filters: API_FILTERS,
-    ): Observable<{ advertisers: API_ADVERTISER[]; paging: PAGING }> {
+    get_advertisers(filters: API_FILTERS): Observable<{ advertisers: API_ADVERTISER[]; paging: PAGING }> {
         const base = `${this.getters.api_get_advertisers}`;
         const params = this.setUrlParams(filters, false, true);
         const url = `${base}${params}`;
@@ -64,13 +62,7 @@ export class AdvertiserService extends BaseService {
         return this.getRequest(url);
     }
 
-    get_advertisers_unassigned_to_user(
-        id: string,
-        page: number,
-        key: string,
-        column = '',
-        order = '',
-    ) {
+    get_advertisers_unassigned_to_user(id: string, page: number, key: string, column = '', order = '') {
         const url = `${this.getters.api_get_advertisers_unassigned}${id}&page=${page}&search=${key}&sortColumn=${column}&sortOrder=${order}`;
         return this.getRequest(url);
     }
@@ -85,10 +77,7 @@ export class AdvertiserService extends BaseService {
         return this.getRequest(url);
     }
 
-    export_all_advertisers(
-        sortColumn: string,
-        sortOrder: string,
-    ): Observable<API_EXPORT_ADVERTISER[]> {
+    export_all_advertisers(sortColumn: string, sortOrder: string): Observable<API_EXPORT_ADVERTISER[]> {
         const url = `${this.getters.export_all_advertiser}?sortColumn=${sortColumn}&sortOrder=${sortOrder}`;
         return this.getRequest(url);
     }
@@ -101,9 +90,7 @@ export class AdvertiserService extends BaseService {
         return this.getRequest(`${this.getters.export_advertiser_dealer_admin}`);
     }
 
-    get_advertiser_by_id(
-        id: string,
-    ): Observable<{ message?: string; advertiser?: any; tags?: TAG[] }> {
+    get_advertiser_by_id(id: string): Observable<{ message?: string; advertiser?: any; tags?: TAG[] }> {
         const url = `${this.getters.api_get_advertisers_by_id}${id}`;
         const request = this.getRequest(url);
         return request;

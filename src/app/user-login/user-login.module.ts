@@ -16,13 +16,7 @@ import {
     MatIconModule,
 } from '@angular/material';
 
-const MaterialModule = [
-    MatInputModule,
-    MatProgressSpinnerModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-];
+const MaterialModule = [MatInputModule, MatProgressSpinnerModule, MatCardModule, MatButtonModule, MatIconModule];
 @NgModule({
     declarations: [LoginComponent, LoginFormComponent, LoginLayoutComponent],
     imports: [

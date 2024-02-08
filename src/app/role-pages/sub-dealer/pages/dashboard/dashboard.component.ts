@@ -33,15 +33,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     statTable: any = {};
     title = '';
 
-    latest_hosts_col = [
-        '#',
-        'Business Name',
-        'Address',
-        'Region',
-        'City',
-        'State',
-        'Creation Date',
-    ];
+    latest_hosts_col = ['#', 'Business Name', 'Address', 'Region', 'City', 'State', 'Creation Date'];
 
     protected _unsubscribe: Subject<void> = new Subject<void>();
 
@@ -122,9 +114,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
                     advertiser_report.map((report) => {
                         const month = report.month.split(' ');
                         this.advertiser_report_chart.chart_data.push(report.total),
-                            this.advertiser_report_chart.chart_label.push(
-                                this._date.transform(month[0], 'MMM'),
-                            );
+                            this.advertiser_report_chart.chart_label.push(this._date.transform(month[0], 'MMM'));
                     });
 
                     this.loading_advertiser_report_chart = false;
@@ -189,9 +179,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
                     host_report.map((report: { total: any; month: any }) => {
                         const month = report.month.split(' ');
                         this.host_report_chart.chart_data.push(report.total),
-                            this.host_report_chart.chart_label.push(
-                                this._date.transform(month[0], 'MMM'),
-                            );
+                            this.host_report_chart.chart_label.push(this._date.transform(month[0], 'MMM'));
                     });
 
                     this.loading_host_report_chart = false;
@@ -235,9 +223,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
                     license_report.map((i) => {
                         let month = i.month.split(' ');
                         this.license_report_chart.chart_data.push(i.total),
-                            this.license_report_chart.chart_label.push(
-                                this._date.transform(month[0], 'MMM'),
-                            );
+                            this.license_report_chart.chart_label.push(this._date.transform(month[0], 'MMM'));
                     });
 
                     this.loading_license_report_chart = false;

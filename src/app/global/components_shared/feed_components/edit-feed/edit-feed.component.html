@@ -11,22 +11,12 @@
             <div class="d-flex flex-column mb-4">
                 <mat-form-field class="full-width">
                     <mat-label>Feed Type</mat-label>
-                    <input
-                        matInput
-                        formControlName="classification"
-                        matInput
-                        type="text"
-                        readonly />
+                    <input matInput formControlName="classification" matInput type="text" readonly />
                 </mat-form-field>
 
                 <mat-form-field class="full-width">
                     <mat-label>Feed Title</mat-label>
-                    <input
-                        matInput
-                        formControlName="feedTitle"
-                        matInput
-                        type="text"
-                        placeholder="Ex: ESPN News" />
+                    <input matInput formControlName="feedTitle" matInput type="text" placeholder="Ex: ESPN News" />
                 </mat-form-field>
 
                 <mat-form-field class="full-width">
@@ -104,9 +94,7 @@
 
                     <ng-template #isInvalidType>
                         <div class="alert alert-danger">
-                            <p class="sm-text font-weight-bold">
-                                Feed URL Error! Possible reasons may be;
-                            </p>
+                            <p class="sm-text font-weight-bold">Feed URL Error! Possible reasons may be;</p>
                             <div class="ml-2">
                                 <ul class="sm-text font-weight-bold">
                                     <li>The feed URL does not start with "http" or "https".</li>
@@ -125,11 +113,7 @@
                     [disabled]="is_invalid_url && !isUrlValidType">
                     Submit
                 </button>
-                <button
-                    mat-button
-                    mat-raised-button
-                    class="theme-btn btn-danger"
-                    [mat-dialog-close]="false">
+                <button mat-button mat-raised-button class="theme-btn btn-danger" [mat-dialog-close]="false">
                     Cancel
                 </button>
             </div>

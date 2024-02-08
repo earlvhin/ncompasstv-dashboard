@@ -1,13 +1,4 @@
-import {
-    trigger,
-    transition,
-    style,
-    query,
-    group,
-    animateChild,
-    animate,
-    keyframes,
-} from '@angular/animations';
+import { trigger, transition, style, query, group, animateChild, animate, keyframes } from '@angular/animations';
 
 export const fader = trigger('routeAnimations', [
     transition('* <=> *', [
@@ -21,9 +12,7 @@ export const fader = trigger('routeAnimations', [
             }),
         ]),
 
-        query(':enter', [
-            animate('600ms ease', style({ opacity: 1, transform: 'scale(1) translateY(0)' })),
-        ]),
+        query(':enter', [animate('600ms ease', style({ opacity: 1, transform: 'scale(1) translateY(0)' }))]),
     ]),
 ]);
 

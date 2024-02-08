@@ -70,14 +70,7 @@ export class ViewFillersGroupComponent implements OnInit {
 
     getFillerGroupContents(id, page?) {
         this._filler
-            .get_filler_group_contents(
-                id,
-                this.search_keyword,
-                page,
-                27,
-                this.sorting_column,
-                this.sorting_order,
-            )
+            .get_filler_group_contents(id, this.search_keyword, page, 27, this.sorting_column, this.sorting_order)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data) => {
                 if ('message' in data) {
@@ -95,14 +88,12 @@ export class ViewFillersGroupComponent implements OnInit {
                 //add a screenshoturl since it is not provided yet in the api return
                 data.paging.entities.map((data) => {
                     if (data.fileType == 'webm')
-                        data.screenshotURL =
-                            data.url.substring(0, data.url.lastIndexOf('.')) + '.jpg';
+                        data.screenshotURL = data.url.substring(0, data.url.lastIndexOf('.')) + '.jpg';
                     else data.screenshotURL = data.url;
                 });
 
                 const results = data.paging.entities;
-                this.filler_group_contents =
-                    page > 1 ? this.filler_group_contents.concat(results) : [...results];
+                this.filler_group_contents = page > 1 ? this.filler_group_contents.concat(results) : [...results];
                 this.no_search_result = false;
             })
             .add(() => {
@@ -189,14 +180,7 @@ export class ViewFillersGroupComponent implements OnInit {
                     .delete_filler_contents(this.selected_filler)
                     .pipe(takeUntil(this._unsubscribe))
                     .subscribe((data: any) => {
-                        this.warningModal(
-                            'success',
-                            'Delete Filler',
-                            'Filler Content ' + data.message,
-                            '',
-                            '',
-                            false,
-                        );
+                        this.warningModal('success', 'Delete Filler', 'Filler Content ' + data.message, '', '', false);
                         this.ngOnInit();
                     });
             }
@@ -297,8 +281,7 @@ export class ViewFillersGroupComponent implements OnInit {
 
     allowedToDelete() {
         if (this._isDealer || this._isSubDealer) {
-            if (this.filler_group_data.createdBy != this._auth.current_user_value.user_id)
-                this.restricted = true;
+            if (this.filler_group_data.createdBy != this._auth.current_user_value.user_id) this.restricted = true;
             else this.restricted = false;
         } else if (this._isAdmin || this._isDealerAdmin) {
             this._user
@@ -308,10 +291,8 @@ export class ViewFillersGroupComponent implements OnInit {
                     if (UI_ROLE_DEFINITION.dealer in data.role) this.restricted = true;
                     else this.restricted = false;
 
-                    if (this._isDealerAdmin && UI_ROLE_DEFINITION.administrator in data.role)
-                        this.restricted = true;
-                    if (this._isAdmin && UI_ROLE_DEFINITION.dealeradmin in data.role)
-                        this.restricted = true;
+                    if (this._isDealerAdmin && UI_ROLE_DEFINITION.administrator in data.role) this.restricted = true;
+                    if (this._isAdmin && UI_ROLE_DEFINITION.dealeradmin in data.role) this.restricted = true;
                 });
         }
     }

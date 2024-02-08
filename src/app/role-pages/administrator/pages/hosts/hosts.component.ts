@@ -266,9 +266,7 @@ export class HostsComponent implements OnInit {
                         },
                         {
                             value: dealer.hosts[0] ? dealer.hosts[0].name : '---',
-                            link: dealer.hosts[0]
-                                ? '/administrator/hosts/' + dealer.hosts[0].hostId
-                                : null,
+                            link: dealer.hosts[0] ? '/administrator/hosts/' + dealer.hosts[0].hostId : null,
                             new_tab_link: true,
                             editable: false,
                             hidden: false,
@@ -330,9 +328,7 @@ export class HostsComponent implements OnInit {
             pageSize: 15,
         };
 
-        let request = this.has_sort
-            ? this._host.get_host_by_page(filters)
-            : this._host.get_host_fetch(filters);
+        let request = this.has_sort ? this._host.get_host_by_page(filters) : this._host.get_host_fetch(filters);
 
         request
             .pipe(takeUntil(this._unsubscribe))
@@ -423,8 +419,7 @@ export class HostsComponent implements OnInit {
             address: data.address,
             schedule:
                 storehours[this.now] && storehours[this.now].status
-                    ? storehours[this.now].periods[0].open == '' &&
-                      storehours[this.now].periods[0].close == ''
+                    ? storehours[this.now].periods[0].open == '' && storehours[this.now].periods[0].close == ''
                         ? 'Open 24 Hours'
                         : storehours[this.now].periods.map((i) => {
                               return i.open + ' - ' + i.close;
@@ -494,10 +489,7 @@ export class HostsComponent implements OnInit {
                     }
                 }
                 Object.keys(this.hosts_table_column).forEach((key) => {
-                    if (
-                        this.hosts_table_column[key].name &&
-                        !this.hosts_table_column[key].no_export
-                    ) {
+                    if (this.hosts_table_column[key].name && !this.hosts_table_column[key].no_export) {
                         header.push({
                             header: this.hosts_table_column[key].name,
                             key: this.hosts_table_column[key].key,
@@ -514,8 +506,7 @@ export class HostsComponent implements OnInit {
     }
 
     getDataForExport(tab: string): void {
-        const EXCEL_TYPE =
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 
         switch (tab) {
             case 'hosts':
@@ -593,11 +584,9 @@ export class HostsComponent implements OnInit {
 
                             if (time_start.getTime() > time_end.getTime()) {
                                 time_end = new Date(time_end.getTime() + 60 * 60 * 24 * 1000);
-                                this.diff_hours =
-                                    (time_end.getTime() - time_start.getTime()) / 1000;
+                                this.diff_hours = (time_end.getTime() - time_start.getTime()) / 1000;
                             } else {
-                                this.diff_hours =
-                                    (time_end.getTime() - time_start.getTime()) / 1000;
+                                this.diff_hours = (time_end.getTime() - time_start.getTime()) / 1000;
                             }
                         } else {
                             this.diff_hours = 86400;
@@ -669,12 +658,10 @@ export class HostsComponent implements OnInit {
     }
 
     private subscribeToStatusFilterClick() {
-        this._helper.onClickCardByStatus
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((response) => {
-                if (response.page !== 'hosts') return;
-                this.current_status_filter = response.value;
-                this.getHosts(1);
-            });
+        this._helper.onClickCardByStatus.pipe(takeUntil(this._unsubscribe)).subscribe((response) => {
+            if (response.page !== 'hosts') return;
+            this.current_status_filter = response.value;
+            this.getHosts(1);
+        });
     }
 }

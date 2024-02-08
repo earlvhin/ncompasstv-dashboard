@@ -70,15 +70,13 @@ export class ActivityTabComponent implements OnInit {
                         return;
                     }
 
-                    this.getUserById(res.paging.entities.map((a) => a.initiatedBy)).subscribe(
-                        (responses) => {
-                            this.created_by = responses;
+                    this.getUserById(res.paging.entities.map((a) => a.initiatedBy)).subscribe((responses) => {
+                        this.created_by = responses;
 
-                            const mappedData = this.mapToTableFormat(res.paging.entities);
-                            this.paging_data = res.paging;
-                            this.activity_data = [...mappedData];
-                        },
-                    );
+                        const mappedData = this.mapToTableFormat(res.paging.entities);
+                        this.paging_data = res.paging;
+                        this.activity_data = [...mappedData];
+                    });
                 },
                 (error) => {
                     console.error(error);
@@ -98,9 +96,7 @@ export class ActivityTabComponent implements OnInit {
     }
 
     getUserById(ids: any[]) {
-        const userObservables = ids.map((id) =>
-            this._user.get_user_by_id(id).pipe(takeUntil(this._unsubscribe)),
-        );
+        const userObservables = ids.map((id) => this._user.get_user_by_id(id).pipe(takeUntil(this._unsubscribe)));
 
         return forkJoin(userObservables);
     }

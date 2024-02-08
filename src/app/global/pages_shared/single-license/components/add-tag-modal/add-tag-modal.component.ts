@@ -50,17 +50,11 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
     }
 
     cannotAddTag(): boolean {
-        return (
-            this._tagNameControl.invalid ||
-            this._tagColorControl.invalid ||
-            this.isCheckingTagExistence
-        );
+        return this._tagNameControl.invalid || this._tagColorControl.invalid || this.isCheckingTagExistence;
     }
 
     cannotSubmitTags(): boolean {
-        return (
-            this._newTagsControl.value.length <= 0 && this._existingTagsControl.value.length <= 0
-        );
+        return this._newTagsControl.value.length <= 0 && this._existingTagsControl.value.length <= 0;
     }
 
     async onAddTag() {
@@ -71,10 +65,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
         const newTagsControl = this._newTagsControl.value as TAG[];
 
         try {
-            const tagExists = await this._tag
-                .checkTagName(name)
-                .pipe(takeUntil(this._unsubscribe))
-                .toPromise();
+            const tagExists = await this._tag.checkTagName(name).pipe(takeUntil(this._unsubscribe)).toPromise();
 
             if (tagExists) {
                 this.isCheckingTagExistence = false;
@@ -137,8 +128,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
 
         data.splice(index, 1);
 
-        if (type === 'existing')
-            this.tagMultiSelect.compareWith = (a, b) => a && b && a.tagId === b.tagId;
+        if (type === 'existing') this.tagMultiSelect.compareWith = (a, b) => a && b && a.tagId === b.tagId;
     }
 
     onSelectTagColor(value: string): void {
@@ -206,8 +196,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
                     if (message) return;
                     const tagsToRemove = this.currentTags;
                     const removedDuplicateTags = tags.filter(
-                        (result) =>
-                            !tagsToRemove.find((tagToRemove) => tagToRemove.tagId === result.tagId),
+                        (result) => !tagsToRemove.find((tagToRemove) => tagToRemove.tagId === result.tagId),
                     );
                     this.filteredTags.next(removedDuplicateTags);
                 },
@@ -236,8 +225,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
     }
 
     private async onDeleteTagFromOwner(tagId: string, ownerId: string): Promise<void> {
-        const response =
-            await this.openConfirmAPIRequestDialog('delete_tag_from_owner').toPromise();
+        const response = await this.openConfirmAPIRequestDialog('delete_tag_from_owner').toPromise();
 
         if (!response) return;
 
@@ -291,15 +279,13 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
                     const merged = this._existingTagsControl.value.concat(tags);
 
                     const searchResults: TAG[] = merged.filter(
-                        (tag, index, merged) =>
-                            merged.findIndex((mergedTag) => mergedTag.name === tag.name) === index,
+                        (tag, index, merged) => merged.findIndex((mergedTag) => mergedTag.name === tag.name) === index,
                     );
 
                     const tagsToRemove = this.currentTags;
 
                     const filtered = searchResults.filter(
-                        (result) =>
-                            !tagsToRemove.find((tagToRemove) => tagToRemove.tagId === result.tagId),
+                        (result) => !tagsToRemove.find((tagToRemove) => tagToRemove.tagId === result.tagId),
                     );
 
                     this.filteredTags.next(filtered);
@@ -325,9 +311,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
                     else this.getAllRecentTags();
                 }),
             )
-            .subscribe(
-                () => (this.tagMultiSelect.compareWith = (a, b) => a && b && a.tagId === b.tagId),
-            );
+            .subscribe(() => (this.tagMultiSelect.compareWith = (a, b) => a && b && a.tagId === b.tagId));
     }
 
     protected getFormControl(name: string) {

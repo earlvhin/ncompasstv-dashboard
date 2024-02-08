@@ -88,11 +88,7 @@
 
     <div class="row no-gutters">
         <div class="col-lg-12">
-            <mat-tab-group
-                dynamicHeight
-                #tabGroup
-                (selectedTabChange)="onTabChanged($event)"
-                class="custom-mat-tab">
+            <mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event)" class="custom-mat-tab">
                 <mat-tab id="hosts-view-tab" label="Hosts View">
                     <div *ngIf="tabGroup.selectedIndex === 0">
                         <div *ngIf="!initial_load; else loader">
@@ -101,9 +97,7 @@
                                     <div class="offset-lg-8 col-lg-4">
                                         <app-search-field
                                             *ngIf="!initial_load"
-                                            [form_title]="
-                                                'Search Host Name, Address, City, Postal Code, or #Tag'
-                                            "
+                                            [form_title]="'Search Host Name, Address, City, Postal Code, or #Tag'"
                                             [placeholder]="'Example: N-Compass'"
                                             [data_reference]="host_data"
                                             [primary_keyword]="'host_name'"
@@ -115,8 +109,7 @@
                                 <div class="row" *ngIf="!initial_load">
                                     <div class="col-lg-12">
                                         <ng-container *ngIf="!searching; else loader">
-                                            <mat-card
-                                                *ngIf="host_filtered_data.length > 0; else nodata">
+                                            <mat-card *ngIf="host_filtered_data.length > 0; else nodata">
                                                 <app-data-table
                                                     [table_columns]="host_table_column"
                                                     [table_data]="host_filtered_data"
@@ -128,9 +121,7 @@
                                                     [is_view_only]="is_view_only"
                                                     (update_info)="ngOnInit()"
                                                     (page_triggered)="getHosts($event)"
-                                                    (to_sort_column)="
-                                                        getHostColumnsAndOrder($event)
-                                                    ">
+                                                    (to_sort_column)="getHostColumnsAndOrder($event)">
                                                 </app-data-table>
                                             </mat-card>
                                         </ng-container>

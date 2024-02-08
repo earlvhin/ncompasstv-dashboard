@@ -5,10 +5,7 @@
                 <h1 class="page-title">{{ title }}</h1>
             </div>
             <div class="flex-even text-right">
-                <a
-                    [routerLink]="['/administrator/users/create-user/dealer']"
-                    target="_blank"
-                    *ngIf="!is_dealer_admin">
+                <a [routerLink]="['/administrator/users/create-user/dealer']" target="_blank" *ngIf="!is_dealer_admin">
                     <button
                         mat-button
                         mat-raised-button
@@ -52,9 +49,7 @@
                     title="Export Table to CSV"
                     *ngIf="current_tab === 'Dealer'">
                     <span
-                        class="{{
-                            !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin'
-                        }}"
+                        class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
                         [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
                     <span
                         class="ml-2 button_text_animation"

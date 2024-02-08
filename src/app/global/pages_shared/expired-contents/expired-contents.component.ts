@@ -127,11 +127,7 @@ export class ExpiredContentsComponent implements OnInit {
 
     saveForDeletion() {
         this._content.update_unused_contents(this.selection_for_delete).subscribe((data) => {
-            this.openConfirmationModal(
-                'success',
-                'Success!',
-                'Unused Contents list to be deleted updated!',
-            );
+            this.openConfirmationModal('success', 'Success!', 'Unused Contents list to be deleted updated!');
         });
     }
 

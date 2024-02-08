@@ -56,19 +56,11 @@ export class CreateEntryComponent implements OnInit {
                     this.form_invalid = false;
                     this._dialog_ref.close(data);
                     this.reload_page.emit(true);
-                    this.showConfirmationDialog(
-                        'success',
-                        'Entry Saved Successfully',
-                        'Click OK to continue',
-                    );
+                    this.showConfirmationDialog('success', 'Entry Saved Successfully', 'Click OK to continue');
                 },
                 (error) => {
                     this.form_invalid = false;
-                    this.showConfirmationDialog(
-                        'error',
-                        'Error while saving Entry',
-                        error.error.message,
-                    );
+                    this.showConfirmationDialog('error', 'Error while saving Entry', error.error.message);
                 },
             );
     }

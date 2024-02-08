@@ -10,9 +10,7 @@
                     [disabled]="workbook_generation"
                     title="Export Table to CSV">
                     <span
-                        class="{{
-                            !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin'
-                        }}"
+                        class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
                         [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
                     <span
                         class="ml-2 button_text_animation"
@@ -77,9 +75,7 @@
                 <i class="text-gray fa-5x far fa-file-alt"></i>
             </div>
             <h3 class="text-gray col-lg-12">No Results Found.</h3>
-            <span class="text-gray col-lg-12"
-                >Try adjusting your search to find what you're looking for.</span
-            >
+            <span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
         </mat-card>
     </div>
 </ng-template>

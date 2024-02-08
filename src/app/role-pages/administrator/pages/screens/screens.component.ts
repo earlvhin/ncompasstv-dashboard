@@ -82,22 +82,20 @@ export class ScreensComponent implements OnInit {
     pageRequested(e) {
         this.searching = true;
         this.screens = [];
-        this._screen
-            .get_screens(e, this.search_data, this.sort_column, this.sort_order)
-            .subscribe((data) => {
-                this.paging_data = data.paging;
-                if (data.paging.entities) {
-                    this.screens = this.screen_mapToUI(data.paging.entities);
-                    this.filtered_data = this.screen_mapToUI(data.paging.entities);
-                } else {
-                    if (this.search_data == '') {
-                        this.no_screen = true;
-                    }
-                    this.filtered_data = [];
+        this._screen.get_screens(e, this.search_data, this.sort_column, this.sort_order).subscribe((data) => {
+            this.paging_data = data.paging;
+            if (data.paging.entities) {
+                this.screens = this.screen_mapToUI(data.paging.entities);
+                this.filtered_data = this.screen_mapToUI(data.paging.entities);
+            } else {
+                if (this.search_data == '') {
+                    this.no_screen = true;
                 }
-                this.initial_load = false;
-                this.searching = false;
-            });
+                this.filtered_data = [];
+            }
+            this.initial_load = false;
+            this.searching = false;
+        });
     }
 
     getColumnsAndOrder(data) {
@@ -134,8 +132,7 @@ export class ScreensComponent implements OnInit {
                     new_tab_link: true,
                 },
                 {
-                    value:
-                        s.screenTypeName != '' ? this._titlecase.transform(s.screenTypeName) : '--',
+                    value: s.screenTypeName != '' ? this._titlecase.transform(s.screenTypeName) : '--',
                     link: null,
                     editable: true,
                     dropdown_edit: true,

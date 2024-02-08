@@ -6,10 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { AuthService } from '../../../services/auth-service/auth.service';
-import {
-    UI_ROLE_DEFINITION,
-    UI_ROLE_DEFINITION_TEXT,
-} from '../../../models/ui_role-definition.model';
+import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../../models/ui_role-definition.model';
 import { API_USER_DATA } from '../../../models/api_user-data.model';
 import { API_UPDATE_USER_INFO } from '../../../models/api_update-user-info.model';
 import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
@@ -61,9 +58,7 @@ export class CredentialSettingComponent implements OnInit {
             this._params.paramMap
                 .pipe(takeUntil(this._unsubscribe))
                 .subscribe(() =>
-                    this.getUserById(this._params.snapshot.params.data).add(() =>
-                        this.initializeOtherSettingsForm(),
-                    ),
+                    this.getUserById(this._params.snapshot.params.data).add(() => this.initializeOtherSettingsForm()),
                 ),
         );
     }
@@ -143,11 +138,7 @@ export class CredentialSettingComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 () => {
-                    this.openConfirmationModal(
-                        'success',
-                        'Success!',
-                        'Password changed succesfully',
-                    );
+                    this.openConfirmationModal('success', 'Success!', 'Password changed succesfully');
                     this.createActivity(changePassword);
                 },
                 (error: HttpErrorResponse) => {
@@ -186,12 +177,7 @@ export class CredentialSettingComponent implements OnInit {
             .update_user(body)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
-                () =>
-                    this.openConfirmationModal(
-                        'success',
-                        'Success',
-                        'Updated email notification settings',
-                    ),
+                () => this.openConfirmationModal('success', 'Success', 'Updated email notification settings'),
                 (error) => {
                     console.error(error);
                 },
@@ -214,10 +200,7 @@ export class CredentialSettingComponent implements OnInit {
                 this.password_validation_message = 'Password Passed';
             }
 
-            if (
-                this.passwordFormControl.new_password.value ==
-                this.passwordFormControl.re_password.value
-            ) {
+            if (this.passwordFormControl.new_password.value == this.passwordFormControl.re_password.value) {
                 this.password_match = true;
                 this.password_is_match = 'Password Match';
             } else {

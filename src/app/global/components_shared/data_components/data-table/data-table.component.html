@@ -18,14 +18,10 @@
 
                     <i
                         *ngIf="tc.sortable"
-                        class="sort cursor-pointer ml-2 fas fa-angle-{{
-                            sort_order == 'desc' ? 'down' : 'up'
-                        }}"
+                        class="sort cursor-pointer ml-2 fas fa-angle-{{ sort_order == 'desc' ? 'down' : 'up' }}"
                         (click)="sortByColumnName(tc.column, sort_order == 'desc' ? 'asc' : 'desc')"
                         data-toggle="tooltip"
-                        title="Sorted by {{
-                            sort_order == 'desc' ? 'Descending' : 'Ascending'
-                        }} Order">
+                        title="Sorted by {{ sort_order == 'desc' ? 'Descending' : 'Ascending' }} Order">
                     </i>
                 </th>
                 <ng-template #checkbox>
@@ -92,9 +88,7 @@
                         *ngIf="!data[d].hidden"
                         [ngClass]="!data[d].isImage && !data[d].show_tags ? 'flex' : 'white-space'"
                         [style.color]="data[d].color">
-                        <span
-                            class="text-center float-left"
-                            *ngIf="license_status_column && data[d].status">
+                        <span class="text-center float-left" *ngIf="license_status_column && data[d].status">
                             <ng-container *ngIf="d === 'piStatus'">
                                 <h1>HERE</h1>
                             </ng-container>
@@ -143,42 +137,24 @@
                                                 'new-order-color': data[d].is_new_order
                                             }">
                                             <ng-container>
-                                                <div
-                                                    *ngIf="
-                                                        !data[d].permission;
-                                                        else userWithPermission
-                                                    ">
-                                                    <span
-                                                        *ngIf="
-                                                            !data[d].compressed;
-                                                            else shortened_tooltip
-                                                        ">
-                                                        <div
-                                                            class="default-value-with-url d-flex align-items-center">
+                                                <div *ngIf="!data[d].permission; else userWithPermission">
+                                                    <span *ngIf="!data[d].compressed; else shortened_tooltip">
+                                                        <div class="default-value-with-url d-flex align-items-center">
                                                             <div class="value">
                                                                 {{ data[d].value }}
                                                             </div>
                                                             <ng-container
-                                                                *ngIf="
-                                                                    pagesWithStatusIndicator.includes(
-                                                                        page
-                                                                    )
-                                                                ">
+                                                                *ngIf="pagesWithStatusIndicator.includes(page)">
                                                                 <span>
                                                                     <i
                                                                         class="fas fa-circle"
                                                                         [ngClass]="
-                                                                            getStatusColor(
-                                                                                data.status.value
-                                                                            )
+                                                                            getStatusColor(data.status.value)
                                                                         "></i>
                                                                 </span>
                                                             </ng-container>
                                                             <ng-container
-                                                                *ngIf="
-                                                                    data[d].has_favorites &&
-                                                                    data[d].is_favorite
-                                                                ">
+                                                                *ngIf="data[d].has_favorites && data[d].is_favorite">
                                                                 <span>
                                                                     <i
                                                                         class="fas fa-star favorites"
@@ -221,42 +197,24 @@
                                                 'new-order-color': data[d].is_new_order
                                             }">
                                             <ng-container>
-                                                <div
-                                                    *ngIf="
-                                                        !data[d].permission;
-                                                        else userWithPermission
-                                                    ">
-                                                    <span
-                                                        *ngIf="
-                                                            !data[d].compressed;
-                                                            else shortened_tooltip
-                                                        ">
-                                                        <div
-                                                            class="default-value-with-url d-flex align-items-center">
+                                                <div *ngIf="!data[d].permission; else userWithPermission">
+                                                    <span *ngIf="!data[d].compressed; else shortened_tooltip">
+                                                        <div class="default-value-with-url d-flex align-items-center">
                                                             <div class="global-value">
                                                                 <p>{{ data[d].value }}</p>
                                                             </div>
                                                             <ng-container
-                                                                *ngIf="
-                                                                    pagesWithStatusIndicator.includes(
-                                                                        page
-                                                                    )
-                                                                ">
+                                                                *ngIf="pagesWithStatusIndicator.includes(page)">
                                                                 <span>
                                                                     <i
                                                                         class="fas fa-circle"
                                                                         [ngClass]="
-                                                                            getStatusColor(
-                                                                                data.status.value
-                                                                            )
+                                                                            getStatusColor(data.status.value)
                                                                         "></i>
                                                                 </span>
                                                             </ng-container>
                                                             <ng-container
-                                                                *ngIf="
-                                                                    data[d].has_favorites &&
-                                                                    data[d].is_favorite
-                                                                ">
+                                                                *ngIf="data[d].has_favorites && data[d].is_favorite">
                                                                 <span>
                                                                     <i
                                                                         class="fas fa-star favorites"
@@ -302,11 +260,7 @@
                                 <span
                                     class="fas fa-clock cursor-pointer text-gray-with-hover"
                                     placement="right"
-                                    [ngClass]="
-                                        data.status && data.status.value === 'A'
-                                            ? 'text-primary'
-                                            : 'text-gray'
-                                    "
+                                    [ngClass]="data.status && data.status.value === 'A' ? 'text-primary' : 'text-gray'"
                                     [ngbTooltip]="businessHoursTooltip">
                                 </span>
                             </span>
@@ -315,9 +269,7 @@
                                 <div class="text-left">
                                     <span class="sm-text"><b>Business Hours Today</b></span
                                     ><br />
-                                    <span class="xsm-text">{{
-                                        data[d].business_hours_label.date
-                                    }}</span
+                                    <span class="xsm-text">{{ data[d].business_hours_label.date }}</span
                                     ><br /><br />
                                     <span class="pt-2 xsm-text">
                                         <i class="fas fa-map-marker-alt"></i>
@@ -388,8 +340,7 @@
                                                     *ngIf="data[d].quantity; else default"
                                                     [innerHTML]="data[d].value"></span>
                                                 <ng-template #default>
-                                                    <ng-container
-                                                        *ngIf="!data[d].notes; else notesValue">
+                                                    <ng-container *ngIf="!data[d].notes; else notesValue">
                                                         {{ data[d].value }}
                                                     </ng-container>
                                                 </ng-template>
@@ -405,9 +356,7 @@
                                                     {{ data[d].value != '' ? data[d].value : '' }}
                                                     <button
                                                         class="fas fa-copy text-primary no-border"
-                                                        *ngIf="
-                                                            data[d].copy && data[d].value != '--'
-                                                        "
+                                                        *ngIf="data[d].copy && data[d].value != '--'"
                                                         (click)="copyToClipboard(data[d].value)"
                                                         title="Copy ID"></button>
                                                 </div>
@@ -415,9 +364,7 @@
                                                     PW - {{ data[d].password }}
                                                     <button
                                                         class="fas fa-copy text-primary no-border"
-                                                        *ngIf="
-                                                            data[d].copy && data[d].password != '--'
-                                                        "
+                                                        *ngIf="data[d].copy && data[d].password != '--'"
                                                         (click)="copyToClipboard(data[d].password)"
                                                         title="Copy Password"></button>
                                                 </div>
@@ -445,10 +392,7 @@
                                                     <a
                                                         class="dropdown-item md-text"
                                                         *ngFor="let host of data[d].host_list"
-                                                        [routerLink]="[
-                                                            '/administrator/hosts',
-                                                            host.hostId
-                                                        ]"
+                                                        [routerLink]="['/administrator/hosts', host.hostId]"
                                                         target="_blank">
                                                         {{ host.hostName }}
                                                     </a>
@@ -474,15 +418,11 @@
                                                     class="dropdown-menu bg-dark text-white"
                                                     aria-labelledby="quantity"
                                                     ngbDropdownMenu>
-                                                    <span class="sm-text pl-2"
-                                                        >QUANTITY BREAKDOWN:</span
-                                                    >
+                                                    <span class="sm-text pl-2">QUANTITY BREAKDOWN:</span>
                                                     <a
                                                         class="dropdown-item sm-text text-white"
                                                         *ngFor="let group of data[d].filler_groups"
-                                                        (click)="
-                                                            navigateToFiller(group.fillerGroupId)
-                                                        ">
+                                                        (click)="navigateToFiller(group.fillerGroupId)">
                                                         {{ group.quantity }} - {{ group.name }}
                                                     </a>
                                                 </div>
@@ -521,14 +461,8 @@
                         </ng-container>
 
                         <ng-template #notesValue>
-                            <p
-                                (click)="onShowNotes(data[d].value)"
-                                class="hoverable no-link-support">
-                                {{
-                                    data[d].value.length > 150
-                                        ? data[d].value.slice(0, 150) + '...'
-                                        : data[d].value
-                                }}
+                            <p (click)="onShowNotes(data[d].value)" class="hoverable no-link-support">
+                                {{ data[d].value.length > 150 ? data[d].value.slice(0, 150) + '...' : data[d].value }}
                             </p>
                         </ng-template>
 
@@ -544,9 +478,7 @@
                                     </a>
                                 </div>
                                 <div class="col-lg-12">
-                                    <span *ngIf="has_timestamp_beside_image">{{
-                                        data[d].value | screenshot
-                                    }}</span>
+                                    <span *ngIf="has_timestamp_beside_image">{{ data[d].value | screenshot }}</span>
                                 </div>
                             </ng-container>
 
@@ -560,18 +492,14 @@
                             class="naked-btn ml-2"
                             *ngIf="data[d].editable && !is_view_only"
                             (click)="editField(data[d], data[d].label, data[d].value)">
-                            <i
-                                class="clickable fa fa-pencil text-gray"
-                                title="Edit {{ data[d].label }}"></i>
+                            <i class="clickable fa fa-pencil text-gray" title="Edit {{ data[d].label }}"></i>
                         </button>
 
                         <button
                             class="naked-btn ml-2"
                             *ngIf="data[d].popview && data[d].value > 0"
                             (click)="viewListModal(data[d], data[d].label, data[d].value)">
-                            <i
-                                class="clickable fa fa-search-plus text-gray"
-                                title="View all {{ data[d].label }}"></i>
+                            <i class="clickable fa fa-search-plus text-gray" title="View all {{ data[d].label }}"></i>
                         </button>
                     </span>
                 </td>
@@ -605,9 +533,7 @@
                         class="fas fa-edit cursor-pointer mx-3 text-dark"
                         title="Edit"
                         *ngIf="
-                            feed_edit &&
-                                data.classification.value !== 'generated_feed' &&
-                                !is_view_only;
+                            feed_edit && data.classification.value !== 'generated_feed' && !is_view_only;
                             else edit_generated_feed
                         "
                         (click)="editFeed(data)">
@@ -654,9 +580,7 @@
                 </td>
 
                 <td class="p-3 control-toggle" *ngIf="billing_action">
-                    <i
-                        class="fas fa-money-bill-alt disabled xlg-text text-light-gray"
-                        title="Charge Account"></i>
+                    <i class="fas fa-money-bill-alt disabled xlg-text text-light-gray" title="Charge Account"></i>
                     <!-- <i class="fas fa-money-bill-alt cursor-pointer xlg-text text-danger" title="Charge Account" (click)="autoCharge(data.id.value)"></i> -->
                 </td>
 
@@ -682,9 +606,7 @@
 
                 <td class="p-3 control-toggle" *ngIf="transaction_action">
                     <a href="{{ data.link.value }}" target="_blank" *ngIf="data.link.value != null">
-                        <i
-                            class="fas fa-receipt normal-text text-gray clickable"
-                            title="View Transaction Receipt"></i>
+                        <i class="fas fa-receipt normal-text text-gray clickable" title="View Transaction Receipt"></i>
                     </a>
                 </td>
 
@@ -704,19 +626,13 @@
                         (click)="deletePlaylist(data.playlist_id.value)"></i>
                     <i
                         class="fas fa-file-excel cursor-pointer"
-                        [ngClass]="
-                            data.allow_export.value
-                                ? 'text-primary cursor-pointer'
-                                : 'text-gray cursor-void'
-                        "
+                        [ngClass]="data.allow_export.value ? 'text-primary cursor-pointer' : 'text-gray cursor-void'"
                         title="{{
                             data.allow_export.value
                                 ? 'Export contents to CSV'
                                 : 'Export not available, Playlist has no content.'
                         }}"
-                        (click)="
-                            exportPlaylist({ id: data.playlist_id.value, name: data.name.value })
-                        "></i>
+                        (click)="exportPlaylist({ id: data.playlist_id.value, name: data.name.value })"></i>
                     <i
                         class="fas fa-upload cursor-pointer mx-3"
                         *ngIf="!is_view_only"
@@ -763,9 +679,7 @@
                 </td>
 
                 <td class="p-3 control-toggle text-center" *ngIf="is_delete_enabled">
-                    <i
-                        class="fas fa-trash cursor-pointer color-danger"
-                        (click)="onDelete(data.s3FileName.value)"></i>
+                    <i class="fas fa-trash cursor-pointer color-danger" (click)="onDelete(data.s3FileName.value)"></i>
                 </td>
 
                 <td class="p-3 control-toggle text-center" *ngIf="content_metrics">
@@ -807,12 +721,10 @@
     <ng-container *ngIf="pagination_enabled">
         <div class="row" *ngIf="table_data.length > 0 && !paging_details">
             <div class="col-lg-12 text-center mt-4">
-                <pagination-controls (pageChange)="onPageChange($event)" class="sm-text">
-                </pagination-controls>
+                <pagination-controls (pageChange)="onPageChange($event)" class="sm-text"> </pagination-controls>
             </div>
         </div>
-        <app-pagination-field [paging_data]="paging_details" (get_page)="getPage($event)">
-        </app-pagination-field>
+        <app-pagination-field [paging_data]="paging_details" (get_page)="getPage($event)"> </app-pagination-field>
     </ng-container>
 </div>
 

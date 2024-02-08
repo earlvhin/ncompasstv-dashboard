@@ -280,11 +280,7 @@ export class CloneScreenComponent implements OnInit {
 
         if (page > 1) {
             this._host
-                .get_host_by_dealer_id(
-                    this.selected_dealer[0].dealerId,
-                    page,
-                    this.searchHostKeyword,
-                )
+                .get_host_by_dealer_id(this.selected_dealer[0].dealerId, page, this.searchHostKeyword)
                 .pipe(takeUntil(this._unsubscribe))
                 .subscribe(
                     (response) => {

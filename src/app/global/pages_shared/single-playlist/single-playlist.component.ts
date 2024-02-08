@@ -115,10 +115,7 @@ export class SinglePlaylistComponent implements OnInit {
     getPlaylistData(id: string) {
         this.playlist_updating = true;
 
-        if (
-            this.is_initial_load &&
-            (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')
-        ) {
+        if (this.is_initial_load && (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')) {
             this.setpageData(this._helper.singlePlaylistData);
             this.getPlaylistScreens(id).add(() => (this.playlist_updating = false));
             this.is_initial_load = false;
@@ -303,9 +300,7 @@ export class SinglePlaylistComponent implements OnInit {
         return this._playlist.onPushPlaylistUpdateToAllLicenses
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(() =>
-                this.playlist.licenses.forEach((license) =>
-                    this._socket.emit('D_update_player', license.licenseId),
-                ),
+                this.playlist.licenses.forEach((license) => this._socket.emit('D_update_player', license.licenseId)),
             );
     }
 

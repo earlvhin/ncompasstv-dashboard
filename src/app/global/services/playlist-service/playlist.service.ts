@@ -39,18 +39,12 @@ export class PlaylistService extends BaseService {
     }
 
     get_playlists(page, key) {
-        return this.getRequest(
-            `${this.getters.api_get_playlist}` + '?page=' + `${page}` + '&search=' + `${key}`,
-        );
+        return this.getRequest(`${this.getters.api_get_playlist}` + '?page=' + `${page}` + '&search=' + `${key}`);
     }
 
     get_all_playlists(page, key, column?, order?) {
         const base = `${this.getters.api_get_all_playlist}`;
-        const params = this.setUrlParams(
-            { page, search: key, sortColumn: column, sortOrder: order },
-            false,
-            true,
-        );
+        const params = this.setUrlParams({ page, search: key, sortColumn: column, sortOrder: order }, false, true);
         const url = `${base}${params}`;
         return this.getRequest(url);
     }
@@ -81,9 +75,7 @@ export class PlaylistService extends BaseService {
     }
 
     get_playlist_by_dealer_id_v2(id) {
-        return this.getRequest(
-            `${this.getters.api_get_playlist_by_dealer_id_table}?dealerId=${id}&pageSize=0`,
-        );
+        return this.getRequest(`${this.getters.api_get_playlist_by_dealer_id_table}?dealerId=${id}&pageSize=0`);
     }
 
     get_playlist_by_id(id) {

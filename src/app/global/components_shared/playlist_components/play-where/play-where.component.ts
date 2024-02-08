@@ -39,10 +39,7 @@ export class PlayWhereComponent implements OnInit {
     ngOnInit() {
         if (this.content_data) {
             this.content = this.content_data.content;
-            this.host_licenses =
-                this.content_data.host_license.length > 0
-                    ? this.content_data.host_license
-                    : undefined;
+            this.host_licenses = this.content_data.host_license.length > 0 ? this.content_data.host_license : undefined;
         }
 
         this.toggleEvent.subscribe((data) => {
@@ -77,13 +74,10 @@ export class PlayWhereComponent implements OnInit {
             // Add to blacklist array
             if (
                 this.inBlacklistData(event.blocklist_data).length > 0 &&
-                this.In_remove_in_blocklist(
-                    this.inBlacklistData(event.blocklist_data)[0].blacklistedContentId,
-                ) == 0
+                this.In_remove_in_blocklist(this.inBlacklistData(event.blocklist_data)[0].blacklistedContentId) == 0
             ) {
                 this.remove_in_blocklist.push({
-                    blacklistedContentId: this.inBlacklistData(event.blocklist_data)[0]
-                        .blacklistedContentId,
+                    blacklistedContentId: this.inBlacklistData(event.blocklist_data)[0].blacklistedContentId,
                 });
             }
 
@@ -97,13 +91,9 @@ export class PlayWhereComponent implements OnInit {
             // Remove in remove_in_blocklist
             if (
                 this.inBlacklistData(event.blocklist_data).length > 0 &&
-                this.In_remove_in_blocklist(
-                    this.inBlacklistData(event.blocklist_data)[0].blacklistedContentId,
-                ) > 0
+                this.In_remove_in_blocklist(this.inBlacklistData(event.blocklist_data)[0].blacklistedContentId) > 0
             ) {
-                this.RemoveIn_remove_in_blocklist(
-                    this.inBlacklistData(event.blocklist_data)[0].blacklistedContentId,
-                );
+                this.RemoveIn_remove_in_blocklist(this.inBlacklistData(event.blocklist_data)[0].blacklistedContentId);
             }
 
             // Add in add_in_blocklist
@@ -119,44 +109,35 @@ export class PlayWhereComponent implements OnInit {
         let blocklist_data = {
             incoming: this.add_in_blocklist,
             removing: this.remove_in_blocklist,
-            status:
-                this.add_in_blocklist.length > 0 || this.remove_in_blocklist.length > 0
-                    ? true
-                    : false,
+            status: this.add_in_blocklist.length > 0 || this.remove_in_blocklist.length > 0 ? true : false,
         };
 
         this.blocklist_changes_saved.emit(blocklist_data);
     }
 
     getBlacklistProperties() {
-        this._playlist
-            .get_blacklisted_by_id(this.content_data.content.playlistContentId)
-            .subscribe((data) => {
-                this.blacklist_data = data.blacklistsContents || [];
-                this.blacklist_data_ready.emit(this.blacklist_data);
+        this._playlist.get_blacklisted_by_id(this.content_data.content.playlistContentId).subscribe((data) => {
+            this.blacklist_data = data.blacklistsContents || [];
+            this.blacklist_data_ready.emit(this.blacklist_data);
 
-                if (!data.message) {
-                    const blacklisted = [];
+            if (!data.message) {
+                const blacklisted = [];
 
-                    this.blacklist_data.forEach((i) => {
-                        if (this.licenses.includes(i.licenseId)) {
-                            blacklisted.push(i);
-                        }
-                    });
+                this.blacklist_data.forEach((i) => {
+                    if (this.licenses.includes(i.licenseId)) {
+                        blacklisted.push(i);
+                    }
+                });
 
-                    this.blacklist_count.emit(blacklisted.length);
-                } else {
-                    this.blacklist_count.emit(0);
-                }
-            });
+                this.blacklist_count.emit(blacklisted.length);
+            } else {
+                this.blacklist_count.emit(0);
+            }
+        });
     }
 
     hasWhiteListed(e) {
-        if (
-            !e &&
-            this.add_in_blocklist.length == this.license_count &&
-            this.remove_in_blocklist.length == 0
-        ) {
+        if (!e && this.add_in_blocklist.length == this.license_count && this.remove_in_blocklist.length == 0) {
             this.whitelisted.emit(false);
         } else {
             this.whitelisted.emit(true);

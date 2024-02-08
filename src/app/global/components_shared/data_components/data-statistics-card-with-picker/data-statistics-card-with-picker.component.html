@@ -63,9 +63,7 @@
                 <div class="col-lg-1 p-0 pt-3 text-left">
                     <button
                         class="hidden-button white-bg fas fa-times"
-                        [ngClass]="
-                            selected_dealer ? 'text-danger cursor-pointer' : 'text-gray drop-cursor'
-                        "
+                        [ngClass]="selected_dealer ? 'text-danger cursor-pointer' : 'text-gray drop-cursor'"
                         title="Unselect Dealer"
                         [disabled]="!selected_dealer"
                         (click)="unselectDealer()"></button>
@@ -77,8 +75,7 @@
         <mat-card>
             <app-data-statistics-card
                 *ngIf="
-                    (generate_chart && !installation) ||
-                        (installation && total && is_valid_onchange);
+                    (generate_chart && !installation) || (installation && total && is_valid_onchange);
                     else no_content
                 "
                 [id]="'average-view'"

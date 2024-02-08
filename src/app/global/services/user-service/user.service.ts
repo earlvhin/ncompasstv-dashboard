@@ -80,24 +80,20 @@ export class UserService extends BaseService {
                 let result: any = {};
 
                 if ('user' in response) result = { ...response.user };
-                if ('dealer' in response)
-                    result = response.dealer.length && { ...result, dealer: response.dealer[0] };
+                if ('dealer' in response) result = response.dealer.length && { ...result, dealer: response.dealer[0] };
                 if ('advertiser' in response)
                     result = response.advertiser.length && {
                         ...result,
                         advertiser: response.advertiser[0],
                     };
-                if ('host' in response)
-                    result = response.host.length && { ...result, host: response.host[0] };
+                if ('host' in response) result = response.host.length && { ...result, host: response.host[0] };
 
                 return result;
             },
         );
     }
 
-    get_dealeradmin_dealers(
-        userId: string,
-    ): Observable<{ dealers: { businessName: string; dealerId: string }[] }> {
+    get_dealeradmin_dealers(userId: string): Observable<{ dealers: { businessName: string; dealerId: string }[] }> {
         const url = `${this.getters.api_get_dealer_admin_user}?userid=${userId}`;
         return this.getRequest(url);
     }

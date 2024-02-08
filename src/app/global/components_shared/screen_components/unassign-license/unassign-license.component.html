@@ -14,14 +14,7 @@
                 </li>
             </ul>
 
-            <button
-                mat-button
-                mat-raised-button
-                mat-dialog-close
-                class="theme-btn mr-2"
-                color="warn">
-                Cancel
-            </button>
+            <button mat-button mat-raised-button mat-dialog-close class="theme-btn mr-2" color="warn">Cancel</button>
 
             <button
                 mat-button
@@ -35,9 +28,7 @@
             </button>
 
             <ng-template #unassigning>
-                <button mat-button mat-raised-button class="theme-btn mr-3" [disabled]="true">
-                    Please Wait . . .
-                </button>
+                <button mat-button mat-raised-button class="theme-btn mr-3" [disabled]="true">Please Wait . . .</button>
             </ng-template>
         </div>
     </ng-container>
@@ -49,17 +40,10 @@
             <p class="mb-4 sm-text font-weight-md text-warning">
                 This will remove all screen data associated with this license
             </p>
-            <button
-                mat-button
-                mat-raised-button
-                class="theme-btn mr-2"
-                [mat-dialog-close]="false"
-                color="warn">
+            <button mat-button mat-raised-button class="theme-btn mr-2" [mat-dialog-close]="false" color="warn">
                 Cancel
             </button>
-            <button mat-button mat-raised-button class="theme-btn" (click)="unassignLicense()">
-                Continue
-            </button>
+            <button mat-button mat-raised-button class="theme-btn" (click)="unassignLicense()">Continue</button>
         </div>
     </ng-template>
 

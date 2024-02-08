@@ -66,8 +66,7 @@ export class FillersComponent implements OnInit {
         this.filler_group = [];
         switch (e.index) {
             case 0:
-                if (this.is_dealer_admin)
-                    this.getDealerAdminsDealerFillers(1, '', '', '', 'dealeradmin');
+                if (this.is_dealer_admin) this.getDealerAdminsDealerFillers(1, '', '', '', 'dealeradmin');
                 else this.getAllFillers(1, '');
                 break;
             case 1:
@@ -79,10 +78,8 @@ export class FillersComponent implements OnInit {
 
                 break;
             case 2:
-                if (this.is_dealer_admin)
-                    this.getDealerAdminsDealerFillers(1, '', '', '', 'dealer');
-                else if (this.is_dealer)
-                    this.getDealerAdminsDealerFillers(1, '', '', '', 'dealeradmin');
+                if (this.is_dealer_admin) this.getDealerAdminsDealerFillers(1, '', '', '', 'dealer');
+                else if (this.is_dealer) this.getDealerAdminsDealerFillers(1, '', '', '', 'dealeradmin');
                 else this.getDealers(1);
                 break;
             default:
@@ -332,14 +329,7 @@ export class FillersComponent implements OnInit {
     getDealerFillersAdminView(page, keyword?, sort_col?, sort_ord?) {
         if (page == 1) this.is_loading = true;
         this._filler
-            .get_filler_group_dealer_admin_view(
-                this.current_dealer_selected,
-                page,
-                keyword,
-                11,
-                sort_col,
-                sort_ord,
-            )
+            .get_filler_group_dealer_admin_view(this.current_dealer_selected, page, keyword, 11, sort_col, sort_ord)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data: any) => {
                 if (!data.message) {

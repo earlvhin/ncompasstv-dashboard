@@ -1,11 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {
-    CustomFieldGroup,
-    CustomFields,
-    FieldGroup,
-    Fields,
-    FieldsAPI,
-} from '../../models/host-custom-field-group';
+import { CustomFieldGroup, CustomFields, FieldGroup, Fields, FieldsAPI } from '../../models/host-custom-field-group';
 import { HostService } from '../../services/host-service/host.service';
 
 @Component({
@@ -27,16 +21,11 @@ export class HostCustomFieldsComponent implements OnInit {
     }
 
     addField() {
-        this.custom_host_fields.push(
-            new Fields(`Field ${this.custom_host_fields.length + 1}`, 'text', 128),
-        );
+        this.custom_host_fields.push(new Fields(`Field ${this.custom_host_fields.length + 1}`, 'text', 128));
     }
 
     createCustomField() {
-        const fieldgroup = new CustomFieldGroup(
-            new FieldGroup(this.field_group_name),
-            this.custom_host_fields,
-        );
+        const fieldgroup = new CustomFieldGroup(new FieldGroup(this.field_group_name), this.custom_host_fields);
 
         this._host.create_field_group(fieldgroup).subscribe(
             (data) => {},
@@ -57,9 +46,7 @@ export class HostCustomFieldsComponent implements OnInit {
                 this.edit_mode = true;
                 this.field_group_name = this.custom_fields[index].fieldGroupName;
                 data.fields.map((i) => {
-                    this.custom_host_fields.push(
-                        new Fields(i.fieldName, i.fieldType, i.fieldLength),
-                    );
+                    this.custom_host_fields.push(new Fields(i.fieldName, i.fieldType, i.fieldLength));
                 });
             },
             (error) => {

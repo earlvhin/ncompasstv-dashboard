@@ -1,13 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Subscription } from 'rxjs';
-import {
-    AdvertiserService,
-    AuthService,
-    HostService,
-    LicenseService,
-    ContentService,
-} from 'src/app/global/services';
+import { AdvertiserService, AuthService, HostService, LicenseService, ContentService } from 'src/app/global/services';
 import * as moment from 'moment';
 
 @Component({
@@ -125,23 +119,13 @@ export class DashboardComponent implements OnInit {
             this.status_graph_value.push(data.totalPending);
 
             if (this.licenses_details) {
+                this.temp_label.push(this.licenses_details.ad_value_label + ': ' + this.licenses_details.ad_value);
+                this.temp_label.push(this.licenses_details.menu_value_label + ': ' + this.licenses_details.menu_value);
                 this.temp_label.push(
-                    this.licenses_details.ad_value_label + ': ' + this.licenses_details.ad_value,
+                    this.licenses_details.closed_value_label + ': ' + this.licenses_details.closed_value,
                 );
                 this.temp_label.push(
-                    this.licenses_details.menu_value_label +
-                        ': ' +
-                        this.licenses_details.menu_value,
-                );
-                this.temp_label.push(
-                    this.licenses_details.closed_value_label +
-                        ': ' +
-                        this.licenses_details.closed_value,
-                );
-                this.temp_label.push(
-                    this.licenses_details.unassigned_value_label +
-                        ': ' +
-                        this.licenses_details.unassigned_value,
+                    this.licenses_details.unassigned_value_label + ': ' + this.licenses_details.unassigned_value,
                 );
                 this.temp_array.push(this.licenses_details.ad_value);
                 this.temp_array.push(this.licenses_details.menu_value);
@@ -165,15 +149,9 @@ export class DashboardComponent implements OnInit {
                     };
 
                     if (this.hosts_details) {
+                        this.host_label.push(this.hosts_details.active_label + ': ' + this.hosts_details.active_value);
                         this.host_label.push(
-                            this.hosts_details.active_label +
-                                ': ' +
-                                this.hosts_details.active_value,
-                        );
-                        this.host_label.push(
-                            this.hosts_details.inactive_label +
-                                ': ' +
-                                this.hosts_details.inactive_value,
+                            this.hosts_details.inactive_label + ': ' + this.hosts_details.inactive_value,
                         );
                         this.host_label.push(
                             this.hosts_details.for_installation_label +
@@ -215,9 +193,7 @@ export class DashboardComponent implements OnInit {
                     };
                     if (this.ad_licenses_details) {
                         this.ad_license_label.push(
-                            this.ad_licenses_details.hosts_label +
-                                ': ' +
-                                this.ad_licenses_details.hosts_value,
+                            this.ad_licenses_details.hosts_label + ': ' + this.ad_licenses_details.hosts_value,
                         );
                         this.ad_license_label.push(
                             this.ad_licenses_details.advertisers_label +
@@ -225,19 +201,13 @@ export class DashboardComponent implements OnInit {
                                 this.ad_licenses_details.advertisers_value,
                         );
                         this.ad_license_label.push(
-                            this.ad_licenses_details.fillers_label +
-                                ': ' +
-                                this.ad_licenses_details.fillers_value,
+                            this.ad_licenses_details.fillers_label + ': ' + this.ad_licenses_details.fillers_value,
                         );
                         this.ad_license_label.push(
-                            this.ad_licenses_details.feeds_label +
-                                ': ' +
-                                this.ad_licenses_details.feeds_value,
+                            this.ad_licenses_details.feeds_label + ': ' + this.ad_licenses_details.feeds_value,
                         );
                         this.ad_license_label.push(
-                            this.ad_licenses_details.others_label +
-                                ': ' +
-                                this.ad_licenses_details.others_value,
+                            this.ad_licenses_details.others_label + ': ' + this.ad_licenses_details.others_value,
                         );
                         this.ad_license_array.push(this.ad_licenses_details.hosts_value);
                         this.ad_license_array.push(this.ad_licenses_details.advertisers_value);

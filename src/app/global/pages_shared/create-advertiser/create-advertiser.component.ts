@@ -295,9 +295,7 @@ export class CreateAdvertiserComponent implements OnInit {
                     });
 
                     this.gen_categories_data = genCategories.map((category) => {
-                        category.generalCategory = this._titlecase.transform(
-                            category.generalCategory,
-                        );
+                        category.generalCategory = this._titlecase.transform(category.generalCategory);
                         return category;
                     });
 
@@ -439,9 +437,7 @@ export class CreateAdvertiserComponent implements OnInit {
         }
 
         this._fastedge
-            .get_google_business_profile(
-                this.googlePlaceFormControls.location.value + ', ' + country,
-            )
+            .get_google_business_profile(this.googlePlaceFormControls.location.value + ', ' + country)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (data) => {
@@ -494,9 +490,7 @@ export class CreateAdvertiserComponent implements OnInit {
             }
             if (sliced_address.length == 5) {
                 let state_zip = sliced_address[3].split(' ');
-                this.newAdvertiserFormControls.address.setValue(
-                    `${sliced_address[0]} ${sliced_address[1]}`,
-                );
+                this.newAdvertiserFormControls.address.setValue(`${sliced_address[0]} ${sliced_address[1]}`);
                 this.setCity(sliced_address[1]);
                 this.newAdvertiserFormControls.zip.setValue(`${state_zip[1]} ${state_zip[2]}`);
             }
@@ -618,16 +612,12 @@ export class CreateAdvertiserComponent implements OnInit {
 
     setToGeneralCategory(event: string) {
         this.no_category2 = true;
-        this.newAdvertiserFormControls.category2.setValue(
-            this._titlecase.transform(event).replace(/_/g, ' '),
-        );
+        this.newAdvertiserFormControls.category2.setValue(this._titlecase.transform(event).replace(/_/g, ' '));
     }
 
     setToCategory(event: string) {
         this.no_category = true;
-        this.newAdvertiserFormControls.category.setValue(
-            this._titlecase.transform(event).replace(/_/g, ' '),
-        );
+        this.newAdvertiserFormControls.category.setValue(this._titlecase.transform(event).replace(/_/g, ' '));
         this.getGeneralCategory(event);
     }
 
@@ -657,10 +647,7 @@ export class CreateAdvertiserComponent implements OnInit {
             this.city_selected = data;
         });
 
-        this.new_advertiser_form.controls['zip'].setValidators([
-            Validators.required,
-            Validators.maxLength(7),
-        ]);
+        this.new_advertiser_form.controls['zip'].setValidators([Validators.required, Validators.maxLength(7)]);
 
         this.new_advertiser_form.controls['zip'].valueChanges.subscribe((data) => {
             if (this.canada_selected) {

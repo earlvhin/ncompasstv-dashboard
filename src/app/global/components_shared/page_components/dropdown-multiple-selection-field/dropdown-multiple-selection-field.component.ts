@@ -36,16 +36,14 @@ export class DropdownMultipleSelectionFieldComponent implements OnInit {
 
     onRemoveDealer(index: number) {
         this.selectedDropdownControl.value.splice(index, 1);
-        if (!this.dealerAdmin)
-            this.dropdownMultipleSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
+        if (!this.dealerAdmin) this.dropdownMultipleSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
         else this.dropdownMultipleSelect.compareWith = (a, b) => a && b && a.userId === b.userId;
         this.onSubmit();
     }
 
     onClearDealer() {
         this.selectedDropdownControl.value.length = 0;
-        if (!this.dealerAdmin)
-            this.dropdownMultipleSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
+        if (!this.dealerAdmin) this.dropdownMultipleSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
         else this.dropdownMultipleSelect.compareWith = (a, b) => a && b && a.userId === b.userId;
         this.onSubmit();
     }
@@ -72,18 +70,12 @@ export class DropdownMultipleSelectionFieldComponent implements OnInit {
                         let filtered = [];
                         this.dropdownData.map((dealer) => {
                             if (!this.dealerAdmin) {
-                                if (
-                                    dealer.businessName
-                                        .toLowerCase()
-                                        .indexOf(keyword.toLowerCase()) > -1
-                                )
+                                if (dealer.businessName.toLowerCase().indexOf(keyword.toLowerCase()) > -1)
                                     filtered.push(dealer);
                             } else {
                                 if (
-                                    dealer.firstName.toLowerCase().indexOf(keyword.toLowerCase()) >
-                                        -1 ||
-                                    dealer.lastName.toLowerCase().indexOf(keyword.toLowerCase()) >
-                                        -1
+                                    dealer.firstName.toLowerCase().indexOf(keyword.toLowerCase()) > -1 ||
+                                    dealer.lastName.toLowerCase().indexOf(keyword.toLowerCase()) > -1
                                 )
                                     filtered.push(dealer);
                             }
@@ -94,11 +86,8 @@ export class DropdownMultipleSelectionFieldComponent implements OnInit {
             )
             .subscribe(() => {
                 if (!this.dealerAdmin)
-                    this.dropdownMultipleSelect.compareWith = (a, b) =>
-                        a && b && a.dealerId === b.dealerId;
-                else
-                    this.dropdownMultipleSelect.compareWith = (a, b) =>
-                        a && b && a.userId === b.userId;
+                    this.dropdownMultipleSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
+                else this.dropdownMultipleSelect.compareWith = (a, b) => a && b && a.userId === b.userId;
             });
     }
 }

@@ -26,13 +26,7 @@ export class API_CREATE_PLAYLIST_CONTENT {
     isFullScreen: number;
     duration: number;
 
-    constructor(
-        contentId: string,
-        handler: string,
-        seq: number,
-        fullscreen: number,
-        duration: number,
-    ) {
+    constructor(contentId: string, handler: string, seq: number, fullscreen: number, duration: number) {
         this.contentId = contentId;
         this.handlerId = handler;
         this.seq = seq;

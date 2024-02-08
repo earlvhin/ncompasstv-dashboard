@@ -112,10 +112,7 @@ export class NewDealerAdminComponent implements OnInit {
 
         this.subscription.add(
             this.new_admin_form.valueChanges.subscribe((data) => {
-                if (
-                    this.new_admin_form.valid &&
-                    this.f.password.value === this.f.re_password.value
-                ) {
+                if (this.new_admin_form.valid && this.f.password.value === this.f.re_password.value) {
                     this.form_invalid = false;
                 } else {
                     this.form_invalid = true;
@@ -144,10 +141,7 @@ export class NewDealerAdminComponent implements OnInit {
 
         this.subscription.add(
             this.f.re_password.valueChanges.subscribe((data) => {
-                if (
-                    this.f.password.value == this.f.re_password.value &&
-                    this.f.password.value.length !== 0
-                ) {
+                if (this.f.password.value == this.f.re_password.value && this.f.password.value.length !== 0) {
                     this.password_is_match = true;
                     this.password_match_msg = 'Password matches';
                 } else {
@@ -162,9 +156,7 @@ export class NewDealerAdminComponent implements OnInit {
     }
 
     onSelectDealer(dealers): void {
-        this.selected_dealer = this.dealers_list.filter((dealer) =>
-            dealers.includes(dealer.dealerId),
-        );
+        this.selected_dealer = this.dealers_list.filter((dealer) => dealers.includes(dealer.dealerId));
         // this.unfiltered_selected_dealer = this.dealers_list.filter((dealer) => dealers.includes(dealer.dealerId));
     }
 
@@ -204,10 +196,7 @@ export class NewDealerAdminComponent implements OnInit {
                         // this.searchData(keyword);
                         let filtered = [];
                         this.dealers_list.map((dealer) => {
-                            if (
-                                dealer.businessName.toLowerCase().indexOf(keyword.toLowerCase()) >
-                                -1
-                            ) {
+                            if (dealer.businessName.toLowerCase().indexOf(keyword.toLowerCase()) > -1) {
                                 filtered.push(dealer);
                             }
                         });
@@ -217,11 +206,7 @@ export class NewDealerAdminComponent implements OnInit {
                     }
                 }),
             )
-            .subscribe(
-                () =>
-                    (this.dealerMultiSelect.compareWith = (a, b) =>
-                        a && b && a.dealerId === b.dealerId),
-            );
+            .subscribe(() => (this.dealerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId));
     }
 
     getDealers() {

@@ -70,9 +70,7 @@ export class FeedService extends BaseService {
     create_widget_feed(body: CREATE_WIDGET_FEED) {
         const url = this.creators.api_new_feed;
 
-        body.embeddedscript = encodeURIComponent(body.embeddedscript)
-            .replace(/'/g, '%27')
-            .replace(/"/g, '%22');
+        body.embeddedscript = encodeURIComponent(body.embeddedscript).replace(/'/g, '%27').replace(/"/g, '%22');
 
         return this.postRequest(url, [body]);
     }
@@ -103,11 +101,7 @@ export class FeedService extends BaseService {
         message?: string;
     }> {
         const base = `${this.getters.api_get_feeds}`;
-        const params = this.setUrlParams(
-            { page, search: key, sortColumn: column, sortOrder: order },
-            false,
-            true,
-        );
+        const params = this.setUrlParams({ page, search: key, sortColumn: column, sortOrder: order }, false, true);
         const url = `${base}${params}`;
         return this.getRequest(url);
     }
@@ -128,9 +122,7 @@ export class FeedService extends BaseService {
     }
 
     get_feed_types() {
-        return this.getRequest(`${this.getters.api_get_feed_types}`).map(
-            (data: any) => data.feedTypes,
-        );
+        return this.getRequest(`${this.getters.api_get_feed_types}`).map((data: any) => data.feedTypes);
     }
 
     get_fillers() {
@@ -138,9 +130,7 @@ export class FeedService extends BaseService {
     }
 
     get_generated_feed_by_id(id: string) {
-        return this.getRequest(`${this.getters.api_get_generated_feed_by_id}${id}`).pipe(
-            map((data) => data.feed),
-        );
+        return this.getRequest(`${this.getters.api_get_generated_feed_by_id}${id}`).pipe(map((data) => data.feed));
     }
 
     get_feeds_total() {
@@ -212,10 +202,8 @@ export class FeedService extends BaseService {
             const colorValues = colorValuesEnclosed.split(',');
 
             for (let i = 0; i < colorValues.length; i++) {
-                if (i !== colorValues.length - 1 && colorValues[i].length > 3)
-                    return { invalidColor: true };
-                if (i === colorValues.length - 1 && parseFloat(colorValues[i]) > 1)
-                    return { invalidColor: true };
+                if (i !== colorValues.length - 1 && colorValues[i].length > 3) return { invalidColor: true };
+                if (i === colorValues.length - 1 && parseFloat(colorValues[i]) > 1) return { invalidColor: true };
             }
 
             return null;

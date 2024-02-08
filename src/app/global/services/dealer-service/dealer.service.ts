@@ -72,9 +72,7 @@ export class DealerService extends BaseService {
     }
 
     export_dealers(): Observable<API_EXPORT_DEALER[]> {
-        return this.getRequest(`${this.getters.export_dealers}`).map(
-            (response) => response.dealers,
-        );
+        return this.getRequest(`${this.getters.export_dealers}`).map((response) => response.dealers);
     }
 
     get_credit_cards(dealerId: string) {

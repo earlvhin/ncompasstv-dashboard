@@ -3,12 +3,7 @@
         <div class="col-lg-7">
             <div class="d-flex pt-3">
                 <div class="sort-file-type mr-2">
-                    <button
-                        mat-button
-                        mat-raised-button
-                        [matMenuTriggerFor]="menu"
-                        mat-raised-button
-                        class="theme-btn">
+                    <button mat-button mat-raised-button [matMenuTriggerFor]="menu" mat-raised-button class="theme-btn">
                         <span class="button-label">Media Type</span>
                         <span class="fas fa-angle-down ml-2"></span>
                     </button>
@@ -20,11 +15,7 @@
                 </div>
 
                 <div class="sort-by-date mr-2">
-                    <button
-                        mat-button
-                        mat-raised-button
-                        [matMenuTriggerFor]="orderSort"
-                        class="theme-btn">
+                    <button mat-button mat-raised-button [matMenuTriggerFor]="orderSort" class="theme-btn">
                         <span class="button-label">Order by Date</span>
                         <span class="fas fa-sort ml-2"></span>
                     </button>
@@ -66,18 +57,12 @@
 				</div> -->
 
                 <div class="flex-even form-field">
-                    <span
-                        *ngIf="search_form_invalid"
-                        class="invalidator text-danger font-weight-bold xsm-text">
+                    <span *ngIf="search_form_invalid" class="invalidator text-danger font-weight-bold xsm-text">
                         Type in at least 3 characters
                     </span>
                     <mat-form-field class="full-width" appearance="fill">
                         <mat-label>Search a File</mat-label>
-                        <input
-                            matInput
-                            type="text"
-                            placeholder="Search a File"
-                            [formControl]="search_control" />
+                        <input matInput type="text" placeholder="Search a File" [formControl]="search_control" />
                     </mat-form-field>
                     <span class="fas fa-search"></span>
                 </div>

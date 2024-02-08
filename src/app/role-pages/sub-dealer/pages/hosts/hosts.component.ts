@@ -17,12 +17,7 @@ import {
     UI_DEALER_HOSTS,
     UI_TABLE_LICENSE_BY_HOST,
 } from 'src/app/global/models';
-import {
-    AuthService,
-    AdvertiserService,
-    HostService,
-    LicenseService,
-} from 'src/app/global/services';
+import { AuthService, AdvertiserService, HostService, LicenseService } from 'src/app/global/services';
 import { UserSortModalComponent } from 'src/app/global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
 
 @Component({
@@ -413,8 +408,7 @@ export class HostsComponent implements OnInit {
                     }
                     this.workbook.xlsx.writeBuffer().then((file: any) => {
                         const blob = new Blob([file], { type: EXCEL_TYPE });
-                        const filename =
-                            this.currentUser.roleInfo.businessName + '-HOSTS' + '.xlsx';
+                        const filename = this.currentUser.roleInfo.businessName + '-HOSTS' + '.xlsx';
                         saveAs(blob, filename);
                     });
                     this.workbook_generation = false;
@@ -448,8 +442,7 @@ export class HostsComponent implements OnInit {
             address: data.hostAddress,
             schedule:
                 storehours[this.now] && storehours[this.now].status
-                    ? storehours[this.now].periods[0].open == '' &&
-                      storehours[this.now].periods[0].close == ''
+                    ? storehours[this.now].periods[0].open == '' && storehours[this.now].periods[0].close == ''
                         ? 'Open 24 Hours'
                         : storehours[this.now].periods.map((i) => {
                               return i.open + ' - ' + i.close;
@@ -530,19 +523,13 @@ export class HostsComponent implements OnInit {
                 { value: hosts.postalCode, link: null, editable: false, hidden: false },
                 { value: hosts.totalLicenses, link: null, editable: false, hidden: false },
                 {
-                    value: hosts.category
-                        ? this._title.transform(hosts.category.replace(/_/g, ' '))
-                        : '--',
+                    value: hosts.category ? this._title.transform(hosts.category.replace(/_/g, ' ')) : '--',
                     link: null,
                     editable: false,
                     hidden: true,
                 },
                 {
-                    value: hosts.status
-                        ? hosts.status === 'A'
-                            ? 'Active'
-                            : 'Inactive'
-                        : 'Inactive',
+                    value: hosts.status ? (hosts.status === 'A' ? 'Active' : 'Inactive') : 'Inactive',
                     link: null,
                     editable: false,
                     hidden: false,

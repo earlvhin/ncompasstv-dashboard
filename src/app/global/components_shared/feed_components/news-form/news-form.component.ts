@@ -31,12 +31,7 @@ export class NewsFormComponent implements OnInit, OnDestroy {
     selected_background_image: string;
     selected_banner_image: string;
 
-    font_family = [
-        { label: 'Helvetica' },
-        { label: 'Poppins' },
-        { label: 'Roboto' },
-        { label: 'Montserrat' },
-    ];
+    font_family = [{ label: 'Helvetica' }, { label: 'Poppins' }, { label: 'Roboto' }, { label: 'Montserrat' }];
 
     orientation = [{ label: 'Vertical' }, { label: 'Horizontal' }];
 
@@ -125,8 +120,7 @@ export class NewsFormComponent implements OnInit, OnDestroy {
             const validators: any[] = [];
 
             if (field.required) validators.push(Validators.required);
-            if (field.viewType === 'colorpicker')
-                validators.push(this._feed.validateColorFieldValues.bind(this));
+            if (field.viewType === 'colorpicker') validators.push(this._feed.validateColorFieldValues.bind(this));
             if (field.form_control_name === 'results') validators.push(Validators.max(10));
 
             Object.assign(formConfig, {

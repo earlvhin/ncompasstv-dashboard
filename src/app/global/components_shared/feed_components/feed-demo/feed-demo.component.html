@@ -6,11 +6,7 @@
     <div class="demo-wrapper">
         <ng-container *ngFor="let f of feed_items; let i = index">
             <div [ngClass]="i == 0 ? 'active' : 'hidden'">
-                <img
-                    class="banner-image"
-                    *ngIf="banner_image_data"
-                    [src]="banner_image_data"
-                    alt="banner-image" />
+                <img class="banner-image" *ngIf="banner_image_data" [src]="banner_image_data" alt="banner-image" />
 
                 <img class="responsive-size" [src]="f.image.file_url" [alt]="f.image.filename" />
 

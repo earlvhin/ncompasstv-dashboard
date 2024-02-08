@@ -170,10 +170,7 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
 
         this.subscription.add(
             this.f.re_password.valueChanges.subscribe(() => {
-                if (
-                    this.f.password.value == this.f.re_password.value &&
-                    this.f.password.value.length !== 0
-                ) {
+                if (this.f.password.value == this.f.re_password.value && this.f.password.value.length !== 0) {
                     this.password_is_match = true;
                     this.password_match_msg = 'Passwords match';
                 } else {
@@ -231,8 +228,7 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
             return false;
         }
 
-        const { firstName, lastName, contactNo, parentId, roleId, email, password, createdBy } =
-            form.value;
+        const { firstName, lastName, contactNo, parentId, roleId, email, password, createdBy } = form.value;
         const data = {
             firstName,
             lastName,

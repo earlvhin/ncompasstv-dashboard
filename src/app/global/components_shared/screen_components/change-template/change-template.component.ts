@@ -98,9 +98,7 @@ export class ChangeTemplateComponent implements OnInit, OnDestroy {
             templateZoneId: string;
             playlistId: string;
         }[];
-        const assignedZoneIndex = currentPlaylists.findIndex(
-            (data) => data.templateZoneId === zone.templateZoneId,
-        );
+        const assignedZoneIndex = currentPlaylists.findIndex((data) => data.templateZoneId === zone.templateZoneId);
         if (assignedZoneIndex !== -1) currentPlaylists.splice(assignedZoneIndex, 1);
         currentPlaylists.push({ templateZoneId, playlistId });
         control.setValue(currentPlaylists);
@@ -151,15 +149,8 @@ export class ChangeTemplateComponent implements OnInit, OnDestroy {
     }
 
     private setDialogData() {
-        const {
-            currentTemplate,
-            dealerPlaylists,
-            screenZonePlaylists,
-            playlistId,
-            playlistRoute,
-            screen,
-            templates,
-        } = this._dialog_data;
+        const { currentTemplate, dealerPlaylists, screenZonePlaylists, playlistId, playlistRoute, screen, templates } =
+            this._dialog_data;
         this.currentTemplate = currentTemplate;
         this.dealerPlaylists = dealerPlaylists;
         this.screenZonePlaylists = [...screenZonePlaylists];
@@ -173,14 +164,9 @@ export class ChangeTemplateComponent implements OnInit, OnDestroy {
         this.changeTemplateForm.controls.template.valueChanges
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((response: { name: string; id: string }) => {
-                this.selectedTemplate = this.templates.filter(
-                    (data) => data.template.templateId === response.id,
-                )[0];
+                this.selectedTemplate = this.templates.filter((data) => data.template.templateId === response.id)[0];
                 this.changeTemplateForm.removeControl('zones');
-                this.changeTemplateForm.addControl(
-                    'zones',
-                    this._form_builder.control([], Validators.required),
-                );
+                this.changeTemplateForm.addControl('zones', this._form_builder.control([], Validators.required));
 
                 // const selectedTemplateZones = this.selectedTemplate.templateZones;
 

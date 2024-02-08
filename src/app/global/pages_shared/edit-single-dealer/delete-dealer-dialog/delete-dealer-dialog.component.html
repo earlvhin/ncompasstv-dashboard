@@ -5,9 +5,7 @@
         </div>
     </div>
 
-    <div
-        mat-dialog-content
-        class="h-100 d-flex flex-column align-items-center justify-content-center text-center">
+    <div mat-dialog-content class="h-100 d-flex flex-column align-items-center justify-content-center text-center">
         <ng-container *ngIf="!hasSubmittedRequest; else request_submitted">
             <app-warning-animation></app-warning-animation>
 
@@ -33,16 +31,12 @@
 
             <ng-template #failed_to_delete>
                 <app-fail-animation></app-fail-animation>
-                <p class="mb-4 md-text">
-                    Whoops! Something went wrong. Please contact your system administrator
-                </p>
+                <p class="mb-4 md-text">Whoops! Something went wrong. Please contact your system administrator</p>
             </ng-template>
         </ng-template>
     </div>
 
-    <div
-        mat-dialog-actions
-        class="actions-container d-flex margin-left-auto justify-content-center">
+    <div mat-dialog-actions class="actions-container d-flex margin-left-auto justify-content-center">
         <ng-container *ngIf="!hasSubmittedRequest; else request_submitted_actions">
             <!-- SUBMIT BUTTON -->
             <button
@@ -55,20 +49,11 @@
             </button>
 
             <!-- CANCEL BUTTON -->
-            <button
-                mat-raised-button
-                color="warn"
-                [mat-dialog-close]="false"
-                [disabled]="isDeleting">
-                Cancel
-            </button>
+            <button mat-raised-button color="warn" [mat-dialog-close]="false" [disabled]="isDeleting">Cancel</button>
         </ng-container>
 
         <ng-template #request_submitted_actions>
-            <button
-                mat-raised-button
-                [mat-dialog-close]="isDeleteSuccessful ? true : false"
-                class="theme-btn">
+            <button mat-raised-button [mat-dialog-close]="isDeleteSuccessful ? true : false" class="theme-btn">
                 Dismiss
             </button>
         </ng-template>

@@ -397,9 +397,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         this.subscription.add(
             this._params.paramMap.subscribe(
                 () => {
-                    this.dealer_id = this.from_change
-                        ? this.dealer_id
-                        : this._params.snapshot.params.data;
+                    this.dealer_id = this.from_change ? this.dealer_id : this._params.snapshot.params.data;
                     this.getDealer();
                     this.getDealerAdvertiser(1);
                     this.getDealerHost(1);
@@ -446,14 +444,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     activateLicense(e): void {
         this.subscription.add(
             this._license.activate_license(e).subscribe(
-                () =>
-                    this.warningModal(
-                        'success',
-                        'License Activated',
-                        'License successfully activated.',
-                        '',
-                        '',
-                    ),
+                () => this.warningModal('success', 'License Activated', 'License successfully activated.', '', ''),
                 (error) => {
                     console.error(error);
                 },
@@ -633,14 +624,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     deactivateLicense(e): void {
         this.subscription.add(
             this._license.deactivate_license(e).subscribe(
-                () =>
-                    this.warningModal(
-                        'success',
-                        'License Deactivated',
-                        'License successfully deactivated.',
-                        '',
-                        '',
-                    ),
+                () => this.warningModal('success', 'License Deactivated', 'License successfully deactivated.', '', ''),
                 (error) => {
                     console.error(error);
                 },
@@ -658,12 +642,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         this.activity_data = [];
 
         this._dealer
-            .get_dealer_activity(
-                this.dealer_id,
-                this.sort_column_activity,
-                this.sort_order_activity,
-                page,
-            )
+            .get_dealer_activity(this.dealer_id, this.sort_column_activity, this.sort_order_activity, page)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (res) => {
@@ -672,16 +651,14 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                         this.activity_data = [];
                         return;
                     }
-                    this.getUserById(res.paging.entities.map((a) => a.initiatedBy)).subscribe(
-                        (responses) => {
-                            this.created_by = responses;
+                    this.getUserById(res.paging.entities.map((a) => a.initiatedBy)).subscribe((responses) => {
+                        this.created_by = responses;
 
-                            const mappedData = this.activity_mapToUI(res.paging.entities);
-                            this.paging_data = res.paging;
-                            this.activity_data = [...mappedData];
-                            this.reload_data = true;
-                        },
-                    );
+                        const mappedData = this.activity_mapToUI(res.paging.entities);
+                        this.paging_data = res.paging;
+                        this.activity_data = [...mappedData];
+                        this.reload_data = true;
+                    });
                 },
                 (error) => {
                     console.error(error);
@@ -691,9 +668,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     getUserById(ids: any[]) {
-        const userObservables = ids.map((id) =>
-            this._user.get_user_by_id(id).pipe(takeUntil(this._unsubscribe)),
-        );
+        const userObservables = ids.map((id) => this._user.get_user_by_id(id).pipe(takeUntil(this._unsubscribe)));
 
         return forkJoin(userObservables);
     }
@@ -1037,20 +1012,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         };
 
         if (this.license_card) {
-            this.temp_label.push(
-                this.license_card.ad_value_label + ': ' + this.license_card.ad_value,
-            );
-            this.temp_label.push(
-                this.license_card.menu_value_label + ': ' + this.license_card.menu_value,
-            );
-            this.temp_label.push(
-                this.license_card.closed_value_label + ': ' + this.license_card.closed_value,
-            );
-            this.temp_label.push(
-                this.license_card.unassigned_value_label +
-                    ': ' +
-                    this.license_card.unassigned_value,
-            );
+            this.temp_label.push(this.license_card.ad_value_label + ': ' + this.license_card.ad_value);
+            this.temp_label.push(this.license_card.menu_value_label + ': ' + this.license_card.menu_value);
+            this.temp_label.push(this.license_card.closed_value_label + ': ' + this.license_card.closed_value);
+            this.temp_label.push(this.license_card.unassigned_value_label + ': ' + this.license_card.unassigned_value);
             this.temp_array_value.push(this.license_card.ad_value);
             this.temp_array_value.push(this.license_card.menu_value);
             this.temp_array_value.push(this.license_card.closed_value);
@@ -1299,8 +1264,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
             address: data.hostAddress,
             schedule:
                 storehours[this.now] && storehours[this.now].status
-                    ? storehours[this.now].periods[0].open == '' &&
-                      storehours[this.now].periods[0].close == ''
+                    ? storehours[this.now].periods[0].open == '' && storehours[this.now].periods[0].close == ''
                         ? 'Open 24 Hours'
                         : storehours[this.now].periods.map((i) => {
                               return i.open + ' - ' + i.close;
@@ -1411,19 +1375,17 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     getDealerLicenseZone(page) {
         this.searching_license_zone = true;
         this.subscription.add(
-            this._dealer
-                .get_dealer_license_zone(this.search_data_license_zone, this.dealer_id, page)
-                .subscribe(
-                    (data) => {
-                        this.setZoneData(data);
-                    },
-                    (error) => {
-                        this.initial_load_zone = false;
-                        this.searching_license_zone = false;
-                        this.license_zone_data = [];
-                        this.license_zone_filtered_data = [];
-                    },
-                ),
+            this._dealer.get_dealer_license_zone(this.search_data_license_zone, this.dealer_id, page).subscribe(
+                (data) => {
+                    this.setZoneData(data);
+                },
+                (error) => {
+                    this.initial_load_zone = false;
+                    this.searching_license_zone = false;
+                    this.license_zone_data = [];
+                    this.license_zone_filtered_data = [];
+                },
+            ),
         );
     }
 
@@ -1468,8 +1430,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
                     if (response.paging.entities.length > 0) {
                         dealers.forEach((dealer, index) => {
-                            if (dealer.dealerId === this.dealer_id)
-                                response.paging.entities.splice(index, 1);
+                            if (dealer.dealerId === this.dealer_id) response.paging.entities.splice(index, 1);
                         });
                     }
 
@@ -1570,11 +1531,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
             'reboot_player',
             this._auth.current_user_value.user_id,
         );
-        const rebootPiActivity = new ACTIVITY_LOGS(
-            this.dealer_id,
-            'reboot_pi',
-            this._auth.current_user_value.user_id,
-        );
+        const rebootPiActivity = new ACTIVITY_LOGS(this.dealer_id, 'reboot_pi', this._auth.current_user_value.user_id);
         const deletedLicenseActivity = new ACTIVITY_LOGS(
             this.dealer_id,
             'deleted_multiple_license',
@@ -1622,13 +1579,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 case 'license_delete':
                     this.subscription.add(
                         this._license.delete_license(this.array_to_delete).subscribe((data) => {
-                            this.warningModal(
-                                'success',
-                                'License Deleted',
-                                'License successfully deleted.',
-                                '',
-                                '',
-                            ),
+                            this.warningModal('success', 'License Deleted', 'License successfully deleted.', '', ''),
                                 this.reloadLicense();
                         }),
                     );
@@ -1849,8 +1800,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     generateExcel(tab) {
-        const EXCEL_TYPE =
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
         let rowIndex = 1;
         for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
             this.worksheet.getRow(rowIndex).alignment = {
@@ -1877,13 +1827,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';
                 item.piStatus = item.piStatus == 0 ? 'Offline' : 'Online';
                 item.screenType = this._titlecase.transform(item.screenType);
-                item.contentsUpdated = this._date.transform(
-                    item.contentsUpdated,
-                    'MMM dd, yyyy h:mm a',
-                );
-                item.timeIn = item.timeIn
-                    ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a')
-                    : '';
+                item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
+                item.timeIn = item.timeIn ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a') : '';
                 item.installDate = this._date.transform(item.installDate, 'MMM dd, yyyy');
                 item.dateCreated = this._date.transform(item.dateCreated, 'MMM dd, yyyy');
                 item.internetType = this.getInternetType(item.internetType);
@@ -1891,8 +1836,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 item.isActivated = item.isActivated == 0 ? 'No' : 'Yes';
                 let parse_version = JSON.parse(item.appVersion);
                 item.ui = parse_version && parse_version.ui ? parse_version.ui : '1.0.0';
-                item.server =
-                    parse_version && parse_version.server ? parse_version.server : '1.0.0';
+                item.server = parse_version && parse_version.server ? parse_version.server : '1.0.0';
                 item.tagsToString = item.tags.join(',');
                 break;
             case 'Hosts':
@@ -1962,39 +1906,29 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         } else {
             let data_to_return: any = '';
             if (data.templateBackground != 'NO DATA') {
-                data_to_return =
-                    data_to_return + 'Background: ' + this.msToTime(data.templateBackground);
+                data_to_return = data_to_return + 'Background: ' + this.msToTime(data.templateBackground);
             }
             if (data.templateBottom != 'NO DATA') {
-                data_to_return =
-                    data_to_return + '\n' + 'Bottom: ' + this.msToTime(data.templateBottom);
+                data_to_return = data_to_return + '\n' + 'Bottom: ' + this.msToTime(data.templateBottom);
             }
             if (data.templateHorizontal != 'NO DATA') {
-                data_to_return =
-                    data_to_return + '\n' + 'Horizontal: ' + this.msToTime(data.templateHorizontal);
+                data_to_return = data_to_return + '\n' + 'Horizontal: ' + this.msToTime(data.templateHorizontal);
             }
             if (data.templateHorizontalSmall != 'NO DATA') {
                 data_to_return =
-                    data_to_return +
-                    '\n' +
-                    'Horizontal Small: ' +
-                    this.msToTime(data.templateHorizontalSmall);
+                    data_to_return + '\n' + 'Horizontal Small: ' + this.msToTime(data.templateHorizontalSmall);
             }
             if (data.templateLowerLeft != 'NO DATA') {
-                data_to_return =
-                    data_to_return + '\n' + 'Lower Left: ' + this.msToTime(data.templateLowerLeft);
+                data_to_return = data_to_return + '\n' + 'Lower Left: ' + this.msToTime(data.templateLowerLeft);
             }
             if (data.templateMain != 'NO DATA') {
-                data_to_return =
-                    data_to_return + '\n' + 'Main: ' + this.msToTime(data.templateMain);
+                data_to_return = data_to_return + '\n' + 'Main: ' + this.msToTime(data.templateMain);
             }
             if (data.templateUpperLeft != 'NO DATA') {
-                data_to_return =
-                    data_to_return + '\n' + 'Upper Left: ' + this.msToTime(data.templateUpperLeft);
+                data_to_return = data_to_return + '\n' + 'Upper Left: ' + this.msToTime(data.templateUpperLeft);
             }
             if (data.templateVertical != 'NO DATA') {
-                data_to_return =
-                    data_to_return + '\n' + 'Vertical: ' + this.msToTime(data.templateVertical);
+                data_to_return = data_to_return + '\n' + 'Vertical: ' + this.msToTime(data.templateVertical);
             }
             return data_to_return;
         }
@@ -2020,10 +1954,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         switch (tab) {
             case 'Licenses':
                 Object.keys(this.license_table_columns).forEach((key) => {
-                    if (
-                        this.license_table_columns[key].name &&
-                        !this.license_table_columns[key].no_export
-                    ) {
+                    if (this.license_table_columns[key].name && !this.license_table_columns[key].no_export) {
                         header.push({
                             header: this.license_table_columns[key].name,
                             key: this.license_table_columns[key].key,

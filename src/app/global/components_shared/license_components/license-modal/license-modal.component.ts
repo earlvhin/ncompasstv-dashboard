@@ -61,16 +61,14 @@ export class LicenseModalComponent implements OnInit {
 
     generateLicense() {
         this.is_submitted = true;
-        this._license
-            .generate_license(this.f.dealer.value, this.f.number_of_license.value)
-            .subscribe(
-                (data) => {
-                    this.license_generated = true;
-                },
-                (error) => {
-                    console.error(error);
-                },
-            );
+        this._license.generate_license(this.f.dealer.value, this.f.number_of_license.value).subscribe(
+            (data) => {
+                this.license_generated = true;
+            },
+            (error) => {
+                console.error(error);
+            },
+        );
     }
 
     searchData(e) {

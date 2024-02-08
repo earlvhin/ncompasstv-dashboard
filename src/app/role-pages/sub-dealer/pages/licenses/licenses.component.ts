@@ -199,9 +199,7 @@ export class LicensesComponent implements OnInit {
                         this.license_data_api = data.paging.entities;
                         this.license_data = this.licenseTable_mapToUI(this.license_data_api);
                         this.filtered_data = this.licenseTable_mapToUI(this.license_data_api);
-                        this.license_filtered_data = this.licenseTable_mapToUI(
-                            this.license_data_api,
-                        );
+                        this.license_filtered_data = this.licenseTable_mapToUI(this.license_data_api);
                     } else {
                         if (this.search_data_license == '') {
                             this.no_licenses = true;
@@ -360,8 +358,7 @@ export class LicensesComponent implements OnInit {
             address: data.hostAddress,
             schedule:
                 storehours[this.now] && storehours[this.now].status
-                    ? (storehours[this.now].periods[0].open == '' &&
-                          storehours[this.now].periods[0].close == '') ||
+                    ? (storehours[this.now].periods[0].open == '' && storehours[this.now].periods[0].close == '') ||
                       isAlmostOpenAllDay
                         ? 'Open 24 Hours'
                         : storehours[this.now].periods.map((i) => {
@@ -486,39 +483,29 @@ export class LicensesComponent implements OnInit {
         } else {
             var data_to_return: any = '';
             if (data.templateBackground != 'NO DATA') {
-                data_to_return =
-                    data_to_return + 'Background: ' + this.msToTime(data.templateBackground);
+                data_to_return = data_to_return + 'Background: ' + this.msToTime(data.templateBackground);
             }
             if (data.templateBottom != 'NO DATA') {
-                data_to_return =
-                    data_to_return + '\n' + 'Bottom: ' + this.msToTime(data.templateBottom);
+                data_to_return = data_to_return + '\n' + 'Bottom: ' + this.msToTime(data.templateBottom);
             }
             if (data.templateHorizontal != 'NO DATA') {
-                data_to_return =
-                    data_to_return + '\n' + 'Horizontal: ' + this.msToTime(data.templateHorizontal);
+                data_to_return = data_to_return + '\n' + 'Horizontal: ' + this.msToTime(data.templateHorizontal);
             }
             if (data.templateHorizontalSmall != 'NO DATA') {
                 data_to_return =
-                    data_to_return +
-                    '\n' +
-                    'Horizontal Small: ' +
-                    this.msToTime(data.templateHorizontalSmall);
+                    data_to_return + '\n' + 'Horizontal Small: ' + this.msToTime(data.templateHorizontalSmall);
             }
             if (data.templateLowerLeft != 'NO DATA') {
-                data_to_return =
-                    data_to_return + '\n' + 'Lower Left: ' + this.msToTime(data.templateLowerLeft);
+                data_to_return = data_to_return + '\n' + 'Lower Left: ' + this.msToTime(data.templateLowerLeft);
             }
             if (data.templateMain != 'NO DATA') {
-                data_to_return =
-                    data_to_return + '\n' + 'Main: ' + this.msToTime(data.templateMain);
+                data_to_return = data_to_return + '\n' + 'Main: ' + this.msToTime(data.templateMain);
             }
             if (data.templateUpperLeft != 'NO DATA') {
-                data_to_return =
-                    data_to_return + '\n' + 'Upper Left: ' + this.msToTime(data.templateUpperLeft);
+                data_to_return = data_to_return + '\n' + 'Upper Left: ' + this.msToTime(data.templateUpperLeft);
             }
             if (data.templateVertical != 'NO DATA') {
-                data_to_return =
-                    data_to_return + '\n' + 'Vertical: ' + this.msToTime(data.templateVertical);
+                data_to_return = data_to_return + '\n' + 'Vertical: ' + this.msToTime(data.templateVertical);
             }
             return data_to_return;
         }
@@ -542,10 +529,7 @@ export class LicensesComponent implements OnInit {
         this.workbook.created = new Date();
         this.worksheet = this.workbook.addWorksheet('Licenses');
         Object.keys(this.license_table_columns).forEach((key) => {
-            if (
-                this.license_table_columns[key].name &&
-                !this.license_table_columns[key].no_export
-            ) {
+            if (this.license_table_columns[key].name && !this.license_table_columns[key].no_export) {
                 header.push({
                     header: this.license_table_columns[key].name,
                     key: this.license_table_columns[key].key,

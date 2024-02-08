@@ -13,13 +13,7 @@ import {
     UI_ACTIVITY_LOGS,
     API_USER_DATA,
 } from 'src/app/global/models';
-import {
-    AdvertiserService,
-    ContentService,
-    HelperService,
-    DealerService,
-    UserService,
-} from 'src/app/global/services';
+import { AdvertiserService, ContentService, HelperService, DealerService, UserService } from 'src/app/global/services';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
 @Component({
@@ -102,12 +96,7 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
         this.activity_data = [];
 
         this._advertiser
-            .get_advertiser_activity(
-                this.advertiser_id,
-                this.sort_column_activity,
-                this.sort_order_activity,
-                page,
-            )
+            .get_advertiser_activity(this.advertiser_id, this.sort_column_activity, this.sort_order_activity, page)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (res) => {
@@ -117,16 +106,14 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
                         return;
                     }
 
-                    this.getUserByIds(res.paging.entities.map((a) => a.initiatedBy)).subscribe(
-                        (responses) => {
-                            this.created_by = responses;
+                    this.getUserByIds(res.paging.entities.map((a) => a.initiatedBy)).subscribe((responses) => {
+                        this.created_by = responses;
 
-                            const mappedData = this.activity_mapToUI(res.paging.entities);
-                            this.paging_data_activity = res.paging;
-                            this.activity_data = [...mappedData];
-                            this.reload_data = true;
-                        },
-                    );
+                        const mappedData = this.activity_mapToUI(res.paging.entities);
+                        this.paging_data_activity = res.paging;
+                        this.activity_data = [...mappedData];
+                        this.reload_data = true;
+                    });
                 },
                 (error) => {
                     console.error(error);
@@ -139,9 +126,7 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
         if (e) this.ngOnInit();
     }
     getUserByIds(ids: any[]) {
-        const userObservables = ids.map((id) =>
-            this._user.get_user_by_id(id).pipe(takeUntil(this._unsubscribe)),
-        );
+        const userObservables = ids.map((id) => this._user.get_user_by_id(id).pipe(takeUntil(this._unsubscribe)));
 
         return forkJoin(userObservables);
     }
@@ -176,10 +161,7 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
     private async getAdvertiser() {
         let dealer: API_DEALER;
 
-        if (
-            this.is_loading &&
-            (this.current_role === 'dealer' || this.current_role === 'sub-dealer')
-        ) {
+        if (this.is_loading && (this.current_role === 'dealer' || this.current_role === 'sub-dealer')) {
             this.advertiser = this._helper.singleAdvertiserData;
             this.setDescription();
 
@@ -207,9 +189,7 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
                     this.dateCreated = response.advertiser.dateCreated;
 
                     try {
-                        dealer = await this._dealer
-                            .get_dealer_by_id(advertiser.dealerId)
-                            .toPromise();
+                        dealer = await this._dealer.get_dealer_by_id(advertiser.dealerId).toPromise();
                     } catch (error) {
                         console.error(error);
                     }

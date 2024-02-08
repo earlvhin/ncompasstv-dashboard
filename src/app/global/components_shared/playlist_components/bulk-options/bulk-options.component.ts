@@ -40,36 +40,32 @@ export class BulkOptionsComponent implements OnInit {
         });
 
         localStorage.setItem('marked_content_backup', JSON.stringify(this.selected_content_backup));
-        this.saved_selected_content_backup = JSON.parse(
-            localStorage.getItem('marked_content_backup'),
-        );
+        this.saved_selected_content_backup = JSON.parse(localStorage.getItem('marked_content_backup'));
 
         this.subscription.add(
-            this.duration.valueChanges
-                .pipe(debounceTime(1000), distinctUntilChanged())
-                .subscribe((data) => {
-                    if (data >= 5) {
-                        this.selected_contents.forEach((i) => {
-                            if (i.fileType !== 'webm') {
-                                i.duration = data;
+            this.duration.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((data) => {
+                if (data >= 5) {
+                    this.selected_contents.forEach((i) => {
+                        if (i.fileType !== 'webm') {
+                            i.duration = data;
+                        }
+                    });
+                } else if (data == null || data == undefined || data == '') {
+                    this.saved_selected_content_backup.forEach((i) => {
+                        this.selected_contents.map((j) => {
+                            if (i.playlistContentId == j.playlistContentId) {
+                                j.duration = i.duration;
                             }
                         });
-                    } else if (data == null || data == undefined || data == '') {
-                        this.saved_selected_content_backup.forEach((i) => {
-                            this.selected_contents.map((j) => {
-                                if (i.playlistContentId == j.playlistContentId) {
-                                    j.duration = i.duration;
-                                }
-                            });
-                        });
-                    } else {
-                        this.selected_contents.forEach((i) => {
-                            if (i.fileType !== 'webm') {
-                                i.duration = 5;
-                            }
-                        });
-                    }
-                }),
+                    });
+                } else {
+                    this.selected_contents.forEach((i) => {
+                        if (i.fileType !== 'webm') {
+                            i.duration = 5;
+                        }
+                    });
+                }
+            }),
         );
     }
 

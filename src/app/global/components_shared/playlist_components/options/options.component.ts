@@ -1,24 +1,11 @@
-import {
-    AfterContentChecked,
-    ChangeDetectorRef,
-    Component,
-    Inject,
-    OnDestroy,
-    OnInit,
-} from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Subject } from 'rxjs';
 import * as moment from 'moment';
 
 import { environment as env } from 'src/environments/environment';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
-import {
-    API_CONTENT,
-    API_BLOCKLIST_CONTENT,
-    CREDITS,
-    PLAYLIST_CHANGES,
-    API_LICENSE,
-} from 'src/app/global/models';
+import { API_CONTENT, API_BLOCKLIST_CONTENT, CREDITS, PLAYLIST_CHANGES, API_LICENSE } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services';
 @Component({
     selector: 'app-options',
@@ -171,9 +158,7 @@ export class OptionsComponent implements OnInit, OnDestroy, AfterContentChecked 
     canEditCreditsField() {
         const { credits } = this.playlist_changes_data;
         if (credits.length <= 0) return true;
-        const sum = credits
-            .map((credit) => credit.balance)
-            .reduce((previous, current) => previous + current);
+        const sum = credits.map((credit) => credit.balance).reduce((previous, current) => previous + current);
         return sum === 0;
     }
 
@@ -255,8 +240,7 @@ export class OptionsComponent implements OnInit, OnDestroy, AfterContentChecked 
     }
 
     setDuration() {
-        this.content_data.duration =
-            this.content_data.duration < 5 ? 5 : this.content_data.duration;
+        this.content_data.duration = this.content_data.duration < 5 ? 5 : this.content_data.duration;
         this.contentDataChanged();
     }
 
@@ -321,12 +305,8 @@ export class OptionsComponent implements OnInit, OnDestroy, AfterContentChecked 
             return 0;
         }
 
-        const balance = data
-            .map((credit) => credit.balance)
-            .reduce((previous, current) => previous + current);
-        const credits = data
-            .map((credit) => credit.credits)
-            .reduce((previous, current) => previous + current);
+        const balance = data.map((credit) => credit.balance).reduce((previous, current) => previous + current);
+        const credits = data.map((credit) => credit.credits).reduce((previous, current) => previous + current);
         this.balance = credits;
         return balance;
     }
@@ -350,9 +330,7 @@ export class OptionsComponent implements OnInit, OnDestroy, AfterContentChecked 
             incoming = blocklist.incoming;
         }
 
-        const blackListedLicenseIds: string[] = this.blacklisted_content.map(
-            (content) => content.licenseId,
-        );
+        const blackListedLicenseIds: string[] = this.blacklisted_content.map((content) => content.licenseId);
         const toRemove = blackListedLicenseIds.concat(incoming.map((content) => content.licenseId));
 
         result = licenseIds.filter((id) => !toRemove.includes(id));

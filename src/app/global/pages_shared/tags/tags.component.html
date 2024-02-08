@@ -11,15 +11,13 @@
     <div class="row cards">
         <div class="col-lg" *ngIf="!_isDealer()">
             <div *ngIf="!isLoadingCount; else loading">
-                <app-data-card-count [data_value]="count.dealer" [data_label]="'Dealers'">
-                </app-data-card-count>
+                <app-data-card-count [data_value]="count.dealer" [data_label]="'Dealers'"> </app-data-card-count>
             </div>
         </div>
 
         <div class="col-lg">
             <div *ngIf="!isLoadingCount; else loading">
-                <app-data-card-count [data_value]="count.host" [data_label]="'Hosts'">
-                </app-data-card-count>
+                <app-data-card-count [data_value]="count.host" [data_label]="'Hosts'"> </app-data-card-count>
             </div>
         </div>
 
@@ -32,8 +30,7 @@
 
         <div class="col-lg">
             <div *ngIf="!isLoadingCount; else loading">
-                <app-data-card-count [data_value]="count.license" [data_label]="'Licenses'">
-                </app-data-card-count>
+                <app-data-card-count [data_value]="count.license" [data_label]="'Licenses'"> </app-data-card-count>
             </div>
         </div>
     </div>

@@ -80,10 +80,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 
     private getUserData() {
         // For Dealer or SubDealer Accounts
-        if (
-            this.is_initial_load &&
-            (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')
-        ) {
+        if (this.is_initial_load && (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')) {
             this.setPageData(this._helper.singleUserData);
             this.getUserSelectedRole(this._helper.singleUserData);
             this.initializeForms();
@@ -121,11 +118,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 () => {
-                    this.openConfirmationModal(
-                        'success',
-                        'Success!',
-                        'Password changed succesfully',
-                    );
+                    this.openConfirmationModal('success', 'Success!', 'Password changed succesfully');
                     this.ngOnInit();
                 },
                 (error) => {
@@ -140,8 +133,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
         }
 
         this.selected_dealers_control.value.length = 0;
-        if (this.dealerMultiSelect)
-            this.dealerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
+        if (this.dealerMultiSelect) this.dealerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
     }
 
     onDelete(userId: string): void {
@@ -275,11 +267,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 () => {
-                    this.openConfirmationModal(
-                        'success',
-                        'Success!',
-                        'User info changed succesfully',
-                    );
+                    this.openConfirmationModal('success', 'Success!', 'User info changed succesfully');
                     this.ngOnInit();
                 },
                 (error) => {
@@ -298,9 +286,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (response) => {
-                    this.initial_assigned_dealer_ids = Array.from(
-                        response.dealers.map((dealer) => dealer.dealerId),
-                    );
+                    this.initial_assigned_dealer_ids = Array.from(response.dealers.map((dealer) => dealer.dealerId));
                     this.dealers_form.patchValue({ dealers: response.dealers });
                     this.selected_dealers_control.patchValue([...response.dealers], {
                         emitEvent: false,
@@ -328,8 +314,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
                     this.selected_dealers_control.patchValue([...assignedDealers]);
 
                     setTimeout(() => {
-                        this.dealerMultiSelect.compareWith = (a, b) =>
-                            a && b && a.dealerId === b.dealerId;
+                        this.dealerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
                     }, 2000);
 
                     this.has_loaded_dealers_list = true;
@@ -354,13 +339,11 @@ export class SingleUserComponent implements OnInit, OnDestroy {
                         this.dealer_id = response.dealer.dealerId;
                     if (response.userRoles[0].roleId === UI_ROLE_DEFINITION.advertiser)
                         this.advertiser_id = response.advertiser.id;
-                    if (response.userRoles[0].roleId === UI_ROLE_DEFINITION.host)
-                        this.host_id = response.host.hostId;
+                    if (response.userRoles[0].roleId === UI_ROLE_DEFINITION.host) this.host_id = response.host.hostId;
 
                     const userData = response as API_USER_DATA;
                     this.user = userData;
-                    this.is_dealer_admin =
-                        userData.userRoles[0].roleId === UI_ROLE_DEFINITION.dealeradmin;
+                    this.is_dealer_admin = userData.userRoles[0].roleId === UI_ROLE_DEFINITION.dealeradmin;
                     this.dealer_admin_user_id = userData.userId;
 
                     this.setPageData(userData);
@@ -419,10 +402,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
             window.open(url, '_blank');
         } else if (this.advertiser_id) {
             const url = this._router.serializeUrl(
-                this._router.createUrlTree(
-                    [`/${this.roleRoute}/advertisers/${this.advertiser_id}`],
-                    {},
-                ),
+                this._router.createUrlTree([`/${this.roleRoute}/advertisers/${this.advertiser_id}`], {}),
             );
             window.open(url, '_blank');
         } else {
@@ -514,10 +494,8 @@ export class SingleUserComponent implements OnInit, OnDestroy {
         this.is_sub_dealer = roleName === 'Sub Dealer';
 
         // Setting up ids for dealer account redirects
-        if (data.userRoles[0].roleId === UI_ROLE_DEFINITION.dealer)
-            this.dealer_id = data.dealer.dealerId;
-        if (data.userRoles[0].roleId === UI_ROLE_DEFINITION.advertiser)
-            this.advertiser_id = data.advertiser.id;
+        if (data.userRoles[0].roleId === UI_ROLE_DEFINITION.dealer) this.dealer_id = data.dealer.dealerId;
+        if (data.userRoles[0].roleId === UI_ROLE_DEFINITION.advertiser) this.advertiser_id = data.advertiser.id;
         if (data.userRoles[0].roleId === UI_ROLE_DEFINITION.host) this.host_id = data.host.hostId;
     }
 
@@ -641,8 +619,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 
                 if (keyword && keyword.trim().length > 0) {
                     this.dealers_list = originalDealersList.filter(
-                        (dealer) =>
-                            dealer.businessName.toLowerCase().search(keyword.toLowerCase()) > -1,
+                        (dealer) => dealer.businessName.toLowerCase().search(keyword.toLowerCase()) > -1,
                     );
                 } else {
                     this.dealers_list = this.original_dealers;

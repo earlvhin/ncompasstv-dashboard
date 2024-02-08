@@ -37,9 +37,7 @@
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <mat-form-field class="full-width">
-                                            <mat-label>
-                                                Enter Playlist Name (Max Characters: 50)
-                                            </mat-label>
+                                            <mat-label> Enter Playlist Name (Max Characters: 50) </mat-label>
                                             <input
                                                 type="text"
                                                 matInput
@@ -50,9 +48,7 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <mat-form-field class="full-width">
-                                            <mat-label>
-                                                Describe This Playlist (Max Characters: 100)
-                                            </mat-label>
+                                            <mat-label> Describe This Playlist (Max Characters: 100) </mat-label>
                                             <input
                                                 type="text"
                                                 matInput
@@ -112,8 +108,7 @@
                         <div class="enable-floating mb-3" *ngIf="is_admin">
                             <mat-slide-toggle (change)="displayFloatingContent($event)">
                                 <span class="sm-text">
-                                    Display Floating Content (N-Compass Content or Unassigned
-                                    Content)
+                                    Display Floating Content (N-Compass Content or Unassigned Content)
                                 </span>
                             </mat-slide-toggle>
                         </div>
@@ -142,9 +137,7 @@
                                                 ">
                                                 <div class="mx-1">
                                                     <app-thumbnail-card
-                                                        [classification]="
-                                                            a.content_data.classification
-                                                        "
+                                                        [classification]="a.content_data.classification"
                                                         [filename]="a.content_data.title"
                                                         [file_url]="a.content_data.file_url"
                                                         [image_uri]="a.content_data.thumbnail"
@@ -153,17 +146,13 @@
                                                         [is_protected]="a.content_data.is_protected"
                                                         [dealer]="a.content_data.dealer_id"
                                                         [uuid]="a.content_data.uuid"
-                                                        (click)="
-                                                            mediaViewer_open(a, media_library, i)
-                                                        "
+                                                        (click)="mediaViewer_open(a, media_library, i)"
                                                         [content_id]="a.content_data.content_id"
                                                         (converted)="isDraggable($event, i)">
                                                     </app-thumbnail-card>
                                                 </div>
                                                 <!-- Drag Handle -->
-                                                <div
-                                                    class="example-handle position-absolute cursor-move"
-                                                    cdkDragHandle>
+                                                <div class="example-handle position-absolute cursor-move" cdkDragHandle>
                                                     <svg
                                                         width="24px"
                                                         fill="currentColor"
@@ -179,9 +168,7 @@
                                         </div>
                                     </div>
 
-                                    <div
-                                        class="row no-gutters p-0 mt-5"
-                                        *ngIf="media_library_api.paging">
+                                    <div class="row no-gutters p-0 mt-5" *ngIf="media_library_api.paging">
                                         <app-pagination-field
                                             [paging_data]="media_library_api.paging"
                                             (get_page)="pageRequested($event)">
@@ -201,8 +188,7 @@
                             </div>
                             <h3 class="text-gray col-lg-12">No Results Found.</h3>
                             <span class="text-gray col-lg-12"
-                                >Try adjusting your search or filter to find what you're looking
-                                for.</span
+                                >Try adjusting your search or filter to find what you're looking for.</span
                             >
                         </mat-card>
                     </div>
@@ -226,10 +212,7 @@
                         [cdkDropListData]="playlist_content"
                         (cdkDropListDropped)="drop($event)">
                         <ng-container *ngIf="playlist_content.length > 0; else no_data">
-                            <div
-                                class="example-box p-0"
-                                *ngFor="let a of playlist_content; let i = index"
-                                cdkDrag>
+                            <div class="example-box p-0" *ngFor="let a of playlist_content; let i = index" cdkDrag>
                                 <app-create-playlist-content
                                     [content]="a"
                                     [image_uri]="a.content_data.thumbnail"
@@ -250,16 +233,14 @@
 
     <ng-template #loading>
         <mat-card>
-            <div
-                class="text-center overflow-hidden d-flex align-items-center justify-content-center py-5">
+            <div class="text-center overflow-hidden d-flex align-items-center justify-content-center py-5">
                 <app-spinner></app-spinner>
             </div>
         </mat-card>
     </ng-template>
 
     <ng-template #no_data>
-        <div
-            class="h-100 d-flex align-items-center justify-content-center position-absolute no-content-yet">
+        <div class="h-100 d-flex align-items-center justify-content-center position-absolute no-content-yet">
             <div class="text-center border-dashed p-5">
                 <h2 class="mb-3"><span class="fas fa-images fa-2x"></span></h2>
                 <h3>New Playlist</h3>
@@ -275,8 +256,7 @@
                     <span class="fas fa-images fa-2x text-primary mb-3"></span>
                     <h3>No Dealer Selected</h3>
                     <p class="sm-text mb-3">
-                        Select a dealer to display content assigned to them or toggle floating
-                        content.
+                        Select a dealer to display content assigned to them or toggle floating content.
                     </p>
                 </div>
             </div>

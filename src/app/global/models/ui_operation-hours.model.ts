@@ -5,13 +5,7 @@ export class UI_OPERATION_DAYS {
     periods: UI_OPERATION_HOURS[];
     status: boolean;
 
-    constructor(
-        id: number,
-        label: string,
-        day: string,
-        periods: UI_OPERATION_HOURS[],
-        status: boolean,
-    ) {
+    constructor(id: number, label: string, day: string, periods: UI_OPERATION_HOURS[], status: boolean) {
         this.id = id;
         this.label = label;
         this.day = day;

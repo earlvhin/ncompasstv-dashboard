@@ -202,9 +202,7 @@ export class SingleScreenComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 () => {
-                    const license = this.screen.screen_license.filter(
-                        (i) => i.license_key.value === id,
-                    )[0];
+                    const license = this.screen.screen_license.filter((i) => i.license_key.value === id)[0];
 
                     this._socket.emit('D_activated', license.license_id.value);
                 },
@@ -225,10 +223,7 @@ export class SingleScreenComponent implements OnInit {
         dialog.afterClosed().subscribe(async (response: boolean) => {
             if (!response) return;
 
-            await this._router.navigate([
-                `/${this.roleRoute}/screens/`,
-                this._helper.singleScreenData.screen.screenId,
-            ]);
+            await this._router.navigate([`/${this.roleRoute}/screens/`, this._helper.singleScreenData.screen.screenId]);
             this.setPageData(this._helper.singleScreenData);
             this.getScreenLicenses(1);
             this.getScreenType();
@@ -292,8 +287,7 @@ export class SingleScreenComponent implements OnInit {
 
         // Structure Data to be sent
         const final_screen_info = {
-            screen:
-                this.edit_screen_info != undefined ? this.edit_screen_info : this.screen_info.value,
+            screen: this.edit_screen_info != undefined ? this.edit_screen_info : this.screen_info.value,
             screenZonePlaylists: this.edit_screen_zone_playlist,
         };
 
@@ -304,11 +298,7 @@ export class SingleScreenComponent implements OnInit {
             .subscribe(
                 () => {
                     this.no_changes = true;
-                    this.openConfirmationModal(
-                        'success',
-                        'Success!',
-                        'Screen successfully updated!',
-                    );
+                    this.openConfirmationModal('success', 'Success!', 'Screen successfully updated!');
                 },
                 (error) => {
                     console.error(error);
@@ -349,10 +339,7 @@ export class SingleScreenComponent implements OnInit {
             .get_playlist_by_dealer_id_v2(id)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
-                (response: {
-                    paging: PAGING;
-                    playlists: { playlists: API_PLAYLIST[]; contents: any }[];
-                }) => {
+                (response: { paging: PAGING; playlists: { playlists: API_PLAYLIST[]; contents: any }[] }) => {
                     const { entities } = response.paging;
                     const playlists = entities as API_PLAYLIST[];
                     this.dealer_playlist = playlists;
@@ -530,10 +517,7 @@ export class SingleScreenComponent implements OnInit {
             },
         };
 
-        const dialog: MatDialogRef<ChangeTemplateComponent> = this._dialog.open(
-            ChangeTemplateComponent,
-            config,
-        );
+        const dialog: MatDialogRef<ChangeTemplateComponent> = this._dialog.open(ChangeTemplateComponent, config);
 
         dialog.afterClosed().subscribe(
             (response: boolean | API_CHANGE_TEMPLATE) => {
@@ -546,10 +530,7 @@ export class SingleScreenComponent implements OnInit {
                     .pipe(takeUntil(this._unsubscribe))
                     .subscribe(
                         async (response) => {
-                            await this._router.navigate([
-                                `/${this.roleRoute}/screens/`,
-                                response.screenId,
-                            ]);
+                            await this._router.navigate([`/${this.roleRoute}/screens/`, response.screenId]);
                             const screenData = (await this._screen
                                 .get_screen_by_id(response.screenId)
                                 .toPromise()) as API_SINGLE_SCREEN;
@@ -597,9 +578,7 @@ export class SingleScreenComponent implements OnInit {
     // Playlist is selected
     playlistSelected(playlist_id: string, zone_id: string) {
         const currentZonePlaylists = Array.from(this.edit_screen_zone_playlist);
-        const toChangeIndex = currentZonePlaylists.findIndex(
-            (zonePlaylist) => zonePlaylist.templateZoneId === zone_id,
-        );
+        const toChangeIndex = currentZonePlaylists.findIndex((zonePlaylist) => zonePlaylist.templateZoneId === zone_id);
         if (playlist_id === currentZonePlaylists[toChangeIndex].playlistId) return;
         currentZonePlaylists[toChangeIndex].playlistId = playlist_id;
         this.edit_screen_zone_playlist = [...currentZonePlaylists];
@@ -648,9 +627,7 @@ export class SingleScreenComponent implements OnInit {
 
     // Watch changes of Screen Info Form
     watchScreenInfo() {
-        this.screen_info.valueChanges
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(() => (this.no_changes = false));
+        this.screen_info.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => (this.no_changes = false));
     }
 
     private checkMissingZones(templateId: string) {
@@ -666,8 +643,8 @@ export class SingleScreenComponent implements OnInit {
 
                 if (zonesCount === currentZoneCount) return;
 
-                const onlyCurrentZoneNames = this.screen.screen_zone_playlist.map(
-                    (screenZonePlaylist) => screenZonePlaylist.screen_template.name.toLowerCase(),
+                const onlyCurrentZoneNames = this.screen.screen_zone_playlist.map((screenZonePlaylist) =>
+                    screenZonePlaylist.screen_template.name.toLowerCase(),
                 );
 
                 const missingZones = Array.from(template.templateZones)
@@ -717,10 +694,7 @@ export class SingleScreenComponent implements OnInit {
     }
 
     private getScreen(id: string) {
-        if (
-            this.is_initial_load_for_dealer &&
-            (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')
-        ) {
+        if (this.is_initial_load_for_dealer && (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')) {
             this.setPageData(this._helper.singleScreenData);
             this.checkMissingZones(this._helper.singleScreenData.template.templateId);
             this.is_initial_load_for_dealer = false;
@@ -929,18 +903,9 @@ export class SingleScreenComponent implements OnInit {
                 },
             ],
             published_by: [{ value: this.screen.created_by, disabled: true }, Validators.required],
-            business_name: [
-                { value: this.screen.assigned_dealer, disabled: true },
-                Validators.required,
-            ],
-            assigned_host: [
-                { value: this.screen.assigned_host, disabled: true },
-                Validators.required,
-            ],
-            template: [
-                { value: this.screen.assigned_template, disabled: true },
-                Validators.required,
-            ],
+            business_name: [{ value: this.screen.assigned_dealer, disabled: true }, Validators.required],
+            assigned_host: [{ value: this.screen.assigned_host, disabled: true }, Validators.required],
+            template: [{ value: this.screen.assigned_template, disabled: true }, Validators.required],
             notes: [{ value: this.screen.notes ? this.screen.notes : '', disabled: true }],
         });
 

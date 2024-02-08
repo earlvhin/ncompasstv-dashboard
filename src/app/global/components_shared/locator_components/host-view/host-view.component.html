@@ -4,9 +4,7 @@
             <div class="col-lg-5">
                 <mat-form-field class="col-lg-5 full-width content-filter-dropdown">
                     <mat-label>Search Options</mat-label>
-                    <mat-select
-                        (selectionChange)="onSearchOption($event.value)"
-                        [(value)]="currentSearchOption">
+                    <mat-select (selectionChange)="onSearchOption($event.value)" [(value)]="currentSearchOption">
                         <mat-option [value]="'host'">Search by Host</mat-option>
                         <mat-option [value]="'state'">Search by State</mat-option>
                         <mat-option [value]="'category'">Search by Category</mat-option>
@@ -30,45 +28,29 @@
                         <p class="sm-text">LEGEND:</p>
                     </div>
                     <div class="d-flex align-items-center mr-2">
-                        <img
-                            class="map-status"
-                            src="assets/media-files/markers/online_all.png"
-                            alt="online-all" />
+                        <img class="map-status" src="assets/media-files/markers/online_all.png" alt="online-all" />
                         <p class="sm-text ml-1">Online</p>
                     </div>
                     <div class="d-flex align-items-center mr-2">
-                        <img
-                            class="map-status"
-                            src="assets/media-files/markers/pending.png"
-                            alt="pending-all" />
+                        <img class="map-status" src="assets/media-files/markers/pending.png" alt="pending-all" />
                         <p class="sm-text ml-1">Pending</p>
                     </div>
                     <div class="d-flex align-items-center mr-2">
-                        <img
-                            class="map-status"
-                            src="assets/media-files/markers/online_many.png"
-                            alt="online-all" />
+                        <img class="map-status" src="assets/media-files/markers/online_many.png" alt="online-all" />
                         <p class="sm-text ml-1">Up to 75% online</p>
                     </div>
                     <div class="d-flex align-items-center mr-2">
-                        <img
-                            class="map-status"
-                            src="assets/media-files/markers/online_few.png"
-                            alt="online-all" />
+                        <img class="map-status" src="assets/media-files/markers/online_few.png" alt="online-all" />
                         <p class="sm-text ml-1">50% or less online</p>
                     </div>
                     <div class="d-flex align-items-center mr-2">
-                        <img
-                            class="map-status"
-                            src="assets/media-files/markers/offline.png"
-                            alt="online-all" />
+                        <img class="map-status" src="assets/media-files/markers/offline.png" alt="online-all" />
                         <p class="sm-text ml-1">Offline</p>
                     </div>
                 </div>
                 <div class="col-lg-12 text-right p-0">
                     <p class="sm-text mt-2 p-0 text-danger">
-                        Note: If host is displayed but no marker is shown please check the
-                        coordinates of that host.
+                        Note: If host is displayed but no marker is shown please check the coordinates of that host.
                     </p>
                 </div>
             </div>

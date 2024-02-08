@@ -47,11 +47,7 @@
             title="Next">
             <i class="fa fa-chevron-right"></i>
         </button>
-        <button
-            [mat-dialog-close]="onCloseMediaViewer()"
-            class="close"
-            data-toggle="tooltip"
-            title="Close">
+        <button [mat-dialog-close]="onCloseMediaViewer()" class="close" data-toggle="tooltip" title="Close">
             <i class="fa fa-times"></i>
         </button>
     </div>
@@ -72,10 +68,7 @@
                 class="full-width height-100 p-absolute" />
             <div
                 class="frame-wrap"
-                *ngIf="
-                    (file_data.selected.file_type | isFeed) &&
-                    file_data.selected.classification !== 'live_stream'
-                ">
+                *ngIf="(file_data.selected.file_type | isFeed) && file_data.selected.classification !== 'live_stream'">
                 <img
                     class="full-width height-100 p-absolute"
                     [src]="feed_demo_url + file_data.selected.file_url | sanitize"
@@ -84,19 +77,14 @@
 
             <div
                 class="frame-wrap"
-                *ngIf="
-                    (file_data.selected.file_type | isFeed) &&
-                    file_data.selected.classification === 'live_stream'
-                ">
+                *ngIf="(file_data.selected.file_type | isFeed) && file_data.selected.classification === 'live_stream'">
                 <iframe
                     class="full-width height-100 p-absolute"
                     [src]="file_data.selected.file_url | sanitize"
                     frameborder="0"></iframe>
             </div>
         </div>
-        <div
-            class="media-info text-gray height-100"
-            *ngIf="file_data.selected.owner_name; else spinner">
+        <div class="media-info text-gray height-100" *ngIf="file_data.selected.owner_name; else spinner">
             <div class="details p-3">
                 <h4 class="word-break font-weight-bold">{{ file_data.selected.title }}</h4>
                 <p class="sm-text">
@@ -115,11 +103,7 @@
                             <span class="font-weight-bold">Role:</span>
                             {{ file_data.selected.owner_type }}
                         </p>
-                        <ng-container
-                            *ngIf="
-                                file_data.selected.classification === 'filler-v2';
-                                else notFiller
-                            ">
+                        <ng-container *ngIf="file_data.selected.classification === 'filler-v2'; else notFiller">
                             <p class="sm-text">
                                 <span class="font-weight-bold">Type:</span>
                                 {{ file_data.selected.file_type }} | Filler
@@ -138,20 +122,12 @@
                         </p>
                         <p class="sm-text">
                             <span class="font-weight-bold">Duration:</span>
-                            {{
-                                file_data.selected.duration != null
-                                    ? file_data.selected.duration
-                                    : '0'
-                            }}
+                            {{ file_data.selected.duration != null ? file_data.selected.duration : '0' }}
                             s
                         </p>
 
                         <div class="set-to-filler-toggle">
-                            <ng-container
-                                *ngIf="
-                                    file_data.selected.file_type !== 'feed' &&
-                                    page === 'media-library'
-                                ">
+                            <ng-container *ngIf="file_data.selected.file_type !== 'feed' && page === 'media-library'">
                                 <mat-slide-toggle
                                     (change)="onSetContentAsFiller($event)"
                                     labelPosition="before"

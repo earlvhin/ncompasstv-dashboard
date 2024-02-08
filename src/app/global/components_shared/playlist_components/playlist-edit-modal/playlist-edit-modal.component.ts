@@ -28,10 +28,7 @@ export class PlaylistEditModalComponent implements OnInit {
         this.edit_form = this._form.group({
             playlistId: [this._playlist_data.playlist.playlistId, Validators.required],
             dealerId: [this._playlist_data.playlist.dealerId, Validators.required],
-            playlistName: [
-                this._playlist_data.playlist.playlistName,
-                [Validators.required, Validators.maxLength(50)],
-            ],
+            playlistName: [this._playlist_data.playlist.playlistName, [Validators.required, Validators.maxLength(50)]],
             playlistDescription: [
                 this._playlist_data.playlist.playlistDescription,
                 [Validators.required, Validators.maxLength(100)],

@@ -41,10 +41,7 @@ export class FeedInfoComponent implements OnInit {
 
         this.formSubscription = this.new_feed_form.valueChanges.subscribe((f) => {
             this.hasUnsavedChanges =
-                f.feed_title ||
-                f.feed_type ||
-                f.description ||
-                (f.assign_to !== '' && !this.isDealer);
+                f.feed_title || f.feed_type || f.description || (f.assign_to !== '' && !this.isDealer);
             this.formChanges.emit(this.hasUnsavedChanges);
             this.updateHasUnsavedChanges(this.hasUnsavedChanges);
         });
@@ -116,10 +113,7 @@ export class FeedInfoComponent implements OnInit {
         if (this.editing) {
             config['feed_title'] = [feed.feedTitle, Validators.required];
             config['description'] = [feed.description];
-            config['feed_type'] = [
-                { value: feed.feedType.feedTypeId, disabled: true },
-                Validators.required,
-            ];
+            config['feed_type'] = [{ value: feed.feedType.feedTypeId, disabled: true }, Validators.required];
             config['assign_to'] = [{ value: null, disabled: true }];
             config['assign_to_id'] = [{ value: null, disabled: true }];
 

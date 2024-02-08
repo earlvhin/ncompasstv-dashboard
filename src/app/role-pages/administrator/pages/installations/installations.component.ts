@@ -141,8 +141,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
                     return;
                 }
 
-                const EXCEL_TYPE =
-                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+                const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 
                 this.licenses_to_export = response.paging.entities;
 
@@ -266,10 +265,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
                     past: isPast,
                 },
                 {
-                    value:
-                        license.screenTypeName != null
-                            ? this._titlecase.transform(license.screenTypeName)
-                            : '--',
+                    value: license.screenTypeName != null ? this._titlecase.transform(license.screenTypeName) : '--',
                     link: null,
                     editable: false,
                     hidden: false,

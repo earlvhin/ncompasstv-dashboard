@@ -1,8 +1,6 @@
 <div class="statistics-graph col-lg-12 p-0 flex mb-3">
     <div class="col-lg-5 pl-0">
-        <mat-card
-            class="card-graph"
-            *ngIf="hosts_graph_data_detailed.length > 0; else no_data_for_year">
+        <mat-card class="card-graph" *ngIf="hosts_graph_data_detailed.length > 0; else no_data_for_year">
             <app-data-statistics-card
                 *ngIf="value_graph_detailed.length > 0"
                 [id]="'total-view'"
@@ -66,9 +64,7 @@
                     <span class="text-primary font-weight-bold"> {{ state_selected }}</span>
                 </div>
                 <div class="col-lg-4 text-right" *ngIf="!loading_details">
-                    <span class="text-primary font-weight-bold">
-                        {{ raw_details.totalLicenses }} license(s)</span
-                    >
+                    <span class="text-primary font-weight-bold"> {{ raw_details.totalLicenses }} license(s)</span>
                 </div>
             </div>
         </div>
@@ -79,9 +75,7 @@
     <div class="col-lg-6 p-0" [hidden]="!has_data">
         <div id="host-map" class="white-bg pt-5 p-3" style="height: 600px; width: 100%"></div>
     </div>
-    <div
-        class="white-bg col-lg-6 p-0 vh-64 d-flex align-items-center justify-content-center"
-        *ngIf="!has_data">
+    <div class="white-bg col-lg-6 p-0 vh-64 d-flex align-items-center justify-content-center" *ngIf="!has_data">
         <app-spinner></app-spinner>
     </div>
 
@@ -113,36 +107,25 @@
                             id="outer-mat">
                             <mat-expansion-panel-header
                                 [ngClass]="
-                                    dealer.hostStates.length > 0
-                                        ? 'bleft-5-active'
-                                        : 'bleft-5-inactive prevent-click'
+                                    dealer.hostStates.length > 0 ? 'bleft-5-active' : 'bleft-5-inactive prevent-click'
                                 ">
                                 <mat-panel-title class="md-text col-lg-11 p-0">
                                     <p class="text-left col-lg-8">
                                         <span class="font-weight-bold">
                                             <a
-                                                [routerLink]="[
-                                                    '/administrator/dealers/',
-                                                    dealer.dealerId
-                                                ]"
+                                                [routerLink]="['/administrator/dealers/', dealer.dealerId]"
                                                 target="_blank"
                                                 >{{ dealer.businessName }}
-                                                <span
-                                                    class="text-primary"
-                                                    *ngIf="dealer.dealerIdAlias != ''"
+                                                <span class="text-primary" *ngIf="dealer.dealerIdAlias != ''"
                                                     >({{ dealer.dealerIdAlias }})</span
                                                 >
                                             </a>
                                         </span>
                                     </p>
-                                    <p class="md-text col-lg-4 text-left">
-                                        {{ dealer.totalLicenses }} license(s)
-                                    </p>
+                                    <p class="md-text col-lg-4 text-left">{{ dealer.totalLicenses }} license(s)</p>
                                 </mat-panel-title>
                                 <mat-panel-description class="md-text clickable">
-                                    <div
-                                        class="col-lg-1 p-0 pt-1 text-right"
-                                        *ngIf="dealer.hostStates.length > 0">
+                                    <div class="col-lg-1 p-0 pt-1 text-right" *ngIf="dealer.hostStates.length > 0">
                                         <div *ngIf="!example.expanded" class="ctm-accordion-icon">
                                             <i class="fas fa-plus"></i>
                                         </div>
@@ -153,9 +136,7 @@
                                 </mat-panel-description>
                             </mat-expansion-panel-header>
 
-                            <div
-                                class="col-lg-12 text-left pl-0 pr-0"
-                                *ngIf="dealer.hostStates.length > 0">
+                            <div class="col-lg-12 text-left pl-0 pr-0" *ngIf="dealer.hostStates.length > 0">
                                 <mat-expansion-panel
                                     (opened)="panelOpenState = true"
                                     (closed)="panelOpenState = false"
@@ -168,10 +149,7 @@
                                             <p class="text-left col-lg-8">
                                                 <span class="font-weight-bold">
                                                     <a
-                                                        [routerLink]="[
-                                                            '/administrator/hosts/',
-                                                            host.hostId
-                                                        ]"
+                                                        [routerLink]="['/administrator/hosts/', host.hostId]"
                                                         target="_blank"
                                                         >{{ host.hostName }}</a
                                                     >
@@ -185,34 +163,23 @@
                                             <div
                                                 class="col-lg-1 ml-2 p-0 pt-1 text-right"
                                                 *ngIf="host.licenses.length > 0">
-                                                <div
-                                                    *ngIf="!example2.expanded"
-                                                    class="ctm-accordion-icon">
+                                                <div *ngIf="!example2.expanded" class="ctm-accordion-icon">
                                                     <i class="fas fa-chevron-down"></i>
                                                 </div>
-                                                <div
-                                                    *ngIf="example2.expanded"
-                                                    class="ctm-accordion-icon">
+                                                <div *ngIf="example2.expanded" class="ctm-accordion-icon">
                                                     <i class="fas fa-chevron-down"></i>
                                                 </div>
                                             </div>
                                         </mat-panel-description>
                                     </mat-expansion-panel-header>
                                     <div class="description col-lg-12 p-0">
-                                        <div
-                                            class="col-lg-12"
-                                            *ngFor="let license of host.licenses">
+                                        <div class="col-lg-12" *ngFor="let license of host.licenses">
                                             <a
-                                                [routerLink]="[
-                                                    '/administrator/licenses/',
-                                                    license.licenseId
-                                                ]"
+                                                [routerLink]="['/administrator/licenses/', license.licenseId]"
                                                 target="_blank">
                                                 <i class="fas fa-circle xsm-text mr-3"></i>
                                                 {{ license.licenseKey }}
-                                                <span
-                                                    class="text-primary"
-                                                    *ngIf="license.alias != null"
+                                                <span class="text-primary" *ngIf="license.alias != null"
                                                     >({{ license.alias }})</span
                                                 >
                                             </a>

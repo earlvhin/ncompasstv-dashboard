@@ -1,6 +1,4 @@
-<mat-form-field
-    class="full-width custom-autocomplete p-relative"
-    [appearance]="isLocator ? 'fill' : 'standard'">
+<mat-form-field class="full-width custom-autocomplete p-relative" [appearance]="isLocator ? 'fill' : 'standard'">
     <mat-label [ngClass]="white_label ? 'text-white' : ''">{{ label }}</mat-label>
 
     <input
@@ -49,9 +47,7 @@
                     (click)="dataSelected($event)"
                     [attr.data-text]="s[primary_keyword]"
                     [attr.data-value]="s[key_of_value]">
-                    <span *ngIf="display_role">{{
-                        s[role] == 1 ? 'A- ' : s[role] == 2 ? 'D- ' : 'DA- '
-                    }}</span
+                    <span *ngIf="display_role">{{ s[role] == 1 ? 'A- ' : s[role] == 2 ? 'D- ' : 'DA- ' }}</span
                     >{{ s[primary_keyword] }}
                 </li>
                 <div *ngIf="loading_data">

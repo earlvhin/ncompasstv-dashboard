@@ -7,13 +7,11 @@
 
             <p class="sm-text">
                 <ng-container *ngIf="type === 'add'; else swap_content_sub_heading">
-                    Click a single or multiple content you wish to add to your playlist. New
-                    playlist content are added at the beginning.
+                    Click a single or multiple content you wish to add to your playlist. New playlist content are added
+                    at the beginning.
                 </ng-container>
 
-                <ng-template #swap_content_sub_heading>
-                    Select a content you want to swap
-                </ng-template>
+                <ng-template #swap_content_sub_heading> Select a content you want to swap </ng-template>
             </p>
         </div>
 
@@ -37,11 +35,7 @@
                     <div class="col-lg-7">
                         <mat-form-field class="full-width position-relative" appearance="fill">
                             <mat-label>Search a Filename or a Feed Title</mat-label>
-                            <input
-                                matInput
-                                type="text"
-                                placeholder="Search a File"
-                                (keyup)="searchContent($event)" />
+                            <input matInput type="text" placeholder="Search a File" (keyup)="searchContent($event)" />
                         </mat-form-field>
                     </div>
 
@@ -49,20 +43,14 @@
                         <div class="row">
                             <div class="col-lg-2">
                                 <mat-slide-toggle
-                                    [checked]="
-                                        dealer_has_no_contents && floating_contents.length > 0
-                                    "
+                                    [checked]="dealer_has_no_contents && floating_contents.length > 0"
                                     (change)="displayFloating($event)"
-                                    [disabled]="
-                                        dealer_has_no_contents && floating_contents.length > 0
-                                    ">
+                                    [disabled]="dealer_has_no_contents && floating_contents.length > 0">
                                 </mat-slide-toggle>
                             </div>
                             <div class="col-lg-10">
                                 <h6 class="sm-text">Display Floating Contents</h6>
-                                <p class="xsm-text">
-                                    Display all content that are not assigned to any Dealer
-                                </p>
+                                <p class="xsm-text">Display all content that are not assigned to any Dealer</p>
                             </div>
                         </div>
                     </div>
@@ -73,12 +61,8 @@
                         <div class="playlist-media-panel border material-shadow bg-light p-2 mb-4">
                             <ng-container *ngIf="media_files; else loading">
                                 <div *ngIf="!file_not_found; else not_found" class="h-100">
-                                    <div
-                                        class="row no-gutters"
-                                        *ngIf="media_files.length > 0; else loading">
-                                        <div
-                                            class="col-lg-2"
-                                            *ngFor="let content of media_files; let i = index">
+                                    <div class="row no-gutters" *ngIf="media_files.length > 0; else loading">
+                                        <div class="col-lg-2" *ngFor="let content of media_files; let i = index">
                                             <div
                                                 class="m-1 position-relative"
                                                 [ngClass]="isMarked(content) ? 'marked' : null">
@@ -86,8 +70,7 @@
                                                     [content]="content"
                                                     (converted)="videoConverted($event)"
                                                     (click)="
-                                                        (content.isConverted &&
-                                                            content.fileType == 'webm') ||
+                                                        (content.isConverted && content.fileType == 'webm') ||
                                                         content.fileType != 'webm'
                                                             ? addToMarked(content)
                                                             : contentNotReady()
@@ -110,8 +93,7 @@
                             <ng-template #not_found>
                                 <div class="row no-gutters">
                                     <div class="col-lg-12">
-                                        <div
-                                            class="full-width text-center loader-overlay h-100 text-center pt-5">
+                                        <div class="full-width text-center loader-overlay h-100 text-center pt-5">
                                             <ng-container
                                                 *ngIf="
                                                     media_files.length > 0 &&
@@ -120,16 +102,12 @@
                                                     else no_contents
                                                 ">
                                                 <h3>Content Not Found</h3>
-                                                <p class="sm-text mb-0">
-                                                    Please try another keyword
-                                                </p>
+                                                <p class="sm-text mb-0">Please try another keyword</p>
                                             </ng-container>
 
                                             <ng-template #no_contents>
                                                 <h3>No Contents Available</h3>
-                                                <p class="sm-text mb-0">
-                                                    This dealer has yet to add contents
-                                                </p>
+                                                <p class="sm-text mb-0">This dealer has yet to add contents</p>
                                             </ng-template>
                                         </div>
                                     </div>
@@ -153,17 +131,11 @@
                                 <mat-label class="font-weight-bold sm-text text-dark mb-2">
                                     Select Filler Owner:
                                 </mat-label>
-                                <mat-select
-                                    [(value)]="active_filler"
-                                    (valueChange)="getAllFillerGroups($event)">
-                                    <mat-option
-                                        [value]="1"
-                                        *ngIf="!_isDealer() && !_isDealerAdmin()">
+                                <mat-select [(value)]="active_filler" (valueChange)="getAllFillerGroups($event)">
+                                    <mat-option [value]="1" *ngIf="!_isDealer() && !_isDealerAdmin()">
                                         Admin Fillers
                                     </mat-option>
-                                    <mat-option [value]="3" *ngIf="!_isDealer()">
-                                        Dealer Admin Fillers
-                                    </mat-option>
+                                    <mat-option [value]="3" *ngIf="!_isDealer()"> Dealer Admin Fillers </mat-option>
                                     <mat-option [value]="2">
                                         {{ _isDealer() ? 'My Fillers' : 'Dealer Fillers' }}
                                     </mat-option>
@@ -174,13 +146,10 @@
                 </div>
                 <div class="row no-gutters">
                     <div class="col-lg-12">
-                        <div
-                            class="playlist-media-panel overflow-x-hidden border material-shadow bg-light p-2 mb-4">
+                        <div class="playlist-media-panel overflow-x-hidden border material-shadow bg-light p-2 mb-4">
                             <div *ngIf="!in_progress_saving_fillers; else savingFillers">
                                 <div *ngIf="!no_filler_groups; else nodata">
-                                    <div
-                                        class="row no-gutters"
-                                        *ngIf="filler_groups.length > 0; else loading">
+                                    <div class="row no-gutters" *ngIf="filler_groups.length > 0; else loading">
                                         <div class="col-lg-2" *ngFor="let data of filler_groups">
                                             <div class="row">
                                                 <div
@@ -202,43 +171,26 @@
                                                         </div>
                                                         <div class="row">
                                                             <div class="col-lg-12 text-center">
-                                                                <h5
-                                                                    class="text-white"
-                                                                    title="{{ data.name }}">
+                                                                <h5 class="text-white" title="{{ data.name }}">
                                                                     {{ data.name | slice: 0 : 15
-                                                                    }}{{
-                                                                        data.name.length > 15
-                                                                            ? '...'
-                                                                            : ''
-                                                                    }}
+                                                                    }}{{ data.name.length > 15 ? '...' : '' }}
                                                                 </h5>
                                                             </div>
                                                         </div>
                                                         <div class="row">
                                                             <div class="col-lg-12 text-center">
                                                                 <div class="sm-text text-white">
-                                                                    <span
-                                                                        >{{
-                                                                            data.totalFillers
-                                                                        }}
-                                                                        Fillers</span
-                                                                    >
+                                                                    <span>{{ data.totalFillers }} Fillers</span>
                                                                     <span
                                                                         class="fas fa-info info xsm-text ml-2 br-100"
-                                                                        [ngbTooltip]="
-                                                                            breakdownFillers
-                                                                        "></span>
+                                                                        [ngbTooltip]="breakdownFillers"></span>
                                                                 </div>
                                                                 <ng-template #breakdownFillers>
                                                                     <div
                                                                         class="sm-text"
-                                                                        *ngFor="
-                                                                            let group of data.fillerGroups
-                                                                        ">
+                                                                        *ngFor="let group of data.fillerGroups">
                                                                         {{ group.quantity }}
-                                                                        <span *ngIf="group.isPair"
-                                                                            >(In Pairs)</span
-                                                                        >
+                                                                        <span *ngIf="group.isPair">(In Pairs)</span>
                                                                         -
                                                                         {{ group.name }}
                                                                         <span></span>
@@ -260,19 +212,14 @@
                                             <i class="text-gray fa-5x far fa-file-alt"></i>
                                         </div>
                                         <h3 class="text-gray col-lg-12">No Data Found.</h3>
-                                        <span class="text-gray col-lg-12"
-                                            >Add Filler Feeds first.</span
-                                        >
+                                        <span class="text-gray col-lg-12">Add Filler Feeds first.</span>
                                     </div>
                                 </div>
                             </ng-template>
                             <ng-template #savingFillers>
-                                <div
-                                    class="loader-overlay bg-dark text-white text-center h-100 pt-5">
+                                <div class="loader-overlay bg-dark text-white text-center h-100 pt-5">
                                     <h4 class="mt-5">Saving Fillers</h4>
-                                    <span class="sm-text"
-                                        >Please wait, while we update your playlist contents.
-                                    </span>
+                                    <span class="sm-text">Please wait, while we update your playlist contents. </span>
                                     <mat-spinner [diameter]="100" class="mt-5"></mat-spinner>
                                 </div>
                             </ng-template>
@@ -334,20 +281,12 @@
                                 mat-button
                                 mat-raised-button
                                 class="theme-btn"
-                                [disabled]="
-                                    current_content.length == 0 || in_progress_saving_fillers
-                                "
+                                [disabled]="current_content.length == 0 || in_progress_saving_fillers"
                                 (click)="addFillerOnPlaylist()">
-                                {{
-                                    in_progress_saving_fillers
-                                        ? 'Saving Playlist ...'
-                                        : 'Add Filler to Playlist'
-                                }}
+                                {{ in_progress_saving_fillers ? 'Saving Playlist ...' : 'Add Filler to Playlist' }}
                                 <span
                                     [class]="
-                                        in_progress_saving_fillers
-                                            ? 'fas fa-spinner ml-2'
-                                            : 'fas fa-plus ml-2'
+                                        in_progress_saving_fillers ? 'fas fa-spinner ml-2' : 'fas fa-plus ml-2'
                                     "></span>
                             </button>
                         </div>
@@ -359,8 +298,7 @@
                 <div class="row" *ngIf="isActiveTab == 0">
                     <div class="col-lg-10 text-left">
                         <span class="sm-text" *ngIf="paging"
-                            >Loaded {{ media_files.length }} of
-                            {{ paging.totalEntities }} Assets</span
+                            >Loaded {{ media_files.length }} of {{ paging.totalEntities }} Assets</span
                         >
                     </div>
                     <div class="col-lg-2 text-right">

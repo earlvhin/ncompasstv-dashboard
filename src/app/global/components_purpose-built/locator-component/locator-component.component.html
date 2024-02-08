@@ -46,26 +46,12 @@
                                                 <h5>{{ schedule.day }}</h5>
                                             </th>
                                             <span *ngIf="schedule.periods[0]; else close">
-                                                <td
-                                                    *ngFor="
-                                                        let hrs of schedule.periods;
-                                                        let j = index
-                                                    ">
+                                                <td *ngFor="let hrs of schedule.periods; let j = index">
                                                     <h5 *ngIf="j > 0">&</h5>
-                                                    <h5
-                                                        *ngIf="
-                                                            hrs.open == '' &&
-                                                            hrs.close == '' &&
-                                                            schedule.status
-                                                        ">
+                                                    <h5 *ngIf="hrs.open == '' && hrs.close == '' && schedule.status">
                                                         - Open 24 hours
                                                     </h5>
-                                                    <h5
-                                                        *ngIf="
-                                                            hrs.open == '' &&
-                                                            hrs.close == '' &&
-                                                            !schedule.status
-                                                        ">
+                                                    <h5 *ngIf="hrs.open == '' && hrs.close == '' && !schedule.status">
                                                         - Closed
                                                     </h5>
                                                     <h5 *ngIf="hrs.open != '' && hrs.close != ''">
@@ -79,9 +65,7 @@
                                 </tr>
                             </div>
                             <h6 class="coordinates mt-3">
-                                <i class="fas fa-map-marker"></i> {{ host.latitude }},{{
-                                    host.longitude
-                                }}
+                                <i class="fas fa-map-marker"></i> {{ host.latitude }},{{ host.longitude }}
                             </h6>
                         </agm-info-window>
                     </agm-marker>
@@ -114,25 +98,17 @@
                                                         </ngx-mat-select-search>
                                                     </mat-option>
                                                     <div>
-                                                        <mat-option
-                                                            *ngFor="let data of data_reference"
-                                                            [value]="data">
+                                                        <mat-option *ngFor="let data of data_reference" [value]="data">
                                                             <ng-container [ngSwitch]="type">
-                                                                <ng-container
-                                                                    *ngSwitchCase="'category'">
+                                                                <ng-container *ngSwitchCase="'category'">
                                                                     <div>{{ data.category }}</div>
                                                                 </ng-container>
-                                                                <ng-container
-                                                                    *ngSwitchCase="'state'">
+                                                                <ng-container *ngSwitchCase="'state'">
                                                                     <div>{{ data.state }}</div>
                                                                 </ng-container>
                                                                 <ng-container *ngSwitchDefault>
                                                                     <div>
-                                                                        {{
-                                                                            data.hostName
-                                                                                ? data.hostName
-                                                                                : data.name
-                                                                        }}
+                                                                        {{ data.hostName ? data.hostName : data.name }}
                                                                     </div>
                                                                 </ng-container>
                                                             </ng-container>
@@ -170,22 +146,14 @@
                             <div class="row">
                                 <div class="col-lg-12 d-flex pr-3">
                                     <ng-container>
-                                        <div
-                                            class="list-container d-flex align-items-start flex-wrap">
+                                        <div class="list-container d-flex align-items-start flex-wrap">
                                             <div
-                                                *ngFor="
-                                                    let data of listControl.value;
-                                                    let i = index
-                                                "
+                                                *ngFor="let data of listControl.value; let i = index"
                                                 class="data-selected pl-2 pr-2 mr-2 mb-2 sm-text text-white bg-primary d-flex align-items-center">
                                                 <div class="name">
                                                     <ng-container [ngSwitch]="type">
                                                         <ng-container *ngSwitchDefault>
-                                                            {{
-                                                                data.hostName
-                                                                    ? data.hostName
-                                                                    : data.name
-                                                            }}
+                                                            {{ data.hostName ? data.hostName : data.name }}
                                                         </ng-container>
                                                         <ng-container *ngSwitchCase="'category'">
                                                             {{ data.category }}
@@ -195,9 +163,7 @@
                                                         </ng-container>
                                                     </ng-container>
                                                 </div>
-                                                <div
-                                                    class="remove-btn cursor-pointer"
-                                                    (click)="onRemoveResult(data)">
+                                                <div class="remove-btn cursor-pointer" (click)="onRemoveResult(data)">
                                                     <mat-icon>close</mat-icon>
                                                 </div>
                                             </div>
@@ -223,34 +189,25 @@
                                             <span class="text-gray">LICENSE(S)</span>
                                         </span>
                                         <br />
-                                        <span
-                                            class="fas fa-circle xsm-text text-primary mr-2"></span>
+                                        <span class="fas fa-circle xsm-text text-primary mr-2"></span>
                                         <span class="text-primary font-weight-bold"
-                                            >{{ onlineCount }}
-                                            <span class="text-gray">ONLINE</span></span
+                                            >{{ onlineCount }} <span class="text-gray">ONLINE</span></span
                                         >
                                         <span> | </span>
-                                        <span
-                                            class="fas fa-circle xsm-text text-pending mr-2"></span>
+                                        <span class="fas fa-circle xsm-text text-pending mr-2"></span>
                                         <span class="text-pending font-weight-bold"
-                                            >{{ pendingCount }}
-                                            <span class="text-gray">PENDING</span></span
+                                            >{{ pendingCount }} <span class="text-gray">PENDING</span></span
                                         >
                                         <span> | </span>
-                                        <span
-                                            class="fas fa-circle xsm-text text-danger mr-2"></span>
+                                        <span class="fas fa-circle xsm-text text-danger mr-2"></span>
                                         <span class="text-danger font-weight-bold"
-                                            >{{ offlineCount }}
-                                            <span class="text-gray">OFFLINE</span></span
+                                            >{{ offlineCount }} <span class="text-gray">OFFLINE</span></span
                                         >
                                     </div>
                                 </div>
-                                <ng-container
-                                    *ngIf="type === 'host'; else stateOrCategoryAccordion">
+                                <ng-container *ngIf="type === 'host'; else stateOrCategoryAccordion">
                                     <mat-accordion>
-                                        <mat-expansion-panel
-                                            *ngFor="let host of hosts"
-                                            class="mb-3">
+                                        <mat-expansion-panel *ngFor="let host of hosts" class="mb-3">
                                             <mat-expansion-panel-header class="mt-2">
                                                 <mat-panel-title
                                                     class="md-text p-0"
@@ -263,11 +220,7 @@
                                                                 alt="Status" />
                                                         </div>
                                                         <div class="host-name">
-                                                            {{
-                                                                host.hostName
-                                                                    ? host.hostName
-                                                                    : host.name
-                                                            }}
+                                                            {{ host.hostName ? host.hostName : host.name }}
                                                         </div>
                                                     </div>
                                                 </mat-panel-title>
@@ -284,35 +237,22 @@
                                                 <hr />
                                                 <mat-list>
                                                     <div class="d-flex flex-column">
-                                                        <div
-                                                            class="d-flex dealer-and-category pb-1">
-                                                            <div
-                                                                class="dealer d-flex flex-column sm-text mr-2">
-                                                                <span
-                                                                    class="font-weight-bold text-gray"
-                                                                    >DEALER</span
-                                                                >
+                                                        <div class="d-flex dealer-and-category pb-1">
+                                                            <div class="dealer d-flex flex-column sm-text mr-2">
+                                                                <span class="font-weight-bold text-gray">DEALER</span>
                                                                 {{ host.businessName }}
                                                             </div>
-                                                            <div
-                                                                class="category d-flex flex-column sm-text">
-                                                                <span
-                                                                    class="font-weight-bold text-gray"
-                                                                    >CATEGORY</span
-                                                                >
+                                                            <div class="category d-flex flex-column sm-text">
+                                                                <span class="font-weight-bold text-gray">CATEGORY</span>
                                                                 {{ host.generalCategory }} >
                                                                 {{ host.category }}
                                                             </div>
                                                         </div>
-                                                        <div
-                                                            class="d-flex state flex-column sm-text">
-                                                            <span class="font-weight-bold text-gray"
-                                                                >STATE</span
-                                                            >
+                                                        <div class="d-flex state flex-column sm-text">
+                                                            <span class="font-weight-bold text-gray">STATE</span>
                                                             {{ host.state }}
                                                         </div>
-                                                        <span
-                                                            class="font-weight-bold text-gray sm-text mt-2"
+                                                        <span class="font-weight-bold text-gray sm-text mt-2"
                                                             >LICENSES</span
                                                         >
                                                         <mat-list-item
@@ -322,22 +262,13 @@
                                                                 <div
                                                                     class="col-lg-12 d-flex p-0 xsm-text clickable"
                                                                     (click)="
-                                                                        openPageNewTab(
-                                                                            'licenses',
-                                                                            license.licenseId
-                                                                        )
+                                                                        openPageNewTab('licenses', license.licenseId)
                                                                     ">
                                                                     <span
                                                                         [ngClass]="{
-                                                                            'text-primary':
-                                                                                license.status ===
-                                                                                'online',
-                                                                            'text-danger':
-                                                                                license.status ===
-                                                                                'offline',
-                                                                            'text-pending':
-                                                                                license.status ===
-                                                                                'pending'
+                                                                            'text-primary': license.status === 'online',
+                                                                            'text-danger': license.status === 'offline',
+                                                                            'text-pending': license.status === 'pending'
                                                                         }">
                                                                         <i
                                                                             class="fas fa-circle xsm-text mr-3"></i> </span
@@ -373,35 +304,27 @@
                                                 </mat-panel-description>
                                             </mat-expansion-panel-header>
                                             <div class="row full-width">
-                                                <div
-                                                    class="col-lg-12"
-                                                    *ngFor="let host of data.hosts">
+                                                <div class="col-lg-12" *ngFor="let host of data.hosts">
                                                     <mat-expansion-panel
                                                         #categoryOrStatePanel
                                                         id="outer-mat"
                                                         class="mb-3 p-2"
                                                         hideToggle
                                                         (click)="onClickHostName(host.hostId)"
-                                                        [class.panelBorder]="
-                                                            categoryOrStatePanel.expanded
-                                                        ">
+                                                        [class.panelBorder]="categoryOrStatePanel.expanded">
                                                         <!-- [expanded]='h.hostId == clicked_marker_id'		 -->
-                                                        <mat-expansion-panel-header
-                                                            class="pr-0 pl-0 mt-2">
+                                                        <mat-expansion-panel-header class="pr-0 pl-0 mt-2">
                                                             <mat-panel-title class="md-text p-0">
                                                                 <div
                                                                     class="row flex-nowrap align-items-center m-0 w-100">
-                                                                    <div
-                                                                        class="col-lg-1 p-0 mr-2 ml-2 text-left">
+                                                                    <div class="col-lg-1 p-0 mr-2 ml-2 text-left">
                                                                         <img
                                                                             class="map-header-status"
                                                                             [src]="host.iconUrl"
                                                                             alt="Status" />
                                                                     </div>
-                                                                    <p
-                                                                        class="col-lg-9 p-0 mt-1 mr-2 text-left">
-                                                                        <span
-                                                                            class="font-weight-bold md-text">
+                                                                    <p class="col-lg-9 p-0 mt-1 mr-2 text-left">
+                                                                        <span class="font-weight-bold md-text">
                                                                             {{ host.hostName }}
                                                                         </span>
                                                                         <br />
@@ -411,23 +334,16 @@
                                                                             {{ host.postalCode }}
                                                                         </span>
                                                                     </p>
-                                                                    <div
-                                                                        class="col-lg-2 p-0 text-right">
+                                                                    <div class="col-lg-2 p-0 text-right">
                                                                         <div
-                                                                            *ngIf="
-                                                                                !categoryOrStatePanel.expanded
-                                                                            "
+                                                                            *ngIf="!categoryOrStatePanel.expanded"
                                                                             class="ctm-accordion-icon">
-                                                                            <i
-                                                                                class="fas fa-plus"></i>
+                                                                            <i class="fas fa-plus"></i>
                                                                         </div>
                                                                         <div
-                                                                            *ngIf="
-                                                                                categoryOrStatePanel.expanded
-                                                                            "
+                                                                            *ngIf="categoryOrStatePanel.expanded"
                                                                             class="ctm-accordion-icon">
-                                                                            <i
-                                                                                class="fas fa-minus"></i>
+                                                                            <i class="fas fa-minus"></i>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -436,29 +352,21 @@
                                                         <div class="pt-2">
                                                             <div
                                                                 class="host-licenses-list"
-                                                                *ngIf="
-                                                                    host.licenses.length > 0;
-                                                                    else no_licenses_text
-                                                                ">
+                                                                *ngIf="host.licenses.length > 0; else no_licenses_text">
                                                                 <div class="row">
                                                                     <div
                                                                         class="col-xs-6 mr-3"
-                                                                        *ngFor="
-                                                                            let license of host.licenses
-                                                                        ">
+                                                                        *ngFor="let license of host.licenses">
                                                                         <div>
                                                                             <span
                                                                                 class="fas fa-circle mr-1 sm-text"
                                                                                 [ngClass]="{
                                                                                     'text-primary':
-                                                                                        license.status ===
-                                                                                        'online',
+                                                                                        license.status === 'online',
                                                                                     'text-danger':
-                                                                                        license.status ===
-                                                                                        'offline',
+                                                                                        license.status === 'offline',
                                                                                     'text-pending':
-                                                                                        license.status ===
-                                                                                        'pending'
+                                                                                        license.status === 'pending'
                                                                                 }">
                                                                             </span>
                                                                             <a
@@ -470,8 +378,7 @@
                                                                                 class="clickable">
                                                                                 {{
                                                                                     license.alias &&
-                                                                                    license.alias
-                                                                                        .length > 0
+                                                                                    license.alias.length > 0
                                                                                         ? license.alias
                                                                                         : license.licenseKey
                                                                                 }}

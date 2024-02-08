@@ -25,9 +25,7 @@
                         Assign Licenses
                         <span class="fas fa-check ml-2"></span>
                     </button>
-                    <button mat-button mat-raised-button mat-dialog-close class="theme-btn">
-                        Cancel
-                    </button>
+                    <button mat-button mat-raised-button mat-dialog-close class="theme-btn">Cancel</button>
                 </div>
 
                 <ng-template #fake_buttons>
@@ -35,9 +33,7 @@
                         Assign Licenses
                         <span class="fas fa-check ml-2"></span>
                     </button>
-                    <button mat-button mat-raised-button mat-dialog-close class="theme-btn">
-                        Cancel
-                    </button>
+                    <button mat-button mat-raised-button mat-dialog-close class="theme-btn">Cancel</button>
                 </ng-template>
             </ng-container>
         </ng-container>
@@ -48,16 +44,13 @@
             <div class="py-5">
                 <h3 class="mb-0">No Available License</h3>
                 <p class="sm-text mb-4">Purchase a license to continue</p>
-                <button mat-button mat-raised-button mat-dialog-close class="theme-btn mr-3">
-                    OK
-                </button>
+                <button mat-button mat-raised-button mat-dialog-close class="theme-btn mr-3">OK</button>
             </div>
         </div>
     </ng-template>
 
     <ng-template #loading>
-        <div
-            class="text-center overflow-hidden d-flex align-items-center justify-content-center py-4">
+        <div class="text-center overflow-hidden d-flex align-items-center justify-content-center py-4">
             <app-spinner [diameter]="60"></app-spinner>
         </div>
     </ng-template>
@@ -67,13 +60,7 @@
             <div class="py-4">
                 <app-success-animation class="mb-2"></app-success-animation>
                 <h3 class="mb-4">License assignment succesful!</h3>
-                <button
-                    mat-button
-                    mat-raised-button
-                    [mat-dialog-close]="true"
-                    class="theme-btn mr-3">
-                    OK
-                </button>
+                <button mat-button mat-raised-button [mat-dialog-close]="true" class="theme-btn mr-3">OK</button>
             </div>
         </div>
     </ng-template>

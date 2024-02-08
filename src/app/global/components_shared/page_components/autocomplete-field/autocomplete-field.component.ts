@@ -146,11 +146,7 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
     initializeSearch(event: { target: { value: any } }) {
         if (event.target.value) {
             this.search_result = this.data_reference.filter((res) => {
-                if (
-                    res[this.primary_keyword]
-                        .toLowerCase()
-                        .includes(event.target.value.toLowerCase())
-                ) {
+                if (res[this.primary_keyword].toLowerCase().includes(event.target.value.toLowerCase())) {
                     return res;
                 }
             });
@@ -162,11 +158,7 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
     search(event: { target: { value: any } }) {
         if (event.target.value) {
             this.search_result = this.data_reference.filter((res) => {
-                if (
-                    res[this.primary_keyword]
-                        .toLowerCase()
-                        .includes(event.target.value.toLowerCase())
-                ) {
+                if (res[this.primary_keyword].toLowerCase().includes(event.target.value.toLowerCase())) {
                     return res;
                 }
             });

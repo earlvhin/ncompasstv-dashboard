@@ -64,13 +64,7 @@ export class UI_HOST_DMA {
     number_of_hosts: object;
     dma_code: object;
     dma_name: object;
-    constructor(
-        index: object,
-        rank: object,
-        number_of_hosts: object,
-        dma_code: object,
-        dma_name: object,
-    ) {
+    constructor(index: object, rank: object, number_of_hosts: object, dma_code: object, dma_name: object) {
         this.index = index;
         this.rank = rank;
         this.number_of_hosts = number_of_hosts;

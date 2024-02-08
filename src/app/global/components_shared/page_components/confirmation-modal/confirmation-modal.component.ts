@@ -32,23 +32,13 @@ export class ConfirmationModalComponent implements OnInit {
         this.return_msg = this.dialogData.return_msg;
         this.action = this.dialogData.action;
         this.rename = this.dialogData.rename;
-        this.is_selection =
-            typeof this.dialogData.is_selection !== 'undefined'
-                ? this.dialogData.is_selection
-                : false;
+        this.is_selection = typeof this.dialogData.is_selection !== 'undefined' ? this.dialogData.is_selection : false;
         this.is_installation =
-            typeof this.dialogData.is_installation !== 'undefined'
-                ? this.dialogData.is_installation
-                : false;
-        this.filler_photo =
-            typeof this.dialogData.filler_photo !== 'undefined'
-                ? this.dialogData.filler_photo
-                : false;
+            typeof this.dialogData.is_installation !== 'undefined' ? this.dialogData.is_installation : false;
+        this.filler_photo = typeof this.dialogData.filler_photo !== 'undefined' ? this.dialogData.filler_photo : false;
         this.delete = this.dialogData.delete;
         this.picture_upload =
-            typeof this.dialogData.picture_upload !== 'undefined'
-                ? this.dialogData.picture_upload
-                : false;
+            typeof this.dialogData.picture_upload !== 'undefined' ? this.dialogData.picture_upload : false;
     }
 
     displaySuccess() {

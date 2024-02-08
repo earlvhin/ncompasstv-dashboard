@@ -171,23 +171,14 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
                     hidden: false,
                 },
                 type: {
-                    value:
-                        license.screenTypeId != null
-                            ? this._titlecase.transform(license.screenTypeName)
-                            : '--',
+                    value: license.screenTypeId != null ? this._titlecase.transform(license.screenTypeName) : '--',
                     link: null,
                     editable: false,
                     hidden: false,
                 },
                 screen: {
-                    value:
-                        license.screenId != null
-                            ? this._titlecase.transform(license.screenName)
-                            : '--',
-                    link:
-                        license.screenId != null
-                            ? `/${this.currentRole}/screens/` + license.screenId
-                            : null,
+                    value: license.screenId != null ? this._titlecase.transform(license.screenName) : '--',
+                    link: license.screenId != null ? `/${this.currentRole}/screens/` + license.screenId : null,
                     new_tab_link: true,
                     editable: false,
                     hidden: false,
@@ -223,9 +214,7 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
                     hidden: false,
                 },
                 install_date: {
-                    value: license.installDate
-                        ? this._date.transform(license.installDate, 'MMM dd, y')
-                        : '--',
+                    value: license.installDate ? this._date.transform(license.installDate, 'MMM dd, y') : '--',
                     link: null,
                     editable: true,
                     label: 'Install Date',
@@ -253,10 +242,7 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
         const single_host_start_time = localStorage.getItem(`${this.hostId}`);
 
         if (single_host_start_time) {
-            this.timeout_duration = moment().diff(
-                moment(single_host_start_time, 'MMMM Do YYYY, h:mm:ss a'),
-                'minutes',
-            );
+            this.timeout_duration = moment().diff(moment(single_host_start_time, 'MMMM Do YYYY, h:mm:ss a'), 'minutes');
             if (this.timeout_duration >= 10) {
                 this.ongoing_remote_activity = false;
                 localStorage.removeItem(`${this.hostId}`);
@@ -275,13 +261,7 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
         this.ongoing_remote_activity = true;
     }
 
-    private openWarningModal(
-        status: string,
-        message: string,
-        data: string,
-        return_msg: string,
-        action: string,
-    ): void {
+    private openWarningModal(status: string, message: string, data: string, return_msg: string, action: string): void {
         this._dialog.closeAll();
 
         const dialog = this._dialog.open(ConfirmationModalComponent, {
@@ -293,44 +273,32 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
         dialog.afterClosed().subscribe((result) => {
             switch (result) {
                 case 'system_update':
-                    this.licenses.forEach((data) =>
-                        this.socket.emit('D_system_update_by_license', data.licenseId),
-                    );
+                    this.licenses.forEach((data) => this.socket.emit('D_system_update_by_license', data.licenseId));
                     this.setTimeoutBtn();
                     break;
 
                 case 'update':
-                    this.licenses.forEach((data) =>
-                        this.socket.emit('D_update_player', data.licenseId),
-                    );
+                    this.licenses.forEach((data) => this.socket.emit('D_update_player', data.licenseId));
                     this.setTimeoutBtn();
                     break;
 
                 case 'upgrade_to_v2':
-                    this.licenses.forEach((data) =>
-                        this.socket.emit('D_upgrade_to_v2_by_license', data.licenseId),
-                    );
+                    this.licenses.forEach((data) => this.socket.emit('D_upgrade_to_v2_by_license', data.licenseId));
                     this.setTimeoutBtn();
                     break;
 
                 case 'screenshot':
-                    this.licenses.forEach((data) =>
-                        this.socket.emit('D_screenshot_pi', data.licenseId),
-                    );
+                    this.licenses.forEach((data) => this.socket.emit('D_screenshot_pi', data.licenseId));
                     this.setTimeoutBtn();
                     break;
 
                 case 'reboot_player':
-                    this.licenses.forEach((data) =>
-                        this.socket.emit('D_player_restart', data.licenseId),
-                    );
+                    this.licenses.forEach((data) => this.socket.emit('D_player_restart', data.licenseId));
                     this.setTimeoutBtn();
                     break;
 
                 case 'reboot':
-                    this.licenses.forEach((data) =>
-                        this.socket.emit('D_player_restart', data.licenseId),
-                    );
+                    this.licenses.forEach((data) => this.socket.emit('D_player_restart', data.licenseId));
                     this.setTimeoutBtn();
                     break;
 
@@ -366,9 +334,7 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     private subscribeToRefresh(): void {
-        this._license.onRefreshLicensesTab
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(() => this.onReloadLicenses());
+        this._license.onRefreshLicensesTab.pipe(takeUntil(this._unsubscribe)).subscribe(() => this.onReloadLicenses());
     }
 
     private subscribeToSearch(): void {

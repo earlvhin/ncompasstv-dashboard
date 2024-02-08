@@ -27,14 +27,10 @@
 
                     <div class="custom-fields-area mb-3">
                         <h3>Custom Fields</h3>
-                        <p class="sm-text mb-3">
-                            Click the plus (+) button to add a field for this field group
-                        </p>
+                        <p class="sm-text mb-3">Click the plus (+) button to add a field for this field group</p>
 
                         <div class="bg-gray p-4 text-center">
-                            <div
-                                class="d-flex"
-                                *ngFor="let chf of custom_host_fields; let i = index">
+                            <div class="d-flex" *ngFor="let chf of custom_host_fields; let i = index">
                                 <mat-form-field class="flex-even mr-2" appearance="fill">
                                     <mat-label>Field Name</mat-label>
                                     <input
@@ -99,9 +95,7 @@
         </div>
 
         <div class="col-lg-4">
-            <mat-card
-                class="field-group-item d-flex p-3 mb-2"
-                *ngFor="let c of custom_fields; let i = index">
+            <mat-card class="field-group-item d-flex p-3 mb-2" *ngFor="let c of custom_fields; let i = index">
                 <div class="flex-even">
                     <h4>{{ c.fieldGroupName }}</h4>
                     <p class="sm-text">Created {{ c.createdDate | date }}</p>

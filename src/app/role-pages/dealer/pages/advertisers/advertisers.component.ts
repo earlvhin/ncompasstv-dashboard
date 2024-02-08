@@ -106,8 +106,7 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
     modifyItem(item, data) {
         item.contentsCount = item.contentCount;
 
-        if (item.contents && item.contents.length > 0)
-            item.contentsFormatted = item.contents.join(', ');
+        if (item.contents && item.contents.length > 0) item.contentsFormatted = item.contents.join(', ');
     }
 
     private getAdvertiserDataForExportDealer(data): void {
@@ -129,8 +128,7 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
     }
 
     exportProcess() {
-        const EXCEL_TYPE =
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
         this.advertisers_to_export.forEach((item) => {
             this.worksheet.addRow(item).font = { bold: false };
         });

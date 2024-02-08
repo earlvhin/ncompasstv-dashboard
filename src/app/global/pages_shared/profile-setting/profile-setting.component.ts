@@ -115,12 +115,7 @@ export class ProfileSettingComponent implements OnInit {
         this.activity_data = [];
 
         this._dealer
-            .get_dealer_activity(
-                this.dealer_id,
-                this.sort_column_activity,
-                this.sort_order_activity,
-                page,
-            )
+            .get_dealer_activity(this.dealer_id, this.sort_column_activity, this.sort_order_activity, page)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (res) => {
@@ -130,16 +125,14 @@ export class ProfileSettingComponent implements OnInit {
                         return;
                     }
 
-                    this.getUserByIds(res.paging.entities.map((a) => a.initiatedBy)).subscribe(
-                        (responses) => {
-                            this.activity_created_by = responses;
+                    this.getUserByIds(res.paging.entities.map((a) => a.initiatedBy)).subscribe((responses) => {
+                        this.activity_created_by = responses;
 
-                            const mappedData = this.activity_mapToUI(res.paging.entities);
-                            this.paging_data_activity = res.paging;
-                            this.activity_data = [...mappedData];
-                            this.reload_data = true;
-                        },
-                    );
+                        const mappedData = this.activity_mapToUI(res.paging.entities);
+                        this.paging_data_activity = res.paging;
+                        this.activity_data = [...mappedData];
+                        this.reload_data = true;
+                    });
                 },
                 (error) => {
                     console.error(error);
@@ -152,9 +145,7 @@ export class ProfileSettingComponent implements OnInit {
         if (e) this.ngOnInit();
     }
     getUserByIds(ids: any[]) {
-        const userObservables = ids.map((id) =>
-            this._user.get_user_by_id(id).pipe(takeUntil(this._unsubscribe)),
-        );
+        const userObservables = ids.map((id) => this._user.get_user_by_id(id).pipe(takeUntil(this._unsubscribe)));
 
         return forkJoin(userObservables);
     }

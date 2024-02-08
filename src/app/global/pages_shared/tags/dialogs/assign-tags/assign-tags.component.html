@@ -34,9 +34,7 @@
                                 </ngx-mat-select-search>
                             </mat-option>
 
-                            <mat-option
-                                *ngFor="let owner of filteredOwners | async"
-                                [value]="owner">
+                            <mat-option *ngFor="let owner of filteredOwners | async" [value]="owner">
                                 <div class="display-name">
                                     <span>({{ owner.prefix }})</span>
                                     {{ owner.displayName | titlecase }}

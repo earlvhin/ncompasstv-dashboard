@@ -32,9 +32,7 @@
                     [disabled]="workbook_generation"
                     title="Export to CSV">
                     <span
-                        class="{{
-                            !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin'
-                        }}"
+                        class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
                         [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
                     <span
                         class="ml-2 button_text_animation"
@@ -61,9 +59,7 @@
         <mat-form-field class="full-width" *ngIf="!isLoading">
             <mat-label
                 ><i class="fas fa-search mr-3"></i>
-                <ng-container *ngIf="!is_dealer; else notAdmin">
-                    Search by tag, &#64;assignee or ^dealer
-                </ng-container>
+                <ng-container *ngIf="!is_dealer; else notAdmin"> Search by tag, &#64;assignee or ^dealer </ng-container>
             </mat-label>
             <input matInput [formControl]="searchFormControl" />
         </mat-form-field>

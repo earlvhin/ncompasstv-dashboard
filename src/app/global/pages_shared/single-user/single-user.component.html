@@ -17,9 +17,7 @@
                     {{ user.userRoles[0].roleName }}
                 </span>
             </div>
-            <p class="sm-text mb-4 font-italic">
-                Created {{ user.dateCreated | date }} by {{ user.creatorName }}
-            </p>
+            <p class="sm-text mb-4 font-italic">Created {{ user.dateCreated | date }} by {{ user.creatorName }}</p>
         </div>
         <div class="offset-lg-6 col-lg-2 text-right">
             <button
@@ -56,9 +54,7 @@
                         </div>
 
                         <!-- EMAIL FIELD -->
-                        <div
-                            class="text-field-container"
-                            *ngIf="field.type === 'email' && is_admin">
+                        <div class="text-field-container" *ngIf="field.type === 'email' && is_admin">
                             <mat-form-field class="full-width">
                                 <mat-label>Email</mat-label>
                                 <input
@@ -70,9 +66,7 @@
                         </div>
 
                         <!-- RADIO BUTTON -->
-                        <div
-                            class="radio-btn-container"
-                            *ngIf="this.is_sub_dealer && field.type === 'radio'">
+                        <div class="radio-btn-container" *ngIf="this.is_sub_dealer && field.type === 'radio'">
                             <label>Permission:</label>
                             <mat-radio-group
                                 name="{{ field.name }}"
@@ -91,18 +85,13 @@
                         <!-- TOGGLE FIELD -->
                         <div class="toggle-field-container" *ngIf="field.type === 'toggle'">
                             <span>Receive Email Notification:</span>
-                            <mat-slide-toggle
-                                formControlName="{{ field.control }}"></mat-slide-toggle>
+                            <mat-slide-toggle formControlName="{{ field.control }}"></mat-slide-toggle>
                         </div>
 
                         <!-- FOR DEALERS MAPPING OF DEALERADMIN -->
                     </div>
 
-                    <button
-                        mat-button
-                        mat-raised-button
-                        class="theme-btn mt-4"
-                        [disabled]="info_form_disabled">
+                    <button mat-button mat-raised-button class="theme-btn mt-4" [disabled]="info_form_disabled">
                         Save Changes
                     </button>
                 </form>
@@ -135,22 +124,13 @@
                             matInput
                             [type]="is_password_field_type ? 'password' : 'text'"
                             placeholder="New Password" />
-                        <mat-icon
-                            class="pw-visibility"
-                            matSuffix
-                            (click)="togglePasswordFieldType()"
-                            >{{
-                                is_password_field_type ? 'visibility_off' : 'visibility'
-                            }}</mat-icon
-                        >
-                        <span
-                            class="validation-message warning sm-text px-3 py-1"
-                            *ngIf="password_invalid">
+                        <mat-icon class="pw-visibility" matSuffix (click)="togglePasswordFieldType()">{{
+                            is_password_field_type ? 'visibility_off' : 'visibility'
+                        }}</mat-icon>
+                        <span class="validation-message warning sm-text px-3 py-1" *ngIf="password_invalid">
                             {{ password_validation_message }}
                         </span>
-                        <span
-                            class="validation-message good sm-text px-3 py-1"
-                            *ngIf="password_invalid == false">
+                        <span class="validation-message good sm-text px-3 py-1" *ngIf="password_invalid == false">
                             {{ password_validation_message }}
                         </span>
                     </mat-form-field>
@@ -162,31 +142,18 @@
                             formControlName="re_password"
                             [type]="is_retype_password_field_type ? 'password' : 'text'"
                             placeholder="Retype New Password" />
-                        <mat-icon
-                            class="pw-visibility"
-                            matSuffix
-                            (click)="toggleRetypePasswordFieldType()"
-                            >{{
-                                is_retype_password_field_type ? 'visibility_off' : 'visibility'
-                            }}</mat-icon
-                        >
-                        <span
-                            class="validation-message warning sm-text px-3 py-1"
-                            *ngIf="password_match == false">
+                        <mat-icon class="pw-visibility" matSuffix (click)="toggleRetypePasswordFieldType()">{{
+                            is_retype_password_field_type ? 'visibility_off' : 'visibility'
+                        }}</mat-icon>
+                        <span class="validation-message warning sm-text px-3 py-1" *ngIf="password_match == false">
                             {{ password_is_match }}
                         </span>
-                        <span
-                            class="validation-message good sm-text px-3 py-1"
-                            *ngIf="password_match">
+                        <span class="validation-message good sm-text px-3 py-1" *ngIf="password_match">
                             {{ password_is_match }}
                         </span>
                     </mat-form-field>
 
-                    <button
-                        mat-button
-                        mat-raised-button
-                        class="theme-btn mt-4"
-                        [disabled]="password_form.invalid">
+                    <button mat-button mat-raised-button class="theme-btn mt-4" [disabled]="password_form.invalid">
                         Save New Password
                     </button>
                 </form>
@@ -215,25 +182,17 @@
                                             [placeholderLabel]="'Search Dealer Name'"
                                             [clearSearchInput]="false"
                                             [searching]="is_searching_dealer">
-                                            <mat-icon class="clear" ngxMatSelectSearchClear
-                                                >close</mat-icon
-                                            >
+                                            <mat-icon class="clear" ngxMatSelectSearchClear>close</mat-icon>
                                         </ngx-mat-select-search>
                                     </mat-option>
-                                    <mat-option
-                                        *ngFor="let dealer of dealers_list"
-                                        [value]="dealer">
-                                        <div
-                                            class="dealer md-text"
-                                            (click)="selectDealer(dealer.dealerId)">
+                                    <mat-option *ngFor="let dealer of dealers_list" [value]="dealer">
+                                        <div class="dealer md-text" (click)="selectDealer(dealer.dealerId)">
                                             {{ dealer.businessName }}
                                         </div>
                                     </mat-option>
                                 </div>
                                 <footer class="selection">
-                                    <button
-                                        class="theme-btn _primary md-text mr-3"
-                                        (click)="dealerMultiSelect.close()">
+                                    <button class="theme-btn _primary md-text mr-3" (click)="dealerMultiSelect.close()">
                                         APPLY SELECTION
                                     </button>
                                 </footer>
@@ -256,25 +215,16 @@
                             </div>
 
                             <div class="d-flex flex-row align-items-start flex-wrap p-0">
-                                <ng-container
-                                    *ngFor="
-                                        let dealer of selected_dealers_control.value;
-                                        let i = index
-                                    ">
+                                <ng-container *ngFor="let dealer of selected_dealers_control.value; let i = index">
                                     <div
                                         class="d-flex align-items-center bg-primary text-white md-text dealer pl-3 pr-3 br-5 mr-2 mb-2"
                                         [ngClass]="{
                                             'selected-dealer-disabled': !has_loaded_dealers_list
                                         }">
-                                        <ng-container
-                                            *ngIf="has_loaded_assigned_dealers; else loaderSmall">
+                                        <ng-container *ngIf="has_loaded_assigned_dealers; else loaderSmall">
                                             <div class="name">{{ dealer.businessName }}</div>
-                                            <div
-                                                class="remove-btn cursor-pointer"
-                                                (click)="removeSelectedDealer(i)">
-                                                <mat-icon class="md-text font-weight-bold pt-2 pl-2"
-                                                    >close</mat-icon
-                                                >
+                                            <div class="remove-btn cursor-pointer" (click)="removeSelectedDealer(i)">
+                                                <mat-icon class="md-text font-weight-bold pt-2 pl-2">close</mat-icon>
                                             </div>
                                         </ng-container>
                                     </div>

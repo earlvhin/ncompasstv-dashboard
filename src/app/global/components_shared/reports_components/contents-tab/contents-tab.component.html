@@ -16,10 +16,7 @@
                         matInput
                         [matDatepicker]="datePicker"
                         readonly />
-                    <mat-datepicker-toggle
-                        matSuffix
-                        [for]="datePicker"
-                        [disabled]="searching"></mat-datepicker-toggle>
+                    <mat-datepicker-toggle matSuffix [for]="datePicker" [disabled]="searching"></mat-datepicker-toggle>
                     <mat-datepicker #datePicker></mat-datepicker>
                 </mat-form-field>
             </div>
@@ -34,10 +31,7 @@
                         [matDatepicker]="datePicker2"
                         [min]="start_date"
                         readonly />
-                    <mat-datepicker-toggle
-                        matSuffix
-                        [for]="datePicker2"
-                        [disabled]="searching"></mat-datepicker-toggle>
+                    <mat-datepicker-toggle matSuffix [for]="datePicker2" [disabled]="searching"></mat-datepicker-toggle>
                     <mat-datepicker #datePicker2></mat-datepicker>
                 </mat-form-field>
             </div>
@@ -88,15 +82,11 @@
                     (click)="exportTable('dealer')"
                     [disabled]="searching || workbook_generation"
                     title="Export to CSV">
-                    <span
-                        class="button-label"
-                        [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">
+                    <span class="button-label" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">
                         {{ !workbook_generation ? 'Export Results' : 'Generating CSV' }}
                     </span>
                     <span
-                        class="{{
-                            !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin'
-                        }} ml-2 sm-text"
+                        class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }} ml-2 sm-text"
                         [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
                 </button>
             </div>
@@ -136,8 +126,7 @@
                     </div>
                     <h3 class="text-gray col-lg-12">No Results Found.</h3>
                     <span class="text-gray col-lg-12"
-                        >Try adjusting your date range or dealer to find what you're looking
-                        for.</span
+                        >Try adjusting your date range or dealer to find what you're looking for.</span
                     >
                 </mat-card>
             </div>

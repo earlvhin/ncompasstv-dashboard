@@ -42,23 +42,14 @@ export class AddFillerContentComponent implements OnInit {
         this.hidePrevModal();
         const client = filestack.init(environment.third_party.filestack_api_key);
         client
-            .picker(
-                this.filestackOptions(
-                    ['image/jpg', 'image/jpeg', 'image/png'],
-                    [720, 640],
-                    'Image',
-                    1000,
-                ),
-            )
+            .picker(this.filestackOptions(['image/jpg', 'image/jpeg', 'image/png'], [720, 640], 'Image', 1000))
             .open();
     }
 
     onUploadVideo() {
         this.hidePrevModal();
         const client = filestack.init(environment.third_party.filestack_api_key);
-        client
-            .picker(this.filestackOptions(['video/mp4', 'video/webm'], [1280, 720], 'Video', 10))
-            .open();
+        client.picker(this.filestackOptions(['video/mp4', 'video/webm'], [1280, 720], 'Video', 10)).open();
     }
 
     onUploadFeed() {
@@ -114,9 +105,7 @@ export class AddFillerContentComponent implements OnInit {
                         handlerid: uploaded.handle,
                         title: uploaded.filename,
                     };
-                    modified_details.title = this.removeHandleIdOnFileName(
-                        modified_details.filename,
-                    );
+                    modified_details.title = this.removeHandleIdOnFileName(modified_details.filename);
                     this.upload_holder.push(modified_details);
                 });
 
@@ -146,10 +135,7 @@ export class AddFillerContentComponent implements OnInit {
             folder,
         );
         if (file_data) {
-            this._filestack
-                .post_content_info(file_data)
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe();
+            this._filestack.post_content_info(file_data).pipe(takeUntil(this._unsubscribe)).subscribe();
         }
     }
 

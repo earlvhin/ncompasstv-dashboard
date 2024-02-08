@@ -1,10 +1,7 @@
 <div class="p-5 user-form">
     <div class="d-flex align-items-center mb-5">
         <div class="mr-3">
-            <img
-                src="/assets/media-files/advertiser-icon.png"
-                class="user-icon"
-                alt="dealer-icon" />
+            <img src="/assets/media-files/advertiser-icon.png" class="user-icon" alt="dealer-icon" />
         </div>
         <div class="flex-even">
             <h3 class="mb-0">New Advertiser</h3>
@@ -27,9 +24,7 @@
         <div class="row mb-4">
             <ng-container *ngFor="let f of form_fields_view">
                 <div class="{{ f.width }}">
-                    <mat-form-field
-                        class="full-width"
-                        *ngIf="!f.is_autocomplete; else autocomplete">
+                    <mat-form-field class="full-width" *ngIf="!f.is_autocomplete; else autocomplete">
                         <mat-label>{{ f.label }}</mat-label>
                         <input
                             *ngIf="f.type !== 'password'; else passwordField"
@@ -46,14 +41,9 @@
                                         matInput
                                         placeholder="{{ f.placeholder }}"
                                         [type]="is_password_field_type ? 'password' : 'text'" />
-                                    <mat-icon
-                                        class="pw-visibility"
-                                        matSuffix
-                                        (click)="togglePasswordFieldType()"
-                                        >{{
-                                            is_password_field_type ? 'visibility_off' : 'visibility'
-                                        }}</mat-icon
-                                    >
+                                    <mat-icon class="pw-visibility" matSuffix (click)="togglePasswordFieldType()">{{
+                                        is_password_field_type ? 'visibility_off' : 'visibility'
+                                    }}</mat-icon>
                                 </div>
                             </div>
 
@@ -63,18 +53,12 @@
                                         formControlName="{{ f.control }}"
                                         matInput
                                         placeholder="{{ f.placeholder }}"
-                                        [type]="
-                                            is_retype_password_field_type ? 'password' : 'text'
-                                        " />
+                                        [type]="is_retype_password_field_type ? 'password' : 'text'" />
                                     <mat-icon
                                         class="pw-visibility"
                                         matSuffix
                                         (click)="toggleRetypePasswordFieldType()"
-                                        >{{
-                                            is_retype_password_field_type
-                                                ? 'visibility_off'
-                                                : 'visibility'
-                                        }}</mat-icon
+                                        >{{ is_retype_password_field_type ? 'visibility_off' : 'visibility' }}</mat-icon
                                     >
                                 </div>
                             </div>
@@ -139,14 +123,10 @@
                 </div>
             </ng-container>
         </div>
-        <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="form_invalid">
-            Create Advertiser
-        </button>
+        <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="form_invalid">Create Advertiser</button>
     </form>
 
-    <div
-        class="submit-on-load d-flex align-items-center justify-content-center w-100"
-        *ngIf="is_submitted">
+    <div class="submit-on-load d-flex align-items-center justify-content-center w-100" *ngIf="is_submitted">
         <app-spinner></app-spinner>
     </div>
     <ng-template #loader>

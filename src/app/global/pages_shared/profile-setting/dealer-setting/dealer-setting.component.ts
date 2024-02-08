@@ -158,10 +158,7 @@ export class DealerSettingComponent implements OnInit, OnDestroy {
             .subscribe(
                 (response) => {
                     this.user_data = Object.assign({}, response.user, response.dealer[0]);
-                    this.user_data.dateCreated = this._date.transform(
-                        this.user_data.dateCreated,
-                        'MMM dd, yyyy',
-                    );
+                    this.user_data.dateCreated = this._date.transform(this.user_data.dateCreated, 'MMM dd, yyyy');
                     this._dealer.onDealerDataLoaded.next({ email: this.user_data.email });
                     this.readyUpdateForm();
                 },
@@ -178,19 +175,10 @@ export class DealerSettingComponent implements OnInit, OnDestroy {
     readyUpdateForm() {
         this.update_user = this._form.group({
             dealer_id: [{ value: this.user_data.dealerId, disabled: true }, Validators.required],
-            business_name: [
-                { value: this.user_data.businessName, disabled: true },
-                Validators.required,
-            ],
+            business_name: [{ value: this.user_data.businessName, disabled: true }, Validators.required],
             contact: [{ value: this.user_data.contactNumber, disabled: true }, Validators.required],
-            contact_person: [
-                { value: this.user_data.contactPerson, disabled: true },
-                Validators.required,
-            ],
-            owner_f_name: [
-                { value: this.user_data.firstName, disabled: true },
-                Validators.required,
-            ],
+            contact_person: [{ value: this.user_data.contactPerson, disabled: true }, Validators.required],
+            owner_f_name: [{ value: this.user_data.firstName, disabled: true }, Validators.required],
             owner_l_name: [{ value: this.user_data.lastName, disabled: true }, Validators.required],
             email: [{ value: this.user_data.email, disabled: true }, Validators.required],
             address: [{ value: this.user_data.address, disabled: true }, Validators.required],
@@ -267,11 +255,7 @@ export class DealerSettingComponent implements OnInit, OnDestroy {
 
         this._dealer.update_dealer(this.mapDealerInfoChanges()).subscribe(
             (data) => {
-                this.openConfirmationModal(
-                    'success',
-                    'Success!',
-                    'Dealer info changed succesfully',
-                );
+                this.openConfirmationModal('success', 'Success!', 'Dealer info changed succesfully');
                 this.ngOnInit();
                 this.createActivity(modifyDealer);
             },

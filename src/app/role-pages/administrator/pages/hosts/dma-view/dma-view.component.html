@@ -9,13 +9,9 @@
                 [disabled]="workbook_generation"
                 title="Export to CSV">
                 <span
-                    class="{{
-                        !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin'
-                    }}"
+                    class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
                     [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
-                <span class="ml-2 button_text_animation">{{
-                    !workbook_generation ? 'Export' : 'Generating CSV'
-                }}</span>
+                <span class="ml-2 button_text_animation">{{ !workbook_generation ? 'Export' : 'Generating CSV' }}</span>
             </button>
         </div>
         <div class="search-field-container">

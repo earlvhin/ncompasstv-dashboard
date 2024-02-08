@@ -34,8 +34,7 @@
             <ng-container *ngIf="!unassigning">
                 <app-warning-animation></app-warning-animation>
                 <h3 class="mb-1 mt-2">
-                    Unassigning {{ unassigning_licenses.length }} License<span
-                        *ngIf="unassigning_licenses.length > 1"
+                    Unassigning {{ unassigning_licenses.length }} License<span *ngIf="unassigning_licenses.length > 1"
                         >s</span
                     >
                 </h3>
@@ -45,18 +44,10 @@
                     >
                     Are you sure you want to unassign licenses from this host?
                 </p>
-                <button
-                    mat-button
-                    mat-raised-button
-                    class="theme-btn mr-2"
-                    (click)="show_warning = false">
+                <button mat-button mat-raised-button class="theme-btn mr-2" (click)="show_warning = false">
                     Cancel
                 </button>
-                <button
-                    mat-button
-                    mat-raised-button
-                    class="theme-btn _primary"
-                    (click)="unassignLicenses()">
+                <button mat-button mat-raised-button class="theme-btn _primary" (click)="unassignLicenses()">
                     Continue
                 </button>
             </ng-container>
@@ -72,9 +63,7 @@
             <p class="mb-0 sm-text font-weight-md">
                 {{ unassigning_licenses.length }} license(s) successfully unassigned from this host.
             </p>
-            <button mat-button mat-raised-button [mat-dialog-close]="true" class="mt-4 theme-btn">
-                OK
-            </button>
+            <button mat-button mat-raised-button [mat-dialog-close]="true" class="mt-4 theme-btn">OK</button>
         </div>
     </ng-template>
 </div>

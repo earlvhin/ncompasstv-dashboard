@@ -42,18 +42,10 @@ export class EditTicketComponent implements OnInit {
             .subscribe(
                 (data) => {
                     this._dialog_ref.close(data);
-                    this.showConfirmationDialog(
-                        'success',
-                        'Ticket Saved Successfully',
-                        'Click OK to continue',
-                    );
+                    this.showConfirmationDialog('success', 'Ticket Saved Successfully', 'Click OK to continue');
                 },
                 (error) => {
-                    this.showConfirmationDialog(
-                        'error',
-                        'Error while saving Entry',
-                        error.error.message,
-                    );
+                    this.showConfirmationDialog('error', 'Error while saving Entry', error.error.message);
                 },
             );
     }

@@ -1,9 +1,7 @@
 <div class="theme-container">
     <div class="title-section">
         <h1 class="page-title">{{ title }}</h1>
-        <p class="sm-text">
-            This is a danger zone, actions done in this page may result to breaking changes.
-        </p>
+        <p class="sm-text">This is a danger zone, actions done in this page may result to breaking changes.</p>
         <hr class="mt-4 mb-0" />
     </div>
 
@@ -28,10 +26,7 @@
                                             class="theme-btn _warning"
                                             (click)="remoteUpdateAll()"
                                             [disabled]="remote_update_disabled"
-                                            *ngIf="
-                                                !remote_update_disabled;
-                                                else disabled_remote_update
-                                            ">
+                                            *ngIf="!remote_update_disabled; else disabled_remote_update">
                                             Reboot Player
                                         </button>
 
@@ -62,10 +57,7 @@
                                             class="theme-btn _danger"
                                             (click)="remoteRebootAll()"
                                             [disabled]="remote_update_disabled"
-                                            *ngIf="
-                                                !remote_update_disabled;
-                                                else disabled_remote_reboot
-                                            ">
+                                            *ngIf="!remote_update_disabled; else disabled_remote_reboot">
                                             Reboot Pi
                                         </button>
 
@@ -87,9 +79,7 @@
                                 <div class="d-flex align-items-center">
                                     <div class="flex-even">
                                         <h4>Delete All Screenshots</h4>
-                                        <p class="sm-text mb-0">
-                                            This will delete all saved screenshots
-                                        </p>
+                                        <p class="sm-text mb-0">This will delete all saved screenshots</p>
                                     </div>
                                     <div class="text-right">
                                         <button
@@ -98,10 +88,7 @@
                                             class="theme-btn _caution"
                                             (click)="removeAllScreenshots()"
                                             [disabled]="remote_update_disabled"
-                                            *ngIf="
-                                                !remote_update_disabled;
-                                                else disabled_remote_reboot
-                                            ">
+                                            *ngIf="!remote_update_disabled; else disabled_remote_reboot">
                                             Delete Screenshots
                                         </button>
 
@@ -123,9 +110,7 @@
                                 <div class="d-flex align-items-center">
                                     <div class="flex-even">
                                         <h4>Renew All Socket Connection</h4>
-                                        <p class="sm-text mb-0">
-                                            This will renew all player socket connection.
-                                        </p>
+                                        <p class="sm-text mb-0">This will renew all player socket connection.</p>
                                     </div>
                                     <div class="text-right">
                                         <button
@@ -134,10 +119,7 @@
                                             class="theme-btn _teal"
                                             (click)="renewSocket()"
                                             [disabled]="remote_update_disabled"
-                                            *ngIf="
-                                                !remote_update_disabled;
-                                                else disabled_remote_reboot
-                                            ">
+                                            *ngIf="!remote_update_disabled; else disabled_remote_reboot">
                                             Renew Socket
                                         </button>
 
@@ -164,9 +146,7 @@
                         <div class="row">
                             <div class="col-lg-7">
                                 <h3>Remote Terminal</h3>
-                                <p class="sm-text mb-3">
-                                    Write a short script and send it to all online players.
-                                </p>
+                                <p class="sm-text mb-3">Write a short script and send it to all online players.</p>
                                 <div class="terminal">
                                     <div class="entered-scripts">
                                         <div *ngFor="let s of terminal_entered_scripts">
@@ -182,10 +162,7 @@
                                         <button
                                             (click)="remoteRunTerminal()"
                                             class="terminal-submit-button"
-                                            [disabled]="
-                                                terminal_value === undefined ||
-                                                terminal_value === ''
-                                            ">
+                                            [disabled]="terminal_value === undefined || terminal_value === ''">
                                             Run <span class="fas fa-play sm-text ml-2"></span>
                                         </button>
                                     </div>
@@ -201,12 +178,9 @@
                             <mat-card class="p-5 mt-5">
                                 <h3>Set Global Settings</h3>
                                 <p class="sm-text mb-4">
-                                    Global settings are configuration fetched and applied by all
-                                    players.
+                                    Global settings are configuration fetched and applied by all players.
                                 </p>
-                                <form
-                                    [formGroup]="global_settings_form"
-                                    (ngSubmit)="setGlobalSettings()">
+                                <form [formGroup]="global_settings_form" (ngSubmit)="setGlobalSettings()">
                                     <mat-form-field class="mb-3 full-width" appearance="fill">
                                         <mat-label>Vistar Network ID</mat-label>
                                         <input
@@ -243,9 +217,7 @@
                         <div class="col-lg-5">
                             <mat-card class="p-5 mt-5">
                                 <h3>Add Activity Code</h3>
-                                <p class="sm-text mb-4">
-                                    Activity codes for dashboard, reference for activity logs.
-                                </p>
+                                <p class="sm-text mb-4">Activity codes for dashboard, reference for activity logs.</p>
                                 <form
                                     [formGroup]="activity_code_form"
                                     #formDirective="ngForm"
@@ -291,9 +263,7 @@
                                         <span class="sm-text">Activity Description</span>
                                     </div>
                                 </div>
-                                <div
-                                    class="row border-bottom"
-                                    *ngFor="let a of activities; let i = index">
+                                <div class="row border-bottom" *ngFor="let a of activities; let i = index">
                                     <div class="col-lg-1 border-right py-3">
                                         {{ i + 1 }}
                                     </div>

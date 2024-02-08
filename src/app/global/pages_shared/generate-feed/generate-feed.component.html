@@ -41,15 +41,10 @@
                         <!-- Begin: Slider Form -->
                         <div
                             class="bg-gray mt-5 p-4"
-                            *ngIf="
-                                feed_info &&
-                                setSelectedFeedType(feed_info.feedTypeId) === 'Slide Feed'
-                            ">
+                            *ngIf="feed_info && setSelectedFeedType(feed_info.feedTypeId) === 'Slide Feed'">
                             <app-slider-form
                                 (structured_slide_feed)="structureSlideFeedToGenerate($event)"
-                                [banner_image_data]="
-                                    fetched_feed ? fetched_feed.bannerImageData : null
-                                "
+                                [banner_image_data]="fetched_feed ? fetched_feed.bannerImageData : null"
                                 [global_settings]="slide_global_settings"
                                 [feed_items]="feed_items"
                                 [selected_dealer]="selected_dealer">
@@ -60,10 +55,7 @@
                         <!-- Begin: Weather Maker -->
                         <div
                             class="mt-5"
-                            *ngIf="
-                                feed_info &&
-                                setSelectedFeedType(feed_info.feedTypeId) === 'Weather Feed'
-                            ">
+                            *ngIf="feed_info && setSelectedFeedType(feed_info.feedTypeId) === 'Weather Feed'">
                             <app-weather-form
                                 (weather_feed_data)="structureWeatherFeedToGenerate($event)"
                                 [edit_weather_data]="fetched_feed ? fetched_feed.feedWeather : null"
@@ -73,11 +65,7 @@
                         <!-- End: Weather Maker -->
 
                         <!-- Begin: News Maker -->
-                        <div
-                            class="mt-5"
-                            *ngIf="
-                                feed_info && setSelectedFeedType(feed_info.feedTypeId) === 'News'
-                            ">
+                        <div class="mt-5" *ngIf="feed_info && setSelectedFeedType(feed_info.feedTypeId) === 'News'">
                             <app-news-form
                                 (news_feed_data)="structureNewsFeedToGenerate($event)"
                                 [edit_news_data]="fetched_feed ? fetched_feed.feedNews : null"
@@ -87,19 +75,11 @@
                         <!-- End: News Maker -->
 
                         <!-- Begin: Filler Maker -->
-                        <div
-                            class="mt-5"
-                            *ngIf="
-                                feed_info && setSelectedFeedType(feed_info.feedTypeId) === 'Fillers'
-                            ">
+                        <div class="mt-5" *ngIf="feed_info && setSelectedFeedType(feed_info.feedTypeId) === 'Fillers'">
                             <app-filler-form
                                 (filler_data)="structureFillerFeedToGenerate($event)"
-                                [filler_global_settings]="
-                                    fetched_feed ? fetched_feed.fillerGlobalSettings : null
-                                "
-                                [filler_items_structured]="
-                                    fetched_feed ? fetched_feed.feedFillers : []
-                                "
+                                [filler_global_settings]="fetched_feed ? fetched_feed.fillerGlobalSettings : null"
+                                [filler_items_structured]="fetched_feed ? fetched_feed.feedFillers : []"
                                 [selected_dealer]>
                             </app-filler-form>
                         </div>
@@ -122,9 +102,8 @@
                                 <div class="col-lg-12 text-center">
                                     <h3 class="mb-1">Here's a preview of your customized feed.</h3>
                                     <p class="sm-text">
-                                        This is just a demo to see the styles applied. Save this
-                                        feed to see it live with animations. You can edit your
-                                        generated feed by going back one step above.
+                                        This is just a demo to see the styles applied. Save this feed to see it live
+                                        with animations. You can edit your generated feed by going back one step above.
                                     </p>
                                 </div>
                             </div>
@@ -139,14 +118,11 @@
                                     <ng-container
                                         *ngIf="
                                             generated_slide_feed &&
-                                            setSelectedFeedType(feed_info.feedTypeId) ===
-                                                'Slide Feed'
+                                            setSelectedFeedType(feed_info.feedTypeId) === 'Slide Feed'
                                         ">
                                         <app-feed-demo
                                             [banner_image_data]="selected_banner_image"
-                                            [global_settings]="
-                                                generated_slide_feed.feedGlobalSettings
-                                            "
+                                            [global_settings]="generated_slide_feed.feedGlobalSettings"
                                             [feed_items]="feed_items">
                                         </app-feed-demo>
 
@@ -164,11 +140,9 @@
                                     <ng-container
                                         *ngIf="
                                             generated_weather_feed &&
-                                            setSelectedFeedType(feed_info.feedTypeId) ===
-                                                'Weather Feed'
+                                            setSelectedFeedType(feed_info.feedTypeId) === 'Weather Feed'
                                         ">
-                                        <app-weather-demo [weather_data]="generated_weather_feed">
-                                        </app-weather-demo>
+                                        <app-weather-demo [weather_data]="generated_weather_feed"> </app-weather-demo>
 
                                         <button
                                             mat-button
@@ -183,11 +157,9 @@
                                     <!-- Begin: Weather Feed Demo -->
                                     <ng-container
                                         *ngIf="
-                                            generated_news_feed &&
-                                            setSelectedFeedType(feed_info.feedTypeId) === 'News'
+                                            generated_news_feed && setSelectedFeedType(feed_info.feedTypeId) === 'News'
                                         ">
-                                        <app-news-demo [news_data]="generated_news_feed">
-                                        </app-news-demo>
+                                        <app-news-demo [news_data]="generated_news_feed"> </app-news-demo>
 
                                         <button
                                             mat-button
@@ -205,8 +177,7 @@
                                             generated_filler_feed &&
                                             setSelectedFeedType(feed_info.feedTypeId) === 'Fillers'
                                         ">
-                                        <app-filler-demo [filler_data]="generated_filler_feed">
-                                        </app-filler-demo>
+                                        <app-filler-demo [filler_data]="generated_filler_feed"> </app-filler-demo>
 
                                         <button
                                             mat-button

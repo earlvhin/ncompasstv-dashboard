@@ -2,17 +2,11 @@
     class="bg-white border m-1 position-relative overflow-hidden cursor-pointer"
     data-toggle="tooltip"
     data-placement="top"
-    [attr.title]="
-        content.fileType !== 'feed' ? removeFilenameHandle(content.fileName) : content.title
-    ">
+    [attr.title]="content.fileType !== 'feed' ? removeFilenameHandle(content.fileName) : content.title">
     <div class="h-100 w-100">
         <div class="content-thumbnail inline-block">
             <img
-                [src]="
-                    content.fileType !== 'feed'
-                        ? content.thumbnail
-                        : (fs_screenshot + '/' + content.url | sanitize)
-                "
+                [src]="content.fileType !== 'feed' ? content.thumbnail : (fs_screenshot + '/' + content.url | sanitize)"
                 alt="thumbnail"
                 class="full-width height-100 border-bottom" />
 
@@ -34,21 +28,11 @@
                 <p class="sm-text mb-0 cursor-pointer">
                     <i
                         class="fas fa-user-circle"
-                        [ngClass]="
-                            content.dealerId == null || content.dealerId == ''
-                                ? 'text-gray'
-                                : 'text-primary'
-                        "
-                        [title]="
-                            content.dealerId == null || content.dealerId == ''
-                                ? 'Unassigned'
-                                : 'Assigned'
-                        "></i>
+                        [ngClass]="content.dealerId == null || content.dealerId == '' ? 'text-gray' : 'text-primary'"
+                        [title]="content.dealerId == null || content.dealerId == '' ? 'Unassigned' : 'Assigned'"></i>
                 </p>
 
-                <p
-                    class="sm-text mb-0 cursor-pointer ml-2"
-                    *ngIf="show_fullscreen_status && content.isFullScreen == 1">
+                <p class="sm-text mb-0 cursor-pointer ml-2" *ngIf="show_fullscreen_status && content.isFullScreen == 1">
                     <i class="fas fa-expand text-primary"></i>
                 </p>
             </div>

@@ -1,7 +1,4 @@
-<div
-    class="template-wrapper"
-    [ngClass]="larger ? 'larger' : ''"
-    [ngStyle]="{ height: height, width: width }">
+<div class="template-wrapper" [ngClass]="larger ? 'larger' : ''" [ngStyle]="{ height: height, width: width }">
     <ng-container *ngFor="let t of template_data.templateZones">
         <app-template-zones
             [zone_name]="t.name"

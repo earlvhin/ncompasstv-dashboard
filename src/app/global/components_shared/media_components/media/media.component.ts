@@ -244,12 +244,7 @@ export class MediaComponent implements OnInit, OnDestroy {
         const dialog = this._dialog.open(SelectOwnerComponent, { width: '500px', data });
 
         dialog.afterClosed().subscribe(
-            (response: {
-                dealer: { id; name };
-                host: { id; name };
-                advertiser: { id; name };
-                type: number;
-            }) => {
+            (response: { dealer: { id; name }; host: { id; name }; advertiser: { id; name }; type: number }) => {
                 if (typeof response === 'undefined' || !response) return;
 
                 let toId = '';
@@ -312,8 +307,7 @@ export class MediaComponent implements OnInit, OnDestroy {
     pageRequested(page: number, filter: boolean): void {
         this.no_search_result = false;
         this.searching = true;
-        if (this.is_dealer)
-            this.filters.user.dealer_label = this._auth.current_user_value.roleInfo.dealerId;
+        if (this.is_dealer) this.filters.user.dealer_label = this._auth.current_user_value.roleInfo.dealerId;
 
         const labels = {
             feedId: this.filters.feedId,
@@ -419,8 +413,7 @@ export class MediaComponent implements OnInit, OnDestroy {
 
             if (m.fileType === 'webm' || m.fileType === 'mp4')
                 fileThumbnailUrl = this.renameWebmThumb(m.fileName, m.url);
-            else if (this._isImage.transform(m.fileType))
-                fileThumbnailUrl = `${m.url}${m.fileName}`;
+            else if (this._isImage.transform(m.fileType)) fileThumbnailUrl = `${m.url}${m.fileName}`;
             else fileThumbnailUrl = m.previewThumbnail || m.thumbnail;
 
             return new UI_CONTENT(
@@ -480,10 +473,7 @@ export class MediaComponent implements OnInit, OnDestroy {
     }
 
     private sendStatCardsData(): void {
-        if (
-            this.role_id === UI_ROLE_DEFINITION.dealer ||
-            this.role_id === UI_ROLE_DEFINITION['sub-dealer']
-        ) {
+        if (this.role_id === UI_ROLE_DEFINITION.dealer || this.role_id === UI_ROLE_DEFINITION['sub-dealer']) {
             this.subscription.add(
                 this._content
                     .get_contents_total_by_dealer(this._auth.current_user_value.roleInfo.dealerId)

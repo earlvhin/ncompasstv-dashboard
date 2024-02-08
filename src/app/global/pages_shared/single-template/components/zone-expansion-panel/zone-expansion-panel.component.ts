@@ -101,8 +101,7 @@ export class ZoneExpansionPanelComponent implements OnInit, OnDestroy {
             let data: any[] = [zone[config.name]];
             if (config.required) data.push(Validators.required);
             formConfiguration[config.name] = data;
-            if (config.name === 'templateZoneId')
-                formConfiguration['templateZoneId'] = zone.templateZoneId;
+            if (config.name === 'templateZoneId') formConfiguration['templateZoneId'] = zone.templateZoneId;
         });
 
         this.form = this._form_builder.group(formConfiguration);

@@ -19,24 +19,17 @@
                                 <div class="create-screen-height">
                                     <form [formGroup]="new_screen_form" *ngIf="dealers.length > 0">
                                         <div class="row">
-                                            <div
-                                                *ngFor="let f of new_screen_form_view"
-                                                class="{{ f.width }}">
+                                            <div *ngFor="let f of new_screen_form_view" class="{{ f.width }}">
                                                 <mat-form-field class="full-width">
                                                     <mat-label>{{ f.label }}</mat-label>
-                                                    <input
-                                                        matInput
-                                                        formControlName="{{ f.control }}" />
+                                                    <input matInput formControlName="{{ f.control }}" />
                                                 </mat-form-field>
                                             </div>
                                         </div>
                                     </form>
 
                                     <div class="row">
-                                        <div
-                                            [ngClass]="
-                                                screen_selected == null ? 'col-lg-12' : 'col-lg-11'
-                                            ">
+                                        <div [ngClass]="screen_selected == null ? 'col-lg-12' : 'col-lg-11'">
                                             <app-autocomplete-field
                                                 [data_reference]="screen_types"
                                                 [primary_keyword]="'description'"
@@ -47,9 +40,7 @@
                                                 [reset_value]="reset_screen">
                                             </app-autocomplete-field>
                                         </div>
-                                        <div
-                                            class="col-lg-1 cursor-pointer"
-                                            *ngIf="screen_selected != null">
+                                        <div class="col-lg-1 cursor-pointer" *ngIf="screen_selected != null">
                                             <span
                                                 class="pt-3 fa fa-times text-danger"
                                                 data-toggle="tooltip"
@@ -58,11 +49,7 @@
                                         </div>
                                         <div class="row"></div>
                                         <div class="col-lg-12 mb-4">
-                                            <ng-container
-                                                *ngIf="
-                                                    dealerId && is_dealer_present;
-                                                    else no_dealer
-                                                ">
+                                            <ng-container *ngIf="dealerId && is_dealer_present; else no_dealer">
                                                 <mat-form-field class="full-width mt-3">
                                                     <mat-label class="text-dark"
                                                         >You are creating a screen for:</mat-label
@@ -101,8 +88,7 @@
                                                 class="theme-btn"
                                                 (click)="checkIfStep1Complete()">
                                                 <span class="button-label">Next</span>
-                                                <span
-                                                    class="fas fa-long-arrow-alt-right ml-2"></span>
+                                                <span class="fas fa-long-arrow-alt-right ml-2"></span>
                                             </button>
                                         </div>
                                     </div>
@@ -140,10 +126,7 @@
                         <ng-template #screen_info_error_msg>
                             <div class="pt-5 text-center">
                                 <h2 class="mb-2">Screen Information Not Valid</h2>
-                                <p>
-                                    Please go back to <strong>Step 1</strong> and complete the forms
-                                    to proceed.
-                                </p>
+                                <p>Please go back to <strong>Step 1</strong> and complete the forms to proceed.</p>
                             </div>
                         </ng-template>
                     </mat-step>
@@ -151,9 +134,7 @@
                     <!-- STEP 3 -->
                     <mat-step>
                         <ng-template matStepLabel>Assign Playlist</ng-template>
-                        <div
-                            class="row justify-content-center"
-                            *ngIf="!no_chosen_template; else no_template">
+                        <div class="row justify-content-center" *ngIf="!no_chosen_template; else no_template">
                             <div class="col-lg-7">
                                 <div class="mb-4 mt-5">
                                     <div *ngIf="template$ | async as template; else loading">
@@ -177,17 +158,13 @@
                                             <mat-form-field
                                                 class="full-width"
                                                 *ngFor="
-                                                    let z of zone_playlist_form.get(
-                                                        'screenZonePlaylist'
-                                                    )['controls'];
+                                                    let z of zone_playlist_form.get('screenZonePlaylist')['controls'];
                                                     let i = index
                                                 "
                                                 [formGroupName]="i">
                                                 <mat-label
                                                     >Select Playlist for
-                                                    {{
-                                                        z.controls['templateName'].value
-                                                    }}</mat-label
+                                                    {{ z.controls['templateName'].value }}</mat-label
                                                 >
                                                 <mat-select formControlName="zonePlaylist">
                                                     <div>
@@ -207,8 +184,7 @@
                                         <div class="text-left">
                                             <h3>Aw Sorry!</h3>
                                             <p class="sm-text mb-3">
-                                                The selected dealer has no available playlist(s) at
-                                                the moment.
+                                                The selected dealer has no available playlist(s) at the moment.
                                             </p>
                                             <button
                                                 mat-button
@@ -235,10 +211,7 @@
                         <ng-template #no_template>
                             <div class="pt-5 text-center">
                                 <h2 class="mb-2">Please Choose a Template</h2>
-                                <p>
-                                    Please go back to <strong>Step 2</strong> and choose your
-                                    desired template.
-                                </p>
+                                <p>Please go back to <strong>Step 2</strong> and choose your desired template.</p>
                             </div>
                         </ng-template>
                     </mat-step>
@@ -248,10 +221,7 @@
                         <ng-template matStepLabel>Assign to Host</ng-template>
                         <div
                             class="row justify-content-center mt-5"
-                            *ngIf="
-                                !screen_info_error && !no_chosen_template;
-                                else assign_to_host_error
-                            ">
+                            *ngIf="!screen_info_error && !no_chosen_template; else assign_to_host_error">
                             <div class="col-lg-8 mb-5" style="min-height: 600px">
                                 <div class="mb-4">
                                     <ng-container *ngFor="let t of template$ | async">
@@ -267,9 +237,7 @@
                                 <div class="mb-3">
                                     <ng-container *ngIf="hostId && is_host_present; else no_host">
                                         <mat-form-field class="full-width mt-3">
-                                            <mat-label class="text-dark"
-                                                >You are creating a screen for:</mat-label
-                                            >
+                                            <mat-label class="text-dark">You are creating a screen for:</mat-label>
                                             <input
                                                 matInput
                                                 disabled
@@ -298,8 +266,7 @@
                                         <div class="text-left">
                                             <h3>Oh Snap!</h3>
                                             <p class="sm-text mb-3">
-                                                The selected dealer has no available hosts at the
-                                                moment.
+                                                The selected dealer has no available hosts at the moment.
                                             </p>
                                             <button
                                                 mat-button
@@ -313,40 +280,25 @@
                                     </ng-template>
                                 </div>
 
-                                <ng-container
-                                    *ngIf="licenses && licenses.length > 0; else no_license">
-                                    <div
-                                        class="text-left"
-                                        *ngIf="!has_no_licenses; else no_license">
+                                <ng-container *ngIf="licenses && licenses.length > 0; else no_license">
+                                    <div class="text-left" *ngIf="!has_no_licenses; else no_license">
                                         <div class="licenses-heading">
-                                            <h4 class="font-weight-bold mb-3">
-                                                Assign to Licenses
-                                            </h4>
+                                            <h4 class="font-weight-bold mb-3">Assign to Licenses</h4>
                                             <button
                                                 mat-button
                                                 mat-raised-button
                                                 class="col-lg-6 theme-btn flex-even mx-1"
                                                 (click)="onBulkSetInstallDate()"
-                                                [disabled]="
-                                                    !assigned_licenses ||
-                                                    assigned_licenses.length <= 0
-                                                ">
+                                                [disabled]="!assigned_licenses || assigned_licenses.length <= 0">
                                                 Bulk Set Installation Date
                                                 <span class="fas fa-calendar ml-2 sm-text"></span>
                                             </button>
                                         </div>
                                         <div *ngFor="let l of licenses; let i = index">
-                                            <ng-container
-                                                *ngIf="l.screenId != null; else unused_license">
+                                            <ng-container *ngIf="l.screenId != null; else unused_license">
                                                 <mat-slide-toggle
                                                     class="mb-3"
-                                                    (change)="
-                                                        licenseSelected(
-                                                            slide_toggle_status[i],
-                                                            l.licenseId,
-                                                            i
-                                                        )
-                                                    "
+                                                    (change)="licenseSelected(slide_toggle_status[i], l.licenseId, i)"
                                                     [checked]="true"
                                                     [disabled]="true">
                                                     <span class="md-text">{{ l.licenseKey }}</span>
@@ -359,16 +311,10 @@
                                                         <mat-slide-toggle
                                                             class="mb-3"
                                                             (change)="
-                                                                licenseSelected(
-                                                                    slide_toggle_status[i],
-                                                                    l.licenseId,
-                                                                    i
-                                                                )
+                                                                licenseSelected(slide_toggle_status[i], l.licenseId, i)
                                                             "
                                                             [(ngModel)]="slide_toggle_status[i]">
-                                                            <span class="md-text">{{
-                                                                l.licenseKey
-                                                            }}</span>
+                                                            <span class="md-text">{{ l.licenseKey }}</span>
                                                         </mat-slide-toggle>
                                                     </div>
                                                     <div
@@ -376,27 +322,18 @@
                                                         [ngClass]="{
                                                             disabled:
                                                                 !assigned_licenses ||
-                                                                !assigned_licenses.includes(
-                                                                    l.licenseId
-                                                                )
+                                                                !assigned_licenses.includes(l.licenseId)
                                                         }">
                                                         <span
                                                             >Installed:
                                                             {{
                                                                 l.installDate
-                                                                    ? (l.installDate
-                                                                      | date: 'MMM dd, y')
+                                                                    ? (l.installDate | date: 'MMM dd, y')
                                                                     : '--'
                                                             }}</span
                                                         >
                                                         <mat-icon
-                                                            (click)="
-                                                                onSetInstallDate(
-                                                                    l.licenseId,
-                                                                    l.installDate,
-                                                                    i
-                                                                )
-                                                            "
+                                                            (click)="onSetInstallDate(l.licenseId, l.installDate, i)"
                                                             >calendar_today</mat-icon
                                                         >
                                                     </div>
@@ -408,9 +345,7 @@
 
                                 <ng-template #no_license>
                                     <h4 class="font-weight-bold">No License Available</h4>
-                                    <p class="sm-text">
-                                        Assign a License to this Host to continue.
-                                    </p>
+                                    <p class="sm-text">Assign a License to this Host to continue.</p>
                                 </ng-template>
 
                                 <button
@@ -429,10 +364,9 @@
                             <div class="pt-5 text-center">
                                 <h2 class="mb-2">Your Screen Is Not Valid</h2>
                                 <p>
-                                    Your screen does not have the minimum requirements to be
-                                    published,
-                                    <br />make sure you have completed the
-                                    <strong>first</strong> and <strong>second</strong> steps.
+                                    Your screen does not have the minimum requirements to be published,
+                                    <br />make sure you have completed the <strong>first</strong> and
+                                    <strong>second</strong> steps.
                                 </p>
                             </div>
                         </ng-template>

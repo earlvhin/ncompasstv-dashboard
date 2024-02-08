@@ -17,11 +17,7 @@
             <app-list-item [list_data]="list_data"></app-list-item>
         </ng-container>
 
-        <app-data-graph
-            *ngIf="chart_id"
-            [data_labels]="chart_label"
-            [data_values]="chart_data"
-            [graph_id]="chart_id">
+        <app-data-graph *ngIf="chart_id" [data_labels]="chart_label" [data_values]="chart_data" [graph_id]="chart_id">
         </app-data-graph>
     </mat-expansion-panel>
 </mat-accordion>

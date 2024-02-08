@@ -15,18 +15,8 @@
                 </mat-form-field>
             </div>
 
-            <button
-                mat-button
-                mat-raised-button
-                class="theme-btn mt-4 mr-2"
-                [disabled]="form_valid">
-                Submit
-            </button>
-            <button
-                mat-button
-                mat-raised-button
-                class="theme-btn mt-4 bg-danger"
-                [mat-dialog-close]="true">
+            <button mat-button mat-raised-button class="theme-btn mt-4 mr-2" [disabled]="form_valid">Submit</button>
+            <button mat-button mat-raised-button class="theme-btn mt-4 bg-danger" [mat-dialog-close]="true">
                 Cancel
             </button>
         </form>
@@ -44,9 +34,7 @@
             <app-success-animation></app-success-animation>
             <h3 class="mb-1">Playlist Cloned Successfully!</h3>
             <p class="mb-0 sm-text font-weight-md">Click the button below to continue</p>
-            <button mat-button mat-raised-button class="theme-btn mt-4" mat-dialog-close>
-                Continue
-            </button>
+            <button mat-button mat-raised-button class="theme-btn mt-4" mat-dialog-close>Continue</button>
         </div>
     </ng-container>
 </ng-container>

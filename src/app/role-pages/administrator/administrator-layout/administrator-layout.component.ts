@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../global/services/auth-service/auth.service';
-import {
-    UI_ROLE_DEFINITION_TEXT,
-    UI_ROLE_DEFINITION,
-} from '../../../global/models/ui_role-definition.model';
+import { UI_ROLE_DEFINITION_TEXT, UI_ROLE_DEFINITION } from '../../../global/models/ui_role-definition.model';
 
 @Component({
     selector: 'app-administrator-layout',

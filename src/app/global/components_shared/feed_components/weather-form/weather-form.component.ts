@@ -24,12 +24,7 @@ export class WeatherFormComponent implements OnInit, OnDestroy {
     zipcode_valid: boolean;
     zipcode_checking: boolean = false;
 
-    font_family = [
-        { label: 'Helvetica' },
-        { label: 'Poppins' },
-        { label: 'Roboto' },
-        { label: 'Montserrat' },
-    ];
+    font_family = [{ label: 'Helvetica' }, { label: 'Poppins' }, { label: 'Roboto' }, { label: 'Montserrat' }];
 
     orientation = [{ label: 'Vertical' }, { label: 'Horizontal' }];
 
@@ -118,8 +113,7 @@ export class WeatherFormComponent implements OnInit, OnDestroy {
             const validators: any[] = [];
 
             if (field.required) validators.push(Validators.required);
-            if (field.viewType === 'colorpicker')
-                validators.push(this._feed.validateColorFieldValues.bind(this));
+            if (field.viewType === 'colorpicker') validators.push(this._feed.validateColorFieldValues.bind(this));
 
             Object.assign(formConfig, {
                 [field.form_control_name]: [field.value ? field.value : null, validators],
@@ -144,20 +138,12 @@ export class WeatherFormComponent implements OnInit, OnDestroy {
                 }
             });
 
-            this.formControls.backgroundContentId.setValue(
-                this.edit_weather_data.backgroundContentId,
-            );
+            this.formControls.backgroundContentId.setValue(this.edit_weather_data.backgroundContentId);
             this.formControls.bannerContentId.setValue(this.edit_weather_data.bannerContentId);
             this.formControls.footerContentId.setValue(this.edit_weather_data.footerContentId);
-            this.formControls.boxBackgroundColor.setValue(
-                this.edit_weather_data.boxBackgroundColor,
-            );
-            this.formControls.headerImageSize.setValue(
-                this.edit_weather_data.headerImageSize || 500,
-            );
-            this.formControls.footerImageSize.setValue(
-                this.edit_weather_data.footerImageSize || 500,
-            );
+            this.formControls.boxBackgroundColor.setValue(this.edit_weather_data.boxBackgroundColor);
+            this.formControls.headerImageSize.setValue(this.edit_weather_data.headerImageSize || 500);
+            this.formControls.footerImageSize.setValue(this.edit_weather_data.footerImageSize || 500);
             this.formControls.daysFontColor.setValue(this.edit_weather_data.daysFontColor);
             this.formControls.numberDays.setValue(this.edit_weather_data.numberDays);
             this.formControls.fontFamily.setValue(this.edit_weather_data.fontFamily);

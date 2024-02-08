@@ -8,12 +8,7 @@ import { environment } from 'src/environments/environment';
 
 import { LicenseService, AuthService, DealerService } from 'src/app/global/services';
 import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import {
-    API_DEALER_VALUES,
-    API_DEALER_VALUE,
-    UI_ROLE_DEFINITION,
-    ACTIVITY_LOGS,
-} from 'src/app/global/models';
+import { API_DEALER_VALUES, API_DEALER_VALUE, UI_ROLE_DEFINITION, ACTIVITY_LOGS } from 'src/app/global/models';
 
 @Component({
     selector: 'app-dealers-view',
@@ -281,11 +276,7 @@ export class DealersViewComponent implements OnInit {
                     .delete_contract_details(data.s3Filename)
                     .pipe(takeUntil(this._unsubscribe))
                     .subscribe((response) => {
-                        this.openConfirmationModal(
-                            'success',
-                            'Success!',
-                            'File has been deleted succesfully',
-                        );
+                        this.openConfirmationModal('success', 'Success!', 'File has been deleted succesfully');
                         this.ngOnInit();
                     }),
             );
@@ -295,11 +286,7 @@ export class DealersViewComponent implements OnInit {
                     .delete_territory_details(data.s3Filename)
                     .pipe(takeUntil(this._unsubscribe))
                     .subscribe((response) => {
-                        this.openConfirmationModal(
-                            'success',
-                            'Success!',
-                            'File has been deleted succesfully',
-                        );
+                        this.openConfirmationModal('success', 'Success!', 'File has been deleted succesfully');
                         this.ngOnInit();
                     }),
             );
@@ -402,14 +389,8 @@ export class DealersViewComponent implements OnInit {
             thirtyseven: [{ value: this.values_data.month37, disabled: true }],
             base: [{ value: this.values_data.baseFee, disabled: true }, Validators.required],
             price: [{ value: this.values_data.perLicense, disabled: true }, Validators.required],
-            new_price: [
-                { value: this.values_data.licensePriceNew, disabled: true },
-                Validators.required,
-            ],
-            billable: [
-                { value: this.values_data.billableLicenses, disabled: true },
-                Validators.required,
-            ],
+            new_price: [{ value: this.values_data.licensePriceNew, disabled: true }, Validators.required],
+            billable: [{ value: this.values_data.billableLicenses, disabled: true }, Validators.required],
         });
 
         this.subscription.add(
@@ -458,11 +439,7 @@ export class DealersViewComponent implements OnInit {
 
         this._dealer.update_dealer_values(this.mapUserInfoChanges()).subscribe(
             () => {
-                this.openConfirmationModal(
-                    'success',
-                    'Success!',
-                    'Dealer Billing Info changed succesfully',
-                );
+                this.openConfirmationModal('success', 'Success!', 'Dealer Billing Info changed succesfully');
                 this.createActivity(newDealerActivityLog);
                 this.ngOnInit();
             },
@@ -501,21 +478,11 @@ export class DealersViewComponent implements OnInit {
     mapUserInfoChanges() {
         return {
             dealerId: this.dealer,
-            month1: this.newBillingFormControls.start.value
-                ? this.newBillingFormControls.start.value
-                : 0,
-            month19: this.newBillingFormControls.nineteen.value
-                ? this.newBillingFormControls.nineteen.value
-                : 0,
-            month25: this.newBillingFormControls.twentyfive.value
-                ? this.newBillingFormControls.twentyfive.value
-                : 0,
-            month31: this.newBillingFormControls.thirtyone.value
-                ? this.newBillingFormControls.thirtyone.value
-                : 0,
-            month37: this.newBillingFormControls.thirtyseven.value
-                ? this.newBillingFormControls.thirtyseven.value
-                : 0,
+            month1: this.newBillingFormControls.start.value ? this.newBillingFormControls.start.value : 0,
+            month19: this.newBillingFormControls.nineteen.value ? this.newBillingFormControls.nineteen.value : 0,
+            month25: this.newBillingFormControls.twentyfive.value ? this.newBillingFormControls.twentyfive.value : 0,
+            month31: this.newBillingFormControls.thirtyone.value ? this.newBillingFormControls.thirtyone.value : 0,
+            month37: this.newBillingFormControls.thirtyseven.value ? this.newBillingFormControls.thirtyseven.value : 0,
             baseFee: this.newBillingFormControls.base.value,
             perLicense: this.newBillingFormControls.price.value,
             licensePriceNew: this.newBillingFormControls.new_price.value,

@@ -58,10 +58,7 @@ export class ContentsTabComponent implements OnInit {
 
                     //for preview
                     this.contents.map((content) => {
-                        content.url = content.url.replace(
-                            'https://n-compass-filestack.s3.amazonaws.com/',
-                            '',
-                        );
+                        content.url = content.url.replace('https://n-compass-filestack.s3.amazonaws.com/', '');
                     });
 
                     this.contentsForDialog = this.mapToMediaPreviewDialog(this.contents);
@@ -164,14 +161,6 @@ export class ContentsTabComponent implements OnInit {
     }
 
     protected get columns(): string[] {
-        return [
-            '#',
-            'Name',
-            'Type',
-            'Total Play Count',
-            'Total Duration',
-            'Upload Date',
-            'Uploaded By',
-        ];
+        return ['#', 'Name', 'Type', 'Total Play Count', 'Total Duration', 'Upload Date', 'Uploaded By'];
     }
 }

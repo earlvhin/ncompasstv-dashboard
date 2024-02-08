@@ -114,9 +114,7 @@ export class DmaTabComponent implements OnInit, OnDestroy {
     }
 
     private getHostsByDMA(rank: number, code: string, name: string) {
-        return this._host
-            .get_dma_hosts_by_rank(rank, code, name)
-            .pipe(takeUntil(this._unsubscribe));
+        return this._host.get_dma_hosts_by_rank(rank, code, name).pipe(takeUntil(this._unsubscribe));
     }
 
     private initializeForm(): void {
@@ -149,17 +147,14 @@ export class DmaTabComponent implements OnInit, OnDestroy {
                             (dma, index, merged) =>
                                 merged.findIndex(
                                     (mergedDMA) =>
-                                        mergedDMA.dmaRank === dma.dmaRank &&
-                                        mergedDMA.dmaCode === dma.dmaCode,
+                                        mergedDMA.dmaRank === dma.dmaRank && mergedDMA.dmaCode === dma.dmaCode,
                                 ) === index,
                         );
                         this.filteredDMA.next(unique);
                     });
                 }),
             )
-            .subscribe(
-                () => (this.searchSelectDMADropdown.compareWith = (a, b) => a && b && a === b),
-            );
+            .subscribe(() => (this.searchSelectDMADropdown.compareWith = (a, b) => a && b && a === b));
     }
 
     private onSelectDMA(): void {
@@ -187,8 +182,7 @@ export class DmaTabComponent implements OnInit, OnDestroy {
             }
 
             hour.periods.map((period) => {
-                if (period.open === '' && period.close === '')
-                    days.push(`${hour.day} : Open 24 hrs`);
+                if (period.open === '' && period.close === '') days.push(`${hour.day} : Open 24 hrs`);
                 else days.push(`${hour.day} : ${period.open} - ${period.close}`);
             });
         });

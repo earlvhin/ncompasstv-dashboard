@@ -77,18 +77,10 @@ export class EditFeedComponent implements OnInit, OnDestroy {
             .subscribe(
                 (data) => {
                     this._dialog_ref.close(data);
-                    this.showConfirmationDialog(
-                        'success',
-                        'Feed Saved Successfully',
-                        'Click OK to continue',
-                    );
+                    this.showConfirmationDialog('success', 'Feed Saved Successfully', 'Click OK to continue');
                 },
                 (error) => {
-                    this.showConfirmationDialog(
-                        'error',
-                        'Error while saving feed',
-                        error.error.message,
-                    );
+                    this.showConfirmationDialog('error', 'Error while saving feed', error.error.message);
                 },
             );
     }
@@ -144,10 +136,7 @@ export class EditFeedComponent implements OnInit, OnDestroy {
             const roleId = this._auth.current_user_value.role_id;
             const currentUserBusinessName = this._auth.current_user_value.roleInfo.businessName;
             const businessNameData = this._dialog_data.business_name as { id: string };
-            const dealerId =
-                roleId === UI_ROLE_DEFINITION.dealer
-                    ? currentUserBusinessName
-                    : businessNameData.id;
+            const dealerId = roleId === UI_ROLE_DEFINITION.dealer ? currentUserBusinessName : businessNameData.id;
             return dealerId === '--' ? null : dealerId;
         };
 
@@ -209,17 +198,15 @@ export class EditFeedComponent implements OnInit, OnDestroy {
         const form = this.edit_feed_form;
         const control = form.get('feedUrl');
 
-        form.valueChanges
-            .pipe(takeUntil(this._unsubscribe), debounceTime(1000))
-            .subscribe(async () => {
-                if (this.is_widget_feed) return;
-                this.is_validating_url = true;
-                this.onEditUrl = true;
-                const url = control.value as string;
-                this.is_invalid_url = !(await this._feed.check_url(url));
-                this.isUrlValidType = this._feed.isUrlValid;
-                this.is_validating_url = false;
-            });
+        form.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe(async () => {
+            if (this.is_widget_feed) return;
+            this.is_validating_url = true;
+            this.onEditUrl = true;
+            const url = control.value as string;
+            this.is_invalid_url = !(await this._feed.check_url(url));
+            this.isUrlValidType = this._feed.isUrlValid;
+            this.is_validating_url = false;
+        });
     }
 
     private urlCheck(data: string) {

@@ -87,13 +87,7 @@ export class UI_BLOCKLIST_CONTENT {
     date_created: string;
     date_updated: string;
 
-    constructor(
-        block_id: string,
-        license_id: string,
-        content_id: string,
-        date_created: string,
-        date_updated: string,
-    ) {
+    constructor(block_id: string, license_id: string, content_id: string, date_created: string, date_updated: string) {
         this.block_id = block_id;
         this.license_id = license_id;
         this.content_id = content_id;

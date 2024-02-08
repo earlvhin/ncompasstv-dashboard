@@ -67,10 +67,7 @@ export class ToolsComponent implements OnInit {
         const admin_tools_disabled = localStorage.getItem('admin_tools_disabled');
 
         if (admin_tools_disabled) {
-            this.timeout_duration = moment().diff(
-                moment(admin_tools_disabled, 'MMMM Do YYYY, h:mm:ss a'),
-                'minutes',
-            );
+            this.timeout_duration = moment().diff(moment(admin_tools_disabled, 'MMMM Do YYYY, h:mm:ss a'), 'minutes');
 
             if (this.timeout_duration >= 10) {
                 this.remote_update_disabled = false;
@@ -96,13 +93,7 @@ export class ToolsComponent implements OnInit {
     }
 
     remoteUpdateAll() {
-        this.warningModal(
-            'warning',
-            'Update and Reboot',
-            'Update and reboot all online players?',
-            '',
-            'update_reboot',
-        );
+        this.warningModal('warning', 'Update and Reboot', 'Update and reboot all online players?', '', 'update_reboot');
     }
 
     remoteRebootAll() {

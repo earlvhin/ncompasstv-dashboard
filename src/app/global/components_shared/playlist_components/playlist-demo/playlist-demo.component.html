@@ -20,10 +20,7 @@
 
     <ng-container *ngIf="current_filetype | isFeed">
         <div class="frame-wrap">
-            <iframe
-                class="responsive-iframe"
-                [src]="current_content | sanitize"
-                frameborder="0"></iframe>
+            <iframe class="responsive-iframe" [src]="current_content | sanitize" frameborder="0"></iframe>
         </div>
     </ng-container>
 

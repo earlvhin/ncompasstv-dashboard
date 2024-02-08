@@ -11,8 +11,7 @@
             </mat-slide-toggle>
         </div>
         <div class="xsm-text">
-            <strong>{{ host_licenses.licenses.length }}</strong> License<span
-                *ngIf="host_licenses.licenses.length > 1"
+            <strong>{{ host_licenses.licenses.length }}</strong> License<span *ngIf="host_licenses.licenses.length > 1"
                 >s</span
             >
             <span class="fas fa-arrow-down ml-2"></span>
@@ -26,10 +25,7 @@
                     class="align-middle"
                     (change)="blocklisting($event, l.licenseId)"
                     [disabled]="is_child_frequency"
-                    [checked]="
-                        !incoming_blocklist.includes(l.licenseId) ||
-                        remove_in_blocklist.includes(l.licenseId)
-                    ">
+                    [checked]="!incoming_blocklist.includes(l.licenseId) || remove_in_blocklist.includes(l.licenseId)">
                     <h5 class="mb-0 ml-2">{{ l.alias || l.licenseKey }}</h5>
                 </mat-slide-toggle>
             </div>

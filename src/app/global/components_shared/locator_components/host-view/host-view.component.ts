@@ -22,9 +22,7 @@ export class HostViewComponent implements OnInit, OnDestroy {
     isSearchingHosts = false;
     isSearchingHostsByCategory = false;
     isSearchingHostsByState = false;
-    searchDealerId = this.isCurrentUserDealer
-        ? this._auth.current_user_value.roleInfo.dealerId
-        : '';
+    searchDealerId = this.isCurrentUserDealer ? this._auth.current_user_value.roleInfo.dealerId : '';
     searchKey = '';
     stateSearchKey = '';
     statesData: any[] = [];

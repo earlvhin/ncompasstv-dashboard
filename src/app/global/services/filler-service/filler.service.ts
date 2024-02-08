@@ -36,14 +36,7 @@ export class FillerService extends BaseService {
         return this.postRequest(url, data);
     }
 
-    get_filler_groups(
-        page: number,
-        key: string,
-        pageSize,
-        column = '',
-        order = '',
-        dealer?: boolean,
-    ) {
+    get_filler_groups(page: number, key: string, pageSize, column = '', order = '', dealer?: boolean) {
         let url = '';
         if (dealer)
             url = `${this.getters.api_get_dealer_filler_groups}?page=${page}&pageSize=${pageSize}&sortColumn=${column}&sortOrder=${order}`;
@@ -95,14 +88,7 @@ export class FillerService extends BaseService {
         return this.getRequest(url);
     }
 
-    get_filler_group_of_other_roles(
-        role: string,
-        page: number,
-        key: string,
-        pageSize = 11,
-        column = '',
-        order = '',
-    ) {
+    get_filler_group_of_other_roles(role: string, page: number, key: string, pageSize = 11, column = '', order = '') {
         let url = `${this.getters.api_get_dealer_filler_groups_other_roles}?role=${role}&page=${page}&pageSize=${pageSize}&sortColumn=${column}&sortOrder=${order}`;
         if (key && key.trim().length > 0) {
             const search = encodeURIComponent(key);

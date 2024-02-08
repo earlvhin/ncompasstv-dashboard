@@ -105,9 +105,7 @@ export class CreateTemplateComponent implements OnInit {
             disableClose: true,
         });
 
-        this.subscription.add(
-            dialog.afterClosed().subscribe((data: API_ZONE) => this.addZoneProperty(data)),
-        );
+        this.subscription.add(dialog.afterClosed().subscribe((data: API_ZONE) => this.addZoneProperty(data)));
     }
 
     zoneProperty(data: any, index: number) {

@@ -17,13 +17,9 @@
                     <span class="fas fa-user-shield text-white"></span>
                 </div>
                 <div class="ml-3">
-                    <span class="lg-text text-primary f-20"
-                        >Welcome back, Admin {{ user_name }}!</span
-                    >
+                    <span class="lg-text text-primary f-20">Welcome back, Admin {{ user_name }}!</span>
                     <br />
-                    <span class="text-gray sm-text">
-                        This is your N-Compass Dashboard. Look around!
-                    </span>
+                    <span class="text-gray sm-text"> This is your N-Compass Dashboard. Look around! </span>
                 </div>
             </div>
         </div>
@@ -121,9 +117,7 @@
                     <hr class="mb-3" />
                     <div class="row">
                         <div class="col-lg-4 text-center">
-                            <h4
-                                class="xlg-text text-primary"
-                                *ngIf="isNumber(host_stats.total); else spinner">
+                            <h4 class="xlg-text text-primary" *ngIf="isNumber(host_stats.total); else spinner">
                                 {{ getAverage(host_stats.total) }}
                             </h4>
                             <p>
@@ -134,9 +128,7 @@
                             </p>
                         </div>
                         <div class="col-lg-4 text-center">
-                            <h4
-                                class="xlg-text text-primary"
-                                *ngIf="isNumber(advertiser_stats.total); else spinner">
+                            <h4 class="xlg-text text-primary" *ngIf="isNumber(advertiser_stats.total); else spinner">
                                 {{ getAverage(advertiser_stats.total) }}
                             </h4>
                             <p>
@@ -147,9 +139,7 @@
                             </p>
                         </div>
                         <div class="col-lg-4 text-center">
-                            <h4
-                                class="xlg-text text-primary"
-                                *ngIf="isNumber(license_stats.total); else spinner">
+                            <h4 class="xlg-text text-primary" *ngIf="isNumber(license_stats.total); else spinner">
                                 {{ getAverage(license_stats.total) }}
                             </h4>
                             <p>
@@ -175,9 +165,7 @@
                     <hr class="mb-3" />
                     <div class="row no-gutters">
                         <div class="col-lg-6 text-center">
-                            <h4
-                                class="xlg-text text-primary"
-                                *ngIf="isNumber(daily_content_total); else spinner">
+                            <h4 class="xlg-text text-primary" *ngIf="isNumber(daily_content_total); else spinner">
                                 {{ daily_content_total || 0 }}
                             </h4>
                             <p>
@@ -186,9 +174,7 @@
                             </p>
                         </div>
                         <div class="col-lg-6 text-center">
-                            <h4
-                                class="xlg-text text-primary"
-                                *ngIf="isNumber(daily_feed_total); else spinner">
+                            <h4 class="xlg-text text-primary" *ngIf="isNumber(daily_feed_total); else spinner">
                                 {{ daily_feed_total }}
                             </h4>
                             <p>
@@ -240,8 +226,7 @@
                                 {{ installation_stats.next_month }}
                             </h4>
                             <p>
-                                <span
-                                    class="{{ installation_stats.icon }} text-primary mr-1"></span>
+                                <span class="{{ installation_stats.icon }} text-primary mr-1"></span>
                                 <span class="sm-text text-gray"> Next Month </span>
                             </p>
                         </div>
@@ -259,9 +244,7 @@
                     </h4>
                     <hr class="mb-3" />
                     <div class="text-center">
-                        <h4
-                            class="xlg-text text-primary"
-                            *ngIf="isNumber(installation_stats.total); else spinner">
+                        <h4 class="xlg-text text-primary" *ngIf="isNumber(installation_stats.total); else spinner">
                             {{ installation_stats.total }}
                         </h4>
                         <p>
@@ -285,9 +268,7 @@
                     </h4>
                     <hr class="mb-3" />
                     <div class="text-center">
-                        <h4
-                            class="xlg-text text-primary"
-                            *ngIf="isNumber(installation_stats.total); else spinner">
+                        <h4 class="xlg-text text-primary" *ngIf="isNumber(installation_stats.total); else spinner">
                             {{ installation_stats.total }}
                         </h4>
                         <p>
@@ -307,9 +288,7 @@
                     </h4>
                     <hr class="mb-3" />
                     <div class="text-center">
-                        <h4
-                            class="xlg-text text-primary"
-                            *ngIf="isNumber(daily_login_total); else spinner">
+                        <h4 class="xlg-text text-primary" *ngIf="isNumber(daily_login_total); else spinner">
                             {{ daily_login_total }}
                         </h4>
                         <p>

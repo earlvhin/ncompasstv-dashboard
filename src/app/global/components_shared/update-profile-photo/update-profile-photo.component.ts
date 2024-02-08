@@ -62,8 +62,7 @@ export class UpdateProfilePhotoComponent implements OnInit {
         return {
             storeTo: {
                 location: 's3',
-                container:
-                    'nctv-images-' + folder + '/logo/dealers/' + this.page_data.dealerId + '/',
+                container: 'nctv-images-' + folder + '/logo/dealers/' + this.page_data.dealerId + '/',
                 region: 'us-east-1',
             },
             accept: ['image/jpg', 'image/jpeg', 'image/png'],
@@ -114,11 +113,7 @@ export class UpdateProfilePhotoComponent implements OnInit {
                     .subscribe((response) => {
                         if (!response) return;
                         if (response == 'success')
-                            this.openConfirmationModal(
-                                'success',
-                                'Success!',
-                                'Profile picture successfully updated.',
-                            );
+                            this.openConfirmationModal('success', 'Success!', 'Profile picture successfully updated.');
                     });
             }
         });

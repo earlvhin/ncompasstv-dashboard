@@ -132,8 +132,7 @@ export class DmaViewComponent implements OnInit, OnDestroy {
     }
 
     getDataForExport() {
-        const EXCEL_TYPE =
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 
         this._host
             .get_all_dma(1, this.search_key, 0)

@@ -1,12 +1,4 @@
-import {
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    OnInit,
-    Output,
-    ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs/operators';
@@ -78,12 +70,8 @@ export class AutocompleteComponent implements OnInit {
     private _filter(keyword: any) {
         if (this.staticVal) return;
 
-        const filterValue = keyword.hasOwnProperty('value')
-            ? keyword.value.toLowerCase()
-            : keyword.toLowerCase();
-        let filterResult = this.field_data.data.filter((option) =>
-            option.value.toLowerCase().includes(filterValue),
-        );
+        const filterValue = keyword.hasOwnProperty('value') ? keyword.value.toLowerCase() : keyword.toLowerCase();
+        let filterResult = this.field_data.data.filter((option) => option.value.toLowerCase().includes(filterValue));
 
         // In an event that the keyword search returned does not have a result
         // then we trigger no_data_found event back so the parent can do something about it.

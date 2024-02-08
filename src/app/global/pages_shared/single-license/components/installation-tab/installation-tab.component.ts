@@ -169,11 +169,7 @@ export class InstallationTabComponent implements OnInit {
             seq: this.titles.length > 0 ? this.titles[this.titles.length - 1].seq + 1 : 1,
         };
         this._license.create_installation_checklist_title(modified_title).subscribe((data) => {
-            this.confirmationModal(
-                'success',
-                'Checklist Title has been added successfully',
-                'Click OK to continue',
-            );
+            this.confirmationModal('success', 'Checklist Title has been added successfully', 'Click OK to continue');
             this.form.reset();
             this.ngOnInit();
         });
@@ -202,16 +198,14 @@ export class InstallationTabComponent implements OnInit {
                     seq: data.seq,
                     installationChecklistId: data.installationChecklistId,
                 };
-                this._license
-                    .update_installation_checklist_title(modified_title)
-                    .subscribe((data) => {
-                        this.confirmationModal(
-                            'success',
-                            'Checklist Title has been updated successfully',
-                            'Click OK to continue',
-                        );
-                        this.ngOnInit();
-                    });
+                this._license.update_installation_checklist_title(modified_title).subscribe((data) => {
+                    this.confirmationModal(
+                        'success',
+                        'Checklist Title has been updated successfully',
+                        'Click OK to continue',
+                    );
+                    this.ngOnInit();
+                });
             }
         });
     }
@@ -247,66 +241,42 @@ export class InstallationTabComponent implements OnInit {
     }
 
     modifiedDataDisplayTemporary(modified_item, mode) {
-        let obj = this.checklist_items.find(
-            (o) => o.installationChecklist === 'c6cc9507-5273-4a51-bec2-0d8fab768ae9',
-        );
+        let obj = this.checklist_items.find((o) => o.installationChecklist === 'c6cc9507-5273-4a51-bec2-0d8fab768ae9');
         this.checklist_items = this.checklist_items.map((list) => {
             switch (mode) {
                 case 'deleting':
-                    if (
-                        list.installationChecklist.installationChecklistId ===
-                        modified_item.installationChecklistId
-                    ) {
+                    if (list.installationChecklist.installationChecklistId === modified_item.installationChecklistId) {
                         list.installationChecklistItems.splice(
                             list.installationChecklistItems.findIndex(
                                 (item) =>
-                                    item.installationChecklistItemId ===
-                                    modified_item.installationChecklistItemId,
+                                    item.installationChecklistItemId === modified_item.installationChecklistItemId,
                             ),
                             1,
                         );
                     }
                     break;
                 case 'editing':
-                    if (
-                        list.installationChecklist.installationChecklistId ===
-                        modified_item.installationChecklistId
-                    ) {
+                    if (list.installationChecklist.installationChecklistId === modified_item.installationChecklistId) {
                         list.installationChecklistItems.map((innerList) => {
-                            if (
-                                innerList.installationChecklistItemId ===
-                                modified_item.installationChecklistItemId
-                            ) {
+                            if (innerList.installationChecklistItemId === modified_item.installationChecklistItemId) {
                                 innerList.titleToChange = modified_item.title;
                             }
                         });
                     }
                     break;
                 case 'checking':
-                    if (
-                        list.installationChecklist.installationChecklistId ===
-                        modified_item.installationChecklistId
-                    ) {
+                    if (list.installationChecklist.installationChecklistId === modified_item.installationChecklistId) {
                         list.installationChecklistItems.map((innerList) => {
-                            if (
-                                innerList.installationChecklistItemId ===
-                                modified_item.installationChecklistItemId
-                            ) {
+                            if (innerList.installationChecklistItemId === modified_item.installationChecklistItemId) {
                                 innerList.isDone = 1;
                             }
                         });
                     }
                     break;
                 case 'unchecking':
-                    if (
-                        list.installationChecklist.installationChecklistId ===
-                        modified_item.installationChecklistId
-                    ) {
+                    if (list.installationChecklist.installationChecklistId === modified_item.installationChecklistId) {
                         list.installationChecklistItems.map((innerList) => {
-                            if (
-                                innerList.installationChecklistItemId ===
-                                modified_item.installationChecklistItemId
-                            ) {
+                            if (innerList.installationChecklistItemId === modified_item.installationChecklistItemId) {
                                 innerList.isDone = 0;
                             }
                         });
@@ -338,11 +308,7 @@ export class InstallationTabComponent implements OnInit {
 
     editMode() {
         if (this.edit_tasks) {
-            this.selectionModal(
-                'warning',
-                'Do you want to save the changes made on this form?',
-                '',
-            );
+            this.selectionModal('warning', 'Do you want to save the changes made on this form?', '');
         }
         this.edit_tasks = true;
     }
@@ -363,27 +329,17 @@ export class InstallationTabComponent implements OnInit {
         });
 
         if (this.task_items_container.length > 0) {
-            this._license
-                .add_installation_checklist_items(this.task_items_container)
-                .subscribe((data) => {
-                    this.confirmationModal(
-                        'success',
-                        'Task has been successfully added.',
-                        'Click OK to continue',
-                    );
-                    this.task_field_open = false;
-                    const control = <FormArray>this.form.controls['tasks'];
-                    for (let i = control.length - 1; i >= 0; i--) {
-                        control.removeAt(i);
-                    }
-                    this.ngOnInit();
-                });
+            this._license.add_installation_checklist_items(this.task_items_container).subscribe((data) => {
+                this.confirmationModal('success', 'Task has been successfully added.', 'Click OK to continue');
+                this.task_field_open = false;
+                const control = <FormArray>this.form.controls['tasks'];
+                for (let i = control.length - 1; i >= 0; i--) {
+                    control.removeAt(i);
+                }
+                this.ngOnInit();
+            });
         } else {
-            this.confirmationModal(
-                'error',
-                'Make sure to fill up all the necessary fields to create a task.',
-                '',
-            );
+            this.confirmationModal('error', 'Make sure to fill up all the necessary fields to create a task.', '');
         }
     }
 
@@ -415,14 +371,7 @@ export class InstallationTabComponent implements OnInit {
         this.modifiedDataDisplayTemporary(items, 'deleting');
     }
 
-    warningModal(
-        status: string,
-        message: string,
-        data: string,
-        return_msg: string,
-        action: string,
-        id: any,
-    ): void {
+    warningModal(status: string, message: string, data: string, return_msg: string, action: string, id: any): void {
         const dialogRef = this._dialog.open(ConfirmationModalComponent, {
             width: '500px',
             height: '350px',
@@ -472,16 +421,10 @@ export class InstallationTabComponent implements OnInit {
                 this.ngOnInit();
             } else {
                 if (this.tasks_to_edit.length > 0) {
-                    this._license
-                        .update_installation_checklist_item(this.tasks_to_edit)
-                        .subscribe((data) => {
-                            this.confirmationModal(
-                                'success',
-                                'Checklist Item(s) has been updated',
-                                'Click OK to continue',
-                            );
-                            this.getChecklistList();
-                        });
+                    this._license.update_installation_checklist_item(this.tasks_to_edit).subscribe((data) => {
+                        this.confirmationModal('success', 'Checklist Item(s) has been updated', 'Click OK to continue');
+                        this.getChecklistList();
+                    });
                 }
 
                 if (this.id_to_delete.length > 0) {

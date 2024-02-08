@@ -124,38 +124,26 @@ export class DealersTabComponent implements OnInit, OnDestroy {
                     { value: dealer.state, link: null, editable: false, hidden: false },
                     { value: dealer.licenses.length, link: null, editable: false, hidden: false },
                     {
-                        value:
-                            dealer.licenses.length > 0
-                                ? dealer.licenses.filter((i) => i.hostId != null).length
-                                : 0,
+                        value: dealer.licenses.length > 0 ? dealer.licenses.filter((i) => i.hostId != null).length : 0,
                         link: null,
                         editable: false,
                         hidden: false,
                     },
                     {
-                        value:
-                            dealer.licenses.length > 0
-                                ? dealer.licenses.filter((i) => i.hostId == null).length
-                                : 0,
+                        value: dealer.licenses.length > 0 ? dealer.licenses.filter((i) => i.hostId == null).length : 0,
                         link: null,
                         editable: false,
                         hidden: false,
                     },
                     {
-                        value:
-                            dealer.licenses.length > 0
-                                ? dealer.licenses.filter((i) => i.piStatus === 1).length
-                                : 0,
+                        value: dealer.licenses.length > 0 ? dealer.licenses.filter((i) => i.piStatus === 1).length : 0,
                         link: null,
                         editable: false,
                         hidden: false,
                         online_field: true,
                     },
                     {
-                        value:
-                            dealer.licenses.length > 0
-                                ? dealer.licenses.filter((i) => i.piStatus !== 1).length
-                                : 0,
+                        value: dealer.licenses.length > 0 ? dealer.licenses.filter((i) => i.piStatus !== 1).length : 0,
                         link: null,
                         editable: false,
                         hidden: false,
@@ -226,26 +214,24 @@ export class DealersTabComponent implements OnInit, OnDestroy {
     private subscribeToDealerSearch() {
         const control = this.searchControl;
 
-        control.valueChanges
-            .pipe(takeUntil(this._unsubscribe), debounceTime(1000))
-            .subscribe((keyword: string) => {
-                this.hasNoData = false;
-                this.isPageReady = false;
+        control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe((keyword: string) => {
+            this.hasNoData = false;
+            this.isPageReady = false;
+            this.resetFilters();
+
+            if (!keyword || keyword.trim().length === 0) {
+                delete this.filters.search;
+                this.currentTableData = [...this.queuedForReset];
                 this.resetFilters();
-
-                if (!keyword || keyword.trim().length === 0) {
-                    delete this.filters.search;
-                    this.currentTableData = [...this.queuedForReset];
-                    this.resetFilters();
-                    this.preloadDealers();
-                    setTimeout(() => (this.isPageReady = true), 1000);
-                    return;
-                }
-
-                this.filters.search = keyword;
-                this.searchDealers();
                 this.preloadDealers();
-            });
+                setTimeout(() => (this.isPageReady = true), 1000);
+                return;
+            }
+
+            this.filters.search = keyword;
+            this.searchDealers();
+            this.preloadDealers();
+        });
     }
 
     protected get _tableColumns() {

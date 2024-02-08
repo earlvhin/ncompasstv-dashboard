@@ -4,9 +4,7 @@
     <!-- Title -->
     <div class="row mb-2" *ngIf="has_breakdown && compare_basis_label">
         <div class="col-lg-12">
-            <h2 class="text-dark normal-text font-weight-medium m-0">
-                Total {{ compare_basis_label }}
-            </h2>
+            <h2 class="text-dark normal-text font-weight-medium m-0">Total {{ compare_basis_label }}</h2>
         </div>
     </div>
 
@@ -15,9 +13,7 @@
             <!-- Compare Basis -->
             <div class="row mb-3">
                 <div class="col-lg-12" *ngIf="!average_basis_label">
-                    <span class="text-primary font-weight-medium xlg-text mr-1">{{
-                        compare_basis
-                    }}</span>
+                    <span class="text-primary font-weight-medium xlg-text mr-1">{{ compare_basis }}</span>
                     <span class="md-text text-gray font-weight-medium">
                         {{ compare_basis_sub_label }}
                     </span>
@@ -106,9 +102,7 @@
                 <!-- Compare Basis -->
                 <div class="compare-basis text-center" *ngIf="!has_breakdown">
                     <h4>
-                        <span class="font-weight-medium text-primary mr-1 xlg-text">{{
-                            compare_basis
-                        }}</span>
+                        <span class="font-weight-medium text-primary mr-1 xlg-text">{{ compare_basis }}</span>
                         <span class="md-text text-gray f-500">
                             {{ compare_basis_label }}
                         </span>

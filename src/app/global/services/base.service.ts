@@ -94,11 +94,7 @@ export class BaseService {
         return this._http.put(url, body, headers);
     }
 
-    protected deleteRequest(
-        endpoint: string,
-        options: any = null,
-        isApplicationRequestOnly = false,
-    ): Observable<any> {
+    protected deleteRequest(endpoint: string, options: any = null, isApplicationRequestOnly = false): Observable<any> {
         let headers = !isApplicationRequestOnly ? this.headers : this.applicationOnlyHeaders;
         let baseUri = this.baseUri;
         if (options) headers = { ...this.headers, ...options };

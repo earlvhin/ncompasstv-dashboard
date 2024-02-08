@@ -5,10 +5,7 @@ import { UserService } from '../../../../global/services/user-service/user.servi
 import { UI_ROLE_DEFINITION } from '../../../../global/models/ui_role-definition.model';
 import { NotificationService } from '../../../../global/services/notification-service/notification.service';
 import { environment } from '../../../../../environments/environment';
-import {
-    NotificationsPaginated,
-    Notification,
-} from '../../../../global/models/api_notification.model';
+import { NotificationsPaginated, Notification } from '../../../../global/models/api_notification.model';
 import { FeedService } from 'src/app/global/services';
 import { Router } from '@angular/router';
 @Component({
@@ -57,10 +54,7 @@ export class NavbarComponent implements OnInit {
             this.current_userid = user_id;
             // this.setCookieForOtherSite(this.current_userid);
 
-            if (
-                role_id === UI_ROLE_DEFINITION.administrator ||
-                role_id === UI_ROLE_DEFINITION.dealeradmin
-            ) {
+            if (role_id === UI_ROLE_DEFINITION.administrator || role_id === UI_ROLE_DEFINITION.dealeradmin) {
                 this.is_admin = true;
                 this.route = '/administrator';
             }
@@ -129,10 +123,7 @@ export class NavbarComponent implements OnInit {
     }
 
     checkNewNotifications() {
-        this.has_alerts =
-            this.notifications.filter((i: Notification) => i.isOpened == 0).length > 0
-                ? true
-                : false;
+        this.has_alerts = this.notifications.filter((i: Notification) => i.isOpened == 0).length > 0 ? true : false;
     }
 
     protected get currentUser() {

@@ -96,16 +96,14 @@ export class MediaLibraryOptionsComponent implements OnInit {
         // }, this.timeOutDuration);
 
         this.subscription.add(
-            this.search_control.valueChanges
-                .pipe(debounceTime(1000), distinctUntilChanged())
-                .subscribe((data) => {
-                    if (this.search_control.valid) {
-                        this.search_form_invalid = false;
-                        this.searchKeyword.emit(data);
-                    } else {
-                        this.search_form_invalid = true;
-                    }
-                }),
+            this.search_control.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((data) => {
+                if (this.search_control.valid) {
+                    this.search_form_invalid = false;
+                    this.searchKeyword.emit(data);
+                } else {
+                    this.search_form_invalid = true;
+                }
+            }),
         );
     }
 

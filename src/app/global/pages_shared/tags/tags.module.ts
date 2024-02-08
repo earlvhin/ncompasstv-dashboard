@@ -13,13 +13,7 @@ import { AssignTagsComponent } from './dialogs/assign-tags/assign-tags.component
 const DIALOGS = [CreateTagComponent, EditTagComponent, AssignTagsComponent];
 
 @NgModule({
-    declarations: [
-        DIALOGS,
-        TagsComponent,
-        TagOwnersSectionComponent,
-        TagsTableComponent,
-        TagsSectionComponent,
-    ],
+    declarations: [DIALOGS, TagsComponent, TagOwnersSectionComponent, TagsTableComponent, TagsSectionComponent],
     entryComponents: [DIALOGS],
     imports: [GlobalModule, CommonModule, RouterModule],
 })

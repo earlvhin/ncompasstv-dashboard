@@ -31,9 +31,7 @@
                                 [placeholder]="f.placeholder" />
                         </mat-form-field>
                         <div *ngIf="is_dealer">
-                            <mat-form-field
-                                class="col-lg-12"
-                                *ngFor="let f of form_fields_view_additional">
+                            <mat-form-field class="col-lg-12" *ngFor="let f of form_fields_view_additional">
                                 <mat-label>{{ f.label }}</mat-label>
                                 <input
                                     matInput

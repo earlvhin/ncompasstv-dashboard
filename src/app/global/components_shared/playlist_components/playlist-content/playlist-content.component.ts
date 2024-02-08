@@ -58,8 +58,7 @@ export class PlaylistContentComponent implements OnInit, OnDestroy {
         if (this.content.fileType === 'webm' && this.content.classification != 'filler-v2')
             this.content.thumbnail = `${this.content.url}${this.content.fileName.substr(0, this.content.fileName.lastIndexOf('.') + 1)}jpg`;
 
-        if (this.content.fileType === 'mp4' && this.content.handlerId)
-            this.getMp4Thumbnail(this.content.handlerId);
+        if (this.content.fileType === 'mp4' && this.content.handlerId) this.getMp4Thumbnail(this.content.handlerId);
 
         if (this._isImage.transform(this.content.fileType))
             this.content.thumbnail = `${this.content.url}${this.content.fileName}`;
@@ -78,8 +77,7 @@ export class PlaylistContentComponent implements OnInit, OnDestroy {
 
         this.contentTitle = this.content.title;
 
-        if (this.contentTitle.length >= 15)
-            this.contentTitle = `${this.contentTitle.substr(0, 12)}...`;
+        if (this.contentTitle.length >= 15) this.contentTitle = `${this.contentTitle.substr(0, 12)}...`;
 
         this.subscribeToContentHover();
     }

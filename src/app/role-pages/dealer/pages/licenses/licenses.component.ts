@@ -302,25 +302,15 @@ export class LicensesComponent implements OnInit {
                     };
 
                     if (this.licenses_count) {
+                        this.temp_label.push(this.licenses_count.ad_value_label + ': ' + this.licenses_count.ad_value);
                         this.temp_label.push(
-                            this.licenses_count.ad_value_label +
-                                ': ' +
-                                this.licenses_count.ad_value,
+                            this.licenses_count.menu_value_label + ': ' + this.licenses_count.menu_value,
                         );
                         this.temp_label.push(
-                            this.licenses_count.menu_value_label +
-                                ': ' +
-                                this.licenses_count.menu_value,
+                            this.licenses_count.unassigned_value_label + ': ' + this.licenses_count.unassigned_value,
                         );
                         this.temp_label.push(
-                            this.licenses_count.unassigned_value_label +
-                                ': ' +
-                                this.licenses_count.unassigned_value,
-                        );
-                        this.temp_label.push(
-                            this.licenses_count.closed_value_label +
-                                ': ' +
-                                this.licenses_count.closed_value,
+                            this.licenses_count.closed_value_label + ': ' + this.licenses_count.closed_value,
                         );
                         this.temp_array.push(this.licenses_count.ad_value);
                         this.temp_array.push(this.licenses_count.menu_value);
@@ -328,19 +318,13 @@ export class LicensesComponent implements OnInit {
                         this.temp_array.push(this.licenses_count.closed_value);
 
                         this.temp_label_this_week.push(
-                            this.licenses_count.ad_value_label +
-                                ': ' +
-                                this.licenses_count.this_week_ad_value,
+                            this.licenses_count.ad_value_label + ': ' + this.licenses_count.this_week_ad_value,
                         );
                         this.temp_label_this_week.push(
-                            this.licenses_count.menu_value_label +
-                                ': ' +
-                                this.licenses_count.this_week_menu_value,
+                            this.licenses_count.menu_value_label + ': ' + this.licenses_count.this_week_menu_value,
                         );
                         this.temp_label_this_week.push(
-                            this.licenses_count.closed_value_label +
-                                ': ' +
-                                this.licenses_count.this_week_closed_value,
+                            this.licenses_count.closed_value_label + ': ' + this.licenses_count.this_week_closed_value,
                         );
                         this.temp_label_this_week.push(
                             this.licenses_count.unassigned_value_label +
@@ -350,24 +334,16 @@ export class LicensesComponent implements OnInit {
                         this.temp_array_this_week.push(this.licenses_count.this_week_ad_value);
                         this.temp_array_this_week.push(this.licenses_count.this_week_menu_value);
                         this.temp_array_this_week.push(this.licenses_count.this_week_closed_value);
-                        this.temp_array_this_week.push(
-                            this.licenses_count.this_week_unassigned_value,
-                        );
+                        this.temp_array_this_week.push(this.licenses_count.this_week_unassigned_value);
 
                         this.temp_label_last_week.push(
-                            this.licenses_count.ad_value_label +
-                                ': ' +
-                                this.licenses_count.last_week_ad_value,
+                            this.licenses_count.ad_value_label + ': ' + this.licenses_count.last_week_ad_value,
                         );
                         this.temp_label_last_week.push(
-                            this.licenses_count.menu_value_label +
-                                ': ' +
-                                this.licenses_count.last_week_menu_value,
+                            this.licenses_count.menu_value_label + ': ' + this.licenses_count.last_week_menu_value,
                         );
                         this.temp_label_last_week.push(
-                            this.licenses_count.closed_value_label +
-                                ': ' +
-                                this.licenses_count.last_week_closed_value,
+                            this.licenses_count.closed_value_label + ': ' + this.licenses_count.last_week_closed_value,
                         );
                         this.temp_label_last_week.push(
                             this.licenses_count.unassigned_value_label +
@@ -377,9 +353,7 @@ export class LicensesComponent implements OnInit {
                         this.temp_array_last_week.push(this.licenses_count.last_week_ad_value);
                         this.temp_array_last_week.push(this.licenses_count.last_week_menu_value);
                         this.temp_array_last_week.push(this.licenses_count.last_week_closed_value);
-                        this.temp_array_last_week.push(
-                            this.licenses_count.last_week_unassigned_value,
-                        );
+                        this.temp_array_last_week.push(this.licenses_count.last_week_unassigned_value);
                     }
 
                     this.licenses_status = {
@@ -445,11 +419,7 @@ export class LicensesComponent implements OnInit {
                             if (fromShowMore && page > 1) {
                                 this.grid_list_cache = this.license_data_for_grid_view;
                             }
-                            if (
-                                this.grid_list_cache.length > 0 &&
-                                page === 1 &&
-                                fromShowMore === true
-                            ) {
+                            if (this.grid_list_cache.length > 0 && page === 1 && fromShowMore === true) {
                                 this.license_data_for_grid_view = this.grid_list_cache;
                             }
                         } else {
@@ -544,8 +514,7 @@ export class LicensesComponent implements OnInit {
             address: data.hostAddress,
             schedule:
                 storehours[this.now] && storehours[this.now].status
-                    ? (storehours[this.now].periods[0].open == '' &&
-                          storehours[this.now].periods[0].close == '') ||
+                    ? (storehours[this.now].periods[0].open == '' && storehours[this.now].periods[0].close == '') ||
                       isAlmostOpenAllDay
                         ? 'Open 24 Hours'
                         : storehours[this.now].periods.map((i) => {
@@ -660,8 +629,7 @@ export class LicensesComponent implements OnInit {
     }
 
     getDataForExport(id: string): void {
-        const EXCEL_TYPE =
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
         this._license
             .get_license_to_export_duration(
                 id,
@@ -731,39 +699,29 @@ export class LicensesComponent implements OnInit {
         } else {
             var data_to_return: any = '';
             if (data.templateBackground != 'NO DATA') {
-                data_to_return =
-                    data_to_return + 'Background: ' + this.msToTime(data.templateBackground);
+                data_to_return = data_to_return + 'Background: ' + this.msToTime(data.templateBackground);
             }
             if (data.templateBottom != 'NO DATA') {
-                data_to_return =
-                    data_to_return + '\n' + 'Bottom: ' + this.msToTime(data.templateBottom);
+                data_to_return = data_to_return + '\n' + 'Bottom: ' + this.msToTime(data.templateBottom);
             }
             if (data.templateHorizontal != 'NO DATA') {
-                data_to_return =
-                    data_to_return + '\n' + 'Horizontal: ' + this.msToTime(data.templateHorizontal);
+                data_to_return = data_to_return + '\n' + 'Horizontal: ' + this.msToTime(data.templateHorizontal);
             }
             if (data.templateHorizontalSmall != 'NO DATA') {
                 data_to_return =
-                    data_to_return +
-                    '\n' +
-                    'Horizontal Small: ' +
-                    this.msToTime(data.templateHorizontalSmall);
+                    data_to_return + '\n' + 'Horizontal Small: ' + this.msToTime(data.templateHorizontalSmall);
             }
             if (data.templateLowerLeft != 'NO DATA') {
-                data_to_return =
-                    data_to_return + '\n' + 'Lower Left: ' + this.msToTime(data.templateLowerLeft);
+                data_to_return = data_to_return + '\n' + 'Lower Left: ' + this.msToTime(data.templateLowerLeft);
             }
             if (data.templateMain != 'NO DATA') {
-                data_to_return =
-                    data_to_return + '\n' + 'Main: ' + this.msToTime(data.templateMain);
+                data_to_return = data_to_return + '\n' + 'Main: ' + this.msToTime(data.templateMain);
             }
             if (data.templateUpperLeft != 'NO DATA') {
-                data_to_return =
-                    data_to_return + '\n' + 'Upper Left: ' + this.msToTime(data.templateUpperLeft);
+                data_to_return = data_to_return + '\n' + 'Upper Left: ' + this.msToTime(data.templateUpperLeft);
             }
             if (data.templateVertical != 'NO DATA') {
-                data_to_return =
-                    data_to_return + '\n' + 'Vertical: ' + this.msToTime(data.templateVertical);
+                data_to_return = data_to_return + '\n' + 'Vertical: ' + this.msToTime(data.templateVertical);
             }
             return data_to_return;
         }
@@ -787,10 +745,7 @@ export class LicensesComponent implements OnInit {
         this.workbook.created = new Date();
         this.worksheet = this.workbook.addWorksheet('Licenses');
         Object.keys(this.license_table_columns).forEach((key) => {
-            if (
-                this.license_table_columns[key].name &&
-                !this.license_table_columns[key].no_export
-            ) {
+            if (this.license_table_columns[key].name && !this.license_table_columns[key].no_export) {
                 header.push({
                     header: this.license_table_columns[key].name,
                     key: this.license_table_columns[key].key,
@@ -1026,10 +981,7 @@ export class LicensesComponent implements OnInit {
             if (this.no_favorites) {
                 return this.paging_data_license.totalEntities;
             } else {
-                return (
-                    this.paging_data_favorites.totalEntities +
-                    this.paging_data_license.totalEntities
-                );
+                return this.paging_data_favorites.totalEntities + this.paging_data_license.totalEntities;
             }
         } else {
             return this.paging_data_license.totalEntities;

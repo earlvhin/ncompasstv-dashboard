@@ -40,8 +40,7 @@ export class CreateUserComponent implements OnInit {
             },
             {
                 role_name: 'Dealer Admin',
-                role_description:
-                    'Access to all data and grant all privilege under certain dealers.',
+                role_description: 'Access to all data and grant all privilege under certain dealers.',
                 role_icon: 'assets/media-files/admin-icon.png',
                 role: UI_ROLE_DEFINITION_TEXT.dealeradmin,
                 is_dealer: this.is_dealer,

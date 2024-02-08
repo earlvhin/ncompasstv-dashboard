@@ -155,9 +155,7 @@ export class CreateScreenComponent implements OnInit {
     }
 
     addHostButton() {
-        const url = this._router.serializeUrl(
-            this._router.createUrlTree([`/${this.roleRoute}/hosts/create-host`], {}),
-        );
+        const url = this._router.serializeUrl(this._router.createUrlTree([`/${this.roleRoute}/hosts/create-host`], {}));
         window.open(url, '_blank');
     }
 
@@ -221,9 +219,7 @@ export class CreateScreenComponent implements OnInit {
         }
 
         const assignedIndex = this.assigned_licenses.indexOf(licenseId);
-        const queuedIndex = this.queued_install_dates.findIndex(
-            (license) => license.licenseId === licenseId,
-        );
+        const queuedIndex = this.queued_install_dates.findIndex((license) => license.licenseId === licenseId);
 
         this.assigned_licenses.splice(assignedIndex, 1);
         this.queued_install_dates.splice(queuedIndex, 1);
@@ -264,9 +260,7 @@ export class CreateScreenComponent implements OnInit {
 
                         if (idNotQueued) this.queued_install_dates.push(data);
 
-                        const index = this.licenses.findIndex(
-                            (license) => license.licenseId === id && idNotQueued,
-                        );
+                        const index = this.licenses.findIndex((license) => license.licenseId === id && idNotQueued);
 
                         if (index !== -1) this.licenses[index].installDate = date;
                     });
@@ -277,9 +271,7 @@ export class CreateScreenComponent implements OnInit {
                 const data = { licenseId, installDate: date };
 
                 if (queuedLicenseIds.includes(licenseId)) {
-                    const indexToReplace = this.queued_install_dates.findIndex(
-                        (date) => date.licenseId === licenseId,
-                    );
+                    const indexToReplace = this.queued_install_dates.findIndex((date) => date.licenseId === licenseId);
                     this.queued_install_dates[indexToReplace] = data;
                 } else {
                     this.queued_install_dates.push(data);
@@ -345,9 +337,7 @@ export class CreateScreenComponent implements OnInit {
             if (this.queued_install_dates.length > 0) {
                 const publish = {
                     screen: this._screen.create_screen(created_screen),
-                    install_dates: this._license.update_install_date_list(
-                        this.queued_install_dates,
-                    ),
+                    install_dates: this._license.update_install_date_list(this.queued_install_dates),
                 };
 
                 forkJoin([publish.screen, publish.install_dates])
@@ -665,9 +655,7 @@ export class CreateScreenComponent implements OnInit {
         });
 
         dialog.afterClosed().subscribe(() => {
-            const url = this._router.serializeUrl(
-                this._router.createUrlTree([`/${this.roleRoute}/screens`], {}),
-            );
+            const url = this._router.serializeUrl(this._router.createUrlTree([`/${this.roleRoute}/screens`], {}));
             window.open(url, '_blank');
         });
     }
@@ -690,8 +678,7 @@ export class CreateScreenComponent implements OnInit {
         if (this.has_no_licenses) return false;
         return (
             typeof this.licenses.find(
-                (license) =>
-                    this.assigned_licenses.includes(license.licenseId) && !license.installDate,
+                (license) => this.assigned_licenses.includes(license.licenseId) && !license.installDate,
             ) !== 'undefined'
         );
     }

@@ -63,13 +63,7 @@ export class InvoiceViewComponent implements OnInit {
         this.searching_hosts = true;
         this.subscription.add(
             this._billing
-                .get_invoice_charges(
-                    page,
-                    15,
-                    this.search_data_host,
-                    this.filtered_status,
-                    this.filtered_billing_date,
-                )
+                .get_invoice_charges(page, 15, this.search_data_host, this.filtered_status, this.filtered_billing_date)
                 .pipe(takeUntil(this._unsubscribe))
                 .subscribe((response: any) => {
                     if (!response.message) {

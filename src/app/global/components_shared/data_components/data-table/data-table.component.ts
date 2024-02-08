@@ -228,13 +228,7 @@ export class DataTableComponent implements OnInit {
             .add(() => (this.in_progress = false));
     }
 
-    private showInformationModal(
-        width: string,
-        height: string,
-        title: string,
-        contents: any,
-        type: string,
-    ): void {
+    private showInformationModal(width: string, height: string, title: string, contents: any, type: string): void {
         this._dialog.open(InformationModalComponent, {
             width: width,
             height: height,
@@ -487,14 +481,7 @@ export class DataTableComponent implements OnInit {
         return status === 'A' ? 'text-primary' : 'text-gray';
     }
 
-    warningModal(
-        status: string,
-        message: string,
-        data: string,
-        return_msg: string,
-        action: string,
-        id: any,
-    ): void {
+    warningModal(status: string, message: string, data: string, return_msg: string, action: string, id: any): void {
         const deleteLicenseActivity = new ACTIVITY_LOGS(
             this.dealer_id,
             'deleted_license',
@@ -697,19 +684,17 @@ export class DataTableComponent implements OnInit {
                 switch (label) {
                     case 'License Alias':
                         this.subscription.add(
-                            this._license
-                                .update_alias({ licenseId: fields.id, alias: response })
-                                .subscribe(
-                                    () =>
-                                        this.openConfirmationModal(
-                                            'success',
-                                            'Success!',
-                                            'License Alias changed succesfully',
-                                        ),
-                                    (error) => {
-                                        console.error(error);
-                                    },
-                                ),
+                            this._license.update_alias({ licenseId: fields.id, alias: response }).subscribe(
+                                () =>
+                                    this.openConfirmationModal(
+                                        'success',
+                                        'Success!',
+                                        'License Alias changed succesfully',
+                                    ),
+                                (error) => {
+                                    console.error(error);
+                                },
+                            ),
                         );
                         break;
                     case 'Install Date':
@@ -755,25 +740,15 @@ export class DataTableComponent implements OnInit {
                         this._host
                             .update_file_alias(fields.id, response)
                             .pipe(takeUntil(this._unsubscribe))
-                            .subscribe(() =>
-                                this.openConfirmationModal('success', 'Success!', 'Alias changed'),
-                            );
+                            .subscribe(() => this.openConfirmationModal('success', 'Success!', 'Alias changed'));
                         break;
                     case 'Placer Name':
                     case 'Hosts':
                         this._placer
-                            .update_placer_host(
-                                response.hostId,
-                                response.placerId,
-                                response.placername,
-                            )
+                            .update_placer_host(response.hostId, response.placerId, response.placername)
                             .pipe(takeUntil(this._unsubscribe))
                             .subscribe(() =>
-                                this.openConfirmationModal(
-                                    'success',
-                                    'Success!',
-                                    'Placer Record Updated',
-                                ),
+                                this.openConfirmationModal('success', 'Success!', 'Placer Record Updated'),
                             );
                         break;
                     default:
@@ -1009,14 +984,8 @@ export class DataTableComponent implements OnInit {
             )
             .subscribe((licenses: string[]) => {
                 if (licenses.length <= 0)
-                    return this.showConfirmationDialog(
-                        'error',
-                        'No licenses associated with this playlist',
-                    );
-                this.showConfirmationDialog(
-                    'success',
-                    'Succes! Pushed updates to all licenses with this playlist',
-                );
+                    return this.showConfirmationDialog('error', 'No licenses associated with this playlist');
+                this.showConfirmationDialog('success', 'Succes! Pushed updates to all licenses with this playlist');
                 this.push_license_updates.emit(licenses);
             });
     }

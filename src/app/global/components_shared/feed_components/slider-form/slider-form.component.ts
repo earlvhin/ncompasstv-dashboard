@@ -1,12 +1,4 @@
-import {
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    OnInit,
-    Output,
-    ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Sortable } from 'sortablejs';
@@ -201,8 +193,7 @@ export class SliderFormComponent implements OnInit {
             const validators: any[] = [];
 
             if (field.required) validators.push(Validators.required);
-            if (field.viewType === 'colorpicker')
-                validators.push(this._feed.validateColorFieldValues.bind(this));
+            if (field.viewType === 'colorpicker') validators.push(this._feed.validateColorFieldValues.bind(this));
 
             Object.assign(formConfig, {
                 [field.form_control_name]: [field.value ? field.value : null, validators],
@@ -225,9 +216,7 @@ export class SliderFormComponent implements OnInit {
             });
 
             this.image_animation = this.global_settings.imageAnimation;
-            this.formControls.bannerImage.setValue(
-                this.banner_image_data ? this.banner_image_data.contentId : '',
-            );
+            this.formControls.bannerImage.setValue(this.banner_image_data ? this.banner_image_data.contentId : '');
             this.formControls.textAlign.setValue(this.global_settings.textAlign);
             this.formControls.overlay.setValue(this.global_settings.overlay);
             this.formControls.fontColor.setValue(this.global_settings.fontColor);

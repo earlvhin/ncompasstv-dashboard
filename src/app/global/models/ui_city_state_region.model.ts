@@ -34,14 +34,7 @@ export class CITIES_STATE_DATA {
     region: string;
     country: string;
 
-    constructor(
-        id: string,
-        city: string,
-        abbreviation: string,
-        state: string,
-        region: string,
-        country: string,
-    ) {
+    constructor(id: string, city: string, abbreviation: string, state: string, region: string, country: string) {
         this.id = id;
         this.city = city;
         this.abbreviation = abbreviation;

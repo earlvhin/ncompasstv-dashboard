@@ -65,13 +65,7 @@ export class API_CONTENT_HISTORY {
     playlistId: string;
     action: string;
     userId: string;
-    constructor(
-        playlistContentId: string,
-        contentId: string,
-        playlistId: string,
-        action: string,
-        userId: string,
-    ) {
+    constructor(playlistContentId: string, contentId: string, playlistId: string, action: string, userId: string) {
         this.playlistContentId = playlistContentId;
         this.contentId = contentId;
         this.playlistId = playlistId;

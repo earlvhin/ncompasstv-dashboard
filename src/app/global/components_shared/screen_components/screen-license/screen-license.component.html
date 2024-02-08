@@ -17,12 +17,7 @@
                         </li>
                     </ul>
 
-                    <button
-                        mat-button
-                        mat-raised-button
-                        mat-dialog-close
-                        class="theme-btn mr-2"
-                        color="warn">
+                    <button mat-button mat-raised-button mat-dialog-close class="theme-btn mr-2" color="warn">
                         Cancel
                     </button>
 
@@ -47,21 +42,17 @@
     </div>
 
     <ng-template #no_license>
-        <div
-            class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center">
+        <div class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center">
             <div>
                 <h3 class="mb-0">No Available License</h3>
                 <p class="sm-text mb-4">Purchase a license to continue</p>
-                <button mat-button mat-raised-button mat-dialog-close class="theme-btn mr-3">
-                    OK
-                </button>
+                <button mat-button mat-raised-button mat-dialog-close class="theme-btn mr-3">OK</button>
             </div>
         </div>
     </ng-template>
 
     <ng-template #blacklist>
-        <div
-            class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center">
+        <div class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center">
             <div>
                 <app-spinner></app-spinner>
                 <h3 class="mt-4">Blacklisting</h3>
@@ -72,26 +63,18 @@
 
     <ng-template #loading>
         <ng-container *ngIf="!hasNoData; else no_license">
-            <div
-                class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center">
+            <div class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center">
                 <app-spinner></app-spinner>
             </div>
         </ng-container>
     </ng-template>
 
     <ng-template #success>
-        <div
-            class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center">
+        <div class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center">
             <div>
                 <app-success-animation class="mb-2"></app-success-animation>
                 <h3 class="mb-4">License assignment succesful!</h3>
-                <button
-                    mat-button
-                    mat-raised-button
-                    [mat-dialog-close]="true"
-                    class="theme-btn mr-3">
-                    OK
-                </button>
+                <button mat-button mat-raised-button [mat-dialog-close]="true" class="theme-btn mr-3">OK</button>
             </div>
         </div>
     </ng-template>

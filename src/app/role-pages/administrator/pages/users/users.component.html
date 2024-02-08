@@ -129,10 +129,7 @@
                                 <span class="fas fa-angle-down ml-2"></span>
                             </button>
                             <mat-menu #roleMenu="matMenu">
-                                <button
-                                    mat-menu-item
-                                    *ngFor="let role of roles"
-                                    (click)="onFilterByRole(role)">
+                                <button mat-menu-item *ngFor="let role of roles" (click)="onFilterByRole(role)">
                                     <span class="md-text">{{ role.roleName }}</span>
                                 </button>
                             </mat-menu>
@@ -170,16 +167,12 @@
                                 <app-data-table
                                     [table_data]="filtered_data"
                                     [table_columns]="
-                                        is_dealer_admin
-                                            ? dealeradmin_users_table_columns
-                                            : users_table_columns
+                                        is_dealer_admin ? dealeradmin_users_table_columns : users_table_columns
                                     "
                                     [new_table]="true"
                                     [is_user_delete_enabled]="is_dealer_admin ? false : true"
                                     [paging_details]="paging_data"
-                                    [can_toggle_email_notifications]="
-                                        is_dealer_admin ? false : true
-                                    "
+                                    [can_toggle_email_notifications]="is_dealer_admin ? false : true"
                                     (page_triggered)="pageRequested($event)">
                                 </app-data-table>
                             </mat-card>
@@ -211,9 +204,7 @@
                         <i class="text-gray fa-5x far fa-file-alt"></i>
                     </div>
                     <h3 class="text-gray col-lg-12">No Results Found.</h3>
-                    <span class="text-gray col-lg-12"
-                        >Try adjusting your search to find what you're looking for.</span
-                    >
+                    <span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
                 </mat-card>
             </div>
         </ng-template>

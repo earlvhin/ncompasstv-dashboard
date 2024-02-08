@@ -29,9 +29,7 @@
                             <label class="zone-name"
                                 ><b>{{ zone.screen_template.name | titlecase }} Zone</b></label
                             >
-                            <p class="playlist-name">
-                                Playlist: {{ zone.screen_template.playlist_name }}
-                            </p>
+                            <p class="playlist-name">Playlist: {{ zone.screen_template.playlist_name }}</p>
                         </div>
                     </mat-card>
                     <br />
@@ -47,14 +45,9 @@
                         <ng-container *ngFor="let control of formControls">
                             <ng-container *ngIf="fieldInputList.includes(control.type)">
                                 <mat-form-field>
-                                    <ng-container
-                                        *ngIf="control.type === 'select'; else defaultInputField">
-                                        <mat-select
-                                            [formControlName]="control.name"
-                                            [placeholder]="control.label">
-                                            <mat-option
-                                                *ngFor="let option of control.options"
-                                                [value]="option">
+                                    <ng-container *ngIf="control.type === 'select'; else defaultInputField">
+                                        <mat-select [formControlName]="control.name" [placeholder]="control.label">
+                                            <mat-option *ngFor="let option of control.options" [value]="option">
                                                 {{ option[control.option_label] }}
                                             </mat-option>
                                         </mat-select>
@@ -72,8 +65,7 @@
 
                         <ng-container *ngIf="hasSelectedTemplate">
                             <mat-accordion>
-                                <mat-expansion-panel
-                                    *ngFor="let zone of selectedTemplate.templateZones">
+                                <mat-expansion-panel *ngFor="let zone of selectedTemplate.templateZones">
                                     <mat-expansion-panel-header>
                                         <mat-panel-title class="font-weight-medium">
                                             {{ zone.name | titlecase }} Zone

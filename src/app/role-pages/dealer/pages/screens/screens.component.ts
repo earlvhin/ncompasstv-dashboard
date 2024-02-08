@@ -3,10 +3,7 @@ import { AuthService } from '../../../../global/services/auth-service/auth.servi
 import { ScreenService } from '../../../../global/services/screen-service/screen.service';
 import { Subscription } from 'rxjs';
 import { API_SINGLE_SCREEN } from 'src/app/global/models/api_single-screen.model';
-import {
-    UI_TABLE_SCREEN,
-    UI_DEALER_TABLE_SCREEN,
-} from 'src/app/global/models/ui_table-screens.model';
+import { UI_TABLE_SCREEN, UI_DEALER_TABLE_SCREEN } from 'src/app/global/models/ui_table-screens.model';
 import { TitleCasePipe, DatePipe } from '@angular/common';
 
 @Component({
@@ -87,11 +84,7 @@ export class ScreensComponent implements OnInit {
         this.searching = true;
         this.screens = [];
         this._screen
-            .api_get_screen_by_dealer_table(
-                e,
-                this._auth.current_user_value.roleInfo.dealerId,
-                this.search_data,
-            )
+            .api_get_screen_by_dealer_table(e, this._auth.current_user_value.roleInfo.dealerId, this.search_data)
             .subscribe((data) => {
                 this.paging_data = data.paging;
                 if (data.paging.entities.length > 0) {

@@ -10,22 +10,16 @@
                 <ng-container *ngIf="is_page_ready; else loading">
                     <h3 class="mb-1">Advertiser Information</h3>
                     <p class="sm-text mb-4">
-                        You can fill on the forms manually or search all these information via
-                        Google Scrape.
+                        You can fill on the forms manually or search all these information via Google Scrape.
                     </p>
                     <p class="sm-text mb-2 text-danger">
-                        <b>NOTE: </b>Default address selection is within United States only, If you
-                        wish to search within Canada click the tick box below.
+                        <b>NOTE: </b>Default address selection is within United States only, If you wish to search
+                        within Canada click the tick box below.
                     </p>
                     <div class="col-lg-12 mb-3 sm-text p-0">
-                        <mat-checkbox (change)="getCanadaAddress($event)"
-                            >Search within Canada</mat-checkbox
-                        >
+                        <mat-checkbox (change)="getCanadaAddress($event)">Search within Canada</mat-checkbox>
                     </div>
-                    <form
-                        [formGroup]="new_advertiser_form"
-                        (ngSubmit)="newAdvertiserProfile()"
-                        class="text-left">
+                    <form [formGroup]="new_advertiser_form" (ngSubmit)="newAdvertiserProfile()" class="text-left">
                         <div class="row mb-2">
                             <div class="col-lg-12">
                                 <app-autocomplete-field
@@ -46,12 +40,8 @@
                                     [loading_search]="loading_search">
                                 </app-autocomplete-field>
                             </div>
-                            <div
-                                *ngFor="let field of new_advertiser_form_fields"
-                                class="{{ field.col }} mb-3">
-                                <mat-form-field
-                                    class="full-width"
-                                    *ngIf="!field.autocomplete; else autocomplete_field">
+                            <div *ngFor="let field of new_advertiser_form_fields" class="{{ field.col }} mb-3">
+                                <mat-form-field class="full-width" *ngIf="!field.autocomplete; else autocomplete_field">
                                     <mat-label>{{ field.label }}</mat-label>
                                     <input
                                         formControlName="{{ field.control }}"
@@ -61,10 +51,7 @@
 
                                 <ng-template #autocomplete_field>
                                     <app-autocomplete-field
-                                        *ngIf="
-                                            field.control == 'category' && !no_category;
-                                            else no_category_selected
-                                        "
+                                        *ngIf="field.control == 'category' && !no_category; else no_category_selected"
                                         (data_value)="setToCategory($event)"
                                         [data_reference]="categories_data"
                                         [primary_keyword]="'categoryName'"
@@ -142,21 +129,15 @@
                             class="theme-btn mr-2"
                             [disabled]="
                                 form_invalid ||
-                                (canada_selected &&
-                                    new_advertiser_form.get('zip').value.length !== 6) ||
-                                (!canada_selected &&
-                                    new_advertiser_form.get('zip').value.length !== 5)
+                                (canada_selected && new_advertiser_form.get('zip').value.length !== 6) ||
+                                (!canada_selected && new_advertiser_form.get('zip').value.length !== 5)
                             "
                             *ngIf="!is_creating_advertiser; else publishing">
                             Save Advertiser Profile
                         </button>
 
                         <ng-template #publishing>
-                            <button
-                                mat-button
-                                mat-raised-button
-                                class="theme-btn mr-2"
-                                [disabled]="true">
+                            <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="true">
                                 Saving Advertiser Profile . . .
                             </button>
                         </ng-template>
@@ -189,14 +170,10 @@
                         </button>
                     </div>
                 </form>
-                <div
-                    class="location-candidates material-shadow"
-                    *ngIf="location_candidate_fetched && isListVisible">
+                <div class="location-candidates material-shadow" *ngIf="location_candidate_fetched && isListVisible">
                     <ul *ngIf="google_result.length != 0; else loading">
                         <div class="google-result-close-wrapper">
-                            <button
-                                class="modal-close-btn no-border no-background"
-                                (click)="closeGoogleDropdownList()">
+                            <button class="modal-close-btn no-border no-background" (click)="closeGoogleDropdownList()">
                                 <span class="fas fa-times"></span>
                             </button>
                         </div>
@@ -227,10 +204,7 @@
                 <div class="business-profile-image material-shadow">
                     <div class="d-flex justify-content-center mb-3">
                         <div class="image-container text-center">
-                            <img
-                                [src]="current_host_image"
-                                class="w-100-px h-100-px br-100"
-                                alt="admin" />
+                            <img [src]="current_host_image" class="w-100-px h-100-px br-100" alt="admin" />
                         </div>
                     </div>
                     <button

@@ -117,11 +117,8 @@ export class SingleContentComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
-        this.role = Object.keys(UI_ROLE_DEFINITION).find(
-            (key) => UI_ROLE_DEFINITION[key] === this.currentUser.role_id,
-        );
-        if (this.role === UI_ROLE_DEFINITION_TEXT.dealeradmin)
-            this.role = UI_ROLE_DEFINITION_TEXT.administrator;
+        this.role = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this.currentUser.role_id);
+        if (this.role === UI_ROLE_DEFINITION_TEXT.dealeradmin) this.role = UI_ROLE_DEFINITION_TEXT.administrator;
         this.getPageParam();
     }
 
@@ -184,22 +181,17 @@ export class SingleContentComponent implements OnInit, OnDestroy {
                                 { value: i.playlistName, link: null, hidden: false },
                                 { value: i.totalPlay, link: null, hidden: false },
                                 {
-                                    value:
-                                        i.totalDuration != 0 ? this.msToTime(i.totalDuration) : '0',
+                                    value: i.totalDuration != 0 ? this.msToTime(i.totalDuration) : '0',
                                     link: null,
                                     hidden: false,
                                 },
                                 {
-                                    value: i.startDate
-                                        ? moment(new Date(i.startDate)).format('ll')
-                                        : '--',
+                                    value: i.startDate ? moment(new Date(i.startDate)).format('ll') : '--',
                                     link: null,
                                     hidden: false,
                                 },
                                 {
-                                    value: i.endDate
-                                        ? moment(new Date(i.endDate)).format('ll')
-                                        : '--',
+                                    value: i.endDate ? moment(new Date(i.endDate)).format('ll') : '--',
                                     link: null,
                                     hidden: false,
                                 },
@@ -230,9 +222,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
                 if (e === '') filtered = [...this.content_to_export];
                 else
                     filtered = [
-                        ...this.content_to_export.filter((i) =>
-                            i.hostName.toLowerCase().includes(e.toLowerCase()),
-                        ),
+                        ...this.content_to_export.filter((i) => i.hostName.toLowerCase().includes(e.toLowerCase())),
                     ];
 
                 this.content_logs_report_filtered = filtered.map((i) => {
@@ -381,14 +371,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
         this.worksheet.getRow(3).height = 20;
         this.worksheet.getRow(4).values = [];
         this.worksheet.getRow(4).height = 20;
-        this.worksheet.getRow(5).values = [
-            'Host',
-            'Playlist',
-            'Play Count',
-            'Play Duration',
-            'Start Date',
-            'End Date',
-        ];
+        this.worksheet.getRow(5).values = ['Host', 'Playlist', 'Play Count', 'Play Duration', 'Start Date', 'End Date'];
         this.worksheet.getRow(5).height = 20;
         this.worksheet.getCell('A1').alignment = { vertical: 'top', horizontal: 'left' };
         this.worksheet.getRow(2).font = {
@@ -413,15 +396,12 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 
     modifyItem(item) {
         item.totalDuration = this.msToTime(item.totalDuration);
-        item.startDate = item.startDate
-            ? moment(new Date(item.startDate)).format('MM/DD/YYYY')
-            : '';
+        item.startDate = item.startDate ? moment(new Date(item.startDate)).format('MM/DD/YYYY') : '';
         item.endDate = item.endDate ? moment(new Date(item.endDate)).format('MM/DD/YYYY') : '';
     }
 
     generateExcel() {
-        const EXCEL_TYPE =
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
         var filename = '';
         let rowIndex = 1;
         for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
@@ -475,15 +455,11 @@ export class SingleContentComponent implements OnInit, OnDestroy {
             this.getContentHistory(this.content_id, 1);
 
             this.start_date = this._params.snapshot.queryParamMap.get('start_date')
-                ? moment(new Date(this._params.snapshot.queryParamMap.get('start_date'))).format(
-                      'YYYY-MM-DD',
-                  )
+                ? moment(new Date(this._params.snapshot.queryParamMap.get('start_date'))).format('YYYY-MM-DD')
                 : null;
 
             this.end_date = this._params.snapshot.queryParamMap.get('end_date')
-                ? moment(new Date(this._params.snapshot.queryParamMap.get('end_date'))).format(
-                      'YYYY-MM-DD',
-                  )
+                ? moment(new Date(this._params.snapshot.queryParamMap.get('end_date'))).format('YYYY-MM-DD')
                 : null;
 
             if (this.start_date && this.end_date) {
@@ -621,10 +597,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
                     },
                     { value: i.logAction, link: null, editable: false, hidden: false },
                     {
-                        value:
-                            i.userId != '0' && i.userId != null
-                                ? `${i.firstName} ${i.lastName}`
-                                : 'System',
+                        value: i.userId != '0' && i.userId != null ? `${i.firstName} ${i.lastName}` : 'System',
                         link: null,
                         editable: false,
                         hidden: false,

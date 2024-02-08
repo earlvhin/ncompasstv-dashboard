@@ -25,9 +25,7 @@
             </mat-option>
         </div>
         <footer class="selection">
-            <button
-                class="theme-btn _primary md-text mr-3"
-                (click)="dropdownMultipleSelect.close()">
+            <button class="theme-btn _primary md-text mr-3" (click)="dropdownMultipleSelect.close()">
                 APPLY SELECTION
             </button>
         </footer>
@@ -41,9 +39,7 @@
                 </div>
             </div>
             <div class="col-lg-6 text-right">
-                <button
-                    class="naked-btn pb-1 md-text f-500 text-danger clickable"
-                    (click)="onClearDealer()">
+                <button class="naked-btn pb-1 md-text f-500 text-danger clickable" (click)="onClearDealer()">
                     <i class="far fa-times-circle mr-2"></i>
                     <span>CLEAR SELECTION</span>
                 </button>
@@ -55,9 +51,7 @@
                 <div
                     *ngFor="let data of selectedDropdownControl.value; let i = index"
                     class="bg-primary text-white md-text px-2 py-1 br-5 mr-2 mb-2 dealer">
-                    <span class="name mr-2" *ngIf="!dealerAdmin; else dealerAdminField">{{
-                        data.businessName
-                    }}</span>
+                    <span class="name mr-2" *ngIf="!dealerAdmin; else dealerAdminField">{{ data.businessName }}</span>
                     <ng-template #dealerAdminField>
                         <span class="name mr-2"> {{ data.firstName }} {{ data.lastName }} </span>
                     </ng-template>

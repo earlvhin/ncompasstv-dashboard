@@ -227,16 +227,10 @@ export class HostsComponent implements OnInit {
 
     private getDataForExport(): void {
         this.pageSize = 0;
-        const EXCEL_TYPE =
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 
         this._host
-            .get_host_by_dealer_id(
-                this._auth.current_user_value.roleInfo.dealerId,
-                1,
-                '',
-                this.pageSize,
-            )
+            .get_host_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, 1, '', this.pageSize)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((response) => {
                 if (response.message) {
@@ -263,8 +257,7 @@ export class HostsComponent implements OnInit {
 
                 this.workbook.xlsx.writeBuffer().then((file: any) => {
                     const blob = new Blob([file], { type: EXCEL_TYPE });
-                    const filename =
-                        this._auth.current_user_value.roleInfo.businessName + '-HOSTS' + '.xlsx';
+                    const filename = this._auth.current_user_value.roleInfo.businessName + '-HOSTS' + '.xlsx';
                     saveAs(blob, filename);
                 });
 
@@ -326,19 +319,13 @@ export class HostsComponent implements OnInit {
                 { value: hosts.postalCode, link: null, editable: false, hidden: false },
                 { value: hosts.totalLicences, link: null, editable: false, hidden: false },
                 {
-                    value: hosts.category
-                        ? this._title.transform(hosts.category.replace(/_/g, ' '))
-                        : '--',
+                    value: hosts.category ? this._title.transform(hosts.category.replace(/_/g, ' ')) : '--',
                     link: null,
                     editable: false,
                     hidden: true,
                 },
                 {
-                    value: hosts.status
-                        ? hosts.status === 'A'
-                            ? 'Active'
-                            : 'Inactive'
-                        : 'Inactive',
+                    value: hosts.status ? (hosts.status === 'A' ? 'Active' : 'Inactive') : 'Inactive',
                     link: null,
                     editable: false,
                     hidden: false,

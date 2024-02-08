@@ -5,22 +5,16 @@
                 <div class="notification-header">
                     <h3 class="mb-0">Notifications</h3>
                     <p class="sm-text">
-                        All unresolved offline licenses notification. Click "Mark as Resolved" to
-                        hide resolved issues.
+                        All unresolved offline licenses notification. Click "Mark as Resolved" to hide resolved issues.
                     </p>
-                    <button
-                        class="mark-as-resolved"
-                        *ngIf="all_unresolved"
-                        (click)="updateAllNotifStatus()">
+                    <button class="mark-as-resolved" *ngIf="all_unresolved" (click)="updateAllNotifStatus()">
                         Mark all as resolved
                     </button>
                 </div>
 
                 <hr class="my-3" />
 
-                <div
-                    class="notification-item position-relative"
-                    *ngFor="let n of notification_items; let i = index">
+                <div class="notification-item position-relative" *ngFor="let n of notification_items; let i = index">
                     <button
                         class="mark-as-resolved"
                         *ngIf="n.isOpened == 0; else resolved"
@@ -41,9 +35,7 @@
                                     class="font-italic"
                                     [routerLink]="[route + '/licenses', n.licenseId]"
                                     target="_blank">
-                                    <strong *ngIf="n.licenseAlias"
-                                        >{{ n.hostName }} - {{ n.licenseAlias }}</strong
-                                    >
+                                    <strong *ngIf="n.licenseAlias">{{ n.hostName }} - {{ n.licenseAlias }}</strong>
                                     <strong *ngIf="!n.licenseAlias">{{ n.hostName }}</strong>
                                 </a>
                                 of
@@ -52,28 +44,19 @@
                                 >
                                 has been offline for more than an hour now.
                             </p>
-                            <p class="sm-text m-0">
-                                {{ n.dateTime | date: 'MMM d, y, h:mm:ss a' }} - {{ n.timeZone }}
-                            </p>
+                            <p class="sm-text m-0">{{ n.dateTime | date: 'MMM d, y, h:mm:ss a' }} - {{ n.timeZone }}</p>
                         </div>
                     </div>
 
                     <div *ngIf="is_dealer">
                         <p class="mt-0 mb-1">
-                            <a
-                                class="font-italic"
-                                [routerLink]="[route + '/licenses', n.licenseId]"
-                                target="_blank">
-                                <strong *ngIf="n.licenseAlias"
-                                    >{{ n.hostName }} - {{ n.licenseAlias }}</strong
-                                >
+                            <a class="font-italic" [routerLink]="[route + '/licenses', n.licenseId]" target="_blank">
+                                <strong *ngIf="n.licenseAlias">{{ n.hostName }} - {{ n.licenseAlias }}</strong>
                                 <strong *ngIf="!n.licenseAlias">{{ n.hostName }}</strong>
                             </a>
                             has been offline for more than an hour now.
                         </p>
-                        <p class="sm-text m-0">
-                            {{ n.dateTime | date: 'MMM d, y, h:mm:ss a' }} - {{ n.timeZone }}
-                        </p>
+                        <p class="sm-text m-0">{{ n.dateTime | date: 'MMM d, y, h:mm:ss a' }} - {{ n.timeZone }}</p>
                     </div>
                 </div>
 

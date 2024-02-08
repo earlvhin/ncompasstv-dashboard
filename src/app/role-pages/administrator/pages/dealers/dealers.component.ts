@@ -207,8 +207,7 @@ export class DealersComponent implements OnInit, OnDestroy {
     }
 
     setExportDealersData(response) {
-        const EXCEL_TYPE =
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
         this.dealers_to_export = response;
 
         this.dealers_to_export.forEach((dealer) => {
@@ -240,10 +239,7 @@ export class DealersComponent implements OnInit, OnDestroy {
         request.pipe(takeUntil(this._unsubscribe)).subscribe((response) => {
             if (response.message) return (this.orders = 0);
             const orders = response.paging.entities as API_ORDER[];
-            this.orders = orders.reduce(
-                (previous, current) => (current.hasViewed === 0 ? ++previous : previous),
-                0,
-            );
+            this.orders = orders.reduce((previous, current) => (current.hasViewed === 0 ? ++previous : previous), 0);
         });
     }
 
@@ -253,8 +249,6 @@ export class DealersComponent implements OnInit, OnDestroy {
     }
 
     private subscribeToOrderClick(): void {
-        this._billing.on_click_order
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(() => this.getOrders());
+        this._billing.on_click_order.pipe(takeUntil(this._unsubscribe)).subscribe(() => this.getOrders());
     }
 }

@@ -281,22 +281,20 @@ export class DealersTableComponent implements OnInit {
     }
 
     private subscribeToDealerStatusFilter(): void {
-        this._helper.onClickCardByStatus
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((response) => {
-                if (this.searching || response.page !== 'dealers') return;
-                switch (response.value) {
-                    case 'active':
-                        this.selected_filter.status = 'A';
-                        break;
-                    case 'inactive':
-                        this.selected_filter.status = 'I';
-                        break;
-                    default:
-                        this.selected_filter.status = '';
-                        break;
-                }
-                this.pageRequested(1);
-            });
+        this._helper.onClickCardByStatus.pipe(takeUntil(this._unsubscribe)).subscribe((response) => {
+            if (this.searching || response.page !== 'dealers') return;
+            switch (response.value) {
+                case 'active':
+                    this.selected_filter.status = 'A';
+                    break;
+                case 'inactive':
+                    this.selected_filter.status = 'I';
+                    break;
+                default:
+                    this.selected_filter.status = '';
+                    break;
+            }
+            this.pageRequested(1);
+        });
     }
 }

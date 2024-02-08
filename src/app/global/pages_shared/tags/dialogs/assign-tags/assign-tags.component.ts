@@ -150,9 +150,7 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
                     const merged = this.selectedOwnersControl.value.concat(response.owners);
                     const unique = merged.filter(
                         (owner, index, merged) =>
-                            merged.findIndex(
-                                (mergedOwner) => mergedOwner.ownerId === owner.ownerId,
-                            ) === index,
+                            merged.findIndex((mergedOwner) => mergedOwner.ownerId === owner.ownerId) === index,
                     );
                     const assignedPrefix = this.assignOwnerPrefix(unique);
                     this.filteredOwners.next(assignedPrefix);
@@ -180,8 +178,7 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
                     const merged = this.selectedTagsControl.value.concat(tags);
                     const unique = merged.filter(
                         (tag, index, merged) =>
-                            merged.findIndex((mergedTag) => mergedTag.tagId === tag.tagId) ===
-                            index,
+                            merged.findIndex((mergedTag) => mergedTag.tagId === tag.tagId) === index,
                     );
                     this.filteredTags.next(unique);
                 },
@@ -213,11 +210,7 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
                     this.searchOwners(keyword);
                 }),
             )
-            .subscribe(
-                () =>
-                    (this.ownerMultiSelect.compareWith = (a, b) =>
-                        a && b && a.ownerId === b.ownerId),
-            );
+            .subscribe(() => (this.ownerMultiSelect.compareWith = (a, b) => a && b && a.ownerId === b.ownerId));
     }
 
     private subscribeToTagSearch(): void {
@@ -234,8 +227,6 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
                     else this.getAllRecentTags();
                 }),
             )
-            .subscribe(
-                () => (this.tagMultiSelect.compareWith = (a, b) => a && b && a.tagId === b.tagId),
-            );
+            .subscribe(() => (this.tagMultiSelect.compareWith = (a, b) => a && b && a.tagId === b.tagId));
     }
 }

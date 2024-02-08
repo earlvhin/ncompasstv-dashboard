@@ -2,28 +2,18 @@
     <div *ngIf="!initial_load; else loading">
         <div class="row">
             <div class="col-lg-9">
-                <button
-                    mat-button
-                    mat-raised-button
-                    class="theme-btn sm-text mr-2 h-45"
-                    [matMenuTriggerFor]="age">
+                <button mat-button mat-raised-button class="theme-btn sm-text mr-2 h-45" [matMenuTriggerFor]="age">
                     <span class="button-label">Age</span>
                     <span class="fas fa-angle-down"></span>
                 </button>
                 <mat-menu #age="matMenu">
-                    <button
-                        mat-menu-item
-                        (click)="filterTable('monthAsDealer', '0', '3', '0-3 months')">
+                    <button mat-menu-item (click)="filterTable('monthAsDealer', '0', '3', '0-3 months')">
                         0-3 months
                     </button>
-                    <button
-                        mat-menu-item
-                        (click)="filterTable('monthAsDealer', '4', '9', '4-9 months')">
+                    <button mat-menu-item (click)="filterTable('monthAsDealer', '4', '9', '4-9 months')">
                         4-9 months
                     </button>
-                    <button
-                        mat-menu-item
-                        (click)="filterTable('monthAsDealer', '10', '', 'Above 10 months')">
+                    <button mat-menu-item (click)="filterTable('monthAsDealer', '10', '', 'Above 10 months')">
                         Above 10 months
                     </button>
                 </mat-menu>
@@ -39,23 +29,17 @@
                 <mat-menu #unassigned="matMenu">
                     <button
                         mat-menu-item
-                        (click)="
-                            filterTable('unassignedLicensesPercent', '0', '20', 'less than 20%')
-                        ">
+                        (click)="filterTable('unassignedLicensesPercent', '0', '20', 'less than 20%')">
                         less than 20%
                     </button>
                     <button
                         mat-menu-item
-                        (click)="
-                            filterTable('unassignedLicensesPercent', '10', '', 'greater than 10%')
-                        ">
+                        (click)="filterTable('unassignedLicensesPercent', '10', '', 'greater than 10%')">
                         greater than 10%
                     </button>
                     <button
                         mat-menu-item
-                        (click)="
-                            filterTable('unassignedLicensesPercent', '20', '', 'greater than 20%')
-                        ">
+                        (click)="filterTable('unassignedLicensesPercent', '20', '', 'greater than 20%')">
                         greater than 20%
                     </button>
                 </mat-menu>
@@ -69,11 +53,7 @@
                     <span class="fas fa-circle text-danger"></span>
                 </button>
                 <mat-menu #offline="matMenu">
-                    <button
-                        mat-menu-item
-                        (click)="
-                            filterTable('offlineLicensesPercent', '20', '', 'greater than 20%')
-                        ">
+                    <button mat-menu-item (click)="filterTable('offlineLicensesPercent', '20', '', 'greater than 20%')">
                         greater than 20%
                     </button>
                 </mat-menu>
@@ -114,9 +94,7 @@
                             <div class="pl-2" *ngIf="!searching">
                                 <p class="sm-text py-2 m-0">
                                     Showing
-                                    <span class="text-danger">{{
-                                        paging_data.entities.length
-                                    }}</span>
+                                    <span class="text-danger">{{ paging_data.entities.length }}</span>
                                     out of
                                     <span class="text-danger">{{ paging_data.totalEntities }}</span>
                                     dealers result.
@@ -124,11 +102,7 @@
                             </div>
                         </div>
                         <div class="control flex-even text-right">
-                            <button
-                                mat-button
-                                mat-raised-button
-                                class="theme-btn"
-                                (click)="clearFilter()">
+                            <button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
                                 <span class="button-label"> Clear Filter </span>
                                 <span class="fas fa-times ml-2 sm-text"></span>
                             </button>
@@ -140,20 +114,13 @@
             <div class="col-lg-12">
                 <ng-container *ngIf="!searching; else loading">
                     <div *ngIf="!no_dealer; else no_data">
-                        <mat-card
-                            class="theme-table with-page-dealer"
-                            *ngIf="filtered_data.length > 0; else nodata">
+                        <mat-card class="theme-table with-page-dealer" *ngIf="filtered_data.length > 0; else nodata">
                             <ng-container>
                                 <table class="full-width">
                                     <thead align="left" class="text-center">
                                         <!-- Needs Optimization -->
                                         <tr>
-                                            <th
-                                                class="border-right border-bottom p-3"
-                                                scope="col"
-                                                rowspan="2">
-                                                #
-                                            </th>
+                                            <th class="border-right border-bottom p-3" scope="col" rowspan="2">#</th>
 
                                             <th
                                                 class="border-right border-bottom p-3"
@@ -181,9 +148,7 @@
 
                                             <th
                                                 class="border-right border-bottom p-3"
-                                                [ngClass]="
-                                                    active_tab == 'DateCreated' ? 'tab-active' : ''
-                                                "
+                                                [ngClass]="active_tab == 'DateCreated' ? 'tab-active' : ''"
                                                 scope="col"
                                                 rowspan="2"
                                                 [attr.data-column]="'monthAsDealer'">
@@ -200,17 +165,13 @@
                                                     "
                                                     data-toggle="tooltip"
                                                     title="Sorted by {{
-                                                        sortOrder == 'desc'
-                                                            ? 'Descending'
-                                                            : 'Ascending'
+                                                        sortOrder == 'desc' ? 'Descending' : 'Ascending'
                                                     }} Order"></i>
                                             </th>
 
                                             <th
                                                 class="border-right border-bottom p-3"
-                                                [ngClass]="
-                                                    active_tab == 'PlayerCount' ? 'tab-active' : ''
-                                                "
+                                                [ngClass]="active_tab == 'PlayerCount' ? 'tab-active' : ''"
                                                 scope="col"
                                                 rowspan="2"
                                                 [attr.data-column]="'playerCount'">
@@ -227,9 +188,7 @@
                                                     "
                                                     data-toggle="tooltip"
                                                     title="Sorted by {{
-                                                        sortOrder == 'desc'
-                                                            ? 'Descending'
-                                                            : 'Ascending'
+                                                        sortOrder == 'desc' ? 'Descending' : 'Ascending'
                                                     }} Order"></i>
                                             </th>
 
@@ -237,23 +196,15 @@
                                                 class="border-right border-bottom p-3"
                                                 colspan="4"
                                                 scope="col"
-                                                [ngClass]="
-                                                    active_filter_tab == 'totalLicenses'
-                                                        ? 'tab-active'
-                                                        : ''
-                                                ">
+                                                [ngClass]="active_filter_tab == 'totalLicenses' ? 'tab-active' : ''">
                                                 Licenses
                                                 <div ngbDropdown class="float-right d-inline-block">
-                                                    <button
-                                                        class="hidden-button"
-                                                        id="dropdownMenu1"
-                                                        ngbDropdownToggle>
+                                                    <button class="hidden-button" id="dropdownMenu1" ngbDropdownToggle>
                                                         <i
                                                             class="float-right cursor-pointer text-right fas fa-filter"
                                                             data-toggle="tooltip"
                                                             title="{{
-                                                                selected_filter.filter_column ==
-                                                                'totalLicenses'
+                                                                selected_filter.filter_column == 'totalLicenses'
                                                                     ? tooltip
                                                                     : 'Click to Filter Licenses'
                                                             }}"></i>
@@ -282,23 +233,15 @@
                                                 class="border-right border-bottom p-3"
                                                 colspan="3"
                                                 scope="col"
-                                                [ngClass]="
-                                                    active_filter_tab == 'totalHosts'
-                                                        ? 'tab-active'
-                                                        : ''
-                                                ">
+                                                [ngClass]="active_filter_tab == 'totalHosts' ? 'tab-active' : ''">
                                                 Hosts
                                                 <div ngbDropdown class="float-right d-inline-block">
-                                                    <button
-                                                        class="hidden-button"
-                                                        id="dropdownMenu2"
-                                                        ngbDropdownToggle>
+                                                    <button class="hidden-button" id="dropdownMenu2" ngbDropdownToggle>
                                                         <i
                                                             class="float-right cursor-pointer text-right fas fa-filter"
                                                             data-toggle="tooltip"
                                                             title="{{
-                                                                selected_filter.filter_column ==
-                                                                'totalHosts'
+                                                                selected_filter.filter_column == 'totalHosts'
                                                                     ? tooltip
                                                                     : 'Click to Filter Hosts'
                                                             }}"></i>
@@ -309,10 +252,7 @@
                                                         ngbDropdownMenu>
                                                         <button
                                                             class="dropdown-item md-text"
-                                                            *ngFor="
-                                                                let count of filter;
-                                                                let last = last
-                                                            "
+                                                            *ngFor="let count of filter; let last = last"
                                                             (click)="
                                                                 filterByColumnName(
                                                                     'totalHosts',
@@ -326,9 +266,7 @@
                                                     </div>
                                                 </div>
                                             </th>
-                                            <th class="border-bottom p-3" colspan="2" scope="col">
-                                                Advertisers
-                                            </th>
+                                            <th class="border-bottom p-3" colspan="2" scope="col">Advertisers</th>
                                         </tr>
                                         <!--Upper Row End-->
 
@@ -336,11 +274,7 @@
                                             <!-- Licenses -->
                                             <th
                                                 class="border-right border-bottom p-3"
-                                                [ngClass]="
-                                                    active_tab == 'totalLicenses'
-                                                        ? 'tab-active'
-                                                        : ''
-                                                "
+                                                [ngClass]="active_tab == 'totalLicenses' ? 'tab-active' : ''"
                                                 valign="middle"
                                                 [attr.data-column]="'licenses'"
                                                 [attr.data-column-child]="'quantity'"
@@ -358,20 +292,14 @@
                                                     "
                                                     data-toggle="tooltip"
                                                     title="Sorted by {{
-                                                        sortOrder == 'desc'
-                                                            ? 'Descending'
-                                                            : 'Ascending'
+                                                        sortOrder == 'desc' ? 'Descending' : 'Ascending'
                                                     }} Order"></i>
                                             </th>
 
                                             <!-- NO DATA AVAILABLE -->
                                             <th
                                                 class="border-right border-bottom p-3"
-                                                [ngClass]="
-                                                    active_tab == 'totalLicensesUnassigned'
-                                                        ? 'tab-active'
-                                                        : ''
-                                                "
+                                                [ngClass]="active_tab == 'totalLicensesUnassigned' ? 'tab-active' : ''"
                                                 rowspan="2"
                                                 valign="middle">
                                                 Unassigned
@@ -387,20 +315,14 @@
                                                     "
                                                     data-toggle="tooltip"
                                                     title="Sorted by {{
-                                                        sortOrder == 'desc'
-                                                            ? 'Descending'
-                                                            : 'Ascending'
+                                                        sortOrder == 'desc' ? 'Descending' : 'Ascending'
                                                     }} Order"></i>
                                             </th>
                                             <!-- NO DATA AVAILABLE -->
 
                                             <th
                                                 class="border-right border-bottom p-3"
-                                                [ngClass]="
-                                                    active_tab == 'totalLicensesOnline'
-                                                        ? 'tab-active'
-                                                        : ''
-                                                "
+                                                [ngClass]="active_tab == 'totalLicensesOnline' ? 'tab-active' : ''"
                                                 rowspan="2"
                                                 [attr.data-column]="'licenses'"
                                                 [attr.data-column-child]="'online'"
@@ -419,19 +341,13 @@
                                                     "
                                                     data-toggle="tooltip"
                                                     title="Sorted by {{
-                                                        sortOrder == 'desc'
-                                                            ? 'Descending'
-                                                            : 'Ascending'
+                                                        sortOrder == 'desc' ? 'Descending' : 'Ascending'
                                                     }} Order"></i>
                                             </th>
 
                                             <th
                                                 class="border-right border-bottom p-3"
-                                                [ngClass]="
-                                                    active_tab == 'totalLicensesOffline'
-                                                        ? 'tab-active'
-                                                        : ''
-                                                "
+                                                [ngClass]="active_tab == 'totalLicensesOffline' ? 'tab-active' : ''"
                                                 rowspan="2"
                                                 [attr.data-column]="'licenses'"
                                                 [attr.data-column-child]="'offline'"
@@ -450,9 +366,7 @@
                                                     "
                                                     data-toggle="tooltip"
                                                     title="Sorted by {{
-                                                        sortOrder == 'desc'
-                                                            ? 'Descending'
-                                                            : 'Ascending'
+                                                        sortOrder == 'desc' ? 'Descending' : 'Ascending'
                                                     }} Order"></i>
                                             </th>
                                             <!-- Licenses -->
@@ -460,11 +374,7 @@
                                             <!-- Hosts -->
                                             <th
                                                 class="border-right border-bottom p-3"
-                                                [ngClass]="
-                                                    active_tab == 'forInstallationHost'
-                                                        ? 'tab-active'
-                                                        : ''
-                                                "
+                                                [ngClass]="active_tab == 'forInstallationHost' ? 'tab-active' : ''"
                                                 rowspan="2"
                                                 valign="middle"
                                                 [attr.data-column]="'forInstallationHost'"
@@ -482,17 +392,13 @@
                                                     "
                                                     data-toggle="tooltip"
                                                     title="Sorted by {{
-                                                        sortOrder == 'desc'
-                                                            ? 'Descending'
-                                                            : 'Ascending'
+                                                        sortOrder == 'desc' ? 'Descending' : 'Ascending'
                                                     }} Order"></i>
                                             </th>
 
                                             <th
                                                 class="border-right border-bottom p-3"
-                                                [ngClass]="
-                                                    active_tab == 'totalHosts' ? 'tab-active' : ''
-                                                "
+                                                [ngClass]="active_tab == 'totalHosts' ? 'tab-active' : ''"
                                                 rowspan="2"
                                                 align="left"
                                                 valign="middle"
@@ -511,19 +417,13 @@
                                                     "
                                                     data-toggle="tooltip"
                                                     title="Sorted by {{
-                                                        sortOrder == 'desc'
-                                                            ? 'Descending'
-                                                            : 'Ascending'
+                                                        sortOrder == 'desc' ? 'Descending' : 'Ascending'
                                                     }} Order"></i>
                                             </th>
 
                                             <th
                                                 class="border-right border-bottom p-3"
-                                                [ngClass]="
-                                                    active_tab == 'totalHostsActive'
-                                                        ? 'tab-active'
-                                                        : ''
-                                                "
+                                                [ngClass]="active_tab == 'totalHostsActive' ? 'tab-active' : ''"
                                                 rowspan="2"
                                                 valign="middle"
                                                 [attr.data-column]="'activeHost'"
@@ -541,9 +441,7 @@
                                                     "
                                                     data-toggle="tooltip"
                                                     title="Sorted by {{
-                                                        sortOrder == 'desc'
-                                                            ? 'Descending'
-                                                            : 'Ascending'
+                                                        sortOrder == 'desc' ? 'Descending' : 'Ascending'
                                                     }} Order"></i>
                                             </th>
                                             <!-- Hosts -->
@@ -551,11 +449,7 @@
                                             <!-- Advertisers NO DATA AVAILABLE -->
                                             <th
                                                 class="border-right border-bottom p-3"
-                                                [ngClass]="
-                                                    active_tab == 'totalAdvertisers'
-                                                        ? 'tab-active'
-                                                        : ''
-                                                "
+                                                [ngClass]="active_tab == 'totalAdvertisers' ? 'tab-active' : ''"
                                                 rowspan="2"
                                                 valign="middle">
                                                 Total
@@ -571,19 +465,13 @@
                                                     "
                                                     data-toggle="tooltip"
                                                     title="Sorted by {{
-                                                        sortOrder == 'desc'
-                                                            ? 'Descending'
-                                                            : 'Ascending'
+                                                        sortOrder == 'desc' ? 'Descending' : 'Ascending'
                                                     }} Order"></i>
                                             </th>
 
                                             <th
                                                 class="border-bottom"
-                                                [ngClass]="
-                                                    active_tab == 'totalAdvertisersActive'
-                                                        ? 'tab-active'
-                                                        : ''
-                                                "
+                                                [ngClass]="active_tab == 'totalAdvertisersActive' ? 'tab-active' : ''"
                                                 rowspan="2"
                                                 valign="middle">
                                                 Active
@@ -599,9 +487,7 @@
                                                     "
                                                     data-toggle="tooltip"
                                                     title="Sorted by {{
-                                                        sortOrder == 'desc'
-                                                            ? 'Descending'
-                                                            : 'Ascending'
+                                                        sortOrder == 'desc' ? 'Descending' : 'Ascending'
                                                     }} Order"></i>
                                             </th>
                                             <!-- Advertisers -->
@@ -625,11 +511,9 @@
                                                 {{ d.index }}
                                             </td>
                                             <td class="xsm-text border-right p-3">
-                                                <a
-                                                    [routerLink]="[d.dealer_id, d.business_name]"
-                                                    target="_blank"
-                                                    >{{ d.dealer_id_alias }}</a
-                                                >
+                                                <a [routerLink]="[d.dealer_id, d.business_name]" target="_blank">{{
+                                                    d.dealer_id_alias
+                                                }}</a>
                                             </td>
                                             <td class="xsm-text border-right p-3">
                                                 <a [routerLink]="[d.dealer_id]" target="_blank">{{
@@ -679,9 +563,7 @@
                                     </tbody>
                                 </table>
 
-                                <app-pagination-field
-                                    [paging_data]="paging_data"
-                                    (get_page)="pageRequested($event)">
+                                <app-pagination-field [paging_data]="paging_data" (get_page)="pageRequested($event)">
                                 </app-pagination-field>
                             </ng-container>
                         </mat-card>
@@ -698,8 +580,7 @@
                     <strong>P R O C E S S I N G</strong>
                     <br />
                     <span class="sm-text"
-                        >Please wait while we filter our database for you. Filtering may take up to
-                        60seconds.</span
+                        >Please wait while we filter our database for you. Filtering may take up to 60seconds.</span
                     >
                 </div>
             </div>
@@ -730,9 +611,7 @@
                         <i class="text-gray fa-5x far fa-file-alt"></i>
                     </div>
                     <h3 class="text-gray col-lg-12">No Results Found.</h3>
-                    <span class="text-gray col-lg-12"
-                        >Try adjusting your search to find what you're looking for.</span
-                    >
+                    <span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
                 </mat-card>
             </div>
         </div>

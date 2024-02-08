@@ -61,8 +61,7 @@ export class ThumbnailCardComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        if (this.role === UI_ROLE_DEFINITION_TEXT.dealeradmin)
-            this.role = UI_ROLE_DEFINITION_TEXT.administrator;
+        if (this.role === UI_ROLE_DEFINITION_TEXT.dealeradmin) this.role = UI_ROLE_DEFINITION_TEXT.administrator;
         this.route = `/${this.role}/media-library/${this.content_id}`;
         if (
             !this.disconnect_to_socket &&
@@ -147,13 +146,7 @@ export class ThumbnailCardComponent implements OnInit {
         );
     }
 
-    private warningModal(
-        status: string,
-        message: string,
-        data: string,
-        return_msg: string,
-        action: string,
-    ): void {
+    private warningModal(status: string, message: string, data: string, return_msg: string, action: string): void {
         this._dialog.closeAll();
 
         const dialogRef = this._dialog.open(ConfirmationModalComponent, {

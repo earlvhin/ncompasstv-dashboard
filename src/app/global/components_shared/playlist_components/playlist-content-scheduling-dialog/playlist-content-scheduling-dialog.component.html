@@ -58,10 +58,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="end-date">
-                                        <mat-form-field
-                                            appearance="fill"
-                                            appDefaultDateFormat
-                                            *ngIf="start_date">
+                                        <mat-form-field appearance="fill" appDefaultDateFormat *ngIf="start_date">
                                             <mat-label>End Date</mat-label>
                                             <input
                                                 matInput
@@ -84,9 +81,7 @@
                                     <h3 class="font-weight-bold">Day of Week</h3>
                                 </div>
                                 <div class="col-md-6">
-                                    <mat-slide-toggle
-                                        [checked]="has_selected_all_days"
-                                        (change)="onSelectAllDays()">
+                                    <mat-slide-toggle [checked]="has_selected_all_days" (change)="onSelectAllDays()">
                                         Select All Days
                                     </mat-slide-toggle>
                                 </div>

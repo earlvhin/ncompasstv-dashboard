@@ -220,8 +220,7 @@ export class PlacerComponent implements OnInit {
             const blob = new Blob([file], {
                 type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8',
             });
-            const filename =
-                this.host_id != '' ? this.host_name + '_placer_data' : 'Placer_Data' + '.xlsx';
+            const filename = this.host_id != '' ? this.host_name + '_placer_data' : 'Placer_Data' + '.xlsx';
             saveAs(blob, filename);
         });
 
@@ -411,23 +410,13 @@ export class PlacerComponent implements OnInit {
 
     closeDatePickerFrom(event) {
         this.pickerDateFrom = event;
-        this.filterTable(
-            moment(event).format('MMMM YYYY'),
-            moment(event).format('MMMM YYYY'),
-            true,
-            false,
-        );
+        this.filterTable(moment(event).format('MMMM YYYY'), moment(event).format('MMMM YYYY'), true, false);
         this.datePickerFrom.close();
     }
 
     closeDatePickerTo(event) {
         this.pickerDateTo = event;
-        this.filterTable(
-            moment(event).format('MMMM YYYY'),
-            moment(event).format('MMMM YYYY'),
-            false,
-            true,
-        );
+        this.filterTable(moment(event).format('MMMM YYYY'), moment(event).format('MMMM YYYY'), false, true);
         this.datePickerTo.close();
     }
 }

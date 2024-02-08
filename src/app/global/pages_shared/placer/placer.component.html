@@ -47,11 +47,7 @@
                         [disabled]="workbook_generation"
                         title="Export to CSV">
                         <span
-                            class="{{
-                                !workbook_generation
-                                    ? 'fas fa-file-excel'
-                                    : 'fas fa-spinner fa-spin'
-                            }}"
+                            class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
                             [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
                         <span class="ml-2 button_text_animation">{{
                             !workbook_generation ? 'Export' : 'Generating CSV'
@@ -79,16 +75,10 @@
                         <span class="fas fa-chevron-down xsm-text"></span>
                     </button>
                     <mat-menu #assignee="matMenu">
-                        <button
-                            class="md-text"
-                            mat-menu-item
-                            (click)="filterTable('1', 'Assigned')">
+                        <button class="md-text" mat-menu-item (click)="filterTable('1', 'Assigned')">
                             <span class="fas fa-user text-gray mr-3"></span>Assigned
                         </button>
-                        <button
-                            class="md-text"
-                            mat-menu-item
-                            (click)="filterTable('2', 'Unassigned')">
+                        <button class="md-text" mat-menu-item (click)="filterTable('2', 'Unassigned')">
                             <span class="fas fa-user-slash text-gray mr-3"></span>Unassigned
                         </button>
                     </mat-menu>
@@ -117,9 +107,7 @@
                     <div class="pt-2 pill" *ngIf="filter.date_to_label">
                         <p class="m-0">
                             Date Selected:
-                            <strong
-                                >{{ filter.date_from_label }} - {{ filter.date_to_label }}</strong
-                            >
+                            <strong>{{ filter.date_from_label }} - {{ filter.date_to_label }}</strong>
                         </p>
                     </div>
                     <div class="p-2" *ngIf="paging_data">
@@ -132,8 +120,7 @@
                                         : paging_data.pageSize
                                     : 0
                             }}</strong>
-                            out of <strong class="text-danger">{{ total_placer }}</strong> placer
-                            records.
+                            out of <strong class="text-danger">{{ total_placer }}</strong> placer records.
                         </p>
                     </div>
                 </div>

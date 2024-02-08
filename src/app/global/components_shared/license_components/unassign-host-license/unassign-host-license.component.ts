@@ -49,9 +49,7 @@ export class UnassignHostLicenseComponent implements OnInit, OnDestroy {
 
     checkIfAssignedToLicense(): void {
         this.show_warning = true;
-        const license_filter = this.licenses.filter((license) =>
-            this.unassigning_licenses.includes(license.licenseId),
-        );
+        const license_filter = this.licenses.filter((license) => this.unassigning_licenses.includes(license.licenseId));
         const license_with_screen = license_filter.filter((license) => license.screenId != null);
         if (license_with_screen.length > 0) this.show_license_warning = true;
     }

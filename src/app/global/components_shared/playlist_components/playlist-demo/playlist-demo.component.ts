@@ -13,10 +13,7 @@ import {
 import { Subscription, Observable, of } from 'rxjs';
 import { PlaylistService } from '../../../services/playlist-service/playlist.service';
 import { UI_CONTENT } from 'src/app/global/models/ui_content.model';
-import {
-    API_SINGLE_PLAYLIST,
-    API_CONTENT_BLACKLISTED_CONTENTS,
-} from 'src/app/global/models/api_single-playlist.model';
+import { API_SINGLE_PLAYLIST, API_CONTENT_BLACKLISTED_CONTENTS } from 'src/app/global/models/api_single-playlist.model';
 import { MAT_DIALOG_DATA } from '@angular/material';
 
 @Injectable({
@@ -98,10 +95,7 @@ export class PlaylistDemoComponent implements OnInit {
         this.current_filetype = filetype;
 
         if (i > 0) {
-            if (
-                this.playlist_content[i].file_name == this.playlist_content[i - 1].file_name &&
-                this.videoplayer
-            ) {
+            if (this.playlist_content[i].file_name == this.playlist_content[i - 1].file_name && this.videoplayer) {
                 this.videoplayer.nativeElement.play();
             }
         }
@@ -119,12 +113,10 @@ export class PlaylistDemoComponent implements OnInit {
 
     getPlaylistById() {
         this.subscription.add(
-            this._playlist
-                .get_playlist_by_id(this.playlist_id)
-                .subscribe((data: API_SINGLE_PLAYLIST) => {
-                    this.playlist_content = this.playlist_mapToUI(data.playlistContents);
-                    this.checkFileType(this.count);
-                }),
+            this._playlist.get_playlist_by_id(this.playlist_id).subscribe((data: API_SINGLE_PLAYLIST) => {
+                this.playlist_content = this.playlist_mapToUI(data.playlistContents);
+                this.checkFileType(this.count);
+            }),
         );
     }
 

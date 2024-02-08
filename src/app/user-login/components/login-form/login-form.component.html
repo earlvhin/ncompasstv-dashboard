@@ -11,13 +11,8 @@
         </div>
         <div class="col-lg-7">
             <div class="logo-area offset-lg-1 pt-5 col-lg-10">
-                <img
-                    src="/assets/media-files/logo-black.png"
-                    class="form-logo full-width"
-                    alt="logo" />
-                <div class="caption col-lg-12 text-gray md-text f-500">
-                    START YOUR PATH TO FINANCIAL FREEDOM
-                </div>
+                <img src="/assets/media-files/logo-black.png" class="form-logo full-width" alt="logo" />
+                <div class="caption col-lg-12 text-gray md-text f-500">START YOUR PATH TO FINANCIAL FREEDOM</div>
             </div>
             <div class="offset-lg-1 col-lg-10">
                 <form
@@ -25,9 +20,7 @@
                     [formGroup]="login_form"
                     (ngSubmit)="authUser()"
                     [ngClass]="is_error ? 'pt-4' : 'pt-2'">
-                    <mat-form-field
-                        class="full-width mb-0 position-relative"
-                        *ngFor="let f of login_form_view">
+                    <mat-form-field class="full-width mb-0 position-relative" *ngFor="let f of login_form_view">
                         <mat-label class="md-text">{{ f.label }}</mat-label>
 
                         <input
@@ -46,20 +39,13 @@
                                     matInput
                                     placeholder="{{ f.placeholder }}"
                                     [type]="is_password_field_type ? 'password' : 'text'" />
-                                <mat-icon
-                                    class="pw-visibility md-text"
-                                    matSuffix
-                                    (click)="togglePasswordFieldType()"
-                                    >{{
-                                        is_password_field_type ? 'visibility_off' : 'visibility'
-                                    }}</mat-icon
-                                >
+                                <mat-icon class="pw-visibility md-text" matSuffix (click)="togglePasswordFieldType()">{{
+                                    is_password_field_type ? 'visibility_off' : 'visibility'
+                                }}</mat-icon>
                             </div>
                         </ng-template>
 
-                        <span class="field-error" *ngIf="is_submitted && form[f.control].errors">{{
-                            f.error
-                        }}</span>
+                        <span class="field-error" *ngIf="is_submitted && form[f.control].errors">{{ f.error }}</span>
                     </mat-form-field>
                     <div class="sm-text f-500 mb-2 uppercase p-0 text-danger" *ngIf="is_error">
                         {{ error_msg }}
@@ -76,9 +62,7 @@
                             Don't have an account?
                             <br />
                             Inquire with our
-                            <span class="text-primary clickable" (click)="routeToGuest()"
-                                >GUEST</span
-                            >
+                            <span class="text-primary clickable" (click)="routeToGuest()">GUEST</span>
                             account here!
                         </span>
                     </div>

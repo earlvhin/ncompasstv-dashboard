@@ -6,13 +6,7 @@ import { debounceTime, takeUntil } from 'rxjs/operators';
 import { forkJoin, ReplaySubject, Subject } from 'rxjs';
 import * as moment from 'moment';
 
-import {
-    API_CATEGORY,
-    API_HOST,
-    API_LICENSE_PROPS,
-    API_STATE,
-    UI_STORE_HOUR,
-} from 'src/app/global/models';
+import { API_CATEGORY, API_HOST, API_LICENSE_PROPS, API_STATE, UI_STORE_HOUR } from 'src/app/global/models';
 import { AuthService, LicenseService } from 'src/app/global/services';
 
 @Component({
@@ -91,12 +85,8 @@ export class LocatorComponentComponent implements OnInit {
     onRemoveResult(removedData: API_HOST | API_CATEGORY | API_STATE): void {
         if (this.type === 'host') {
             const removedHost = removedData as API_HOST;
-            const hostIndexToRemove = this.hosts.findIndex(
-                (host) => host.hostId === removedHost.hostId,
-            );
-            const dataHostLocationIndex = this.mapMarkers.findIndex(
-                (host) => host.hostId === removedHost.hostId,
-            );
+            const hostIndexToRemove = this.hosts.findIndex((host) => host.hostId === removedHost.hostId);
+            const dataHostLocationIndex = this.mapMarkers.findIndex((host) => host.hostId === removedHost.hostId);
             this.hosts.splice(hostIndexToRemove, 1);
             this.mapMarkers.splice(dataHostLocationIndex, 1);
             this.currentList = [...this.mapMarkers];
@@ -107,15 +97,11 @@ export class LocatorComponentComponent implements OnInit {
             return;
         }
 
-        const indexToRemove = this.categoryOrStateData.findIndex(
-            (data) => data[this.type] === removedData[this.type],
-        );
+        const indexToRemove = this.categoryOrStateData.findIndex((data) => data[this.type] === removedData[this.type]);
         this.categoryOrStateData.splice(indexToRemove, 1);
         this._listControl.setValue([...this.categoryOrStateData], { emitEvent: false });
         this.listBeforeChange = Array.from([...this.categoryOrStateData]);
-        this.mapMarkers = [...this.mapMarkers].filter(
-            (host) => host[this.type] !== removedData[this.type],
-        );
+        this.mapMarkers = [...this.mapMarkers].filter((host) => host[this.type] !== removedData[this.type]);
         this.currentList = [...this.mapMarkers];
         this.hostCount = this.mapMarkers.length;
         this.searchSelectDropdown.compareWith = (a, b) => a && b && a === b;
@@ -132,9 +118,7 @@ export class LocatorComponentComponent implements OnInit {
     openPageNewTab(page: string, id: string) {
         let role = this.currentRole;
         if (role === 'dealeradmin') role = 'administrator';
-        const url = this._router.serializeUrl(
-            this._router.createUrlTree([`/${role}/${page}/${id}`], {}),
-        );
+        const url = this._router.serializeUrl(this._router.createUrlTree([`/${role}/${page}/${id}`], {}));
         window.open(url, '_blank');
     }
 
@@ -198,20 +182,16 @@ export class LocatorComponentComponent implements OnInit {
 
     private onSelectDMA(): void {
         const control = this.searchSelectForm.get('list');
-        control.valueChanges
-            .pipe(debounceTime(1000), takeUntil(this._unsubscribe))
-            .subscribe((change: any[]) => {
-                if (this.listBeforeChange.length > change.length) {
-                    const removed = this.listBeforeChange.filter(
-                        (item) => !change.includes(item),
-                    )[0];
-                    this.onRemoveResult(removed);
-                    this.listBeforeChange = Array.from(change);
-                    return;
-                }
+        control.valueChanges.pipe(debounceTime(1000), takeUntil(this._unsubscribe)).subscribe((change: any[]) => {
+            if (this.listBeforeChange.length > change.length) {
+                const removed = this.listBeforeChange.filter((item) => !change.includes(item))[0];
+                this.onRemoveResult(removed);
+                this.listBeforeChange = Array.from(change);
+                return;
+            }
 
-                this.getLocationLicenses();
-            });
+            this.getLocationLicenses();
+        });
     }
 
     private getLocationLicenses() {
@@ -241,10 +221,7 @@ export class LocatorComponentComponent implements OnInit {
 
             this.original_reference
                 .filter((host) => {
-                    return (
-                        host[this.type] &&
-                        host[this.type].toLowerCase().indexOf(data[this.type].toLowerCase()) > -1
-                    );
+                    return host[this.type] && host[this.type].toLowerCase().indexOf(data[this.type].toLowerCase()) > -1;
                 })
                 .forEach((data) => {
                     requests.push(this.getHostLicenses(data.hostId));
@@ -261,10 +238,7 @@ export class LocatorComponentComponent implements OnInit {
                     .filter((licenses) => Array.isArray(licenses))
                     .forEach((licenses) => {
                         licenses = licenses.map((license) => {
-                            license.status = this.setLicenseStatus(
-                                license.installDate,
-                                license.piStatus,
-                            );
+                            license.status = this.setLicenseStatus(license.installDate, license.piStatus);
 
                             switch (license.status) {
                                 case 'online':
@@ -297,9 +271,7 @@ export class LocatorComponentComponent implements OnInit {
                         switch (this.type) {
                             case 'host':
                                 const host = data as API_HOST;
-                                host.licenses = response.filter(
-                                    (license) => license.hostId === host.hostId,
-                                );
+                                host.licenses = response.filter((license) => license.hostId === host.hostId);
                                 host.iconUrl = this.setHostIconUrl(host.licenses);
                                 mapped = host;
                                 this.mapMarkers.push(host);
@@ -309,17 +281,11 @@ export class LocatorComponentComponent implements OnInit {
                                 const stateOrCategory: API_STATE | API_CATEGORY = data;
                                 stateOrCategory.totalLicenses = 0;
                                 stateOrCategory.hosts = this.original_reference
-                                    .filter(
-                                        (host) => host[this.type] === stateOrCategory[this.type],
-                                    )
+                                    .filter((host) => host[this.type] === stateOrCategory[this.type])
                                     .map((host) => {
-                                        host.licenses = response.filter(
-                                            (license) => license.hostId === host.hostId,
-                                        );
+                                        host.licenses = response.filter((license) => license.hostId === host.hostId);
                                         host.storeHoursParsed = JSON.parse(host.storeHours);
-                                        host.mappedStoreHours = this.mapStoreHours(
-                                            host.storeHoursParsed,
-                                        );
+                                        host.mappedStoreHours = this.mapStoreHours(host.storeHoursParsed);
                                         host.iconUrl = this.setHostIconUrl(host.licenses);
                                         stateOrCategory.totalLicenses += host.licenses.length;
                                         this.mapMarkers.push(host);
@@ -359,8 +325,7 @@ export class LocatorComponentComponent implements OnInit {
             }
 
             hour.periods.map((period) => {
-                if (period.open === '' && period.close === '')
-                    days.push(`${hour.day} : Open 24 hrs`);
+                if (period.open === '' && period.close === '') days.push(`${hour.day} : Open 24 hrs`);
                 else days.push(`${hour.day} : ${period.open} - ${period.close}`);
             });
         });

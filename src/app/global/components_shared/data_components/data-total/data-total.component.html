@@ -18,17 +18,12 @@
 
         <div class="col-lg-12 p-0">
             <span class="sm-text text-gray">
-                {{ new_this_week }} New
-                <span class="text-primary">{{ new_this_week_label }}</span> this week</span
+                {{ new_this_week }} New <span class="text-primary">{{ new_this_week_label }}</span> this week</span
             >
         </div>
 
         <div class="col-lg-12 p-0">
-            <mat-progress-bar
-                class="example-margin"
-                [color]="'primary'"
-                [mode]="'determinate'"
-                [value]="new_this_week">
+            <mat-progress-bar class="example-margin" [color]="'primary'" [mode]="'determinate'" [value]="new_this_week">
             </mat-progress-bar>
         </div>
     </div>

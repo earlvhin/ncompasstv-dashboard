@@ -21,8 +21,7 @@
                         *ngFor="let release of release_notes; index as i"
                         [expanded]="i === release_expanded_panel_index">
                         <mat-expansion-panel-header>
-                            <mat-panel-title
-                                *ngIf="is_current_user_admin; else non_admin_panel_title">
+                            <mat-panel-title *ngIf="is_current_user_admin; else non_admin_panel_title">
                                 <h4 class="col-4">{{ release.version }}</h4>
                                 <div class="col-4 text-center">{{ release.dateCreated }}</div>
                                 <div class="col-4 text-right">

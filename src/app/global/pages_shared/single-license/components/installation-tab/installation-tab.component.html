@@ -6,13 +6,10 @@
             <!-- <form [formGroup]="create_checklist" class=""> -->
             <form [formGroup]="form">
                 <span class="sm-text mb-2">
-                    Fill up this section if the title you are looking for is not existing on the
-                    available title list.
+                    Fill up this section if the title you are looking for is not existing on the available title list.
                 </span>
                 <h5 class="mt-3">Add Title:</h5>
-                <span class="sm-text text-danger">
-                    Note: This will be the headline per checklist.
-                </span>
+                <span class="sm-text text-danger"> Note: This will be the headline per checklist. </span>
                 <div class="col-lg-12 p-0 flex">
                     <mat-form-field class="col-lg-10 p-0">
                         <mat-label>Title:</mat-label>
@@ -23,10 +20,7 @@
                             type="text" />
                     </mat-form-field>
                     <div class="col-lg-2 text-center pt-3 text-primary clickable">
-                        <button
-                            mat-button
-                            class="theme-btn _info mb-2 mr-2 sm-text"
-                            (click)="saveTitle()">
+                        <button mat-button class="theme-btn _info mb-2 mr-2 sm-text" (click)="saveTitle()">
                             Save Title
                         </button>
                     </div>
@@ -38,9 +32,7 @@
                             <li class="md-text text-primary col-lg-11">
                                 {{ title.title }}
                             </li>
-                            <div
-                                class="col-lg-1 text-center sm-text clickable"
-                                (click)="updateTitle(title)">
+                            <div class="col-lg-1 text-center sm-text clickable" (click)="updateTitle(title)">
                                 <span class="fas fa-edit" title="Edit Title"></span>
                             </div>
                             <div
@@ -58,8 +50,7 @@
                 <hr />
 
                 <span class="sm-text mb-2">
-                    For existing title, click Add Task button to add a checklist item, then click
-                    Save Task to publish.
+                    For existing title, click Add Task button to add a checklist item, then click Save Task to publish.
                 </span>
                 <div class="col-lg-12 p-0" *ngIf="task_field_open">
                     <h5>Add Task Lists:</h5>
@@ -85,10 +76,7 @@
                         [formGroupName]="i"
                         class="col-lg-12 p-0 flex">
                         <mat-form-field class="col-lg-11 p-0">
-                            <input
-                                matInput
-                                formControlName="task"
-                                placeholder="Ex. Call Customer" />
+                            <input matInput formControlName="task" placeholder="Ex. Call Customer" />
                         </mat-form-field>
                         <div class="col-lg-1 text-center pt-3">
                             <span
@@ -123,9 +111,7 @@
                 <div class="col-lg-12 flex">
                     <h3
                         class="text-primary"
-                        [ngClass]="
-                            !is_dealer ? 'col-lg-10 pl-4 text-left' : 'col-lg-12 text-center'
-                        ">
+                        [ngClass]="!is_dealer ? 'col-lg-10 pl-4 text-left' : 'col-lg-12 text-center'">
                         INSTALLATION CHECKLIST
                     </h3>
                     <div class="col-lg-2" *ngIf="!is_dealer">
@@ -169,43 +155,29 @@
                                     <ul class="no-style col-lg-12">
                                         <li
                                             class="col-lg-12 flex"
-                                            *ngFor="
-                                                let items of title.installationChecklistItems;
-                                                let even = even
-                                            "
+                                            *ngFor="let items of title.installationChecklistItems; let even = even"
                                             [ngClass]="even ? 'p-3' : 'odd'">
                                             <div class="col-lg-10 pl-0">
                                                 <mat-checkbox
                                                     [checked]="items.isDone"
                                                     (change)="checkItem($event.checked, items)"
                                                     [disabled]="edit_tasks">
-                                                    <span
-                                                        [ngClass]="
-                                                            items.isDone ? 'strike' : 'non-strike'
-                                                        "
-                                                        >{{
-                                                            items.titleToChange
-                                                                ? items.titleToChange
-                                                                : items.title
-                                                        }}</span
-                                                    >
+                                                    <span [ngClass]="items.isDone ? 'strike' : 'non-strike'">{{
+                                                        items.titleToChange ? items.titleToChange : items.title
+                                                    }}</span>
                                                 </mat-checkbox>
                                             </div>
                                             <div
                                                 class="col-lg-1 text-center sm-text clickable"
                                                 (click)="updateItem(items)"
                                                 *ngIf="edit_tasks">
-                                                <span
-                                                    class="fas fa-edit"
-                                                    title="Edit Item Title"></span>
+                                                <span class="fas fa-edit" title="Edit Item Title"></span>
                                             </div>
                                             <div
                                                 class="col-lg-1 text-center text-danger sm-text clickable"
                                                 *ngIf="edit_tasks"
                                                 (click)="deleteItem(items)">
-                                                <span
-                                                    class="fas fa-trash"
-                                                    title="Delete Item Title"></span>
+                                                <span class="fas fa-trash" title="Delete Item Title"></span>
                                             </div>
                                         </li>
                                     </ul>
@@ -216,9 +188,7 @@
                 </div>
 
                 <ng-template #no_checklist>
-                    <span class="pl-5 italic md-text text-primary"
-                        >No available checklist item yet.</span
-                    >
+                    <span class="pl-5 italic md-text text-primary">No available checklist item yet.</span>
                 </ng-template>
             </div>
         </div>

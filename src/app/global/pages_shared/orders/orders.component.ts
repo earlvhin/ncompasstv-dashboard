@@ -157,11 +157,7 @@ export class OrdersComponent implements OnInit {
         this._billing.update_billing_order(shipping_details).subscribe((response) => {
             if (!response) return;
 
-            this.openConfirmationModal(
-                'success',
-                'Success!',
-                'Order has been marked as ' + event.order_status,
-            );
+            this.openConfirmationModal('success', 'Success!', 'Order has been marked as ' + event.order_status);
         });
     }
 

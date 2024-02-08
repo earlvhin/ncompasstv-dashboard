@@ -175,8 +175,7 @@ export class ReassignDealerComponent implements OnInit, OnDestroy {
                     this.dealers = [];
                 } else {
                     // remove current dealer from search results
-                    const entities: { dealerId: string; businessName: string }[] =
-                        response.paging.entities;
+                    const entities: { dealerId: string; businessName: string }[] = response.paging.entities;
                     const existingIndex = entities.findIndex(
                         (entity) => entity.dealerId === this.current_dealer.dealer_id,
                     );

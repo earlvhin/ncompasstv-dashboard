@@ -11,10 +11,7 @@
                             <div class="row"></div>
                             <div class="col-lg-12 pl-0 flex">
                                 <div class="col-lg-6 pl-0">
-                                    <mat-form-field
-                                        class="full-width"
-                                        appearance="fill"
-                                        appDefaultDateFormat>
+                                    <mat-form-field class="full-width" appearance="fill" appDefaultDateFormat>
                                         <mat-label class="md-text">Start Date</mat-label>
                                         <input
                                             [(ngModel)]="start"
@@ -22,18 +19,13 @@
                                             matInput
                                             [matDatepicker]="datePicker"
                                             readonly />
-                                        <mat-datepicker-toggle
-                                            matSuffix
-                                            [for]="datePicker"></mat-datepicker-toggle>
+                                        <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
                                         <mat-datepicker #datePicker></mat-datepicker>
                                     </mat-form-field>
                                 </div>
 
                                 <div class="col-lg-6 pr-0">
-                                    <mat-form-field
-                                        class="full-width"
-                                        appearance="fill"
-                                        appDefaultDateFormat>
+                                    <mat-form-field class="full-width" appearance="fill" appDefaultDateFormat>
                                         <mat-label class="md-text">End Date</mat-label>
                                         <input
                                             [(ngModel)]="end"
@@ -42,9 +34,7 @@
                                             [matDatepicker]="datePicker2"
                                             [min]="start_date"
                                             readonly />
-                                        <mat-datepicker-toggle
-                                            matSuffix
-                                            [for]="datePicker2"></mat-datepicker-toggle>
+                                        <mat-datepicker-toggle matSuffix [for]="datePicker2"></mat-datepicker-toggle>
                                         <mat-datepicker #datePicker2></mat-datepicker>
                                     </mat-form-field>
                                 </div>
@@ -62,15 +52,8 @@
                             <span class="fas fa-sort xsm-text"></span>
                         </button>
                         <mat-menu #status="matMenu">
-                            <button class="md-text" mat-menu-item (click)="filterStatus('Shipped')">
-                                Shipped
-                            </button>
-                            <button
-                                class="md-text"
-                                mat-menu-item
-                                (click)="filterStatus('New Order')">
-                                New Order
-                            </button>
+                            <button class="md-text" mat-menu-item (click)="filterStatus('Shipped')">Shipped</button>
+                            <button class="md-text" mat-menu-item (click)="filterStatus('New Order')">New Order</button>
                         </mat-menu>
                     </div>
                 </div>

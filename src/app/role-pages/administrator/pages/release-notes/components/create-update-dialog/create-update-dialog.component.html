@@ -20,11 +20,7 @@
                         <!-- VERSION -->
                         <mat-form-field class="flex-even mr-4" appearance="fill">
                             <mat-label>Version</mat-label>
-                            <input
-                                formControlName="version"
-                                matInput
-                                placeholder="e.g. v1.2.3"
-                                type="text" />
+                            <input formControlName="version" matInput placeholder="e.g. v1.2.3" type="text" />
                         </mat-form-field>
 
                         <mat-form-field class="flex-even" appearance="fill">
@@ -37,9 +33,7 @@
                         </mat-form-field>
                     </div>
                     <div>
-                        <app-wysiwyg
-                            (tynimce_value)="fetchingValue($event)"
-                            [description]="description"></app-wysiwyg>
+                        <app-wysiwyg (tynimce_value)="fetchingValue($event)" [description]="description"></app-wysiwyg>
                     </div>
                 </form>
             </ng-container>
@@ -57,8 +51,6 @@
             [disabled]="notesForm.invalid">
             Submit
         </button>
-        <button mat-button mat-raised-button class="theme-btn bg-danger" [mat-dialog-close]="true">
-            Cancel
-        </button>
+        <button mat-button mat-raised-button class="theme-btn bg-danger" [mat-dialog-close]="true">Cancel</button>
     </div>
 </div>

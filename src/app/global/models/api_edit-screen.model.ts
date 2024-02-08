@@ -16,14 +16,7 @@ export class EDIT_SCREEN_INFO {
     hostId: string;
     templateId: string;
 
-    constructor(
-        id: string,
-        name: string,
-        desc: string,
-        screenTypeId: string,
-        host: string,
-        template: string,
-    ) {
+    constructor(id: string, name: string, desc: string, screenTypeId: string, host: string, template: string) {
         this.screenId = id;
         this.screenName = name;
         this.description = desc;

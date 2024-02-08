@@ -189,10 +189,7 @@ export class SingleHostComponent implements OnInit {
     }
 
     private getHostById() {
-        if (
-            this.isInitialLoad &&
-            (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')
-        ) {
+        if (this.isInitialLoad && (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')) {
             this.setPageData(this._helper.singleHostData);
             this.isInitialLoad = false;
             return;
@@ -247,24 +244,22 @@ export class SingleHostComponent implements OnInit {
     }
 
     private subscribeToBusinessHoursUpdate(): void {
-        this._host.onUpdateBusinessHours
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((response: boolean) => {
-                if (!response) return;
+        this._host.onUpdateBusinessHours.pipe(takeUntil(this._unsubscribe)).subscribe((response: boolean) => {
+            if (!response) return;
 
-                this._license
-                    .get_licenses_by_host_id(this.hostId)
-                    .pipe(takeUntil(this._unsubscribe))
-                    .subscribe((response) => {
-                        if (!Array.isArray(response)) return;
+            this._license
+                .get_licenses_by_host_id(this.hostId)
+                .pipe(takeUntil(this._unsubscribe))
+                .subscribe((response) => {
+                    if (!Array.isArray(response)) return;
 
-                        const licenses = response as API_LICENSE_PROPS[];
+                    const licenses = response as API_LICENSE_PROPS[];
 
-                        licenses.forEach((license) => {
-                            this._socket.emit('D_update_player', license.licenseId);
-                        });
+                    licenses.forEach((license) => {
+                        this._socket.emit('D_update_player', license.licenseId);
                     });
-            });
+                });
+        });
     }
 
     protected get _roleRoute() {

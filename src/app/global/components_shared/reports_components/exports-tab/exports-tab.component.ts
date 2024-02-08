@@ -91,10 +91,7 @@ export class ExportsTabComponent implements OnInit {
             case 'licenses':
                 this.worksheet = this.workbook.addWorksheet('Host View');
                 Object.keys(this.hosts_table_column).forEach((key) => {
-                    if (
-                        this.hosts_table_column[key].name &&
-                        !this.hosts_table_column[key].no_export
-                    ) {
+                    if (this.hosts_table_column[key].name && !this.hosts_table_column[key].no_export) {
                         header.push({
                             header: this.hosts_table_column[key].name,
                             key: this.hosts_table_column[key].key,
@@ -166,26 +163,11 @@ export class ExportsTabComponent implements OnInit {
     }
 
     getDataForExport(tab: string): void {
-        const EXCEL_TYPE =
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
         switch (tab) {
             case 'licenses':
                 this._license
-                    .get_all_licenses_duration_clone(
-                        0,
-                        '',
-                        'PiStatus',
-                        'desc',
-                        0,
-                        false,
-                        '',
-                        '',
-                        '',
-                        '',
-                        '',
-                        '',
-                        '',
-                    )
+                    .get_all_licenses_duration_clone(0, '', 'PiStatus', 'desc', 0, false, '', '', '', '', '', '', '')
                     .pipe(takeUntil(this._unsubscribe))
                     .subscribe((data) => {
                         if (data.message) {
@@ -231,12 +213,9 @@ export class ExportsTabComponent implements OnInit {
     private mapLicensesForExport(item) {
         const isBlank = (data: string) => !data || data.trim().length === 0;
         item.main_zone = item.templateMain != 'NO DATA' ? this.msToTime(item.templateMain) : '';
-        item.background_zone =
-            item.templateBackground != 'NO DATA' ? this.msToTime(item.templateBackground) : '';
-        item.horizontal_zone =
-            item.templateHorizontal != 'NO DATA' ? this.msToTime(item.templateHorizontal) : '';
-        item.vertical_zone =
-            item.templateVertical != 'NO DATA' ? this.msToTime(item.templateVertical) : '';
+        item.background_zone = item.templateBackground != 'NO DATA' ? this.msToTime(item.templateBackground) : '';
+        item.horizontal_zone = item.templateHorizontal != 'NO DATA' ? this.msToTime(item.templateHorizontal) : '';
+        item.vertical_zone = item.templateVertical != 'NO DATA' ? this.msToTime(item.templateVertical) : '';
         item.piVersion = item.apps ? item.apps.rpi_model : '';
         item.displayStatus = item.displayStatus == 1 ? 'ON' : '';
         item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';
@@ -249,9 +228,7 @@ export class ExportsTabComponent implements OnInit {
         item.internetType = this.getInternetType(item.internetType);
         item.internetSpeed = item.internetSpeed == 'Fast' ? 'Good' : item.internetSpeed;
         item.isActivated = item.isActivated == 0 ? 'No' : 'Yes';
-        const parse_version = isBlank(item.appVersion)
-            ? { ui: 'N/A', server: 'N/A' }
-            : JSON.parse(item.appVersion);
+        const parse_version = isBlank(item.appVersion) ? { ui: 'N/A', server: 'N/A' } : JSON.parse(item.appVersion);
         item.ui = parse_version && parse_version.ui ? parse_version.ui : '1.0.0';
         item.server = parse_version && parse_version.server ? parse_version.server : '1.0.0';
         item.tagsToString = item.tags.join(',');
@@ -274,11 +251,9 @@ export class ExportsTabComponent implements OnInit {
 
                             if (time_start.getTime() > time_end.getTime()) {
                                 time_end = new Date(time_end.getTime() + 60 * 60 * 24 * 1000);
-                                this.diff_hours =
-                                    (time_end.getTime() - time_start.getTime()) / 1000;
+                                this.diff_hours = (time_end.getTime() - time_start.getTime()) / 1000;
                             } else {
-                                this.diff_hours =
-                                    (time_end.getTime() - time_start.getTime()) / 1000;
+                                this.diff_hours = (time_end.getTime() - time_start.getTime()) / 1000;
                             }
                         } else {
                             this.diff_hours = 86400;

@@ -14,12 +14,6 @@ export class FastEdgeService extends BaseService {
         } else {
             key = 'kIwFkm6nVF5qYvAQfYKjB6h516yA918w5m1COWZA';
         }
-        return this.getRequest(
-            `${environment.fastedge}${data}`,
-            { 'x-api-key': key },
-            false,
-            true,
-            true,
-        );
+        return this.getRequest(`${environment.fastedge}${data}`, { 'x-api-key': key }, false, true, true);
     }
 }

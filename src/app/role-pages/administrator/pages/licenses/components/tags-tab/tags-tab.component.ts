@@ -105,10 +105,7 @@ export class TagsTabComponent implements OnInit, OnDestroy {
         return split[length];
     }
 
-    private mapToTableFormat(
-        licenses: API_LICENSE['license'][],
-        paging: PAGING,
-    ): UI_LICENSE_BY_TAGS[] {
+    private mapToTableFormat(licenses: API_LICENSE['license'][], paging: PAGING): UI_LICENSE_BY_TAGS[] {
         let count = paging.pageStart;
 
         return licenses.map((data) => {
@@ -182,14 +179,12 @@ export class TagsTabComponent implements OnInit, OnDestroy {
     private subscribeToSearch(): void {
         const control = this.searchFormControl;
 
-        control.valueChanges
-            .pipe(takeUntil(this._unsubscribe), debounceTime(1000))
-            .subscribe((keyword) => {
-                let search = keyword;
-                if (keyword.trim().length === 1) search = '';
-                this.apiFilters.search = search;
-                this.searchLicenses(this.apiFilters);
-            });
+        control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe((keyword) => {
+            let search = keyword;
+            if (keyword.trim().length === 1) search = '';
+            this.apiFilters.search = search;
+            this.searchLicenses(this.apiFilters);
+        });
     }
 
     protected get currentRole() {

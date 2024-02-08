@@ -16,9 +16,7 @@
                     class="full-width bg-gray mb-4 position-relative overflow-hidden upload-image-field"
                     appearance="fill"
                     *ngIf="w.viewType == 'upload'">
-                    <img
-                        [src]="w.imageUri || '/assets/media-files/placeholder.png'"
-                        alt="Selected Image" />
+                    <img [src]="w.imageUri || '/assets/media-files/placeholder.png'" alt="Selected Image" />
                     <span class="sm-text label-when-filled" *ngIf="w.fileName">{{ w.label }}</span>
                     <p class="filename" [ngClass]="w.fileName ? 'filled' : ''" [title]="w.fileName">
                         {{ w.fileName ? (w.fileName | substring: 18) : '' || w.label }}
@@ -31,9 +29,7 @@
                     </button>
                     <button
                         class="upload-button"
-                        (click)="
-                            $event.preventDefault(); openMediaLibraryModal(w.form_control_name)
-                        ">
+                        (click)="$event.preventDefault(); openMediaLibraryModal(w.form_control_name)">
                         <span class="fas fa-camera"></span>
                     </button>
                 </div>
@@ -68,9 +64,7 @@
                         [cpDisableInput]="true"
                         [value]="w.colorValue || ''" />
 
-                    <div
-                        class="color-showcase position-absolute"
-                        [style.background]="w.colorValue"></div>
+                    <div class="color-showcase position-absolute" [style.background]="w.colorValue"></div>
                 </mat-form-field>
 
                 <div class="error-message">
@@ -80,21 +74,15 @@
         </div>
 
         <div class="alert alert-primary" *ngIf="formControls.zipCode.valid && zipcode_checking">
-            <p class="sm-text font-weight-bold">
-                Checking zipcode {{ formControls.zipCode.value }} validity ...
-            </p>
+            <p class="sm-text font-weight-bold">Checking zipcode {{ formControls.zipCode.value }} validity ...</p>
         </div>
 
         <div class="alert alert-success" *ngIf="zipcode_valid === true && !zipcode_checking">
-            <p class="sm-text font-weight-bold">
-                Zipcode {{ formControls.zipCode.value }} is a valid location.
-            </p>
+            <p class="sm-text font-weight-bold">Zipcode {{ formControls.zipCode.value }} is a valid location.</p>
         </div>
 
         <div class="alert alert-danger" *ngIf="zipcode_valid === false && !zipcode_checking">
-            <p class="sm-text font-weight-bold">
-                Zipcode {{ formControls.zipCode.value }} is not a valid location.
-            </p>
+            <p class="sm-text font-weight-bold">Zipcode {{ formControls.zipCode.value }} is not a valid location.</p>
         </div>
 
         <button

@@ -112,13 +112,7 @@ export class UI_CONTENT_PER_ZONE {
     playlist_name: string;
     playlist_id: string;
 
-    constructor(
-        name: string,
-        order: number,
-        contents: UI_CONTENT[],
-        playlist_name: string,
-        playlist_id: string,
-    ) {
+    constructor(name: string, order: number, contents: UI_CONTENT[], playlist_name: string, playlist_id: string) {
         this.zone_name = name;
         this.zone_order = order;
         this.contents = contents;
@@ -144,13 +138,7 @@ export class UI_PLAYINGWHERE_CONTENT {
     license_alias: object;
     host: object;
     screen_name: object;
-    constructor(
-        license_id: object,
-        index: object,
-        license_alias: object,
-        host: object,
-        screen_name: object,
-    ) {
+    constructor(license_id: object, index: object, license_alias: object, host: object, screen_name: object) {
         this.license_id = license_id;
         this.index = index;
         this.license_alias = license_alias;

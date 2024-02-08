@@ -4,19 +4,8 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
-import {
-    API_ADVERTISER,
-    API_CONTENT,
-    API_HOST,
-    PAGING,
-    UI_ROLE_DEFINITION,
-} from 'src/app/global/models';
-import {
-    AdvertiserService,
-    AuthService,
-    ContentService,
-    HostService,
-} from 'src/app/global/services';
+import { API_ADVERTISER, API_CONTENT, API_HOST, PAGING, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { AdvertiserService, AuthService, ContentService, HostService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 
 @Component({
@@ -83,8 +72,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
         private _dialog: MatDialog,
         private _host: HostService,
     ) {
-        this.optimize_video_upload =
-            localStorage.getItem('optimize_video') == 'false' ? false : true;
+        this.optimize_video_upload = localStorage.getItem('optimize_video') == 'false' ? false : true;
     }
 
     ngOnInit() {
@@ -161,8 +149,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
             this.loading_search_advertiser = true;
         }
 
-        if (this.paging.hasNextPage || this.is_search_advertiser)
-            this.getAdvertiserByDealerId(event.page);
+        if (this.paging.hasNextPage || this.is_search_advertiser) this.getAdvertiserByDealerId(event.page);
     }
 
     advertiserSelected(id: string) {

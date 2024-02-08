@@ -16,30 +16,22 @@
                                 class="full-width screenshot-holder"
                                 style="background-image: url('assets/media-files/no-ss.png')"></div>
                         </ng-template>
-                        <div
-                            class="position-absolute top-0 right-0 pr-3 pt-2 h-150 z-index-5 clickable">
+                        <div class="position-absolute top-0 right-0 pr-3 pt-2 h-150 z-index-5 clickable">
                             <div
                                 class="full-width pl-2 clickable favorites-container for-shadowing"
                                 (click)="removeToFavorites(license)">
-                                <i
-                                    class="fas fa-star favorites for-sha"
-                                    title="Remove from Favorites"></i>
+                                <i class="fas fa-star favorites for-sha" title="Remove from Favorites"></i>
                             </div>
                         </div>
-                        <div
-                            class="grid-details position-absolute top-0 pt-2 pl-0 full-width h-150">
+                        <div class="grid-details position-absolute top-0 pt-2 pl-0 full-width h-150">
                             <div class="full-width p-0 pl-2 for-shadowing">
                                 <i class="fas fa-circle" [ngClass]="checkStatus(license)"></i>
                             </div>
                             <div class="full-width p-0 pl-2 for-shadowing">
                                 <i
                                     class="fas fa-tv"
-                                    title="{{
-                                        license.displayStatus === 0 ? 'Display Off' : 'Display On'
-                                    }}"
-                                    [ngClass]="
-                                        license.displayStatus === 0 ? 'text-danger' : 'text-primary'
-                                    "></i>
+                                    title="{{ license.displayStatus === 0 ? 'Display Off' : 'Display On' }}"
+                                    [ngClass]="license.displayStatus === 0 ? 'text-danger' : 'text-primary'"></i>
                             </div>
                             <div
                                 class="mt-4 col-lg-12 d-flex p-0 bottom-0 sm-text text-white black-opacity z-index-10 license-details">
@@ -48,9 +40,7 @@
                                         ><span
                                             class="sm-text clickable hover-primary"
                                             (click)="navigateToAlias(license.licenseId)"
-                                            title="{{
-                                                license.alias ? license.alias : license.licenseKey
-                                            }}"
+                                            title="{{ license.alias ? license.alias : license.licenseKey }}"
                                             >{{
                                                 license.alias
                                                     ? license.alias.length > 20
@@ -72,8 +62,7 @@
                                             >{{
                                                 license.businessName
                                                     ? license.businessName.length > 10
-                                                        ? (license.businessName | slice: 0 : 10) +
-                                                          '...'
+                                                        ? (license.businessName | slice: 0 : 10) + '...'
                                                         : license.businessName
                                                     : ''
                                             }}
@@ -105,9 +94,7 @@
                                     </span>
                                     <span *ngIf="license.screenshotUrl != ''">
                                         <br />
-                                        <span class="xsm-text">{{
-                                            license.screenshotUrl | screenshot
-                                        }}</span>
+                                        <span class="xsm-text">{{ license.screenshotUrl | screenshot }}</span>
                                     </span>
                                 </div>
                                 <div class="col-lg-1 p-0 text-center">
@@ -117,8 +104,7 @@
                                         [matMenuTriggerFor]="gridView"
                                         title="Show Options"
                                         class="hidden-button no-background text-white clickable">
-                                        <span
-                                            class="fas fa-ellipsis-v for-shadowing f-20 pt-4"></span>
+                                        <span class="fas fa-ellipsis-v for-shadowing f-20 pt-4"></span>
                                     </span>
                                     <mat-menu #gridView="matMenu">
                                         <button
@@ -136,11 +122,7 @@
                                         <button
                                             class="md-text"
                                             mat-menu-item
-                                            (click)="
-                                                copyToClipboard(
-                                                    getAnydeskPassword(license.licenseId)
-                                                )
-                                            ">
+                                            (click)="copyToClipboard(getAnydeskPassword(license.licenseId))">
                                             Copy Password
                                         </button>
                                     </mat-menu>
@@ -166,30 +148,22 @@
                                 class="full-width screenshot-holder"
                                 style="background-image: url('assets/media-files/no-ss.png')"></div>
                         </ng-template>
-                        <div
-                            class="position-absolute top-0 right-0 pr-3 pt-2 h-150 z-index-5 clickable">
+                        <div class="position-absolute top-0 right-0 pr-3 pt-2 h-150 z-index-5 clickable">
                             <div
                                 class="full-width p-0 pl-2 clickable favorites-container for-shadowing"
                                 (click)="addToFavorites(license.licenseId)">
-                                <i
-                                    class="fas fa-star text-light-gray for-sha"
-                                    title="Add to Favorites"></i>
+                                <i class="fas fa-star text-light-gray for-sha" title="Add to Favorites"></i>
                             </div>
                         </div>
-                        <div
-                            class="grid-details position-absolute top-0 pt-2 pl-0 full-width h-150">
+                        <div class="grid-details position-absolute top-0 pt-2 pl-0 full-width h-150">
                             <div class="full-width p-0 pl-2 for-shadowing">
                                 <i class="fas fa-circle" [ngClass]="checkStatus(license)"></i>
                             </div>
                             <div class="full-width p-0 pl-2 for-shadowing">
                                 <i
                                     class="fas fa-tv"
-                                    title="{{
-                                        license.displayStatus === 0 ? 'Display Off' : 'Display On'
-                                    }}"
-                                    [ngClass]="
-                                        license.displayStatus === 0 ? 'text-danger' : 'text-primary'
-                                    "></i>
+                                    title="{{ license.displayStatus === 0 ? 'Display Off' : 'Display On' }}"
+                                    [ngClass]="license.displayStatus === 0 ? 'text-danger' : 'text-primary'"></i>
                             </div>
                             <div
                                 class="mt-4 full-width d-flex p-0 bottom-0 sm-text text-white black-opacity z-index-10 license-details">
@@ -198,9 +172,7 @@
                                         ><span
                                             class="sm-text clickable hover-primary"
                                             (click)="navigateToAlias(license.licenseId)"
-                                            title="{{
-                                                license.alias ? license.alias : license.licenseKey
-                                            }}"
+                                            title="{{ license.alias ? license.alias : license.licenseKey }}"
                                             >{{
                                                 license.alias
                                                     ? license.alias.length > 20
@@ -227,10 +199,7 @@
                                         }}
                                         /
                                     </span>
-                                    <span
-                                        *ngIf="dealers_name != ''"
-                                        title="{{ dealers_name }}"
-                                        class="xsm-text"
+                                    <span *ngIf="dealers_name != ''" title="{{ dealers_name }}" class="xsm-text"
                                         >{{
                                             dealers_name
                                                 ? dealers_name.length > 10
@@ -255,9 +224,7 @@
                                     >
                                     <span *ngIf="license.screenshotUrl != ''">
                                         <br />
-                                        <span class="xsm-text">{{
-                                            license.screenshotUrl | screenshot
-                                        }}</span>
+                                        <span class="xsm-text">{{ license.screenshotUrl | screenshot }}</span>
                                     </span>
                                 </div>
                                 <div class="col-lg-1 p-0 text-center">
@@ -267,8 +234,7 @@
                                         [matMenuTriggerFor]="gridView"
                                         title="Show Options"
                                         class="hidden-button no-background text-white clickable">
-                                        <span
-                                            class="fas fa-ellipsis-v for-shadowing f-20 pt-4"></span>
+                                        <span class="fas fa-ellipsis-v for-shadowing f-20 pt-4"></span>
                                     </span>
                                     <mat-menu #gridView="matMenu">
                                         <button
@@ -286,11 +252,7 @@
                                         <button
                                             class="md-text"
                                             mat-menu-item
-                                            (click)="
-                                                copyToClipboard(
-                                                    getAnydeskPassword(license.licenseId)
-                                                )
-                                            ">
+                                            (click)="copyToClipboard(getAnydeskPassword(license.licenseId))">
                                             Copy Password
                                         </button>
                                     </mat-menu>

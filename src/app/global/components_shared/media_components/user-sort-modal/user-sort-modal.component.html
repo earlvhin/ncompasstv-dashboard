@@ -5,9 +5,7 @@
             <ng-template #licenseLabel>
                 <h3 class="mb-1">Filter Licenses by User</h3>
             </ng-template>
-            <p class="sm-text mb-4">
-                Select Dealer, Host <span *ngIf="!is_license">, and Advertiser</span>
-            </p>
+            <p class="sm-text mb-4">Select Dealer, Host <span *ngIf="!is_license">, and Advertiser</span></p>
 
             <div class="dealer-field">
                 <app-autocomplete-field
@@ -88,9 +86,7 @@
                 [disabled]="dealer_id === undefined">
                 Filter
             </button>
-            <button mat-button mat-raised-button mat-dialog-close class="theme-btn mt-4">
-                Close
-            </button>
+            <button mat-button mat-raised-button mat-dialog-close class="theme-btn mt-4">Close</button>
         </div>
 
         <ng-template #loader_sm>

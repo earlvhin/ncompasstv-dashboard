@@ -15,21 +15,12 @@
                     </app-new-zone>
                 </div>
                 <p class="mb-4">Are you sure you want to save this template?</p>
-                <button
-                    mat-button
-                    mat-raised-button
-                    class="theme-btn mr-3"
-                    (click)="saveTemplate()">
+                <button mat-button mat-raised-button class="theme-btn mr-3" (click)="saveTemplate()">
                     <span class="button-label"> Save Template </span>
                     <span class="fas fa-save sm-text"></span>
                 </button>
 
-                <button
-                    mat-button
-                    mat-raised-button
-                    class="theme-btn mr-3"
-                    color="warn"
-                    [mat-dialog-close]="'cancel'">
+                <button mat-button mat-raised-button class="theme-btn mr-3" color="warn" [mat-dialog-close]="'cancel'">
                     Cancel
                 </button>
             </div>
@@ -45,8 +36,7 @@
 </ng-container>
 
 <ng-template #success>
-    <div
-        class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center py-5">
+    <div class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center py-5">
         <div>
             <app-success-animation class="mb-2"></app-success-animation>
             <h3 class="mb-4">Template Saved!</h3>

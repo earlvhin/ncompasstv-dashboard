@@ -3,14 +3,7 @@ import { Observable, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 import { BaseService } from './base.service';
-import {
-    CREATE_AND_ASSIGN_TAG,
-    API_FILTERS,
-    OWNER,
-    PAGING,
-    TAG,
-    TAG_OWNER,
-} from 'src/app/global/models';
+import { CREATE_AND_ASSIGN_TAG, API_FILTERS, OWNER, PAGING, TAG, TAG_OWNER } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
 @Injectable({
@@ -37,10 +30,7 @@ export class TagService extends BaseService {
         return this.postRequest(endpoint, {});
     }
 
-    createAndAssignTags(
-        body: CREATE_AND_ASSIGN_TAG,
-        isDealer?,
-    ): Observable<{ message: string; tags: any }> {
+    createAndAssignTags(body: CREATE_AND_ASSIGN_TAG, isDealer?): Observable<{ message: string; tags: any }> {
         if (isDealer) {
             let url_split = this.creators.tag_add_and_assign.split('/');
             let new_endpoint = url_split[0] + '/dealer/' + url_split[2] + '/' + url_split[3];
@@ -146,9 +136,7 @@ export class TagService extends BaseService {
     }
 
     getTagsByNameAndType(name: string, typeId: number): Observable<{ tags: TAG[] }> {
-        return this.getRequest(
-            `${this.getters.tags_by_tag_name_and_type}?typeId=${typeId}&name=${name}`,
-        );
+        return this.getRequest(`${this.getters.tags_by_tag_name_and_type}?typeId=${typeId}&name=${name}`);
     }
 
     getDistinctTagsByType(typeId: number) {
@@ -156,9 +144,7 @@ export class TagService extends BaseService {
     }
 
     getDistinctTagsByTypeAndName(typeId: number, tagName: string) {
-        return this.getRequest(
-            `${this.getters.distinct_tags_by_type_and_name}?typeid=${typeId}&name=${tagName}`,
-        );
+        return this.getRequest(`${this.getters.distinct_tags_by_type_and_name}?typeid=${typeId}&name=${tagName}`);
     }
 
     searchAllTags(

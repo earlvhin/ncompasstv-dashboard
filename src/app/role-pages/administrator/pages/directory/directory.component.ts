@@ -31,28 +31,26 @@ export class DirectoryComponent implements OnInit {
         this.searching = true;
         this.directory_data = [];
         this.subscription.add(
-            this._dealer
-                .get_dealers_directory(e, this.search_data, this.search_field)
-                .subscribe((data) => {
-                    this.initial_load = false;
-                    if (data.dealerHosts) {
-                        data.dealerHosts.map((data) => {
-                            if (data.hosts.length > 0) {
-                                data.hosts.map((host) => {
-                                    host.storeHours = JSON.parse(host.storeHours);
-                                });
-                            }
-                        });
-                        this.directory_data = data.dealerHosts;
-                        this.filtered_data = data.dealerHosts;
-                    } else {
-                        this.no_dealer_hosts = true;
-                        this.filtered_data = [];
-                    }
+            this._dealer.get_dealers_directory(e, this.search_data, this.search_field).subscribe((data) => {
+                this.initial_load = false;
+                if (data.dealerHosts) {
+                    data.dealerHosts.map((data) => {
+                        if (data.hosts.length > 0) {
+                            data.hosts.map((host) => {
+                                host.storeHours = JSON.parse(host.storeHours);
+                            });
+                        }
+                    });
                     this.directory_data = data.dealerHosts;
-                    this.paging_data = data.paging;
-                    this.searching = false;
-                }),
+                    this.filtered_data = data.dealerHosts;
+                } else {
+                    this.no_dealer_hosts = true;
+                    this.filtered_data = [];
+                }
+                this.directory_data = data.dealerHosts;
+                this.paging_data = data.paging;
+                this.searching = false;
+            }),
         );
     }
 

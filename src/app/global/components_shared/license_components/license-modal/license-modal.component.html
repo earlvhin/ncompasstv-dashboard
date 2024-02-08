@@ -1,8 +1,5 @@
 <ng-container *ngIf="!license_generated; else success">
-    <div
-        id="generate_license_form"
-        class="generate-license-modal p-4 pb-0 h-100"
-        *ngIf="!is_submitted; else loading">
+    <div id="generate_license_form" class="generate-license-modal p-4 pb-0 h-100" *ngIf="!is_submitted; else loading">
         <ng-container *ngIf="dealers.length > 0; else loading">
             <h3 class="mb-1">Generate License</h3>
             <p class="sm-text mb-4">Choose a dealer and set number of license to generate.</p>
@@ -44,15 +41,13 @@
 </ng-container>
 
 <ng-template #loading>
-    <div
-        class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center h-100">
+    <div class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center h-100">
         <app-spinner></app-spinner>
     </div>
 </ng-template>
 
 <ng-template #success>
-    <div
-        class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center h-100">
+    <div class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center h-100">
         <div>
             <app-success-animation class="mb-2"></app-success-animation>
             <h3 class="mb-4">License assignment succesful!</h3>

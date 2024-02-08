@@ -16,9 +16,7 @@
                     class="full-width bg-gray mb-4 position-relative overflow-hidden upload-image-field"
                     appearance="fill"
                     *ngIf="n.viewType == 'upload'">
-                    <img
-                        [src]="n.imageUri || '/assets/media-files/placeholder.png'"
-                        alt="Selected Image" />
+                    <img [src]="n.imageUri || '/assets/media-files/placeholder.png'" alt="Selected Image" />
                     <span class="sm-text label-when-filled" *ngIf="n.fileName">{{ n.label }}</span>
                     <p class="filename" [ngClass]="n.fileName ? 'filled' : ''" [title]="n.fileName">
                         {{ n.fileName ? (n.fileName | substring: 18) : '' || n.label }}
@@ -31,9 +29,7 @@
                     </button>
                     <button
                         class="upload-button"
-                        (click)="
-                            $event.preventDefault(); openMediaLibraryModal(n.form_control_name)
-                        ">
+                        (click)="$event.preventDefault(); openMediaLibraryModal(n.form_control_name)">
                         <span class="fas fa-camera"></span>
                     </button>
                 </div>
@@ -67,9 +63,7 @@
                         [cpDisableInput]="true"
                         [value]="n.colorValue || ''" />
 
-                    <div
-                        class="color-showcase position-absolute"
-                        [style.background]="n.colorValue"></div>
+                    <div class="color-showcase position-absolute" [style.background]="n.colorValue"></div>
                 </mat-form-field>
 
                 <div class="error-message">
@@ -78,15 +72,11 @@
             </div>
         </div>
 
-        <div
-            *ngIf="is_validating_url"
-            class="spinner-container d-flex justify-content-between mb-2">
+        <div *ngIf="is_validating_url" class="spinner-container d-flex justify-content-between mb-2">
             <app-spinner [diameter]="35"></app-spinner>
         </div>
 
-        <div
-            class="alert alert-success"
-            *ngIf="is_invalid_url === false && isUrlValidType === true">
+        <div class="alert alert-success" *ngIf="is_invalid_url === false && isUrlValidType === true">
             <p class="sm-text font-weight-bold">Entered RSS URL is a supported format.</p>
         </div>
 
@@ -108,12 +98,7 @@
             </ng-template>
         </ng-container>
 
-        <button
-            mat-button
-            mat-raised-button
-            matStepperNext
-            class="theme-btn"
-            (click)="generateNewsFeed()">
+        <button mat-button mat-raised-button matStepperNext class="theme-btn" (click)="generateNewsFeed()">
             Next <span class="fas fa-long-arrow-right"></span>
         </button>
     </form>

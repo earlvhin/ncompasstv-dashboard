@@ -89,20 +89,14 @@
                                                 [ngStyle]="{
                                                     color: workbook_generation ? '#222' : 'white'
                                                 }"
-                                                >{{
-                                                    !workbook_generation
-                                                        ? 'Export'
-                                                        : 'Generating CSV'
-                                                }}</span
+                                                >{{ !workbook_generation ? 'Export' : 'Generating CSV' }}</span
                                             >
                                         </button>
                                     </div>
                                     <div class="col-lg-4">
                                         <app-search-field
                                             *ngIf="!initial_load"
-                                            [form_title]="
-                                                'Search Host Name, Address, City, Postal Code, or #Tag'
-                                            "
+                                            [form_title]="'Search Host Name, Address, City, Postal Code, or #Tag'"
                                             [placeholder]="'Example: N-Compass'"
                                             [data_reference]="host_data"
                                             [primary_keyword]="'host_name'"
@@ -114,8 +108,7 @@
                                 <div class="row" *ngIf="!initial_load">
                                     <div class="col-lg-12">
                                         <ng-container *ngIf="!searching; else loader">
-                                            <mat-card
-                                                *ngIf="host_filtered_data.length > 0; else no_data">
+                                            <mat-card *ngIf="host_filtered_data.length > 0; else no_data">
                                                 <app-data-table
                                                     [table_columns]="host_table_column"
                                                     [table_data]="host_filtered_data"
@@ -146,17 +139,9 @@
                                     <span class="fas fa-circle text-primary"></span>
                                 </button>
                                 <mat-menu #licenseStatus="matMenu">
-                                    <button mat-menu-item (click)="filterTable('status', '1')">
-                                        Online
-                                    </button>
-                                    <button mat-menu-item (click)="filterTable('status', '0')">
-                                        Offline
-                                    </button>
-                                    <button
-                                        mat-menu-item
-                                        (click)="filterTable('activated', 'false')">
-                                        Inactive
-                                    </button>
+                                    <button mat-menu-item (click)="filterTable('status', '1')">Online</button>
+                                    <button mat-menu-item (click)="filterTable('status', '0')">Offline</button>
+                                    <button mat-menu-item (click)="filterTable('activated', 'false')">Inactive</button>
                                 </mat-menu>
 
                                 <button
@@ -168,18 +153,10 @@
                                     <span class="fas fa-sort"></span>
                                 </button>
                                 <mat-menu #timezone="matMenu">
-                                    <button mat-menu-item (click)="filterTable('zone', 'Central')">
-                                        Central
-                                    </button>
-                                    <button mat-menu-item (click)="filterTable('zone', 'Eastern')">
-                                        Eastern
-                                    </button>
-                                    <button mat-menu-item (click)="filterTable('zone', 'Mountain')">
-                                        Mountain
-                                    </button>
-                                    <button mat-menu-item (click)="filterTable('zone', 'Pacific')">
-                                        Pacific
-                                    </button>
+                                    <button mat-menu-item (click)="filterTable('zone', 'Central')">Central</button>
+                                    <button mat-menu-item (click)="filterTable('zone', 'Eastern')">Eastern</button>
+                                    <button mat-menu-item (click)="filterTable('zone', 'Mountain')">Mountain</button>
+                                    <button mat-menu-item (click)="filterTable('zone', 'Pacific')">Pacific</button>
                                 </mat-menu>
 
                                 <button
@@ -208,9 +185,7 @@
                                     [matMenuTriggerFor]="orderSort"
                                     title="Order by License Status">
                                     <span class="fas fa-sort"></span>
-                                    <span class="ml-2 button_text_animation"
-                                        >Order by License Status</span
-                                    >
+                                    <span class="ml-2 button_text_animation">Order by License Status</span>
                                 </button>
 
                                 <mat-menu #orderSort="matMenu">
@@ -221,9 +196,7 @@
                             <div class="col-lg-4">
                                 <app-search-field
                                     *ngIf="!initial_load_license"
-                                    [form_title]="
-                                        'Search License ID, Hostname, Anydesk Id, or #Tag'
-                                    "
+                                    [form_title]="'Search License ID, Hostname, Anydesk Id, or #Tag'"
                                     [placeholder]="'Example: License #100'"
                                     [data_reference]="license_data"
                                     [primary_keyword]="'alias'"
@@ -236,17 +209,12 @@
                         <div
                             class="col-lg-12 p-0"
                             *ngIf="
-                                filters.label_status ||
-                                filters.label_zone ||
-                                filters.label_dealer ||
-                                filters.label_host
+                                filters.label_status || filters.label_zone || filters.label_dealer || filters.label_host
                             ">
                             <div class="col-lg-12 p-0">
                                 <div class="d-flex align-items-center p-2 bg-gray-2">
                                     <div class="filter-pills">
-                                        <div
-                                            class="filetype-pill pill"
-                                            *ngIf="filters.label_status">
+                                        <div class="filetype-pill pill" *ngIf="filters.label_status">
                                             License Status:
                                             <strong>{{ filters.label_status }}</strong>
                                         </div>
@@ -260,11 +228,7 @@
                                         </div>
                                     </div>
                                     <div class="control flex-even text-right">
-                                        <button
-                                            mat-button
-                                            mat-raised-button
-                                            class="theme-btn"
-                                            (click)="clearFilter()">
+                                        <button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
                                             <span class="button-label"> Clear Filter </span>
                                             <span class="fas fa-times ml-2 sm-text"></span>
                                         </button>
@@ -274,13 +238,9 @@
                             <div class="col-lg-12 p-0" *ngIf="!searching_license">
                                 <p class="sm-text py-2 m-0">
                                     Showing
-                                    <span class="text-danger">{{
-                                        licensesPaging.entities.length
-                                    }}</span>
+                                    <span class="text-danger">{{ licensesPaging.entities.length }}</span>
                                     out of
-                                    <span class="text-danger">{{
-                                        licensesPaging.totalEntities
-                                    }}</span>
+                                    <span class="text-danger">{{ licensesPaging.totalEntities }}</span>
                                     licenses result.
                                 </p>
                             </div>
@@ -352,14 +312,8 @@
                     <ng-template #no_data>
                         <mat-card class="p-5">
                             <h3>What the!?</h3>
-                            <p class="sm-text mb-3">
-                                There are no available advertisers at the moment.
-                            </p>
-                            <button
-                                mat-button
-                                mat-raised-button
-                                class="theme-btn mr-2"
-                                [routerLink]="createHostLink">
+                            <p class="sm-text mb-3">There are no available advertisers at the moment.</p>
+                            <button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="createHostLink">
                                 Add Advertiser Profile
                                 <span class="fas fa-plus ml-2 sm-text"></span>
                             </button>
@@ -374,8 +328,7 @@
                                 </div>
                                 <h3 class="text-gray col-lg-12">No Results Found.</h3>
                                 <span class="text-gray col-lg-12"
-                                    >Try adjusting your search to find what you're looking
-                                    for.</span
+                                    >Try adjusting your search to find what you're looking for.</span
                                 >
                             </mat-card>
                         </div>
@@ -413,9 +366,7 @@
                         <i class="text-gray fa-5x far fa-file-alt"></i>
                     </div>
                     <h3 class="text-gray col-lg-12">No Results Found.</h3>
-                    <span class="text-gray col-lg-12"
-                        >Try adjusting your search to find what you're looking for.</span
-                    >
+                    <span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
                 </mat-card>
             </div>
         </ng-template>

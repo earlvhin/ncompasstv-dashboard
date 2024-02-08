@@ -1,12 +1,4 @@
-import {
-    Component,
-    EventEmitter,
-    Input,
-    OnDestroy,
-    OnInit,
-    Output,
-    ViewChild,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import * as moment from 'moment';
 
 import { API_FILTERS, INSTALLATION, PAGING } from 'src/app/global/models';
@@ -71,9 +63,7 @@ export class TabContentComponent implements OnInit, OnDestroy {
     }
 
     private subscribeToResetDatePicker(): void {
-        this.resetDatePicker
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(() => this.date.setValue(new Date()));
+        this.resetDatePicker.pipe(takeUntil(this._unsubscribe)).subscribe(() => this.date.setValue(new Date()));
     }
 
     protected get _dateViews() {

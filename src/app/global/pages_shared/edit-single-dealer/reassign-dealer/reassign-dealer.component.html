@@ -94,22 +94,11 @@
             </ul>
         </div>
 
-        <button
-            mat-button
-            mat-raised-button
-            class="theme-btn mt-4"
-            (click)="onSubmit()"
-            [disabled]="!can_assign">
+        <button mat-button mat-raised-button class="theme-btn mt-4" (click)="onSubmit()" [disabled]="!can_assign">
             Assign
         </button>
 
-        <button
-            mat-button
-            mat-raised-button
-            class="theme-btn mt-4 bg-danger"
-            [mat-dialog-close]="true">
-            Cancel
-        </button>
+        <button mat-button mat-raised-button class="theme-btn mt-4 bg-danger" [mat-dialog-close]="true">Cancel</button>
     </div>
 </div>
 

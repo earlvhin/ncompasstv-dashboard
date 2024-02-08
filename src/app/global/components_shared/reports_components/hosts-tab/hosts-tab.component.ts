@@ -191,20 +191,7 @@ export class HostsTabComponent implements OnInit {
     }
 
     getGraphPoints(e) {
-        var months = [
-            'Jan',
-            'Feb',
-            'Mar',
-            'Apr',
-            'May',
-            'June',
-            'July',
-            'Aug',
-            'Sep',
-            'Oct',
-            'Nov',
-            'Dec',
-        ];
+        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
         var data_formulated = {
             dealers: this.hosts_graph_data_detailed[e].dealers,
@@ -272,9 +259,7 @@ export class HostsTabComponent implements OnInit {
 
                                 this.total = host.totalHosts;
                                 this.hosts_graph_data.push(host);
-                                this.label_graph.push(
-                                    months[host.month - 1] + ' ' + host.totalHosts,
-                                );
+                                this.label_graph.push(months[host.month - 1] + ' ' + host.totalHosts);
                                 this.value_graph.push(host.totalHosts);
                                 this.month_value_graph.push(this.total_month);
                                 this.sum += host.totalHosts;
@@ -283,9 +268,7 @@ export class HostsTabComponent implements OnInit {
                             this.number_of_months = data.hosts.length;
                             this.average = this.sum / this.number_of_months;
                             this.sub_title_detailed =
-                                'Found ' +
-                                data.hosts.length +
-                                ' months with record as per shown in the graph.';
+                                'Found ' + data.hosts.length + ' months with record as per shown in the graph.';
                             this.generate = true;
                         } else {
                             this.generate = false;

@@ -102,8 +102,7 @@ export class SelectOwnerComponent implements OnInit {
     advertiserSearchBoxTrigger(event: { page: number; is_search: boolean }): void {
         this.is_search = event.is_search;
         if (this.is_search) this.search_advertiser_data = '';
-        if (this.paging_advertiser.hasNextPage || this.is_search)
-            this.getAdvertiserByDealer(event.page);
+        if (this.paging_advertiser.hasNextPage || this.is_search) this.getAdvertiserByDealer(event.page);
     }
 
     advertiserSelected(value: string): void {
@@ -151,9 +150,7 @@ export class SelectOwnerComponent implements OnInit {
         this.filter_data.host.id = value;
 
         this.subscription.add(
-            this._host
-                .get_host_by_id(value)
-                .subscribe((data) => (this.filter_data.host.name = data.host.name)),
+            this._host.get_host_by_id(value).subscribe((data) => (this.filter_data.host.name = data.host.name)),
         );
     }
 
@@ -201,8 +198,7 @@ export class SelectOwnerComponent implements OnInit {
                 this.is_host_field_selected = true;
                 this.is_advertiser_field_selected = false;
                 this.is_floating_selected = false;
-                if (advertiser.id && advertiser.id.length > 0)
-                    this.resetAutcompleteField('advertiser');
+                if (advertiser.id && advertiser.id.length > 0) this.resetAutcompleteField('advertiser');
 
                 break;
             case 3: // advertiser selected
@@ -217,8 +213,7 @@ export class SelectOwnerComponent implements OnInit {
                 this.is_advertiser_field_selected = false;
                 this.is_floating_selected = true;
                 if (dealer.id && dealer.id.trim().length > 0) this.resetAutcompleteField('dealer');
-                if (advertiser.id && advertiser.id.length > 0)
-                    this.resetAutcompleteField('advertiser');
+                if (advertiser.id && advertiser.id.length > 0) this.resetAutcompleteField('advertiser');
                 if (host.id && host.id.length > 0) this.resetAutcompleteField('host');
         }
     }
@@ -255,8 +250,7 @@ export class SelectOwnerComponent implements OnInit {
             this.advertisers_data = [];
             this.initial_load_advertiser = false;
 
-            if (this.is_search || this.search_advertiser_data != '')
-                this.loading_search_advertiser = true;
+            if (this.is_search || this.search_advertiser_data != '') this.loading_search_advertiser = true;
             else this.advertisers = [];
 
             if (this.search_advertiser_data.length == 0) this.advertisers = [];
@@ -327,16 +321,14 @@ export class SelectOwnerComponent implements OnInit {
 
         if (page > 1) {
             this.subscription.add(
-                this._host
-                    .get_host_by_dealer_id(this.dealer_id, page, this.search_host_data)
-                    .subscribe((data) => {
-                        data.paging.entities.map((i) => {
-                            this.hosts.push(i);
-                            this.hosts_data.push(i);
-                        });
-                        this.paging_host = data.paging;
-                        this.loading_data_host = false;
-                    }),
+                this._host.get_host_by_dealer_id(this.dealer_id, page, this.search_host_data).subscribe((data) => {
+                    data.paging.entities.map((i) => {
+                        this.hosts.push(i);
+                        this.hosts_data.push(i);
+                    });
+                    this.paging_host = data.paging;
+                    this.loading_data_host = false;
+                }),
             );
         } else {
             this.hosts_data = [];
@@ -346,34 +338,32 @@ export class SelectOwnerComponent implements OnInit {
             if (this.search_host_data.length == 0) this.hosts = [];
 
             this.subscription.add(
-                this._host
-                    .get_host_by_dealer_id(this.dealer_id, page, this.search_host_data)
-                    .subscribe((data) => {
-                        if (!data.message) {
-                            if (this.search_host_data == '') {
-                                data.paging.entities.map((host) => {
-                                    this.hosts.push(host);
-                                    this.hosts_data.push(host);
-                                });
-                            } else {
-                                if (data.paging.entities.length > 0) {
-                                    this.hosts_data = data.paging.entities;
-                                    this.loading_search = false;
-                                }
-                            }
-
-                            this.paging_host = data.paging;
+                this._host.get_host_by_dealer_id(this.dealer_id, page, this.search_host_data).subscribe((data) => {
+                    if (!data.message) {
+                        if (this.search_host_data == '') {
+                            data.paging.entities.map((host) => {
+                                this.hosts.push(host);
+                                this.hosts_data.push(host);
+                            });
                         } else {
-                            this.filter_data.host.name = '';
-
-                            if (this.search_host_data != '') {
-                                this.hosts_data = [];
+                            if (data.paging.entities.length > 0) {
+                                this.hosts_data = data.paging.entities;
                                 this.loading_search = false;
                             }
                         }
-                        this.loading_data_host = false;
-                        this.loading_search_host = false;
-                    }),
+
+                        this.paging_host = data.paging;
+                    } else {
+                        this.filter_data.host.name = '';
+
+                        if (this.search_host_data != '') {
+                            this.hosts_data = [];
+                            this.loading_search = false;
+                        }
+                    }
+                    this.loading_data_host = false;
+                    this.loading_search_host = false;
+                }),
             );
         }
     }

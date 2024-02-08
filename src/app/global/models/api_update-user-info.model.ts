@@ -135,13 +135,7 @@ export class API_UPDATE_DEALER_USER_PROFILE_BY_ADMIN {
     lastName: string;
     email: string;
 
-    constructor(
-        userId: string,
-        dealerId: string,
-        firstName: string,
-        lastName: string,
-        email: string,
-    ) {
+    constructor(userId: string, dealerId: string, firstName: string, lastName: string, email: string) {
         this.userId = userId;
         this.dealerId = dealerId;
         this.firstName = firstName;

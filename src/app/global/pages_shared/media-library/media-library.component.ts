@@ -192,18 +192,12 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 
                     //Additional Checking for video conversion duplicate
                     if (e.originalFile.type.includes('video') && !convert_to_webm) {
-                        var temp = e.originalFile.name.substr(
-                            0,
-                            e.originalFile.name.lastIndexOf('.'),
-                        );
+                        var temp = e.originalFile.name.substr(0, e.originalFile.name.lastIndexOf('.'));
                         temp = temp + '.webm';
                         e.originalFile.name = temp;
                     }
 
-                    e.originalFile.name = e.originalFile.name.substr(
-                        0,
-                        e.originalFile.name.lastIndexOf('.'),
-                    );
+                    e.originalFile.name = e.originalFile.name.substr(0, e.originalFile.name.lastIndexOf('.'));
 
                     if (!this.is_dealer) {
                         this.duplicate_files = this.summarized_media.filter((media) => {
@@ -226,11 +220,7 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
                             'rename',
                         ).then((result) => {
                             if (result === 'upload') {
-                                this.postContentInfo(
-                                    this.duplicate_files,
-                                    this.data_to_upload,
-                                    false,
-                                );
+                                this.postContentInfo(this.duplicate_files, this.data_to_upload, false);
                                 resolve({ filename: this.modified_data[0].filename });
                                 //temporarily add recently uploaded to array
                                 this.all_media.push({ fileName: this.modified_data[0].filename });

@@ -59,10 +59,7 @@ export class FeedMediaComponent implements OnInit {
      * @param event
      */
     @HostListener('scroll', ['$event']) onScroll(event: any) {
-        if (
-            event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight &&
-            this.has_page_left
-        ) {
+        if (event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight && this.has_page_left) {
             this.pageEnd = false;
 
             if (this._dialog_data) {
@@ -192,10 +189,7 @@ export class FeedMediaComponent implements OnInit {
             .get_floating_contents()
             .pipe(takeUntil(this._unsubsribe))
             .subscribe(
-                (data) =>
-                    (this.floating_content = data.iContents.filter((i) =>
-                        this._is_image.transform(i.fileType),
-                    )),
+                (data) => (this.floating_content = data.iContents.filter((i) => this._is_image.transform(i.fileType))),
                 (error) => {
                     console.error(error);
                 },

@@ -7,12 +7,7 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import * as filestack from 'filestack-js';
 import { environment } from 'src/environments/environment';
 
-import {
-    DealerService,
-    DealerAdminService,
-    FillerService,
-    AuthService,
-} from 'src/app/global/services';
+import { DealerService, DealerAdminService, FillerService, AuthService } from 'src/app/global/services';
 import { API_UPDATE_FILLER_GROUP } from 'src/app/global/models/api_update-filler-groups';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
@@ -128,13 +123,11 @@ export class EditFillerGroupComponent implements OnInit {
             });
             this.selectedDealersControl.setValue(dealers_value);
 
-            const dealer_admins_value = this.selected_group_data.blacklistedDealerAdmins.map(
-                (dealeradmin) => {
-                    return this.dealer_admins.find((da) => {
-                        return da.userId === dealeradmin.userId;
-                    });
-                },
-            );
+            const dealer_admins_value = this.selected_group_data.blacklistedDealerAdmins.map((dealeradmin) => {
+                return this.dealer_admins.find((da) => {
+                    return da.userId === dealeradmin.userId;
+                });
+            });
             this.selectedDealerAdminsControl.setValue(dealer_admins_value);
         }
     }

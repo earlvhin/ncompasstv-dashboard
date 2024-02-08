@@ -35,9 +35,7 @@ export class DataGraphCompareComponent implements OnInit {
     }
 
     generateChart() {
-        const canvas = (<HTMLCanvasElement>(
-            document.getElementById(`compare-${this.id}`)
-        )) as HTMLCanvasElement;
+        const canvas = (<HTMLCanvasElement>document.getElementById(`compare-${this.id}`)) as HTMLCanvasElement;
         const labels = this.label_array;
         const data = this.value_array;
 
@@ -48,11 +46,7 @@ export class DataGraphCompareComponent implements OnInit {
                 datasets: [
                     {
                         label: '',
-                        backgroundColor: [
-                            'rgb(193, 239, 130)',
-                            'rgb(255, 131, 157)',
-                            'rgb(151, 221, 211)',
-                        ],
+                        backgroundColor: ['rgb(193, 239, 130)', 'rgb(255, 131, 157)', 'rgb(151, 221, 211)'],
                         data,
                     },
                 ],

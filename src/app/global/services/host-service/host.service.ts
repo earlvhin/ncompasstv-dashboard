@@ -97,11 +97,7 @@ export class HostService extends BaseService {
         return this.getRequest(url);
     }
 
-    get_dma_hosts_by_rank(
-        rank: number,
-        code: string,
-        name: string,
-    ): Observable<{ paging: PAGING }> {
+    get_dma_hosts_by_rank(rank: number, code: string, name: string): Observable<{ paging: PAGING }> {
         const url = `${this.getters.dma_hosts_by_rank}?dmaRank=${rank}&dmaCode=${code}&dmaName=${encodeURIComponent(name)}&pageSize=0`;
         return this.getRequest(url);
     }
@@ -200,9 +196,7 @@ export class HostService extends BaseService {
         return this.getRequest(url);
     }
 
-    get_host_fetch_export(
-        filters: API_FILTERS,
-    ): Observable<{ host?: API_HOST[]; paging?: PAGING; message?: string }> {
+    get_host_fetch_export(filters: API_FILTERS): Observable<{ host?: API_HOST[]; paging?: PAGING; message?: string }> {
         const base = `${this.getters.api_get_hosts_fetch_for_export}`;
         const params = this.setUrlParams(filters, false, true);
         const url = `${base}${params}`;

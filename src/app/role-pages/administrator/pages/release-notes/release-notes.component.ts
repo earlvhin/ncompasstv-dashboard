@@ -90,45 +90,35 @@ export class ReleaseNotesComponent implements OnInit, OnDestroy {
     }
 
     private subscribeToDeleteNoteFromTable(): void {
-        this._release.onDeleteNoteFromDataTable
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(({ releaseNoteId }) => {
-                this._release
-                    .deleteNote(releaseNoteId)
-                    .pipe(takeUntil(this._unsubscribe))
-                    .subscribe(() => {
-                        const notes = this.notes;
-                        const indexToDelete = notes.findIndex(
-                            (note) => note.releaseNoteId === releaseNoteId,
-                        );
-                        notes.splice(indexToDelete, 1);
-                        this.setDataForDisplay(notes);
-                    });
-            });
+        this._release.onDeleteNoteFromDataTable.pipe(takeUntil(this._unsubscribe)).subscribe(({ releaseNoteId }) => {
+            this._release
+                .deleteNote(releaseNoteId)
+                .pipe(takeUntil(this._unsubscribe))
+                .subscribe(() => {
+                    const notes = this.notes;
+                    const indexToDelete = notes.findIndex((note) => note.releaseNoteId === releaseNoteId);
+                    notes.splice(indexToDelete, 1);
+                    this.setDataForDisplay(notes);
+                });
+        });
     }
 
     private subscribeToEditNoteFromTable(): void {
-        this._release.onEditNoteFromDataTable
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(({ releaseNoteId }) => {
-                const config = { width: '1200px', height: '500px', disableClose: true };
-                const dialog = this._dialog.open(CreateUpdateDialogComponent, config);
-                dialog.componentInstance.dialogMode = 'update';
-                dialog.componentInstance.note = this.notes.filter(
-                    (note) => note.releaseNoteId === releaseNoteId,
-                )[0];
+        this._release.onEditNoteFromDataTable.pipe(takeUntil(this._unsubscribe)).subscribe(({ releaseNoteId }) => {
+            const config = { width: '1200px', height: '500px', disableClose: true };
+            const dialog = this._dialog.open(CreateUpdateDialogComponent, config);
+            dialog.componentInstance.dialogMode = 'update';
+            dialog.componentInstance.note = this.notes.filter((note) => note.releaseNoteId === releaseNoteId)[0];
 
-                dialog.afterClosed().subscribe((response: boolean | API_RELEASE_NOTE) => {
-                    if (!response) return;
-                    const data = response as API_RELEASE_NOTE;
-                    const notes = this.notes;
-                    const indexToUpdate = notes.findIndex(
-                        (note) => note.releaseNoteId === data.releaseNoteId,
-                    );
-                    notes[indexToUpdate] = data;
-                    this.setDataForDisplay(notes);
-                });
+            dialog.afterClosed().subscribe((response: boolean | API_RELEASE_NOTE) => {
+                if (!response) return;
+                const data = response as API_RELEASE_NOTE;
+                const notes = this.notes;
+                const indexToUpdate = notes.findIndex((note) => note.releaseNoteId === data.releaseNoteId);
+                notes[indexToUpdate] = data;
+                this.setDataForDisplay(notes);
             });
+        });
     }
 
     protected get _notesTableColumns() {

@@ -8,9 +8,7 @@
             <p class="sm-text mb-0">{{ form_description }}</p>
         </div>
         <div class="text-right">
-            <a
-                class="sm-text font-weight-bold text-primary"
-                [routerLink]="['/administrator/users/create-user']">
+            <a class="sm-text font-weight-bold text-primary" [routerLink]="['/administrator/users/create-user']">
                 <span class="fas fa-angle-left mr-2"></span>
                 Select User Type
             </a>
@@ -25,9 +23,7 @@
             <div class="row mb-4">
                 <ng-container *ngFor="let field of form_fields_view">
                     <div class="{{ field.width }}">
-                        <mat-form-field
-                            class="full-width"
-                            *ngIf="!field.is_autocomplete; else autocomplete">
+                        <mat-form-field class="full-width" *ngIf="!field.is_autocomplete; else autocomplete">
                             <mat-label>{{ field.label }}</mat-label>
                             <input
                                 *ngIf="field.type !== 'password'; else passwordField"
@@ -37,47 +33,32 @@
                                 placeholder="{{ field.placeholder }}" />
 
                             <ng-template #passwordField>
-                                <div
-                                    class="password-container"
-                                    *ngIf="field.control === 'password'">
+                                <div class="password-container" *ngIf="field.control === 'password'">
                                     <div class="field">
                                         <input
                                             formControlName="{{ field.control }}"
                                             matInput
                                             placeholder="{{ field.placeholder }}"
                                             [type]="is_password_field_type ? 'password' : 'text'" />
-                                        <mat-icon
-                                            class="pw-visibility"
-                                            matSuffix
-                                            (click)="togglePasswordFieldType()"
-                                            >{{
-                                                is_password_field_type
-                                                    ? 'visibility_off'
-                                                    : 'visibility'
-                                            }}</mat-icon
-                                        >
+                                        <mat-icon class="pw-visibility" matSuffix (click)="togglePasswordFieldType()">{{
+                                            is_password_field_type ? 'visibility_off' : 'visibility'
+                                        }}</mat-icon>
                                     </div>
                                 </div>
 
-                                <div
-                                    class="password-container"
-                                    *ngIf="field.control === 're_password'">
+                                <div class="password-container" *ngIf="field.control === 're_password'">
                                     <div class="field">
                                         <input
                                             matInput
                                             formControlName="{{ field.control }}"
                                             placeholder="{{ field.placeholder }}"
-                                            [type]="
-                                                is_retype_password_field_type ? 'password' : 'text'
-                                            " />
+                                            [type]="is_retype_password_field_type ? 'password' : 'text'" />
                                         <mat-icon
                                             class="pw-visibility"
                                             matSuffix
                                             (click)="toggleRetypePasswordFieldType()"
                                             >{{
-                                                is_retype_password_field_type
-                                                    ? 'visibility_off'
-                                                    : 'visibility'
+                                                is_retype_password_field_type ? 'visibility_off' : 'visibility'
                                             }}</mat-icon
                                         >
                                     </div>
@@ -115,14 +96,10 @@
                     </div>
                 </ng-container>
             </div>
-            <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="form_invalid">
-                Create Dealer
-            </button>
+            <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="form_invalid">Create Dealer</button>
         </form>
     </ng-container>
-    <div
-        class="submit-on-load d-flex align-items-center justify-content-center"
-        *ngIf="is_submitted">
+    <div class="submit-on-load d-flex align-items-center justify-content-center" *ngIf="is_submitted">
         <app-spinner></app-spinner>
     </div>
 </div>

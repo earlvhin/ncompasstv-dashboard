@@ -32,10 +32,7 @@
 
                         <mat-form-field appearance="fill" class="w-100">
                             <mat-label>Release Notes</mat-label>
-                            <input
-                                formControlName="releaseNotes"
-                                matInput
-                                placeholder="Ex. Change Configuration" />
+                            <input formControlName="releaseNotes" matInput placeholder="Ex. Change Configuration" />
                         </mat-form-field>
 
                         <mat-form-field appearance="fill" class="w-100">
@@ -46,11 +43,7 @@
                                 placeholder="Ex. github.com/NCompass-TV/pi-server/2.2.0" />
                         </mat-form-field>
 
-                        <button
-                            mat-button
-                            mat-raised-button
-                            class="theme-btn mt-4"
-                            [disabled]="app_form_disabled">
+                        <button mat-button mat-raised-button class="theme-btn mt-4" [disabled]="app_form_disabled">
                             Add Version
                         </button>
                     </form>
@@ -94,10 +87,7 @@
 
                         <mat-form-field appearance="fill" class="w-100">
                             <mat-label>App Description</mat-label>
-                            <input
-                                formControlName="appDescription"
-                                matInput
-                                placeholder="Ex. 2.2.0" />
+                            <input formControlName="appDescription" matInput placeholder="Ex. 2.2.0" />
                         </mat-form-field>
 
                         <mat-form-field appearance="fill" class="w-100">
@@ -105,11 +95,7 @@
                             <input formControlName="githubUrl" matInput placeholder="Ex. 2.2.0" />
                         </mat-form-field>
 
-                        <button
-                            mat-button
-                            mat-raised-button
-                            class="theme-btn"
-                            [disabled]="add_app_form_disabled">
+                        <button mat-button mat-raised-button class="theme-btn" [disabled]="add_app_form_disabled">
                             Add App
                         </button>
                     </form>
@@ -131,11 +117,7 @@
                             </mat-select>
                         </mat-form-field>
 
-                        <button
-                            mat-button
-                            mat-raised-button
-                            class="theme-btn"
-                            [disabled]="delete_app_form_disabled">
+                        <button mat-button mat-raised-button class="theme-btn" [disabled]="delete_app_form_disabled">
                             Delete App
                         </button>
                     </form>
@@ -151,9 +133,7 @@
                         <mat-form-field appearance="fill" class="w-100">
                             <mat-label>Select App</mat-label>
                             <mat-select formControlName="versionId" required>
-                                <mat-option
-                                    *ngFor="let a of all_app_versions"
-                                    [value]="a.versionId">
+                                <mat-option *ngFor="let a of all_app_versions" [value]="a.versionId">
                                     {{ a.appName }} - {{ a.version }}
                                 </mat-option>
                             </mat-select>

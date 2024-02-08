@@ -5,10 +5,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { UI_SINGLE_SCREEN } from 'src/app/global/models';
-import {
-    API_RESOURCE_DATA,
-    API_RESOURCE_DATA_COUNT,
-} from 'src/app/global/models/api_resource-data.model';
+import { API_RESOURCE_DATA, API_RESOURCE_DATA_COUNT } from 'src/app/global/models/api_resource-data.model';
 import { LicenseService } from 'src/app/global/services';
 
 @Component({

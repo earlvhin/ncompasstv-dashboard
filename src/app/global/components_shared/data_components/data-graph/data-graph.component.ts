@@ -46,9 +46,7 @@ export class DataGraphComponent implements OnInit, OnDestroy {
         }
 
         if (this.analytics_reload) {
-            this.analytics_reload
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(() => this.initGraph());
+            this.analytics_reload.pipe(takeUntil(this._unsubscribe)).subscribe(() => this.initGraph());
             return;
         }
 

@@ -5,13 +5,7 @@ import { saveAs } from 'file-saver';
 import { takeUntil } from 'rxjs/operators';
 
 import { DEALER_UI_TABLE_ADVERTISERS, UI_DEALER_ADVERTISERS } from 'src/app/global/models';
-import {
-    AdvertiserService,
-    AuthService,
-    DealerService,
-    ExportService,
-    HelperService,
-} from 'src/app/global/services';
+import { AdvertiserService, AuthService, DealerService, ExportService, HelperService } from 'src/app/global/services';
 import { API_EXPORT_ADVERTISER } from 'src/app/global/models/api_export-advertiser.model';
 
 @Component({
@@ -117,19 +111,17 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
             sortOrder: this.sort_order_advertisers,
         };
 
-        this._advertiser
-            .export_all_advertisers(filters.sortColumn, filters.sortOrder)
-            .subscribe((response) => {
-                this.all_advertisers_to_export = response;
-                this.all_advertisers_to_export.forEach((item, i) => {
-                    this.modifyItem(item, data);
-                    this.worksheet.addRow(item).font = {
-                        bold: false,
-                    };
-                });
-
-                this.onExportData(data, columns, this.all_advertisers_to_export);
+        this._advertiser.export_all_advertisers(filters.sortColumn, filters.sortOrder).subscribe((response) => {
+            this.all_advertisers_to_export = response;
+            this.all_advertisers_to_export.forEach((item, i) => {
+                this.modifyItem(item, data);
+                this.worksheet.addRow(item).font = {
+                    bold: false,
+                };
             });
+
+            this.onExportData(data, columns, this.all_advertisers_to_export);
+        });
     }
 
     private getAdvertiserDataForExportDealerAdmin(data): void {
@@ -158,8 +150,7 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
     modifyItem(item, data) {
         item.contentsCount = item.contentCount;
 
-        if (item.contents && item.contents.length > 0)
-            item.contentsFormatted = item.contents.join(', ');
+        if (item.contents && item.contents.length > 0) item.contentsFormatted = item.contents.join(', ');
     }
 
     getColumnsAndOrder(data) {
@@ -203,9 +194,7 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
                             if (pageSize === 0) {
                                 this.advertisers_to_export = [...data.advertisers];
                             } else {
-                                this.dealers_with_advertiser = this.advertiser_mapToUI(
-                                    data.advertisers,
-                                );
+                                this.dealers_with_advertiser = this.advertiser_mapToUI(data.advertisers);
                                 this.filtered_data = this.advertiser_mapToUI(data.advertisers);
                             }
                         } else {
@@ -260,13 +249,7 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
             ];
             this.subscription.add(
                 this._dealer
-                    .get_dealers_with_advertiser(
-                        page,
-                        this.search_data,
-                        this.sort_column,
-                        this.sort_order,
-                        pageSize,
-                    )
+                    .get_dealers_with_advertiser(page, this.search_data, this.sort_column, this.sort_order, pageSize)
                     .subscribe(
                         (data) => {
                             this.paging_data = data.paging;
@@ -274,9 +257,7 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
                                 if (pageSize === 0) {
                                     this.advertisers_to_export = [...data.dealers];
                                 } else {
-                                    this.dealers_with_advertiser = this.dealer_mapToUI(
-                                        data.dealers,
-                                    );
+                                    this.dealers_with_advertiser = this.dealer_mapToUI(data.dealers);
                                     this.filtered_data = this.dealer_mapToUI(data.dealers);
                                 }
                             } else {
@@ -305,8 +286,7 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
     }
 
     exportProcess() {
-        const EXCEL_TYPE =
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
         this.advertisers_to_export.forEach((item) => {
             this.worksheet.addRow(item).font = { bold: false };
         });
@@ -411,10 +391,7 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
         this.workbook.created = new Date();
         this.worksheet = this.workbook.addWorksheet('Advertisers View');
         Object.keys(this.advertiser_table_column).forEach((key) => {
-            if (
-                this.advertiser_table_column[key].name &&
-                !this.advertiser_table_column[key].no_export
-            ) {
+            if (this.advertiser_table_column[key].name && !this.advertiser_table_column[key].no_export) {
                 header.push({
                     header: this.advertiser_table_column[key].name,
                     key: this.advertiser_table_column[key].key,
@@ -449,9 +426,7 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
 
         this.worksheet.columns = header;
 
-        this.userIsAdmin
-            ? this.getAdvertiserDataForExport(data)
-            : this.getAdvertiserDataForExportDealerAdmin(data);
+        this.userIsAdmin ? this.getAdvertiserDataForExport(data) : this.getAdvertiserDataForExportDealerAdmin(data);
     }
 
     getDataForExport() {
@@ -459,12 +434,10 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
     }
 
     private subscribeToStatusFilterClick() {
-        this._helper.onClickCardByStatus
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((response) => {
-                if (response.page !== 'advertisers') return;
-                this.current_status_filter = response.value;
-                this.pageRequested(1);
-            });
+        this._helper.onClickCardByStatus.pipe(takeUntil(this._unsubscribe)).subscribe((response) => {
+            if (response.page !== 'advertisers') return;
+            this.current_status_filter = response.value;
+            this.pageRequested(1);
+        });
     }
 }

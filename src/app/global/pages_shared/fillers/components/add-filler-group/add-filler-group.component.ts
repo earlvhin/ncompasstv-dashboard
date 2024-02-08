@@ -130,14 +130,10 @@ export class AddFillerGroupComponent implements OnInit {
                             'Hurray! You successfully updated Filler Group Cover Photo',
                         ),
                     );
-                document
-                    .getElementsByClassName('cdk-overlay-container')[0]
-                    .classList.remove('hidden');
+                document.getElementsByClassName('cdk-overlay-container')[0].classList.remove('hidden');
             },
             onCancel: () => {
-                document
-                    .getElementsByClassName('cdk-overlay-container')[0]
-                    .classList.remove('hidden');
+                document.getElementsByClassName('cdk-overlay-container')[0].classList.remove('hidden');
                 this._dialog.closeAll();
             },
         };

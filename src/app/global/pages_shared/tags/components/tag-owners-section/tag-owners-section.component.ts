@@ -101,8 +101,7 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
                 };
 
                 dialog = this._dialog.open(CreateTagComponent, dialogConfig);
-                (dialog as MatDialogRef<CreateTagComponent>).componentInstance.currentUserId =
-                    this.currentUserId;
+                (dialog as MatDialogRef<CreateTagComponent>).componentInstance.currentUserId = this.currentUserId;
                 (dialog as MatDialogRef<CreateTagComponent>).componentInstance.tab = this.tab;
 
                 break;
@@ -152,8 +151,7 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
     }
 
     getDataForExport(keyword: string = null, page = 1, pageSize = 0): void {
-        const EXCEL_TYPE =
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 
         if (this.searchFormControl.value) keyword = this.searchFormControl.value;
 
@@ -238,12 +236,7 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
         this.selectedTag = null;
     }
 
-    private searchOwnerTags(
-        keyword: string = null,
-        tagId: string = null,
-        typeId: number = null,
-        page = 1,
-    ): void {
+    private searchOwnerTags(keyword: string = null, tagId: string = null, typeId: number = null, page = 1): void {
         if (keyword && keyword.startsWith('^')) {
             this.searchDealerData(keyword, tagId, typeId, page);
         } else {
@@ -251,12 +244,7 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
         }
     }
 
-    private searchOwnersByTagType(
-        keyword: string = null,
-        tagId: string = null,
-        typeId: number = null,
-        page = 1,
-    ): void {
+    private searchOwnersByTagType(keyword: string = null, tagId: string = null, typeId: number = null, page = 1): void {
         if (!this.currentTagType) return;
         this.isLoading = true;
 
@@ -278,8 +266,7 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 
                     tags.forEach((data, index) => {
                         const { tagTypeName } = data;
-                        tags[index].url =
-                            `/${this.currentUserRole}/${tagTypeName.toLowerCase()}s/${data.ownerId}`;
+                        tags[index].url = `/${this.currentUserRole}/${tagTypeName.toLowerCase()}s/${data.ownerId}`;
                     });
 
                     return { tags, paging };
@@ -297,12 +284,7 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
             .add(() => (this.isLoading = false));
     }
 
-    private searchDealerData(
-        keyword: string = null,
-        tagId: string = null,
-        typeId: number = null,
-        page = 1,
-    ): void {
+    private searchDealerData(keyword: string = null, tagId: string = null, typeId: number = null, page = 1): void {
         if (!this.currentTagType) return;
         this.isLoading = true;
 
@@ -324,8 +306,7 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 
                     tags.forEach((data, index) => {
                         const { tagTypeName } = data;
-                        tags[index].url =
-                            `/${this.currentUserRole}/${tagTypeName.toLowerCase()}s/${data.ownerId}`;
+                        tags[index].url = `/${this.currentUserRole}/${tagTypeName.toLowerCase()}s/${data.ownerId}`;
                     });
 
                     return { tags, paging };
@@ -344,9 +325,7 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
     }
 
     private subscribeToRefreshTableData(): void {
-        this._tag.onRefreshTagOwnersTable
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(() => this.searchOwnerTags());
+        this._tag.onRefreshTagOwnersTable.pipe(takeUntil(this._unsubscribe)).subscribe(() => this.searchOwnerTags());
     }
 
     private subscribeToSearch(): void {

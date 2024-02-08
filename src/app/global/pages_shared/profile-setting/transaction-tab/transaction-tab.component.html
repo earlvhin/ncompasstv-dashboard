@@ -12,12 +12,8 @@
                     <span class="fas fa-sort xsm-text"></span>
                 </button>
                 <mat-menu #type="matMenu">
-                    <button class="md-text" mat-menu-item (click)="filterType('subscription')">
-                        Subscription
-                    </button>
-                    <button class="md-text" mat-menu-item (click)="filterType('purchase')">
-                        Purchase
-                    </button>
+                    <button class="md-text" mat-menu-item (click)="filterType('subscription')">Subscription</button>
+                    <button class="md-text" mat-menu-item (click)="filterType('purchase')">Purchase</button>
                 </mat-menu>
 
                 <button
@@ -30,15 +26,9 @@
                     <span class="fas fa-sort xsm-text"></span>
                 </button>
                 <mat-menu #status="matMenu">
-                    <button class="md-text" mat-menu-item (click)="filterStatus('paid')">
-                        Paid
-                    </button>
-                    <button class="md-text" mat-menu-item (click)="filterStatus('unpaid')">
-                        Unpaid
-                    </button>
-                    <button class="md-text" mat-menu-item (click)="filterStatus('rejected')">
-                        Rejected
-                    </button>
+                    <button class="md-text" mat-menu-item (click)="filterStatus('paid')">Paid</button>
+                    <button class="md-text" mat-menu-item (click)="filterStatus('unpaid')">Unpaid</button>
+                    <button class="md-text" mat-menu-item (click)="filterStatus('rejected')">Rejected</button>
                 </mat-menu>
             </div>
             <div class="col-lg-4">
@@ -58,9 +48,7 @@
                                 matInput
                                 [matDatepicker]="datePicker"
                                 readonly />
-                            <mat-datepicker-toggle
-                                matSuffix
-                                [for]="datePicker"></mat-datepicker-toggle>
+                            <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
                             <mat-datepicker #datePicker></mat-datepicker>
                         </mat-form-field>
                     </div>
@@ -75,9 +63,7 @@
                                 [matDatepicker]="datePicker2"
                                 [min]="start_date"
                                 readonly />
-                            <mat-datepicker-toggle
-                                matSuffix
-                                [for]="datePicker2"></mat-datepicker-toggle>
+                            <mat-datepicker-toggle matSuffix [for]="datePicker2"></mat-datepicker-toggle>
                             <mat-datepicker #datePicker2></mat-datepicker>
                         </mat-form-field>
                     </div>

@@ -25,15 +25,7 @@ export class ScreensComponent implements OnInit {
     no_screen: boolean = false;
     is_view_only = false;
 
-    tbl_screen_columns = [
-        '#',
-        'Screen Name',
-        'Type',
-        'Hosts',
-        'Template',
-        'Creation Date',
-        'Created By',
-    ];
+    tbl_screen_columns = ['#', 'Screen Name', 'Type', 'Hosts', 'Template', 'Creation Date', 'Created By'];
 
     protected _unsubscribe: Subject<void> = new Subject<void>();
 
@@ -99,11 +91,7 @@ export class ScreensComponent implements OnInit {
         this.screens = [];
 
         this._screen
-            .api_get_screen_by_dealer_table(
-                page,
-                this.currentUser.roleInfo.dealerId,
-                this.search_data,
-            )
+            .api_get_screen_by_dealer_table(page, this.currentUser.roleInfo.dealerId, this.search_data)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (response) => {
@@ -147,9 +135,7 @@ export class ScreensComponent implements OnInit {
                     hidden: false,
                 },
                 {
-                    value: screen.screenTypeName
-                        ? this._titlecase.transform(screen.screenTypeName)
-                        : '--',
+                    value: screen.screenTypeName ? this._titlecase.transform(screen.screenTypeName) : '--',
                     link: '/sub-dealer/hosts/' + screen.hostId,
                     editable: false,
                     hidden: false,
@@ -161,9 +147,7 @@ export class ScreensComponent implements OnInit {
                     hidden: false,
                 },
                 {
-                    value: screen.templateId
-                        ? this._titlecase.transform(screen.templateName)
-                        : null,
+                    value: screen.templateId ? this._titlecase.transform(screen.templateName) : null,
                     link: null,
                     editable: false,
                     hidden: false,

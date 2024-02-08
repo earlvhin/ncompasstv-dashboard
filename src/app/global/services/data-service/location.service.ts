@@ -22,29 +22,19 @@ export class LocationService extends BaseService {
     }
 
     get_states_regions(state) {
-        return this.getRequest(
-            './assets/data/states-abbreviation-region.json',
-            null,
-            false,
-            false,
-            false,
-            true,
-        ).map((states: Array<any>) => {
-            return states.filter((s) => s.state === state);
-        });
+        return this.getRequest('./assets/data/states-abbreviation-region.json', null, false, false, false, true).map(
+            (states: Array<any>) => {
+                return states.filter((s) => s.state === state);
+            },
+        );
     }
 
     get_states_by_abbreviation(state) {
-        return this.getRequest(
-            './assets/data/states-abbreviation-region.json',
-            null,
-            false,
-            false,
-            false,
-            true,
-        ).map((states: Array<any>) => {
-            return states.filter((s) => s.abbreviation === state);
-        });
+        return this.getRequest('./assets/data/states-abbreviation-region.json', null, false, false, false, true).map(
+            (states: Array<any>) => {
+                return states.filter((s) => s.abbreviation === state);
+            },
+        );
     }
 
     get_cities_data(search?: string): Observable<CITIES_STATE> {

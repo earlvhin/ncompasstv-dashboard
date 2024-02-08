@@ -11,12 +11,7 @@ import { ConfirmationModalComponent } from '../../page_components/confirmation-m
 import { PlaylistContentSchedulingDialogComponent } from '../playlist-content-scheduling-dialog/playlist-content-scheduling-dialog.component';
 import { PlaylistMediaComponent } from '../playlist-media/playlist-media.component';
 import { ViewSchedulesComponent } from '../view-schedules/view-schedules.component';
-import {
-    AuthService,
-    ConfirmationDialogService,
-    ContentService,
-    PlaylistService,
-} from 'src/app/global/services';
+import { AuthService, ConfirmationDialogService, ContentService, PlaylistService } from 'src/app/global/services';
 
 import {
     API_BLOCKLIST_CONTENT,
@@ -222,8 +217,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
         let content_data = [];
 
         this.playlist_contents.filter((content) => {
-            if (this.selected_playlist_content_ids.includes(content.playlistContentId))
-                content_data.push(content);
+            if (this.selected_playlist_content_ids.includes(content.playlistContentId)) content_data.push(content);
         });
 
         let bulk_option_dialog = this._dialog.open(BulkOptionsComponent, {
@@ -298,9 +292,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
         }
 
         this.playlist_contents = [
-            ...Array.from(contents).filter((content) =>
-                fileTypes(type).includes(content.fileType.toLowerCase()),
-            ),
+            ...Array.from(contents).filter((content) => fileTypes(type).includes(content.fileType.toLowerCase())),
         ];
 
         if (hasStatusFilter && currentStatusFilter.key !== 'default') {
@@ -318,9 +310,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
     filterContentByStatus(key: string): void {
         const originalContents = this.playlist_content_backup;
         const fileTypes = (type: string) => this.getFileTypesByTypeName(type);
-        this.currentStatusFilter = this.statusFilterOptions.filter(
-            (content) => content.key === key,
-        )[0];
+        this.currentStatusFilter = this.statusFilterOptions.filter((content) => content.key === key)[0];
 
         if (key === 'default') {
             this.playlist_content_backup = Array.from(this._contentsBackup);
@@ -343,9 +333,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
             return;
         }
 
-        this.playlist_contents = [
-            ...originalContents.filter((content) => content.scheduleStatus === key),
-        ];
+        this.playlist_contents = [...originalContents.filter((content) => content.scheduleStatus === key)];
         const fileTypeFilter = this.currentFileTypeFilter;
 
         if (typeof fileTypeFilter !== 'undefined' && fileTypeFilter !== 'all') {
@@ -401,17 +389,11 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
     logContentHistory(data: any, isAdd: any) {
         if (isAdd) {
-            data.forEach((i) =>
-                this.playlist_new_content.push(
-                    new API_CONTENT_DATA(i.playlistContentId, i.contentId),
-                ),
-            );
+            data.forEach((i) => this.playlist_new_content.push(new API_CONTENT_DATA(i.playlistContentId, i.contentId)));
         } else {
             if (this.selected_contents.length > 0) {
                 data.forEach((i) =>
-                    this.playlist_new_content.push(
-                        new API_CONTENT_DATA(i.playlistContentId, i.contentId),
-                    ),
+                    this.playlist_new_content.push(new API_CONTENT_DATA(i.playlistContentId, i.contentId)),
                 );
             } else {
                 this.playlist_new_content.push(new API_CONTENT_DATA(data.id, data.contentId));
@@ -490,10 +472,8 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
         }
 
         const dataToSubmit = this.structured_updated_playlist;
-        this.structured_incoming_blocklist =
-            blocklist && blocklist.incoming.length > 0 ? blocklist.incoming : [];
-        this.structured_remove_in_blocklist =
-            blocklist && blocklist.removing.length > 0 ? blocklist.removing : [];
+        this.structured_incoming_blocklist = blocklist && blocklist.incoming.length > 0 ? blocklist.incoming : [];
+        this.structured_remove_in_blocklist = blocklist && blocklist.removing.length > 0 ? blocklist.removing : [];
 
         if (typeof data.credits_status !== 'undefined') creditsStatusUpdate = data.credits_status;
 
@@ -530,9 +510,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
             if (response.mode === 'add') {
                 if (!response) return localStorage.removeItem('to_blocklist');
                 if (localStorage.getItem('to_blocklist'))
-                    this.incoming_blacklist_licenses = localStorage
-                        .getItem('to_blocklist')
-                        .split(',');
+                    this.incoming_blacklist_licenses = localStorage.getItem('to_blocklist').split(',');
                 this.structureAddedPlaylistContent(response.data);
                 return;
             }
@@ -590,10 +568,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
             playlistContentIds.includes(x.playlistContentId),
         );
 
-        if (
-            JSON.stringify(this.playlist_content_backup) !=
-            JSON.stringify(updated_playlist_content_order)
-        ) {
+        if (JSON.stringify(this.playlist_content_backup) != JSON.stringify(updated_playlist_content_order)) {
             this.playlist_contents = updated_playlist_content_order;
             this.playlist_unchanged = false;
         } else {
@@ -690,10 +665,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
                 this.selected_content_count = e.newIndicies.length;
 
                 setTimeout(() => {
-                    if (
-                        this.button_click_event == 'edit-marked' ||
-                        this.button_click_event == 'delete-marked'
-                    ) {
+                    if (this.button_click_event == 'edit-marked' || this.button_click_event == 'delete-marked') {
                     } else {
                         this.selected_playlist_content_ids = [];
                         this.selected_contents = [];
@@ -712,9 +684,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
             const onStart = () => {
                 if (localStorage.getItem('playlist_order'))
-                    this.rearrangePlaylistContents(
-                        localStorage.getItem('playlist_order').split(','),
-                    );
+                    this.rearrangePlaylistContents(localStorage.getItem('playlist_order').split(','));
             };
 
             const onEnd = (e) => {
@@ -751,15 +721,8 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
         }, 1000);
     }
 
-    selectedContent(
-        id: string,
-        contentId: string,
-        contentFrequency: number,
-        classification?,
-    ): void {
-        const selected = this.playlist_contents.find(
-            (content) => content.contentId === contentId,
-        ) as API_CONTENT;
+    selectedContent(id: string, contentId: string, contentFrequency: number, classification?): void {
+        const selected = this.playlist_contents.find((content) => content.contentId === contentId) as API_CONTENT;
 
         if (typeof selected !== 'undefined' && selected.isProtected === 1 && this.is_dealer) return;
 
@@ -775,12 +738,8 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
                 classification: classification,
             });
         } else {
-            this.selected_playlist_content_ids = this.selected_playlist_content_ids.filter(
-                (i) => i !== id,
-            );
-            this.selected_contents = this.selected_contents.filter(
-                (i) => i.playlistContentId !== id,
-            );
+            this.selected_playlist_content_ids = this.selected_playlist_content_ids.filter((i) => i !== id);
+            this.selected_contents = this.selected_contents.filter((i) => i.playlistContentId !== id);
         }
 
         if (this.selected_playlist_content_ids.length === 0) {
@@ -814,9 +773,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
         this.addToBlocklist(to_block);
     }
 
-    structureAddedPlaylistContent(
-        incoming_playlist_content: API_CONTENT_BLACKLISTED_CONTENTS[],
-    ): void {
+    structureAddedPlaylistContent(incoming_playlist_content: API_CONTENT_BLACKLISTED_CONTENTS[]): void {
         this.playlist_contents = incoming_playlist_content.concat(this.playlist_contents);
         this.savePlaylistChanges(this.structureUpdatedPlaylist(), null, null, null, true);
     }
@@ -910,11 +867,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
                         if (frequencyUpdate) {
                             const { frequency, playlistContentId, playlistId } = frequencyUpdate;
-                            let request = this._content.set_frequency(
-                                frequency,
-                                playlistContentId,
-                                playlistId,
-                            );
+                            let request = this._content.set_frequency(frequency, playlistContentId, playlistId);
 
                             if (frequency === 1) {
                                 request = this._content.revert_frequency(playlistContentId);
@@ -924,11 +877,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
                                 if (response) {
                                     const { contentId } = response.playlistContent;
                                     await this._playlist
-                                        .blacklist_cloned_content(
-                                            playlistContentId,
-                                            playlistId,
-                                            contentId,
-                                        )
+                                        .blacklist_cloned_content(playlistContentId, playlistId, contentId)
                                         .toPromise();
                                 }
                             });
@@ -940,9 +889,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
                         if (creditsStatusUpdate) {
                             const { playlistContentId, status } = creditsStatusUpdate;
-                            await this._content
-                                .toggle_credits(playlistContentId, status)
-                                .toPromise();
+                            await this._content.toggle_credits(playlistContentId, status).toPromise();
                         }
 
                         localStorage.removeItem('playlist_order');
@@ -985,9 +932,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
         this.playlist_contents = originalContents.map((content) => {
             let status = 'inactive';
-            const schedule = content.playlistContentsSchedule
-                ? content.playlistContentsSchedule
-                : null;
+            const schedule = content.playlistContentsSchedule ? content.playlistContentsSchedule : null;
 
             // no schedule
             if (!schedule) {
@@ -1000,11 +945,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
             const creditsEnabled = content.creditsEnabled;
 
             // credits depleted to 0
-            if (
-                creditsEnabled === 1 &&
-                playlistContentCredits &&
-                playlistContentCredits.length > 0
-            ) {
+            if (creditsEnabled === 1 && playlistContentCredits && playlistContentCredits.length > 0) {
                 const sum = playlistContentCredits
                     .map((content) => content.credits)
                     .reduce((previous, current) => previous + current);
@@ -1022,14 +963,8 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
                 case 3:
                     const currentDate = moment(new Date(), 'YYYY-MM-DD hh:mm A');
-                    const startDate = moment(
-                        `${schedule.from} ${schedule.playTimeStart}`,
-                        'YYYY-MM-DD hh:mm A',
-                    );
-                    const endDate = moment(
-                        `${schedule.to} ${schedule.playTimeEnd}`,
-                        'YYYY-MM-DD hh:mm A',
-                    );
+                    const startDate = moment(`${schedule.from} ${schedule.playTimeStart}`, 'YYYY-MM-DD hh:mm A');
+                    const endDate = moment(`${schedule.to} ${schedule.playTimeEnd}`, 'YYYY-MM-DD hh:mm A');
 
                     if (currentDate.isBefore(startDate)) status = 'future';
                     if (currentDate.isBetween(startDate, endDate, undefined)) status = 'active';
@@ -1155,9 +1090,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
                     const hasCurrentFileType = fileTypes(this.currentFileTypeFilter).includes(
                         content.fileType.toLowerCase(),
                     );
-                    return (
-                        content.scheduleStatus == this.currentStatusFilter.key && hasCurrentFileType
-                    );
+                    return content.scheduleStatus == this.currentStatusFilter.key && hasCurrentFileType;
                 });
 
                 if (this.currentFileTypeFilter === 'all') {
@@ -1210,13 +1143,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
             const { contentId, isFullScreen, seq, duration, playlistContentId } = content;
             const durationValue = duration > 0 ? duration : 20;
 
-            return new API_UPDATED_PLAYLIST_CONTENT(
-                contentId,
-                isFullScreen,
-                seq,
-                durationValue,
-                playlistContentId,
-            );
+            return new API_UPDATED_PLAYLIST_CONTENT(contentId, isFullScreen, seq, durationValue, playlistContentId);
         });
 
         return new API_UPDATE_PLAYLIST_CONTENT(this.playlist_id, mappedContents);

@@ -41,11 +41,7 @@ export class ScreenService extends BaseService {
 
     get_screens(page, key, column, order) {
         const base = `${this.getters.api_get_screens}`;
-        const params = this.setUrlParams(
-            { page, search: key, sortColumn: column, sortOrder: order },
-            false,
-            true,
-        );
+        const params = this.setUrlParams({ page, search: key, sortColumn: column, sortOrder: order }, false, true);
         const url = `${base}${params}`;
         return this.getRequest(url);
     }
@@ -58,10 +54,7 @@ export class ScreenService extends BaseService {
         return this.getRequest(`${this.getters.api_get_screens_type}`);
     }
 
-    get_screen_by_id(
-        id: string,
-        licenseId?: string,
-    ): Observable<{ message: string } | API_SINGLE_SCREEN> {
+    get_screen_by_id(id: string, licenseId?: string): Observable<{ message: string } | API_SINGLE_SCREEN> {
         let base = `${this.getters.api_get_screen_by_id}${id}`;
         if (licenseId) base += `&licenseId=${licenseId}`;
         return this.getRequest(base);

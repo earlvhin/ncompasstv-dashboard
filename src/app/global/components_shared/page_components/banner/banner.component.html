@@ -19,9 +19,7 @@
                     <h3 class="text-white">{{ title | titlecase }}</h3>
                     <span
                         class="sm-text ml-3"
-                        [ngClass]="
-                            status === 'active' ? 'active text-primary' : 'inactive text-white'
-                        ">
+                        [ngClass]="status === 'active' ? 'active text-primary' : 'inactive text-white'">
                         <span class="fas fa-circle xsm-text mr-2"> </span>
                         <span>{{ status | titlecase }}</span>
                     </span>
@@ -29,16 +27,13 @@
                 <ng-container *ngIf="page === 'single-dealer'">
                     <div class="d-flex align-items-baseline">
                         <h5 class="text-white sm-text mb-1">
-                            <span class="font-italic">Dealer Alias: </span
-                            >{{ page_data.dealer.dealerIdAlias }}
+                            <span class="font-italic">Dealer Alias: </span>{{ page_data.dealer.dealerIdAlias }}
                         </h5>
                     </div>
                 </ng-container>
                 <ng-container *ngIf="page === 'single-host' && (is_admin || is_dealer_admin)">
                     <h4 class="d-inline-block sm-text mb-0 text-white">
-                        <a class="text-white" [routerLink]="[dealer_url]" target="_blank">{{
-                            business_name
-                        }}</a>
+                        <a class="text-white" [routerLink]="[dealer_url]" target="_blank">{{ business_name }}</a>
                         <span class="mx-2">|</span>
                     </h4>
                 </ng-container>
@@ -67,8 +62,7 @@
                             <div class="cursor-pointer text-white" (click)="onShowBusinessHours()">
                                 <strong>Business Hours:</strong>
                                 <span class="ml-2" *ngIf="!show_hours"
-                                    >{{ current_operations.day }} -
-                                    {{ current_operations.period }}</span
+                                    >{{ current_operations.day }} - {{ current_operations.period }}</span
                                 >
                                 <i *ngIf="!show_hours" class="ml-3 fa fa-caret-down"></i>
                                 <i *ngIf="show_hours" class="ml-3 fa fa-caret-up"></i>
@@ -76,38 +70,18 @@
                             <div [ngClass]="show_hours ? 'transition' : 'hidden_hours'">
                                 <div
                                     *ngFor="let hours of business_hours; let i = index"
-                                    [ngClass]="
-                                        current_business_day === hours.day
-                                            ? 'text-primary'
-                                            : 'text-white'
-                                    ">
+                                    [ngClass]="current_business_day === hours.day ? 'text-primary' : 'text-white'">
                                     {{ hours.day }}
                                     <ng-container *ngIf="hours.status; else close">
-                                        <ng-container
-                                            *ngFor="
-                                                let periods of hours.periods;
-                                                let period_index = index
-                                            ">
+                                        <ng-container *ngFor="let periods of hours.periods; let period_index = index">
                                             <span *ngIf="period_index > 0"> & </span>
-                                            <span *ngIf="isOpenAllDay(hours, period_index)"
-                                                >- Open 24 hours</span
-                                            >
-                                            <span
-                                                *ngIf="
-                                                    periods.open == '' &&
-                                                    periods.close == '' &&
-                                                    !hours.status
-                                                "
+                                            <span *ngIf="isOpenAllDay(hours, period_index)">- Open 24 hours</span>
+                                            <span *ngIf="periods.open == '' && periods.close == '' && !hours.status"
                                                 >- Closed</span
                                             >
                                             <span *ngIf="isOpenButNotAllDay(hours, period_index)">
                                                 - {{ periods.open }}
-                                                <span
-                                                    *ngIf="
-                                                        periods.open != '' && periods.close != ''
-                                                    "
-                                                    >-</span
-                                                >
+                                                <span *ngIf="periods.open != '' && periods.close != ''">-</span>
                                                 {{ periods.close }}
                                             </span>
                                         </ng-container>
@@ -187,9 +161,7 @@
     </div>
     <ng-container *ngIf="editable">
         <button class="settings-btn text-white" (click)="onClickModify()">
-            <span class="md-text"
-                ><strong>Modify</strong> <span class="fas fa-cog ml-2"></span
-            ></span>
+            <span class="md-text"><strong>Modify</strong> <span class="fas fa-cog ml-2"></span></span>
         </button>
     </ng-container>
 </div>

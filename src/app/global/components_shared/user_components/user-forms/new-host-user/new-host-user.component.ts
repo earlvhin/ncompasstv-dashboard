@@ -53,8 +53,7 @@ export class NewHostUserComponent implements OnInit {
 
     ngOnInit() {
         let role = this.currentRole;
-        if (this.currentRole === UI_ROLE_DEFINITION_TEXT.dealeradmin)
-            role = UI_ROLE_DEFINITION_TEXT.administrator;
+        if (this.currentRole === UI_ROLE_DEFINITION_TEXT.dealeradmin) role = UI_ROLE_DEFINITION_TEXT.administrator;
         this.create_host_link = `/${role}/hosts/create-host`;
         this.back_btn = `/${role}/users/create-user`;
 
@@ -137,10 +136,7 @@ export class NewHostUserComponent implements OnInit {
 
         this.subscription.add(
             this.new_host_form.valueChanges.subscribe((data) => {
-                if (
-                    this.new_host_form.valid &&
-                    this.f.password.value === this.f.re_password.value
-                ) {
+                if (this.new_host_form.valid && this.f.password.value === this.f.re_password.value) {
                     this.form_invalid = false;
                 } else {
                     this.form_invalid = true;
@@ -169,10 +165,7 @@ export class NewHostUserComponent implements OnInit {
 
         this.subscription.add(
             this.f.re_password.valueChanges.subscribe((data) => {
-                if (
-                    this.f.password.value == this.f.re_password.value &&
-                    this.f.password.value.length !== 0
-                ) {
+                if (this.f.password.value == this.f.re_password.value && this.f.password.value.length !== 0) {
                     this.password_is_match = true;
                     this.password_match_msg = 'Password matches';
                 } else {
@@ -204,11 +197,7 @@ export class NewHostUserComponent implements OnInit {
                 this.loading_data = true;
                 this.subscription.add(
                     this._host
-                        .get_host_by_dealer_id(
-                            this._auth.current_user_value.roleInfo.dealerId,
-                            page,
-                            this.search_key,
-                        )
+                        .get_host_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.search_key)
                         .subscribe((data) => {
                             data.paging.entities.map((i) => {
                                 if (this.search_key != '') {
@@ -225,11 +214,7 @@ export class NewHostUserComponent implements OnInit {
             } else {
                 this.subscription.add(
                     this._host
-                        .get_host_by_dealer_id(
-                            this._auth.current_user_value.roleInfo.dealerId,
-                            page,
-                            this.search_key,
-                        )
+                        .get_host_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.search_key)
                         .subscribe((data) => {
                             if (!data.message) {
                                 data.paging.entities.map((i) => {
@@ -369,12 +354,7 @@ export class NewHostUserComponent implements OnInit {
             (error) => {
                 this.is_submitted = false;
                 this.form_invalid = false;
-                this.openConfirmationModal(
-                    'error',
-                    'Oops something went wrong, Sorry!',
-                    error.error.message,
-                    false,
-                );
+                this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', error.error.message, false);
             },
         );
     }

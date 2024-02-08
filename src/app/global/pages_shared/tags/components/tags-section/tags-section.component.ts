@@ -103,8 +103,6 @@ export class TagsSectionComponent implements OnInit, OnDestroy {
     }
 
     private subscribeToRefreshTableData(): void {
-        this._tag.onRefreshTagsTable
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(() => this.searchTags());
+        this._tag.onRefreshTagsTable.pipe(takeUntil(this._unsubscribe)).subscribe(() => this.searchTags());
     }
 }

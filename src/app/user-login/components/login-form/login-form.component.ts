@@ -6,10 +6,7 @@ import { Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 
 import { AuthService } from '../../../global/services/auth-service/auth.service';
-import {
-    UI_ROLE_DEFINITION,
-    UI_ROLE_DEFINITION_TEXT,
-} from '../../../global/models/ui_role-definition.model';
+import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../../global/models/ui_role-definition.model';
 import { USER_LOCALSTORAGE, USER_LOGIN } from 'src/app/global/models/api_user.model';
 import { UpcomingInstallModalComponent } from '../../../global/pages_shared/upcoming-install-modal/upcoming-install-modal.component';
 import { MatDialog } from '@angular/material';
@@ -126,11 +123,7 @@ export class LoginFormComponent implements OnInit {
                 ) {
                     //Show Modal
                     let item = JSON.parse(localStorage.getItem('installation_ischecked'));
-                    if (
-                        !item ||
-                        this.compareTime(item.timestamp, moment().toDate()) ||
-                        !item.value
-                    ) {
+                    if (!item || this.compareTime(item.timestamp, moment().toDate()) || !item.value) {
                         this.openUpcomingInstallModal();
                     }
                 }

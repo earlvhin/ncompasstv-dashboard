@@ -19,12 +19,7 @@
 
             <mat-form-field class="full-width">
                 <mat-label>Feed Title</mat-label>
-                <input
-                    matInput
-                    formControlName="feedTitle"
-                    matInput
-                    type="text"
-                    placeholder="Ex: ESPN News" />
+                <input matInput formControlName="feedTitle" matInput type="text" placeholder="Ex: ESPN News" />
             </mat-form-field>
 
             <mat-form-field class="full-width">
@@ -96,15 +91,11 @@
 
         <div
             class="alert alert-success"
-            *ngIf="
-                is_invalid_url === false && isUrlValidType === true!;
-                has_selected_widget_feed_type
-            ">
+            *ngIf="is_invalid_url === false && isUrlValidType === true!; has_selected_widget_feed_type">
             <p class="sm-text font-weight-bold">Entered Feed URL is a supported format.</p>
         </div>
 
-        <ng-container
-            *ngIf="is_invalid_url && !is_validating_url && !has_selected_widget_feed_type">
+        <ng-container *ngIf="is_invalid_url && !is_validating_url && !has_selected_widget_feed_type">
             <ng-container *ngIf="is_invalid_url && isUrlValidType; else isInvalidType">
                 <div class="alert alert-warning">
                     <p class="sm-text font-weight-bold">Entered Feed URL may be invalid.</p>
@@ -141,9 +132,7 @@
                 </button>
             </ng-template>
 
-            <button mat-button mat-raised-button class="theme-btn btn-danger" mat-dialog-close>
-                Cancel
-            </button>
+            <button mat-button mat-raised-button class="theme-btn btn-danger" mat-dialog-close>Cancel</button>
         </div>
     </form>
 

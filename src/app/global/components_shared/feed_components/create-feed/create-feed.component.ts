@@ -120,18 +120,10 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
                 (data) => {
                     this._dialog_ref.close(data);
                     this.reload_page.emit(true);
-                    this.showConfirmationDialog(
-                        'success',
-                        'Feed Saved Successfully',
-                        'Click OK to continue',
-                    );
+                    this.showConfirmationDialog('success', 'Feed Saved Successfully', 'Click OK to continue');
                 },
                 (error) => {
-                    this.showConfirmationDialog(
-                        'error',
-                        'Error while saving feed',
-                        error.error.message,
-                    );
+                    this.showConfirmationDialog('error', 'Error while saving feed', error.error.message);
                 },
             );
     }
@@ -169,11 +161,7 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
                 (response) => {
                     this._dialog_ref.close(response);
                     this.reload_page.emit(true);
-                    this.showConfirmationDialog(
-                        'success',
-                        'Feed Saved Successfully',
-                        'Click OK to continue',
-                    );
+                    this.showConfirmationDialog('success', 'Feed Saved Successfully', 'Click OK to continue');
                 },
                 (e) => {
                     throw new Error(e);
@@ -183,9 +171,7 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 
     private filterAutoCompleteChanges(value): any {
         const filterValue = value.toLowerCase();
-        const returnValue = this.dealers.filter(
-            (d) => d.businessName.toLowerCase().indexOf(filterValue) === 0,
-        );
+        const returnValue = this.dealers.filter((d) => d.businessName.toLowerCase().indexOf(filterValue) === 0);
         if (returnValue.length == 0) this.selected_dealer_id = undefined;
         return returnValue;
     }
@@ -279,16 +265,14 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
     private subscribeToFeedUrlChanges() {
         const control = this.new_feed_form.get('feedUrl');
 
-        control.valueChanges
-            .pipe(takeUntil(this._unsubscribe), debounceTime(1000))
-            .subscribe(async (response) => {
-                this.is_validating_url = true;
-                const url = response as string;
-                this.is_invalid_url = !(await this._feed.check_url(url));
-                this.isUrlValidType = this._feed.isUrlValid;
-                this.is_validating_url = false;
-                this.disabled_submit = false;
-            });
+        control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe(async (response) => {
+            this.is_validating_url = true;
+            const url = response as string;
+            this.is_invalid_url = !(await this._feed.check_url(url));
+            this.isUrlValidType = this._feed.isUrlValid;
+            this.is_validating_url = false;
+            this.disabled_submit = false;
+        });
     }
 
     protected get _feedTypes() {

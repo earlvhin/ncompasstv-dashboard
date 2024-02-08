@@ -145,9 +145,7 @@ export class AssignLicenseModalComponent implements OnInit, OnDestroy {
 
         for (let i = 1; i < totalRequests; i++) {
             const page = i + 1;
-            getLicenseRequests.push(
-                this._license.get_license_by_dealer_id(dealerId, page, '', 'online', 15, ''),
-            );
+            getLicenseRequests.push(this._license.get_license_by_dealer_id(dealerId, page, '', 'online', 15, ''));
         }
 
         forkJoin(getLicenseRequests)
@@ -158,9 +156,7 @@ export class AssignLicenseModalComponent implements OnInit, OnDestroy {
                         const licenses = getLicenseResponse.paging.entities as API_LICENSE_PROPS[];
                         merged = merged.concat(
                             licenses.filter(
-                                (license) =>
-                                    !license.hostId ||
-                                    (license.hostId && license.hostId.length <= 0),
+                                (license) => !license.hostId || (license.hostId && license.hostId.length <= 0),
                             ),
                         );
                     });

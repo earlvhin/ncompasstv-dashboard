@@ -148,8 +148,7 @@ export class LicensesTabReportsComponent implements OnInit, OnDestroy {
 
         data.sort((a, b) => a.month - b.month);
 
-        if (!isNarrowedDownResult)
-            data = data.filter((item) => item.year == new Date().getFullYear());
+        if (!isNarrowedDownResult) data = data.filter((item) => item.year == new Date().getFullYear());
         const totalCumulativeLicenses = data.map(cumulativeSum);
 
         data = data.map((license, index) => {
@@ -179,19 +178,6 @@ export class LicensesTabReportsComponent implements OnInit, OnDestroy {
     }
 
     protected get _months() {
-        return [
-            'Jan',
-            'Feb',
-            'Mar',
-            'Apr',
-            'May',
-            'June',
-            'July',
-            'Aug',
-            'Sep',
-            'Oct',
-            'Nov',
-            'Dec',
-        ];
+        return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     }
 }

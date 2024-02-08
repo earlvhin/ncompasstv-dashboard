@@ -1,23 +1,12 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
-import {
-    MAT_DIALOG_DATA,
-    MatDialog,
-    MatDialogRef,
-    MatDialogConfig,
-    MatSlideToggleChange,
-} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatDialogConfig, MatSlideToggleChange } from '@angular/material';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { forkJoin, Subject, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment';
 
-import {
-    AuthService,
-    ConfirmationDialogService,
-    DealerService,
-    UserService,
-} from 'src/app/global/services';
+import { AuthService, ConfirmationDialogService, DealerService, UserService } from 'src/app/global/services';
 import {
     ACTIVITY_LOGS,
     API_DEALER,
@@ -170,9 +159,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
             observables.push(this.updateDealerStatus(newStatus));
         }
 
-        const confirmUpdate = await this._confirmationDialog
-            .warning({ message: title, data: message })
-            .toPromise();
+        const confirmUpdate = await this._confirmationDialog.warning({ message: title, data: message }).toPromise();
 
         if (!confirmUpdate) return;
 
@@ -196,9 +183,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
     }
 
     createActivity(activity) {
-        return this._dealer
-            .create_dealer_activity_logs(activity)
-            .pipe(takeUntil(this._unsubscribe));
+        return this._dealer.create_dealer_activity_logs(activity).pipe(takeUntil(this._unsubscribe));
     }
 
     togglePasswordFieldType(): void {
@@ -294,11 +279,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
                     this.email_not_valid = true;
                 }
 
-                if (
-                    this.edit_dealer_form.valid &&
-                    !this.has_duplicate_email &&
-                    !this.email_not_valid
-                ) {
+                if (this.edit_dealer_form.valid && !this.has_duplicate_email && !this.email_not_valid) {
                     this.enable_update_form = true;
                 } else {
                     this.enable_update_form = false;
@@ -311,15 +292,11 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
     }
 
     private updateDealerData(): Observable<any> {
-        return this._dealer
-            .update_dealer(this.mapDealerInfoChanges())
-            .pipe(takeUntil(this._unsubscribe));
+        return this._dealer.update_dealer(this.mapDealerInfoChanges()).pipe(takeUntil(this._unsubscribe));
     }
 
     private updateDealerStatus(status: string): Observable<any> {
-        return this._dealer
-            .update_status(this.dealer.dealerId, status)
-            .pipe(takeUntil(this._unsubscribe));
+        return this._dealer.update_status(this.dealer.dealerId, status).pipe(takeUntil(this._unsubscribe));
     }
 
     private updateUserData(): Observable<any> {

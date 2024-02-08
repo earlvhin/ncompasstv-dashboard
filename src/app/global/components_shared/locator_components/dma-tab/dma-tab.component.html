@@ -8,9 +8,7 @@
             [disabled]="isExporting || currentDMAList.length === 0"
             title="Export to CSV">
             <span class="{{ !isExporting ? 'fas fa-file-excel' : 'fas fa-spinner' }}"></span>
-            <span class="ml-2 button_text_animation">{{
-                !isExporting ? 'Export' : 'Generating CSV'
-            }}</span>
+            <span class="ml-2 button_text_animation">{{ !isExporting ? 'Export' : 'Generating CSV' }}</span>
         </button>
         <button
             mat-button
@@ -19,9 +17,7 @@
             (click)="toggleOverMap()"
             title="{{ status ? 'Show Search Result' : 'Hide Search Results' }}">
             <span [ngClass]="status ? 'fas fa-eye' : 'fas fa-eye-slash'"></span>
-            <span class="ml-2 button_text_animation">{{
-                status ? 'Show Search Result' : 'Hide Search Results'
-            }}</span>
+            <span class="ml-2 button_text_animation">{{ status ? 'Show Search Result' : 'Hide Search Results' }}</span>
         </button>
     </div>
 
@@ -71,26 +67,12 @@
                                                 <h5>{{ schedule.day }}</h5>
                                             </th>
                                             <span *ngIf="schedule.periods[0]; else close">
-                                                <td
-                                                    *ngFor="
-                                                        let hrs of schedule.periods;
-                                                        let j = index
-                                                    ">
+                                                <td *ngFor="let hrs of schedule.periods; let j = index">
                                                     <h5 *ngIf="j > 0">&</h5>
-                                                    <h5
-                                                        *ngIf="
-                                                            hrs.open == '' &&
-                                                            hrs.close == '' &&
-                                                            schedule.status
-                                                        ">
+                                                    <h5 *ngIf="hrs.open == '' && hrs.close == '' && schedule.status">
                                                         - Open 24 hours
                                                     </h5>
-                                                    <h5
-                                                        *ngIf="
-                                                            hrs.open == '' &&
-                                                            hrs.close == '' &&
-                                                            !schedule.status
-                                                        ">
+                                                    <h5 *ngIf="hrs.open == '' && hrs.close == '' && !schedule.status">
                                                         - Closed
                                                     </h5>
                                                     <h5 *ngIf="hrs.open != '' && hrs.close != ''">
@@ -104,9 +86,7 @@
                                 </tr>
                             </div>
                             <h6 class="coordinates mt-3">
-                                <i class="fas fa-map-marker"></i> {{ host.latitude }},{{
-                                    host.longitude
-                                }}
+                                <i class="fas fa-map-marker"></i> {{ host.latitude }},{{ host.longitude }}
                             </h6>
                         </agm-info-window>
                     </agm-marker>
@@ -131,9 +111,7 @@
                                                         <ngx-mat-select-search
                                                             noEntriesFoundLabel="No results"
                                                             formControlName="searchDMAKeyword"
-                                                            [placeholderLabel]="
-                                                                'Search DMA by name, code, or rank'
-                                                            "
+                                                            [placeholderLabel]="'Search DMA by name, code, or rank'"
                                                             [clearSearchInput]="true"
                                                             [searching]="isSearchingDMA"
                                                             class="md-text">
@@ -141,12 +119,8 @@
                                                         </ngx-mat-select-search>
                                                     </mat-option>
 
-                                                    <mat-option
-                                                        *ngFor="let dma of filteredDMA | async"
-                                                        [value]="dma">
-                                                        <div class="dma">
-                                                            #{{ dma.dmaRank }} - {{ dma.dmaName }}
-                                                        </div>
+                                                    <mat-option *ngFor="let dma of filteredDMA | async" [value]="dma">
+                                                        <div class="dma">#{{ dma.dmaRank }} - {{ dma.dmaName }}</div>
                                                     </mat-option>
                                                 </div>
                                                 <footer class="selection">
@@ -182,12 +156,8 @@
                                     <div
                                         *ngFor="let dma of currentDMAList; let i = index"
                                         class="dma d-flex align-items-center">
-                                        <div class="name">
-                                            #{{ dma.dmaRank }} - {{ dma.dmaName }}
-                                        </div>
-                                        <div
-                                            class="remove-btn cursor-pointer"
-                                            (click)="onDeselectDMA(i)">
+                                        <div class="name">#{{ dma.dmaRank }} - {{ dma.dmaName }}</div>
+                                        <div class="remove-btn cursor-pointer" (click)="onDeselectDMA(i)">
                                             <mat-icon>close</mat-icon>
                                         </div>
                                     </div>
@@ -209,16 +179,10 @@
                                                 #{{ dma.dmaRank }} - {{ dma.dmaName }}
                                             </div>
                                         </mat-panel-title>
-                                        <mat-panel-description
-                                            class="md-text p-0"
-                                            *ngIf="dma.hosts">
+                                        <mat-panel-description class="md-text p-0" *ngIf="dma.hosts">
                                             <div
                                                 class="total-hosts"
-                                                [ngClass]="
-                                                    dma.totalHosts > 0
-                                                        ? 'text-primary'
-                                                        : 'text-danger'
-                                                ">
+                                                [ngClass]="dma.totalHosts > 0 ? 'text-primary' : 'text-danger'">
                                                 <!-- <b>{{ dma.totalHosts }}</b> Host(s) -->
                                                 <b>{{ dma.hosts.length }}</b> Host(s)
                                             </div>

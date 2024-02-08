@@ -67,9 +67,7 @@ export class TagsTableComponent implements OnInit, OnDestroy {
     }
 
     async onDeleteAllTagsFromOwner(ownerId: string): Promise<void> {
-        const response = await this.openConfirmAPIRequestDialog(
-            'delete_all_tags_from_owner',
-        ).toPromise();
+        const response = await this.openConfirmAPIRequestDialog('delete_all_tags_from_owner').toPromise();
 
         if (!response) return;
 
@@ -89,8 +87,7 @@ export class TagsTableComponent implements OnInit, OnDestroy {
     }
 
     async onDeleteTagFromOwner(tagId: string, ownerId: string): Promise<void> {
-        const response =
-            await this.openConfirmAPIRequestDialog('delete_tag_from_owner').toPromise();
+        const response = await this.openConfirmAPIRequestDialog('delete_tag_from_owner').toPromise();
 
         if (!response) return;
 

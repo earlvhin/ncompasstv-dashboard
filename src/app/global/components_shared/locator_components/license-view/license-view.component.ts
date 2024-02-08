@@ -172,9 +172,7 @@ export class LicenseViewComponent implements OnInit {
         this.selected_licenses = this.unfiltered_licenses;
 
         this.selected_dealer_hosts.forEach((host) => this.getLicenseByHost(host.hostId));
-        this.filtered_licenses = this.selected_licenses.filter(
-            (license) => license.piStatus === value,
-        );
+        this.filtered_licenses = this.selected_licenses.filter((license) => license.piStatus === value);
         this.selected_licenses = this.filtered_licenses;
 
         if (value === 1) this.online_licenses = this.filtered_licenses.length;
@@ -209,9 +207,7 @@ export class LicenseViewComponent implements OnInit {
         this.search_keyword = true;
         this.online_licenses = 0;
         this.offline_licenses = 0;
-        this.license_search_results = this.selected_licenses.filter(
-            (license) => license.licenseId === id,
-        );
+        this.license_search_results = this.selected_licenses.filter((license) => license.licenseId === id);
         this.search_license_id = id;
         this.selected_licenses = this.license_search_results;
         this.selected_host_ids = this.license_search_results.map((license) => license.hostId);
@@ -238,9 +234,7 @@ export class LicenseViewComponent implements OnInit {
         this.map_markers = this.mapMarkersToUI(this.selected_dealer_hosts, this.selected_licenses);
 
         this.selected_dealer_hosts.forEach((host) => {
-            host.iconUrl = this.map_markers.filter(
-                (marker) => marker.hostId === host.hostId,
-            )[0].iconUrl;
+            host.iconUrl = this.map_markers.filter((marker) => marker.hostId === host.hostId)[0].iconUrl;
         });
 
         if (this.isFiltered) this.filterDealerHosts(this.filterStatus);
@@ -287,9 +281,7 @@ export class LicenseViewComponent implements OnInit {
                         let dealerLicense = new API_DEALER_LICENSE(
                             license.dealerId,
                             license.hostId,
-                            license.licenseAlias === null
-                                ? license.licenseKey
-                                : license.licenseAlias,
+                            license.licenseAlias === null ? license.licenseKey : license.licenseAlias,
                             license.licenseId,
                             license.licenseKey,
                         );
@@ -328,21 +320,14 @@ export class LicenseViewComponent implements OnInit {
                     this.paging = paging;
 
                     this.selected_dealer_hosts = [...hosts];
-                    this.map_markers = this.mapMarkersToUI(
-                        this.selected_dealer_hosts,
-                        this.selected_licenses,
-                    );
+                    this.map_markers = this.mapMarkersToUI(this.selected_dealer_hosts, this.selected_licenses);
 
                     this.selected_dealer_hosts.forEach((host) => {
                         host.storeHours
                             ? (host.parsedStoreHours = JSON.parse(host.storeHours))
                             : (host.parsedStoreHours = '-');
-                        host.latitude
-                            ? (host.latitude = parseFloat(host.latitude).toFixed(5))
-                            : '-';
-                        host.longitude
-                            ? (host.longitude = parseFloat(host.longitude).toFixed(5))
-                            : '-';
+                        host.latitude ? (host.latitude = parseFloat(host.latitude).toFixed(5)) : '-';
+                        host.longitude ? (host.longitude = parseFloat(host.longitude).toFixed(5)) : '-';
                         host.iconUrl = host.iconUrl = this.map_markers.filter(
                             (marker) => marker.hostId === host.hostId,
                         )[0].iconUrl;
@@ -413,10 +398,7 @@ export class LicenseViewComponent implements OnInit {
                     this.unfiltered_licenses = this.selected_licenses;
 
                     if (this.selected_dealer_hosts.length > 0) {
-                        this.map_markers = this.mapMarkersToUI(
-                            this.selected_dealer_hosts,
-                            this.selected_licenses,
-                        );
+                        this.map_markers = this.mapMarkersToUI(this.selected_dealer_hosts, this.selected_licenses);
 
                         this.selected_dealer_hosts.forEach((host) => {
                             host.iconUrl = this.map_markers.filter(
@@ -427,8 +409,7 @@ export class LicenseViewComponent implements OnInit {
 
                     this.location_selected = true;
                     if (this.isFiltered) this.filterDealerHosts(this.filterStatus);
-                    if (this.license_page_count <= pageCount)
-                        this.getDealerLicenses(this.license_page_count++);
+                    if (this.license_page_count <= pageCount) this.getDealerLicenses(this.license_page_count++);
                 },
                 (error) => {
                     console.error(error);
@@ -475,27 +456,21 @@ export class LicenseViewComponent implements OnInit {
             .add(() => (this.loading_license_count = false));
     }
 
-    private mapMarkersToUI(
-        hosts: API_HOST[],
-        licenses: API_LICENSE_PROPS[],
-    ): UI_HOST_LOCATOR_MARKER_DEALER_MODE[] {
+    private mapMarkersToUI(hosts: API_HOST[], licenses: API_LICENSE_PROPS[]): UI_HOST_LOCATOR_MARKER_DEALER_MODE[] {
         if (!hosts || hosts.length <= 0) return;
 
         return hosts.map((host) => {
             let iconUrl: string;
             let online: any = 0;
             let license_online_percentage: number;
-            const host_licenses: API_LICENSE_PROPS[] = licenses.filter(
-                (license) => license.hostId === host.hostId,
-            );
+            const host_licenses: API_LICENSE_PROPS[] = licenses.filter((license) => license.hostId === host.hostId);
 
             if (host_licenses.length > 0) {
                 online = host_licenses.filter((license) => license.piStatus === 1);
                 license_online_percentage = (online.length / host_licenses.length) * 100;
             }
 
-            if (license_online_percentage == 100)
-                iconUrl = 'assets/media-files/markers/online_all.png';
+            if (license_online_percentage == 100) iconUrl = 'assets/media-files/markers/online_all.png';
             else if (license_online_percentage >= 51 && license_online_percentage < 100)
                 iconUrl = 'assets/media-files/markers/online_many.png';
             else if (license_online_percentage < 51 && license_online_percentage > 0)

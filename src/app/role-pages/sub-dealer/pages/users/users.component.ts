@@ -23,15 +23,7 @@ export class UsersComponent implements OnInit {
     loading_data: boolean = true;
     no_user: boolean = false;
     user_details: any;
-    users_table_column = [
-        '#',
-        'Name',
-        'Email Address',
-        'Contact Number',
-        'Role',
-        'Creation Date',
-        'Created By',
-    ];
+    users_table_column = ['#', 'Name', 'Email Address', 'Contact Number', 'Role', 'Creation Date', 'Created By'];
 
     constructor(
         private _user: UserService,

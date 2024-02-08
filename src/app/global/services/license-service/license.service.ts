@@ -322,11 +322,7 @@ export class LicenseService extends BaseService {
         pending?: any,
     ) {
         const base = `${this.getters.api_get_licenses_by_dealer}`;
-        const params = this.setUrlParams(
-            { dealerId, page, search, arrangement, pageSize, pending },
-            false,
-            true,
-        );
+        const params = this.setUrlParams({ dealerId, page, search, arrangement, pageSize, pending }, false, true);
         const url = `${base}${params}`;
         return this.getRequest(url);
     }
@@ -479,13 +475,9 @@ export class LicenseService extends BaseService {
         return this.getRequest(`${this.getters.api_get_ad_licenses_total_by_dealer}${id}`);
     }
 
-    get_installation_statistics(
-        date: string = null,
-    ): Observable<{ licenseInstallationStats: API_INSTALLATION_STATS }> {
+    get_installation_statistics(date: string = null): Observable<{ licenseInstallationStats: API_INSTALLATION_STATS }> {
         if (!date) date = moment().format('MM-DD-YYYY');
-        return this.getRequest(
-            `${this.getters.license_installation_statistics}` + '?installdate=' + `${date}`,
-        );
+        return this.getRequest(`${this.getters.license_installation_statistics}` + '?installdate=' + `${date}`);
     }
 
     get_statistics_by_dealer(id: string) {
@@ -524,10 +516,7 @@ export class LicenseService extends BaseService {
     }
 
     generate_license(id, count) {
-        return this.postRequest(
-            `${this.creators.api_new_license}dealerId=${id}&licensecount=${count}`,
-            null,
-        );
+        return this.postRequest(`${this.creators.api_new_license}dealerId=${id}&licensecount=${count}`, null);
     }
 
     get_screenshots(id): Observable<{ files: any[] }> {
@@ -593,11 +582,7 @@ export class LicenseService extends BaseService {
         return this.postRequest(this.updaters.api_display_status, data);
     }
 
-    update_notification_settings(data: {
-        licenseId: string;
-        notificationSettings?: number;
-        emailSettings?: number;
-    }) {
+    update_notification_settings(data: { licenseId: string; notificationSettings?: number; emailSettings?: number }) {
         return this.postRequest(this.updaters.license_notification_settings, data);
     }
 

@@ -17,18 +17,12 @@
         <div class="col-lg-6">
             <mat-form-field class="full-width" appearance="fill">
                 <mat-label>Search an image, Type in a filename ...</mat-label>
-                <input
-                    matInput
-                    type="text"
-                    [(ngModel)]="image_search_key"
-                    (keyup)="searchContent($event)" />
+                <input matInput type="text" [(ngModel)]="image_search_key" (keyup)="searchContent($event)" />
             </mat-form-field>
         </div>
         <div class="col-lg-6 pt-2">
             <ng-container *ngIf="is_admin">
-                <div
-                    class="d-flex align-items-center"
-                    *ngIf="floating_content.length > 0; else spinner">
+                <div class="d-flex align-items-center" *ngIf="floating_content.length > 0; else spinner">
                     <div class="mr-3">
                         <mat-slide-toggle
                             [checked]="show_floating_contents_toggle"
@@ -37,9 +31,7 @@
                     </div>
                     <div class="flex-even">
                         <h6 class="sm-text">Display Floating Contents</h6>
-                        <p class="xsm-text">
-                            Display all content that are not assigned to any Dealer
-                        </p>
+                        <p class="xsm-text">Display all content that are not assigned to any Dealer</p>
                     </div>
                 </div>
 
@@ -63,9 +55,7 @@
                         <img [src]="m.thumbnail" [alt]="m.fileName" />
 
                         <div class="overlay">
-                            <span class="xsm-text" [title]="m.title">{{
-                                m.title | substring: 10
-                            }}</span>
+                            <span class="xsm-text" [title]="m.title">{{ m.title | substring: 10 }}</span>
                         </div>
                     </div>
                 </div>
@@ -76,8 +66,7 @@
             <div class="py-4 text-center">
                 <h3>No Media File Available</h3>
                 <p class="sm-text">
-                    No available or appropriate media file for Slide Feed, Go to Media Library to
-                    upload images.
+                    No available or appropriate media file for Slide Feed, Go to Media Library to upload images.
                 </p>
             </div>
         </ng-template>

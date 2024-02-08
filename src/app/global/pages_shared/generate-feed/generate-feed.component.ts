@@ -291,8 +291,7 @@ export class GenerateFeedComponent implements OnInit, CanComponentDeactivate {
 
     /** Set Selected Feed */
     setSelectedFeedType(feedTypeId: string) {
-        if (!this.editing)
-            return this.feed_types.filter((i) => i.feedTypeId === feedTypeId)[0].name;
+        if (!this.editing) return this.feed_types.filter((i) => i.feedTypeId === feedTypeId)[0].name;
         return this.fetched_feed.feedType.name;
     }
 
@@ -396,10 +395,7 @@ export class GenerateFeedComponent implements OnInit, CanComponentDeactivate {
                 .update_filler_feed(this.generated_filler_feed)
                 .pipe(takeUntil(this._unsubscribe))
                 .subscribe(
-                    () =>
-                        this._router
-                            .navigate([`/${this.roleRoute}/feeds`])
-                            .then((_) => window.location.reload()),
+                    () => this._router.navigate([`/${this.roleRoute}/feeds`]).then((_) => window.location.reload()),
                     (error) => {
                         console.error(error);
                     },

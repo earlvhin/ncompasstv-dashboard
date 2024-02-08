@@ -14,9 +14,7 @@
         <tbody>
             <tr *ngFor="let row of table_data.rows; let i = index">
                 <td class="xsm-text border-right text-center p-3">{{ i + 1 }}</td>
-                <td
-                    class="xsm-text border-right text-center p-3"
-                    *ngIf="row.type !== 'feed'; else feed">
+                <td class="xsm-text border-right text-center p-3" *ngIf="row.type !== 'feed'; else feed">
                     {{ row.title ? row.title : '--' }}
                 </td>
                 <td class="xsm-text border-right text-center p-3">{{ row.type }}</td>

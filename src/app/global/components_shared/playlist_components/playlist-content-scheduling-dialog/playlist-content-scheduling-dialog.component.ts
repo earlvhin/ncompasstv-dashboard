@@ -217,8 +217,7 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
         if (type === 'start') this.start_time = value;
         else this.end_time = value;
 
-        if (this.start_time === '12:00 AM' && this.end_time === '11:59 PM')
-            this.has_selected_all_day_long = true;
+        if (this.start_time === '12:00 AM' && this.end_time === '11:59 PM') this.has_selected_all_day_long = true;
         else this.has_selected_all_day_long = false;
     }
 
@@ -254,13 +253,10 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
                             days,
                             playTimeStart,
                             playTimeEnd,
-                            from: moment(
-                                `${startDate} ${playTimeStart}`,
-                                'YYYY-MM-DD hh:mm A',
-                            ).format('YYYY-MM-DD HH:mm:ss'),
-                            to: moment(`${endDate} ${playTimeEnd}`, 'YYYY-MM-DD hh:mm A').format(
+                            from: moment(`${startDate} ${playTimeStart}`, 'YYYY-MM-DD hh:mm A').format(
                                 'YYYY-MM-DD HH:mm:ss',
                             ),
+                            to: moment(`${endDate} ${playTimeEnd}`, 'YYYY-MM-DD hh:mm A').format('YYYY-MM-DD HH:mm:ss'),
                             type: this.getTypeValue(type.name),
                             playlistContentId: id,
                         };
@@ -291,13 +287,10 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
                             days,
                             playTimeStart,
                             playTimeEnd,
-                            from: moment(
-                                `${startDate} ${playTimeStart}`,
-                                'YYYY-MM-DD hh:mm A',
-                            ).format('YYYY-MM-DD HH:mm:ss'),
-                            to: moment(`${endDate} ${playTimeEnd}`, 'YYYY-MM-DD hh:mm A').format(
+                            from: moment(`${startDate} ${playTimeStart}`, 'YYYY-MM-DD hh:mm A').format(
                                 'YYYY-MM-DD HH:mm:ss',
                             ),
+                            to: moment(`${endDate} ${playTimeEnd}`, 'YYYY-MM-DD hh:mm A').format('YYYY-MM-DD HH:mm:ss'),
                             type: this.getTypeValue(type.name),
                             playlistContentId: schedule.content_id,
                         };
@@ -338,12 +331,8 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
                 playTimeEnd,
                 playlistContentId,
                 playlistContentsScheduleId: playlistContentsSchedule.playlistContentsScheduleId,
-                from: moment(`${startDate} ${playTimeStart}`, 'YYYY-MM-DD hh:mm A').format(
-                    'YYYY-MM-DD HH:mm:ss',
-                ),
-                to: moment(`${endDate} ${playTimeEnd}`, 'YYYY-MM-DD hh:mm A').format(
-                    'YYYY-MM-DD HH:mm:ss',
-                ),
+                from: moment(`${startDate} ${playTimeStart}`, 'YYYY-MM-DD hh:mm A').format('YYYY-MM-DD HH:mm:ss'),
+                to: moment(`${endDate} ${playTimeEnd}`, 'YYYY-MM-DD hh:mm A').format('YYYY-MM-DD HH:mm:ss'),
                 type: this.getTypeValue(type.name),
             };
         }
@@ -440,14 +429,10 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
         // for update
 
         const { playlistContentsSchedule } = content;
-        const { alternateWeek, days, from, to, playTimeStart, playTimeEnd, type } =
-            playlistContentsSchedule;
+        const { alternateWeek, days, from, to, playTimeStart, playTimeEnd, type } = playlistContentsSchedule;
         this.type = this.types.filter((t) => t.value == type)[0];
 
-        if (
-            typeof content.playlistContentsSchedule !== 'undefined' &&
-            content.playlistContentsSchedule
-        ) {
+        if (typeof content.playlistContentsSchedule !== 'undefined' && content.playlistContentsSchedule) {
             this.start_date = from;
             this.end_date = to;
             this.alternate_week = alternateWeek;
@@ -464,8 +449,7 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
             this.play_time_end_data = this.setHourData(playTimeEnd);
             this.start_time = playTimeStart;
             this.end_time = playTimeEnd;
-            this.has_selected_all_day_long =
-                playTimeStart === '12:00 AM' && playTimeEnd === '11:59 PM';
+            this.has_selected_all_day_long = playTimeStart === '12:00 AM' && playTimeEnd === '11:59 PM';
             this.invalid_form = false;
         }
     }
@@ -522,29 +506,23 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
         const playTimeStart = this.form.get('playTimeStartData');
         const playTimeEnd = this.form.get('playTimeEndData');
 
-        playTimeStart.valueChanges
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((response: NgbTimeStruct | null) => {
-                if (!response) return;
-                const { hour, minute } = response;
-                const time = moment(`${hour}:${minute}`, 'HH:mm').format('hh:mm A');
-                this.start_time = time;
-                if (this.start_time === '12:00 AM' && this.end_time === '11:59 PM')
-                    this.has_selected_all_day_long = true;
-                else this.has_selected_all_day_long = false;
-            });
+        playTimeStart.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe((response: NgbTimeStruct | null) => {
+            if (!response) return;
+            const { hour, minute } = response;
+            const time = moment(`${hour}:${minute}`, 'HH:mm').format('hh:mm A');
+            this.start_time = time;
+            if (this.start_time === '12:00 AM' && this.end_time === '11:59 PM') this.has_selected_all_day_long = true;
+            else this.has_selected_all_day_long = false;
+        });
 
-        playTimeEnd.valueChanges
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((response: NgbTimeStruct | null) => {
-                if (!response) return;
-                const { hour, minute } = response;
-                const time = moment(`${hour}:${minute}`, 'HH:mm').format('hh:mm A');
-                this.end_time = time;
-                if (this.start_time === '12:00 AM' && this.end_time === '11:59 PM')
-                    this.has_selected_all_day_long = true;
-                else this.has_selected_all_day_long = false;
-            });
+        playTimeEnd.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe((response: NgbTimeStruct | null) => {
+            if (!response) return;
+            const { hour, minute } = response;
+            const time = moment(`${hour}:${minute}`, 'HH:mm').format('hh:mm A');
+            this.end_time = time;
+            if (this.start_time === '12:00 AM' && this.end_time === '11:59 PM') this.has_selected_all_day_long = true;
+            else this.has_selected_all_day_long = false;
+        });
     }
 
     private updateSchedule(data: PlaylistContentSchedule): void {

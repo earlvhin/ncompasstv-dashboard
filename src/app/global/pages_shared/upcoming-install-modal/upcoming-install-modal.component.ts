@@ -31,10 +31,7 @@ export class UpcomingInstallModalComponent implements OnInit {
     getInstallationStats() {
         this._license.get_installation_statistics().subscribe((data: any) => {
             this.installation_stats = {
-                total:
-                    data.licenseInstallationStats.total === 0
-                        ? '0'
-                        : data.licenseInstallationStats.total,
+                total: data.licenseInstallationStats.total === 0 ? '0' : data.licenseInstallationStats.total,
                 today: data.licenseInstallationStats.today,
                 tomorrow: data.licenseInstallationStats.tomorrow,
                 nextThreeDays: data.licenseInstallationStats.nextThreeDays,

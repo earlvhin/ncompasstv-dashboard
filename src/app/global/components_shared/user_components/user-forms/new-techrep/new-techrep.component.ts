@@ -98,10 +98,7 @@ export class NewTechrepComponent implements OnInit {
 
         this.subscription.add(
             this.new_tech_form.valueChanges.subscribe((data) => {
-                if (
-                    this.new_tech_form.valid &&
-                    this.f.password.value === this.f.re_password.value
-                ) {
+                if (this.new_tech_form.valid && this.f.password.value === this.f.re_password.value) {
                     this.form_invalid = false;
                 } else {
                     this.form_invalid = true;
@@ -130,10 +127,7 @@ export class NewTechrepComponent implements OnInit {
 
         this.subscription.add(
             this.f.re_password.valueChanges.subscribe((data) => {
-                if (
-                    this.f.password.value == this.f.re_password.value &&
-                    this.f.password.value.length !== 0
-                ) {
+                if (this.f.password.value == this.f.re_password.value && this.f.password.value.length !== 0) {
                     this.password_is_match = true;
                     this.password_match_msg = 'Password matches';
                 } else {

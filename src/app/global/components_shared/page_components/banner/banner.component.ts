@@ -65,8 +65,7 @@ export class BannerComponent implements OnInit, OnDestroy {
     host: API_HOST = null;
 
     is_admin = this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.administrator;
-    is_current_user_dealer =
-        this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
+    is_current_user_dealer = this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
     is_dealer_admin = this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealeradmin;
     license_stats_label: any = [];
     license_stats_array: any = [];
@@ -103,8 +102,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 
     checkRoute(dealerId: string, hostId: string) {
         let role = this._auth.current_role;
-        if (role === UI_ROLE_DEFINITION_TEXT.dealeradmin)
-            role = UI_ROLE_DEFINITION_TEXT.administrator;
+        if (role === UI_ROLE_DEFINITION_TEXT.dealeradmin) role = UI_ROLE_DEFINITION_TEXT.administrator;
         const route = `/${role}/screens/create-screen/`;
         const routeData = { queryParams: { dealer_id: dealerId, host_id: hostId } };
         const url = this._router.serializeUrl(this._router.createUrlTree([route], routeData));
@@ -120,11 +118,9 @@ export class BannerComponent implements OnInit, OnDestroy {
 
     isOpenAllDay(hours: UI_STORE_HOUR, periodIndex: number) {
         if (!hours.status) return false;
-        const originalCondition =
-            hours.periods[periodIndex].open == '' && hours.periods[periodIndex].close == '';
+        const originalCondition = hours.periods[periodIndex].open == '' && hours.periods[periodIndex].close == '';
         const isOpenAllDay =
-            hours.periods[periodIndex].open === '12:00 AM' &&
-            hours.periods[periodIndex].close === '11:59 PM';
+            hours.periods[periodIndex].open === '12:00 AM' && hours.periods[periodIndex].close === '11:59 PM';
         return originalCondition || isOpenAllDay;
     }
 
@@ -137,9 +133,7 @@ export class BannerComponent implements OnInit, OnDestroy {
     }
 
     onClickModify(): void {
-        let dialog: ComponentType<
-            EditSingleDealerComponent | EditSingleHostComponent | EditSingleAdvertiserComponent
-        >;
+        let dialog: ComponentType<EditSingleDealerComponent | EditSingleHostComponent | EditSingleAdvertiserComponent>;
         let data:
             | { dealer: API_DEALER; user: API_USER_DATA }
             | { host: API_HOST; dealer: API_DEALER; createdBy: any }
@@ -239,8 +233,7 @@ export class BannerComponent implements OnInit, OnDestroy {
                     const hasBlankOpeningTime = !opening || opening === '';
                     const hasBlankClosingTime = !closing || closing === '';
                     const isSetToOpenAllDay = opening === '12:00 AM' && closing === '11:59 PM';
-                    if (hasBlankOpeningTime || hasBlankClosingTime || isSetToOpenAllDay)
-                        period = 'Open 24 hours';
+                    if (hasBlankOpeningTime || hasBlankClosingTime || isSetToOpenAllDay) period = 'Open 24 hours';
                     else period = `${operation.periods[0].open} - ${operation.periods[0].close}`;
                 }
                 this.current_operations = { day: this.current_business_day, period };
@@ -325,8 +318,7 @@ export class BannerComponent implements OnInit, OnDestroy {
                 tags = data.advertiser.tags;
                 status = data.advertiser.status;
                 this.category = this._titlecase.transform(
-                    (this.page_data as { advertiser: API_ADVERTISER; dealer: API_DEALER })
-                        .advertiser.category,
+                    (this.page_data as { advertiser: API_ADVERTISER; dealer: API_DEALER }).advertiser.category,
                 );
         }
 

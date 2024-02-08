@@ -73,11 +73,7 @@
                         [disabled]="workbook_generation"
                         title="Export to CSV">
                         <span
-                            class="{{
-                                !workbook_generation
-                                    ? 'fas fa-file-excel'
-                                    : 'fas fa-spinner fa-spin'
-                            }}"
+                            class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
                             [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
                         <span
                             class="ml-2 button_text_animation"
@@ -94,9 +90,7 @@
                         title="Export to CSV">
                         <span
                             class="{{
-                                !export_all_workbook_generation
-                                    ? 'fas fa-file-excel'
-                                    : 'fas fa-spinner fa-spin'
+                                !export_all_workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin'
                             }}"
                             [ngStyle]="{
                                 color: export_all_workbook_generation ? '#222' : 'white'
@@ -106,20 +100,14 @@
                             [ngStyle]="{
                                 color: export_all_workbook_generation ? '#222' : 'white'
                             }">
-                            {{
-                                !export_all_workbook_generation
-                                    ? 'Export All Advetisers'
-                                    : 'Generating CSV'
-                            }}
+                            {{ !export_all_workbook_generation ? 'Export All Advetisers' : 'Generating CSV' }}
                         </span>
                     </button>
                 </div>
                 <div class="col-lg-4">
                     <app-search-field
                         *ngIf="!initial_load_advertiser"
-                        [form_title]="
-                            'Search Business Name, Address, City, State, Postal Code, or #Tag'
-                        "
+                        [form_title]="'Search Business Name, Address, City, State, Postal Code, or #Tag'"
                         [placeholder]="'Example: N-Compass'"
                         [data_reference]="table.data"
                         [primary_keyword]="'name'"
@@ -170,9 +158,7 @@
                     <i class="text-gray fa-5x far fa-file-alt"></i>
                 </div>
                 <h3 class="text-gray col-lg-12">No Results Found.</h3>
-                <span class="text-gray col-lg-12"
-                    >Try adjusting your search to find what you're looking for.</span
-                >
+                <span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
             </mat-card>
         </div>
     </ng-template>

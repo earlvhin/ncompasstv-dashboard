@@ -1,10 +1,4 @@
-import {
-    HttpEvent,
-    HttpInterceptor,
-    HttpHandler,
-    HttpRequest,
-    HttpErrorResponse,
-} from '@angular/common/http';
+import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { retry, catchError, first, filter, switchMap, take } from 'rxjs/operators';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
@@ -103,13 +97,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
         }
     }
 
-    private showWarningModal(
-        status: string,
-        message: string,
-        data: any,
-        return_msg: string,
-        action: string,
-    ): void {
+    private showWarningModal(status: string, message: string, data: any, return_msg: string, action: string): void {
         this.errorCatched = true;
         const dialogRef = this._dialog.open(ConfirmationModalComponent, {
             width: '500px',

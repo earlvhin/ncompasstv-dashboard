@@ -10,10 +10,7 @@ import { AuthService } from '../../../../global/services/auth-service/auth.servi
 import { ContentService } from '../../../../global/services/content-service/content.service';
 import { DealerService } from '../../../../global/services/dealer-service/dealer.service';
 import { UI_TABLE_CONTENT_METRICS } from '../../../../global/models/ui_table_content_metrics';
-import {
-    UI_ROLE_DEFINITION,
-    UI_ROLE_DEFINITION_TEXT,
-} from '../../../models/ui_role-definition.model';
+import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../../models/ui_role-definition.model';
 
 @Component({
     selector: 'app-contents-tab',
@@ -316,8 +313,7 @@ export class ContentsTabComponent implements OnInit {
     }
 
     generateExcel(options) {
-        const EXCEL_TYPE =
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
         var filename = '';
         let rowIndex = 1;
         for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
@@ -347,14 +343,11 @@ export class ContentsTabComponent implements OnInit {
         switch (tab) {
             case 'dealer':
                 item.playsTotal = item.playsTotal == 0 ? '' : item.playsTotal;
-                item.durationsTotal =
-                    item.durationsTotal == 0 ? '' : this.msToTime(item.durationsTotal);
-                item.hostDurationsTotal =
-                    item.hostDurationsTotal == 0 ? '' : this.msToTime(item.hostDurationsTotal);
+                item.durationsTotal = item.durationsTotal == 0 ? '' : this.msToTime(item.durationsTotal);
+                item.hostDurationsTotal = item.hostDurationsTotal == 0 ? '' : this.msToTime(item.hostDurationsTotal);
                 break;
             case 'contents':
-                item.hostDurationsTotal =
-                    item.hostDurationsTotal == 0 ? '' : this.msToTime(item.hostDurationsTotal);
+                item.hostDurationsTotal = item.hostDurationsTotal == 0 ? '' : this.msToTime(item.hostDurationsTotal);
                 break;
             default:
         }
@@ -365,17 +358,12 @@ export class ContentsTabComponent implements OnInit {
         this.workbook = new Workbook();
         this.workbook.creator = 'NCompass TV';
         this.workbook.created = new Date();
-        this.worksheet = this.workbook.addWorksheet(
-            this.start_date_for_query + ' - ' + this.end_date_for_query,
-        );
+        this.worksheet = this.workbook.addWorksheet(this.start_date_for_query + ' - ' + this.end_date_for_query);
         switch (tab) {
             case 'dealer':
                 this.workbook_generation = true;
                 Object.keys(this.dealers_mode_export_column).forEach((key) => {
-                    if (
-                        this.dealers_mode_export_column[key].name &&
-                        !this.dealers_mode_export_column[key].no_export
-                    ) {
+                    if (this.dealers_mode_export_column[key].name && !this.dealers_mode_export_column[key].no_export) {
                         header.push({
                             header: this.dealers_mode_export_column[key].name,
                             key: this.dealers_mode_export_column[key].key,
@@ -410,11 +398,7 @@ export class ContentsTabComponent implements OnInit {
                 const second_column = ['', 'Total Count', 'Total Duration'];
                 this.worksheet.getRow(2).values = second_column;
                 this.worksheet.getRow(2).height = 20;
-                const third_column = [
-                    '',
-                    this.selected_content_count,
-                    this.selected_content_duration,
-                ];
+                const third_column = ['', this.selected_content_count, this.selected_content_duration];
                 this.worksheet.getRow(3).values = third_column;
                 this.worksheet.getRow(3).height = 20;
                 this.worksheet.getRow(4).values = [];

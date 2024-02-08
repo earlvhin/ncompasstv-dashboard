@@ -29,9 +29,7 @@ export class ContentScheduleCardComponent implements OnInit {
         this.schedule.date = `${moment(from).format('MMM DD, YYYY')} - ${moment(to).format('MMM DD, YYYY')}`;
         this.schedule.days = this.setDays(days);
         this.schedule.time =
-            playTimeStart == '12:00 AM' && playTimeEnd == '11:59 PM'
-                ? 'All Day'
-                : `${playTimeStart} - ${playTimeEnd}`;
+            playTimeStart == '12:00 AM' && playTimeEnd == '11:59 PM' ? 'All Day' : `${playTimeStart} - ${playTimeEnd}`;
         this.has_schedule = true;
     }
 

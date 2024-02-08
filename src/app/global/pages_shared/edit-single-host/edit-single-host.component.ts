@@ -66,8 +66,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
     invalid_schedules: UI_STORE_HOUR_PERIOD[] = [];
     is_active_host = this.host.status === 'A';
     is_current_user_admin = this._auth.current_role === 'administrator';
-    is_current_user_dealer =
-        this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
+    is_current_user_dealer = this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
     is_host_data_ready = false;
     paging: PAGING;
     timezones: API_TIMEZONE[];
@@ -75,9 +74,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 
     private dealer_id = this.host.dealerId;
     private has_content = false;
-    private initial_business_hours: UI_OPERATION_DAYS[] = JSON.parse(
-        this.page_data.host.storeHours,
-    );
+    private initial_business_hours: UI_OPERATION_DAYS[] = JSON.parse(this.page_data.host.storeHours);
     protected _unsubscribe = new Subject<void>();
 
     constructor(
@@ -285,9 +282,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
                         () => {
                             this._dialogRef.close('delete-host');
                             if (!this.is_current_user_admin)
-                                this._router.navigate([
-                                    `/${this.roleRoute}/dealers/${this.dealer_id}`,
-                                ]);
+                                this._router.navigate([`/${this.roleRoute}/dealers/${this.dealer_id}`]);
                             else this._router.navigate([`/${this.roleRoute}/hosts`]);
                         },
                         (error) => {
@@ -403,9 +398,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
         if (this.host.status !== status)
             message += ` This will ${status === 'A' ? 'activate' : 'deactivate'} the host.`;
 
-        const confirmUpdate = await this._confirmationDialog
-            .warning({ message: title, data: message })
-            .toPromise();
+        const confirmUpdate = await this._confirmationDialog.warning({ message: title, data: message }).toPromise();
 
         if (!confirmUpdate) return;
 
@@ -523,9 +516,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
     }
 
     private addCurrentDealerToList(): void {
-        const filtered = this.dealers_data.filter(
-            (dealer) => dealer.dealerId === this.dealer.dealerId,
-        );
+        const filtered = this.dealers_data.filter((dealer) => dealer.dealerId === this.dealer.dealerId);
 
         if (filtered.length > 0) return;
 
@@ -583,8 +574,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (response: { contents: API_CONTENT[] }) => {
-                    if (response && response.contents && response.contents.length > 0)
-                        return (this.has_content = true);
+                    if (response && response.contents && response.contents.length > 0) return (this.has_content = true);
                     this.has_content = false;
                 },
                 (error) => {
@@ -686,12 +676,8 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
             operation.periods = operation.periods.map((period) => {
                 const opening = period.openingHourData;
                 const closing = period.closingHourData;
-                period.open = moment(`${opening.hour} ${opening.minute}`, 'HH:mm').format(
-                    'hh:mm A',
-                );
-                period.close = moment(`${closing.hour} ${closing.minute}`, 'HH:mm').format(
-                    'hh:mm A',
-                );
+                period.open = moment(`${opening.hour} ${opening.minute}`, 'HH:mm').format('hh:mm A');
+                period.close = moment(`${closing.hour} ${closing.minute}`, 'HH:mm').format('hh:mm A');
 
                 return period;
             });
@@ -706,10 +692,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
             this.checkFormValidity();
         });
 
-        this.edit_host_form.controls['zip'].setValidators([
-            Validators.required,
-            Validators.maxLength(7),
-        ]);
+        this.edit_host_form.controls['zip'].setValidators([Validators.required, Validators.maxLength(7)]);
 
         this.edit_host_form.controls['zip'].valueChanges.subscribe((data) => {
             if (this.canada_selected) {

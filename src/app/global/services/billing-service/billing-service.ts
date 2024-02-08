@@ -30,13 +30,7 @@ export class BillingService extends BaseService {
         return this.getRequest(url);
     }
 
-    get_invoice_charges(
-        page: number,
-        pageSize = 15,
-        searchkey: string,
-        status?: string,
-        date?: string,
-    ) {
+    get_invoice_charges(page: number, pageSize = 15, searchkey: string, status?: string, date?: string) {
         const url = `${this.getters.api_get_billing_invoice_charges}?page=${page}&pageSize=${pageSize}&status=${status}&billingdate=${date}&filterby=${searchkey}`;
         return this.getRequest(url);
     }

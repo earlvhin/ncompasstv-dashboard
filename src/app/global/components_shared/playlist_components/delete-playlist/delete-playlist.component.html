@@ -4,8 +4,7 @@
         <app-warning-animation></app-warning-animation>
         <h3 class="my-2 text-danger">You're deleting an active playlist!</h3>
         <p class="mb-4 sm-text font-weight-md text-gray">
-            You can either unassign the playlist from screens or delete it permanently by clicking
-            "Continue Delete".
+            You can either unassign the playlist from screens or delete it permanently by clicking "Continue Delete".
         </p>
         <div class="list-container">
             <div
@@ -29,15 +28,9 @@
                 </a>
             </div>
         </div>
-        <button
-            mat-button
-            mat-raised-button
-            class="mt-3 theme-btn mr-2 bg-danger"
-            [mat-dialog-close]="false">
+        <button mat-button mat-raised-button class="mt-3 theme-btn mr-2 bg-danger" [mat-dialog-close]="false">
             Cancel
         </button>
-        <button mat-button mat-raised-button class="mt-3 theme-btn" (click)="forceDelete()">
-            Continue Delete
-        </button>
+        <button mat-button mat-raised-button class="mt-3 theme-btn" (click)="forceDelete()">Continue Delete</button>
     </div>
 </div>

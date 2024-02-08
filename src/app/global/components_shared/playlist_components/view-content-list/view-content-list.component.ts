@@ -24,13 +24,7 @@ export class ViewContentListComponent implements OnInit, OnDestroy {
     constructor(@Inject(MAT_DIALOG_DATA) public _dialog: { contents: API_CONTENT[] }) {}
 
     get columns(): { name: string }[] {
-        return [
-            { name: '#' },
-            { name: 'Title' },
-            { name: 'Type' },
-            { name: 'Duration' },
-            { name: 'Fullscreen' },
-        ];
+        return [{ name: '#' }, { name: 'Title' }, { name: 'Type' }, { name: 'Duration' }, { name: 'Fullscreen' }];
     }
 
     ngOnInit() {

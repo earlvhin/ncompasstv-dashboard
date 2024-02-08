@@ -16,8 +16,7 @@ export class ExportService {
         workbook.creator = 'NCompass TV';
         workbook.created = new Date();
 
-        const EXCEL_TYPE =
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 
         worksheets.forEach((sheet) => {
             let rowIndex = 1;

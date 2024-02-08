@@ -6,13 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 import * as filestack from 'filestack-js';
 
 import { environment } from 'src/environments/environment';
-import {
-    API_HOST_FILE,
-    HOST_S3_FILE,
-    PAGING,
-    UI_CURRENT_USER,
-    UI_HOST_FILE,
-} from 'src/app/global/models';
+import { API_HOST_FILE, HOST_S3_FILE, PAGING, UI_CURRENT_USER, UI_HOST_FILE } from 'src/app/global/models';
 import { HelperService, HostService } from 'src/app/global/services';
 @Component({
     selector: 'app-documents-tab',

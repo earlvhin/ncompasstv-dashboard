@@ -14,12 +14,7 @@ import {
     IMAGE_FILETYPE,
     UI_ROLE_DEFINITION_TEXT,
 } from 'src/app/global/models';
-import {
-    AdvertiserService,
-    AuthService,
-    ContentService,
-    HostService,
-} from 'src/app/global/services';
+import { AdvertiserService, AuthService, ContentService, HostService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 import { environment as env } from 'src/environments/environment';
 @Component({
@@ -76,15 +71,13 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 
     fetchNextMedia(index: number) {
         this.file_data.selected = this.file_data.content_array[index + 1];
-        if (this.file_data.selected.content_data)
-            this.file_data.selected = this.file_data.selected.content_data;
+        if (this.file_data.selected.content_data) this.file_data.selected = this.file_data.selected.content_data;
         this.configureSelectedContent(this.file_data.selected);
     }
 
     fetchPrevMedia(index: number) {
         this.file_data.selected = this.file_data.content_array[index - 1];
-        if (this.file_data.selected.content_data)
-            this.file_data.selected = this.file_data.selected.content_data;
+        if (this.file_data.selected.content_data) this.file_data.selected = this.file_data.selected.content_data;
         this.configureSelectedContent(this.file_data.selected);
     }
 
@@ -154,11 +147,7 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
         const message = isLocked === 1 ? 'Unlock Content' : 'Lock Content';
         const status = isLocked === 1 ? 'unlock' : 'lock';
         const data = `Are you sure you want to ${status} the content?`;
-        const response: boolean | string = await this.openWarningModal(
-            'warning',
-            message,
-            data,
-        ).toPromise();
+        const response: boolean | string = await this.openWarningModal('warning', message, data).toPromise();
 
         if ((typeof response === 'boolean' && !response) || typeof response === 'string') return;
 
@@ -191,12 +180,7 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 
     private configureSelectedContent(selected: UI_CONTENT) {
         var datetime = new Date(selected.date_uploaded);
-        var time =
-            datetime.getHours() +
-            ':' +
-            datetime.getMinutes() +
-            ' ' +
-            (datetime.getHours() < 12 ? 'AM' : 'PM');
+        var time = datetime.getHours() + ':' + datetime.getMinutes() + ' ' + (datetime.getHours() < 12 ? 'AM' : 'PM');
         this.file_data.selected.time_uploaded = time;
         this.file_size_formatted = this.getFileSize(selected.file_size);
         this.file_data.selected.index = selected.index;

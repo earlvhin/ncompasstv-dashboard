@@ -5,12 +5,7 @@
         <form [formGroup]="edit_form" (ngSubmit)="updatePlaylistInfo()">
             <mat-form-field class="full-width">
                 <mat-label>Playlist Name (Max Characters: 50)</mat-label>
-                <input
-                    formControlName="playlistName"
-                    matInput
-                    type="text"
-                    placeholder="Playlist Name"
-                    maxlength="50" />
+                <input formControlName="playlistName" matInput type="text" placeholder="Playlist Name" maxlength="50" />
             </mat-form-field>
 
             <mat-form-field class="full-width mb-3">
@@ -23,15 +18,12 @@
                     maxlength="100" />
             </mat-form-field>
 
-            <button mat-button mat-raised-button class="theme-btn" [disabled]="disable_btn">
-                Edit Playlist
-            </button>
+            <button mat-button mat-raised-button class="theme-btn" [disabled]="disable_btn">Edit Playlist</button>
         </form>
     </ng-container>
 
     <ng-template #success>
-        <div
-            class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center h-100">
+        <div class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center h-100">
             <div>
                 <app-success-animation class="mb-2"></app-success-animation>
                 <h3 class="mb-4">Playlist Info Updated</h3>

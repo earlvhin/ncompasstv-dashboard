@@ -4,19 +4,8 @@ import { MatDialog, MAT_DIALOG_DATA } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import {
-    AuthService,
-    LicenseService,
-    PlaylistService,
-    RoleService,
-    ScreenService,
-} from 'src/app/global/services';
-import {
-    API_BLOCKLIST_CONTENT,
-    API_LICENSE,
-    UI_ROLE_DEFINITION,
-    UI_ROLE_DEFINITION_TEXT,
-} from 'src/app/global/models';
+import { AuthService, LicenseService, PlaylistService, RoleService, ScreenService } from 'src/app/global/services';
+import { API_BLOCKLIST_CONTENT, API_LICENSE, UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
@@ -113,13 +102,7 @@ export class ScreenLicenseComponent implements OnInit {
                         }
                     },
                     (error) => {
-                        this.warningModal(
-                            'error',
-                            'Oh Snap!',
-                            'Failed to assign license to this screen.',
-                            null,
-                            null,
-                        );
+                        this.warningModal('error', 'Oh Snap!', 'Failed to assign license to this screen.', null, null);
                     },
                 );
         }
@@ -129,9 +112,7 @@ export class ScreenLicenseComponent implements OnInit {
         if (this.zone_contents.length > 0) {
             this.zone_contents.forEach((zone) => {
                 zone.contents.map((c) => {
-                    this.to_blacklist.push(
-                        new API_BLOCKLIST_CONTENT(licenseId, c.content_id, c.playlist_content_id),
-                    );
+                    this.to_blacklist.push(new API_BLOCKLIST_CONTENT(licenseId, c.content_id, c.playlist_content_id));
                 });
             });
         }
@@ -157,13 +138,7 @@ export class ScreenLicenseComponent implements OnInit {
             });
     }
 
-    warningModal(
-        status: string,
-        message: string,
-        data: string,
-        return_msg: string,
-        action: string,
-    ): void {
+    warningModal(status: string, message: string, data: string, return_msg: string, action: string): void {
         this._dialog.closeAll();
 
         const dialogRef = this._dialog.open(ConfirmationModalComponent, {
@@ -173,9 +148,7 @@ export class ScreenLicenseComponent implements OnInit {
         });
 
         const url = `/${this.roleRoute}/screens/`;
-        dialogRef
-            .afterClosed()
-            .subscribe(() => this._router.navigate([url, this._dialog_data.screen_id]));
+        dialogRef.afterClosed().subscribe(() => this._router.navigate([url, this._dialog_data.screen_id]));
     }
 
     private getLicenses(): void {

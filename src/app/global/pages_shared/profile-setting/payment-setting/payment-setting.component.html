@@ -15,18 +15,14 @@
                 </button>
             </div>
         </div>
-        <div
-            class="col-lg-12 p-0 d-flex payment-options"
-            *ngIf="actualCreditCardDetails.length > 0; else no_cc">
+        <div class="col-lg-12 p-0 d-flex payment-options" *ngIf="actualCreditCardDetails.length > 0; else no_cc">
             <div class="col-lg-3 pl-0" *ngFor="let card of actualCreditCardDetails; let i = index">
                 <div class="credit-card" *ngIf="i < 4" [ngClass]="i === 0 ? 'bg-primary' : ''">
                     <div class="col-lg-12 pt-3 d-flex">
                         <div class="icon text-white col-lg-2">
                             <i class="fab fa-cc-{{ card.brand }}"></i>
                         </div>
-                        <div class="lg-text text-white col-lg-10 text-right pt-3">
-                            **** **** **** {{ card.last4 }}
-                        </div>
+                        <div class="lg-text text-white col-lg-10 text-right pt-3">**** **** **** {{ card.last4 }}</div>
                     </div>
                     <div class="col-lg-12 pt-3 text-white md-text">
                         <div class="col-lg-12">
@@ -40,18 +36,14 @@
                                     PRIMARY
                                 </span>
                             </div>
-                            <div class="col-lg-8 pt-4 text-right">
-                                {{ card.exp_month }} / {{ card.exp_year }}
-                            </div>
+                            <div class="col-lg-8 pt-4 text-right">{{ card.exp_month }} / {{ card.exp_year }}</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-lg-12 text-right mt-3" *ngIf="actualCreditCardDetails.length > 4">
-            <span class="clickable text-primary md-text" (click)="viewAllCards()"
-                >VIEW ALL CARDS</span
-            >
+            <span class="clickable text-primary md-text" (click)="viewAllCards()">VIEW ALL CARDS</span>
         </div>
         <ng-template #no_cc>
             <div class="col-lg-12 p-0 d-flex payment-options">
@@ -61,9 +53,7 @@
                             <div class="icon text-white col-lg-2">
                                 <i class="far fa-credit-card"></i>
                             </div>
-                            <div class="lg-text text-white col-lg-10 text-right pt-3">
-                                **** **** **** ****
-                            </div>
+                            <div class="lg-text text-white col-lg-10 text-right pt-3">**** **** **** ****</div>
                         </div>
                         <div class="col-lg-12 pt-3 text-white md-text">
                             <div class="col-lg-12">No Credit Card Added</div>
@@ -83,13 +73,9 @@
                     <mat-form-field class="full-width content-filter-dropdown">
                         <mat-label>Select Card Number</mat-label>
                         <!-- <mat-select (selectionChange)="onSearchOption($event.value)" [(value)]="currentSearchOption" [disabled]="loading_hosts">  -->
-                        <mat-select
-                            (selectionChange)="cardSelection($event)"
-                            [(ngModel)]="cardNumber">
+                        <mat-select (selectionChange)="cardSelection($event)" [(ngModel)]="cardNumber">
                             <mat-option value="">---- ---- ---- ----</mat-option>
-                            <mat-option
-                                *ngFor="let card of actualCreditCardDetails"
-                                [value]="card.last4"
+                            <mat-option *ngFor="let card of actualCreditCardDetails" [value]="card.last4"
                                 >**** **** **** {{ card.last4 }}</mat-option
                             >
                         </mat-select>
@@ -108,9 +94,7 @@
                                 <mat-label>Name on card</mat-label>
                                 <input formControlName="Name" matInput type="text" required />
                             </mat-form-field>
-                            <mat-form-field
-                                class="full-width position-relative text-light-gray"
-                                required>
+                            <mat-form-field class="full-width position-relative text-light-gray" required>
                                 <mat-label>Email</mat-label>
                                 <input formControlName="Email" matInput type="email" readonly />
                             </mat-form-field>
@@ -137,12 +121,7 @@
                             </div>
                             <mat-form-field class="full-width position-relative text-light-gray">
                                 <mat-label>CVC</mat-label>
-                                <input
-                                    formControlName="Cvc"
-                                    matInput
-                                    type="password"
-                                    required
-                                    readonly />
+                                <input formControlName="Cvc" matInput type="password" required readonly />
                             </mat-form-field>
                         </form>
                     </div>
@@ -233,11 +212,7 @@
                     </div>
                 </div>
                 <div class="col-lg-12 text-right pr-0">
-                    <button
-                        mat-button
-                        mat-raised-button
-                        class="theme-btn mt-4"
-                        (click)="updateBillingDetails()">
+                    <button mat-button mat-raised-button class="theme-btn mt-4" (click)="updateBillingDetails()">
                         Save
                     </button>
                 </div>

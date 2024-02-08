@@ -25,19 +25,12 @@
                         </form>
                     </div>
                     <div class="template-zone-information">
-                        <h3
-                            class="mb-4"
-                            *ngIf="zone_property_form.get('zones')['controls'].length > 0">
-                            Zones
-                        </h3>
+                        <h3 class="mb-4" *ngIf="zone_property_form.get('zones')['controls'].length > 0">Zones</h3>
                         <form [formGroup]="zone_property_form" class="mb-4">
                             <ng-container formArrayName="zones">
                                 <mat-accordion>
                                     <mat-expansion-panel
-                                        *ngFor="
-                                            let z of zone_property_form.get('zones')['controls'];
-                                            let i = index
-                                        "
+                                        *ngFor="let z of zone_property_form.get('zones')['controls']; let i = index"
                                         class="mb-3"
                                         [formGroupName]="i">
                                         <mat-expansion-panel-header
@@ -122,15 +115,11 @@
                                                             [cpDisableInput]="true"
                                                             [cpWidth]="478"
                                                             [cpToggle]="true"
-                                                            (colorPickerChange)="
-                                                                colorPicker(color, i)
-                                                            "
+                                                            (colorPickerChange)="colorPicker(color, i)"
                                                             matInput
                                                             type="text"
                                                             [value]="z.controls.background.value"
-                                                            [style.background]="
-                                                                z.controls.background.value
-                                                            " />
+                                                            [style.background]="z.controls.background.value" />
                                                     </mat-form-field>
                                                 </div>
                                             </div>
@@ -139,11 +128,7 @@
                                 </mat-accordion>
                             </ng-container>
                         </form>
-                        <button
-                            mat-button
-                            mat-raised-button
-                            class="theme-btn mr-3"
-                            (click)="openNewZoneModal()">
+                        <button mat-button mat-raised-button class="theme-btn mr-3" (click)="openNewZoneModal()">
                             <span class="button-label"> Add Zone </span>
                             <span class="fas fa-plus sm-text"></span>
                         </button>

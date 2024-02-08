@@ -199,9 +199,7 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
     }
 
     private addCurrentDealerToList(): void {
-        const filtered = this.dealers_data.filter(
-            (dealer) => dealer.dealerId === this.dealers_data.dealerId,
-        );
+        const filtered = this.dealers_data.filter((dealer) => dealer.dealerId === this.dealers_data.dealerId);
 
         if (filtered.length > 0) return;
 
@@ -253,9 +251,7 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
         if (this.advertiser.status !== newStatus)
             message += ` This will ${newStatus === 'A' ? 'activate' : 'deactivate'} the advertiser.`;
 
-        const confirmChange = await this._confirmationDialog
-            .warning({ message: title, data: message })
-            .toPromise();
+        const confirmChange = await this._confirmationDialog.warning({ message: title, data: message }).toPromise();
 
         if (!confirmChange) return;
 
@@ -280,9 +276,7 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
     }
 
     createActivity(activity) {
-        return this._advertiser
-            .create_advertiser_activity_logs(activity)
-            .pipe(takeUntil(this._unsubscribe));
+        return this._advertiser.create_advertiser_activity_logs(activity).pipe(takeUntil(this._unsubscribe));
     }
 
     searchDealers(keyword = '') {
@@ -302,9 +296,7 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
     }
 
     setDealer(dealerId: string) {
-        const filteredDealer = this.dealers_data.filter(
-            (dealer) => dealer.dealerId === dealerId,
-        )[0];
+        const filteredDealer = this.dealers_data.filter((dealer) => dealer.dealerId === dealerId)[0];
         this._formControls.dealerId.setValue(this.initial_dealer_id);
         this.dealer_name = filteredDealer.businessName;
         this.current_dealer = filteredDealer;
@@ -317,9 +309,7 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
                 takeUntil(this._unsubscribe),
                 map((response) => {
                     response = response.map((parentCategory) => {
-                        parentCategory.categoryName = this._titlecase.transform(
-                            parentCategory.categoryName,
-                        );
+                        parentCategory.categoryName = this._titlecase.transform(parentCategory.categoryName);
                         return parentCategory;
                     });
 
@@ -333,10 +323,7 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
     }
 
     private zipCodeValidation() {
-        this.edit_advertiser_form.controls['zip'].setValidators([
-            Validators.required,
-            Validators.maxLength(7),
-        ]);
+        this.edit_advertiser_form.controls['zip'].setValidators([Validators.required, Validators.maxLength(7)]);
 
         this.edit_advertiser_form.controls['zip'].valueChanges.subscribe((data) => {
             if (this.canada_selected) {

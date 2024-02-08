@@ -21,10 +21,7 @@
                         <ng-template #edit_alias>
                             <form class="edit-alias-form" [formGroup]="update_alias">
                                 <h1 class="page-title mb-1">
-                                    <input
-                                        matInput
-                                        formControlName="alias"
-                                        placeholder="License Alias" />
+                                    <input matInput formControlName="alias" placeholder="License Alias" />
                                 </h1>
                             </form>
                             <mat-icon
@@ -89,26 +86,19 @@
                             <span class="sm-text mr-2"> Timezone: </span>
                             <h5 class="sm-text">
                                 {{ timezone.name }} -
-                                <ng-container
-                                    *ngIf="timezone.name === 'US/Pacific'; else otherTimezone">
+                                <ng-container *ngIf="timezone.name === 'US/Pacific'; else otherTimezone">
                                     <span class="time-span">{{ pacificTime }}</span>
                                 </ng-container>
                                 <ng-template #otherTimezone>
-                                    <span
-                                        *ngIf="timezone.name === 'US/Eastern'"
-                                        class="time-span"
-                                        >{{ easternTime }}</span
-                                    >
-                                    <span
-                                        *ngIf="timezone.name === 'US/Mountain'"
-                                        class="time-span"
-                                        >{{ mountainTime }}</span
-                                    >
-                                    <span
-                                        *ngIf="timezone.name === 'US/Central'"
-                                        class="time-span"
-                                        >{{ centralTime }}</span
-                                    >
+                                    <span *ngIf="timezone.name === 'US/Eastern'" class="time-span">{{
+                                        easternTime
+                                    }}</span>
+                                    <span *ngIf="timezone.name === 'US/Mountain'" class="time-span">{{
+                                        mountainTime
+                                    }}</span>
+                                    <span *ngIf="timezone.name === 'US/Central'" class="time-span">{{
+                                        centralTime
+                                    }}</span>
                                 </ng-template>
                             </h5>
                         </div>
@@ -132,16 +122,12 @@
                             [style.backgroundColor]="tag.tagColor ? tag.tagColor : 'gray'">
                             <div
                                 class="name"
-                                matTooltip="{{
-                                    tag.description ? tag.description : 'Edit this tag'
-                                }}"
+                                matTooltip="{{ tag.description ? tag.description : 'Edit this tag' }}"
                                 (click)="openEditTagModal(i, tag)">
                                 {{ tag.name }}
                             </div>
                             <ng-container *ngIf="tag.exclude === 1">
-                                <mat-icon class="excluded" matTooltip="This tag is excluded"
-                                    >visibility_off</mat-icon
-                                >
+                                <mat-icon class="excluded" matTooltip="This tag is excluded">visibility_off</mat-icon>
                             </ng-container>
                             <ng-container>
                                 <mat-icon
@@ -281,29 +267,19 @@
                                                                 mat-button
                                                                 mat-raised-button
                                                                 class="theme-btn mb-2 btn-title"
-                                                                [disabled]="
-                                                                    !pi_status || screenshot_timeout
-                                                                "
+                                                                [disabled]="!pi_status || screenshot_timeout"
                                                                 (click)="screenShotPi()">
-                                                                <span
-                                                                    class="fas fa-camera mr-2"></span>
+                                                                <span class="fas fa-camera mr-2"></span>
                                                                 Screenshot
                                                             </button>
                                                             <button
                                                                 mat-button
                                                                 mat-raised-button
                                                                 class="theme-btn btn-title"
-                                                                *ngIf="
-                                                                    screenshots.length != 0 &&
-                                                                    !isCurrentUserDealer
-                                                                "
-                                                                [disabled]="
-                                                                    screenshot_timeout ||
-                                                                    clear_screenshots
-                                                                "
+                                                                *ngIf="screenshots.length != 0 && !isCurrentUserDealer"
+                                                                [disabled]="screenshot_timeout || clear_screenshots"
                                                                 (click)="clearScreenshots()">
-                                                                <span
-                                                                    class="fas fa-times mr-2"></span>
+                                                                <span class="fas fa-times mr-2"></span>
                                                                 Clear
                                                             </button>
                                                         </div>
@@ -313,20 +289,12 @@
 
                                                     <div class="m-auto horizontal-panel w-right">
                                                         <ng-container
-                                                            *ngIf="
-                                                                screenshots.length != 0;
-                                                                else no_screenshots
-                                                            ">
-                                                            <div
-                                                                class="screenshots"
-                                                                *ngFor="let s of screenshots">
+                                                            *ngIf="screenshots.length != 0; else no_screenshots">
+                                                            <div class="screenshots" *ngFor="let s of screenshots">
                                                                 <a [href]="s" target="_blank"
-                                                                    ><img
-                                                                        [src]="s"
-                                                                        alt="screenshots"
+                                                                    ><img [src]="s" alt="screenshots"
                                                                 /></a>
-                                                                <p
-                                                                    class="screenshots__text text-center mb-0">
+                                                                <p class="screenshots__text text-center mb-0">
                                                                     {{ s | screenshot }}
                                                                 </p>
                                                             </div>
@@ -345,8 +313,7 @@
                                                             *ngIf="screenshot_timeout">
                                                             <div class="flex-even text-center">
                                                                 <h2 class="text-primary">
-                                                                    <span
-                                                                        class="fas fa-camera"></span>
+                                                                    <span class="fas fa-camera"></span>
                                                                 </h2>
                                                                 <h6 class="text-primary">
                                                                     {{ screenshot_message }}
@@ -359,12 +326,9 @@
                                                             *ngIf="clear_screenshots">
                                                             <div class="flex-even text-center">
                                                                 <h2 class="text-primary">
-                                                                    <span
-                                                                        class="fas fa-camera"></span>
+                                                                    <span class="fas fa-camera"></span>
                                                                 </h2>
-                                                                <h6 class="text-primary">
-                                                                    Deleting Screenshots. . .
-                                                                </h6>
+                                                                <h6 class="text-primary">Deleting Screenshots. . .</h6>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -389,9 +353,7 @@
                                                             <div class="d-flex">
                                                                 <!-- Pi Status -->
                                                                 <div class="flex-even">
-                                                                    <span class="title">
-                                                                        Pi Status
-                                                                    </span>
+                                                                    <span class="title"> Pi Status </span>
 
                                                                     <h5
                                                                         class="title"
@@ -399,19 +361,13 @@
                                                                             good: pi_status,
                                                                             bad: !pi_status
                                                                         }">
-                                                                        {{
-                                                                            pi_status
-                                                                                ? 'Online'
-                                                                                : 'Offline'
-                                                                        }}
+                                                                        {{ pi_status ? 'Online' : 'Offline' }}
                                                                     </h5>
                                                                 </div>
 
                                                                 <!-- Player Status -->
                                                                 <div class="flex-even">
-                                                                    <span class="title">
-                                                                        Player Status
-                                                                    </span>
+                                                                    <span class="title"> Player Status </span>
 
                                                                     <h5
                                                                         class="title"
@@ -419,19 +375,13 @@
                                                                             good: player_status,
                                                                             bad: !player_status
                                                                         }">
-                                                                        {{
-                                                                            player_status
-                                                                                ? 'Online'
-                                                                                : 'Offline'
-                                                                        }}
+                                                                        {{ player_status ? 'Online' : 'Offline' }}
                                                                     </h5>
                                                                 </div>
 
                                                                 <!-- TV Status -->
                                                                 <div class="flex-even">
-                                                                    <span class="title">
-                                                                        TV Status
-                                                                    </span>
+                                                                    <span class="title"> TV Status </span>
 
                                                                     <h5
                                                                         class="title"
@@ -439,19 +389,13 @@
                                                                             good: cec_status,
                                                                             bad: !cec_status
                                                                         }">
-                                                                        {{
-                                                                            cec_status
-                                                                                ? 'ON'
-                                                                                : 'OFF'
-                                                                        }}
+                                                                        {{ cec_status ? 'ON' : 'OFF' }}
                                                                     </h5>
                                                                 </div>
 
                                                                 <!-- Display Status -->
                                                                 <div class="flex-even">
-                                                                    <span class="title">
-                                                                        Display Status
-                                                                    </span>
+                                                                    <span class="title"> Display Status </span>
 
                                                                     <h5
                                                                         class="title"
@@ -460,40 +404,25 @@
                                                                             else checkingDisplayStatus
                                                                         "
                                                                         [ngClass]="{
-                                                                            good:
-                                                                                display_status ===
-                                                                                1,
-                                                                            bad:
-                                                                                display_status !== 1
+                                                                            good: display_status === 1,
+                                                                            bad: display_status !== 1
                                                                         }">
-                                                                        <ng-container
-                                                                            [ngSwitch]="
-                                                                                display_status
-                                                                            ">
-                                                                            <ng-container
-                                                                                *ngSwitchCase="1"
+                                                                        <ng-container [ngSwitch]="display_status">
+                                                                            <ng-container *ngSwitchCase="1"
                                                                                 >ON</ng-container
                                                                             >
-                                                                            <ng-container
-                                                                                *ngSwitchCase="2"
+                                                                            <ng-container *ngSwitchCase="2"
                                                                                 >N/A</ng-container
                                                                             >
-                                                                            <ng-container
-                                                                                *ngSwitchDefault
+                                                                            <ng-container *ngSwitchDefault
                                                                                 >OFF</ng-container
                                                                             >
                                                                         </ng-container>
                                                                     </h5>
 
-                                                                    <ng-template
-                                                                        #checkingDisplayStatus>
-                                                                        <h5
-                                                                            class="sm-text text-gray">
-                                                                            {{
-                                                                                pi_status
-                                                                                    ? 'Checking ...'
-                                                                                    : 'N/A'
-                                                                            }}
+                                                                    <ng-template #checkingDisplayStatus>
+                                                                        <h5 class="sm-text text-gray">
+                                                                            {{ pi_status ? 'Checking ...' : 'N/A' }}
                                                                         </h5>
                                                                     </ng-template>
                                                                 </div>
@@ -502,9 +431,7 @@
                                                             <div class="d-flex">
                                                                 <!-- Last Startup -->
                                                                 <div class="flex-even last-online">
-                                                                    <span class="title"
-                                                                        >Last Startup</span
-                                                                    >
+                                                                    <span class="title">Last Startup</span>
                                                                     <h5 class="title">
                                                                         {{ lastStartup }}
                                                                     </h5>
@@ -512,9 +439,7 @@
 
                                                                 <!-- Last Disconnect -->
                                                                 <div class="flex-even last-offline">
-                                                                    <span class="title"
-                                                                        >Last Disconnect</span
-                                                                    >
+                                                                    <span class="title">Last Disconnect</span>
                                                                     <h5 class="title">
                                                                         {{ lastDisconnect }}
                                                                     </h5>
@@ -522,14 +447,9 @@
 
                                                                 <!-- Last Update -->
                                                                 <div class="flex-even last-update">
-                                                                    <span class="title"
-                                                                        >Last Update</span
-                                                                    >
+                                                                    <span class="title">Last Update</span>
                                                                     <h5 class="title">
-                                                                        {{
-                                                                            content_time_update ||
-                                                                                'N/A'
-                                                                        }}
+                                                                        {{ content_time_update || 'N/A' }}
                                                                     </h5>
                                                                 </div>
                                                             </div>
@@ -537,32 +457,21 @@
                                                             <div class="d-flex gap-5">
                                                                 <!-- Anydesk -->
                                                                 <div class="flex-even">
-                                                                    <span class="title"
-                                                                        >Anydesk</span
-                                                                    >
-                                                                    <div
-                                                                        class="d-flex align-items-center">
-                                                                        <h5
-                                                                            class="d-inline-block title mr-3">
-                                                                            {{
-                                                                                anydesk_id
-                                                                                    ? anydesk_id
-                                                                                    : 'N/A'
-                                                                            }}
+                                                                    <span class="title">Anydesk</span>
+                                                                    <div class="d-flex align-items-center">
+                                                                        <h5 class="d-inline-block title mr-3">
+                                                                            {{ anydesk_id ? anydesk_id : 'N/A' }}
                                                                         </h5>
 
                                                                         <ng-container
                                                                             *ngIf="
-                                                                                !anydesk_restarting &&
-                                                                                    anydesk_id;
+                                                                                !anydesk_restarting && anydesk_id;
                                                                                 else disabledAnydeskControls
                                                                             ">
                                                                             <!-- RESTART ANYDESK SERVICE BUTTON -->
                                                                             <button
                                                                                 class="card-button restart-anydesk"
-                                                                                (click)="
-                                                                                    restartAnydesk()
-                                                                                "
+                                                                                (click)="restartAnydesk()"
                                                                                 title="Restart Anydesk Service">
                                                                                 <span
                                                                                     class="fas fa-power-off md-text"></span>
@@ -570,25 +479,17 @@
 
                                                                             <!-- RESET ANYDESK ID BUTTON -->
                                                                             <button
-                                                                                *ngIf="
-                                                                                    hasAdminPrivileges
-                                                                                "
+                                                                                *ngIf="hasAdminPrivileges"
                                                                                 class="card-button reset-anydesk-id"
-                                                                                (click)="
-                                                                                    onResetAnydeskID()
-                                                                                "
+                                                                                (click)="onResetAnydeskID()"
                                                                                 title="Reset Anydesk ID">
                                                                                 <span
                                                                                     class="fa fa-exchange md-text"></span>
                                                                             </button>
                                                                         </ng-container>
 
-                                                                        <ng-template
-                                                                            #disabledAnydeskControls>
-                                                                            <ng-container
-                                                                                *ngIf="
-                                                                                    anydesk_restarting
-                                                                                ">
+                                                                        <ng-template #disabledAnydeskControls>
+                                                                            <ng-container *ngIf="anydesk_restarting">
                                                                                 <button
                                                                                     class="card-button restart-anydesk disabled rotate mr-2"
                                                                                     title="Anydesk Status">
@@ -597,11 +498,8 @@
                                                                                 </button>
                                                                             </ng-container>
 
-                                                                            <span
-                                                                                class="sm-text text-gray">
-                                                                                {{
-                                                                                    anydesk_status_text
-                                                                                }}
+                                                                            <span class="sm-text text-gray">
+                                                                                {{ anydesk_status_text }}
                                                                             </span>
                                                                         </ng-template>
                                                                     </div>
@@ -609,9 +507,7 @@
 
                                                                 <!-- Anydesk Password -->
                                                                 <div class="flex-even last-update">
-                                                                    <span class="title"
-                                                                        >Anydesk Password</span
-                                                                    >
+                                                                    <span class="title">Anydesk Password</span>
                                                                     <h5 class="title">
                                                                         {{ splitKey(license_id) }}
                                                                     </h5>
@@ -619,26 +515,15 @@
 
                                                                 <!-- TV Brand -->
                                                                 <div class="flex-even tv-brand">
-                                                                    <span class="title"
-                                                                        >TV Brand</span
-                                                                    >
-                                                                    <div
-                                                                        class="d-flex align-items-center">
+                                                                    <span class="title">TV Brand</span>
+                                                                    <div class="d-flex align-items-center">
                                                                         <h5 class="title">
-                                                                            {{
-                                                                                tv_brand | titlecase
-                                                                            }}
+                                                                            {{ tv_brand | titlecase }}
                                                                         </h5>
                                                                         <mat-icon
                                                                             class="clickable sm-text"
-                                                                            (click)="
-                                                                                openUpdateTvBrandDialog()
-                                                                            ">
-                                                                            {{
-                                                                                is_editing_tv_brand
-                                                                                    ? 'save'
-                                                                                    : 'edit'
-                                                                            }}
+                                                                            (click)="openUpdateTvBrandDialog()">
+                                                                            {{ is_editing_tv_brand ? 'save' : 'edit' }}
                                                                         </mat-icon>
                                                                     </div>
                                                                 </div>
@@ -649,30 +534,17 @@
                                                     <!-- Screen Info -->
                                                     <div class="w-40">
                                                         <mat-card class="h-100 p-4">
-                                                            <ng-container
-                                                                *ngIf="
-                                                                    hasLoadedScreenData;
-                                                                    else loaderSmall
-                                                                ">
-                                                                <h5 class="mb-0 font-weight-medium">
-                                                                    Screen Info
-                                                                </h5>
+                                                            <ng-container *ngIf="hasLoadedScreenData; else loaderSmall">
+                                                                <h5 class="mb-0 font-weight-medium">Screen Info</h5>
 
                                                                 <hr class="my-2" />
 
                                                                 <div class="d-flex">
                                                                     <!-- Screen Name -->
                                                                     <div class="flex-even">
-                                                                        <span class="title"
-                                                                            >Screen Name</span
-                                                                        >
-                                                                        <a
-                                                                            [routerLink]="
-                                                                                screen_route
-                                                                            "
-                                                                            target="_blank">
-                                                                            <h5
-                                                                                class="hoverable title">
+                                                                        <span class="title">Screen Name</span>
+                                                                        <a [routerLink]="screen_route" target="_blank">
+                                                                            <h5 class="hoverable title">
                                                                                 {{
                                                                                     screen.screen_title
                                                                                         ? (screen.screen_title
@@ -684,9 +556,7 @@
                                                                     </div>
 
                                                                     <div class="flex-even">
-                                                                        <span class="title"
-                                                                            >Screen Template</span
-                                                                        >
+                                                                        <span class="title">Screen Template</span>
                                                                         <h5 class="title">
                                                                             {{
                                                                                 screen.assigned_template
@@ -696,17 +566,12 @@
                                                                         </h5>
                                                                     </div>
 
-                                                                    <div
-                                                                        class="flex-even"
-                                                                        *ngIf="screen_type">
-                                                                        <span class="title"
-                                                                            >Screen Type</span
-                                                                        >
+                                                                    <div class="flex-even" *ngIf="screen_type">
+                                                                        <span class="title">Screen Type</span>
                                                                         <h5 class="title">
                                                                             {{
                                                                                 screen_type.name
-                                                                                    ? (screen_type.name
-                                                                                      | titlecase)
+                                                                                    ? (screen_type.name | titlecase)
                                                                                     : 'N/A'
                                                                             }}
                                                                         </h5>
@@ -717,21 +582,13 @@
 
                                                                 <!-- Screen Playlists -->
                                                                 <div>
-                                                                    <span class="title"
-                                                                        >Screen Playlists</span
-                                                                    >
+                                                                    <span class="title">Screen Playlists</span>
                                                                     <div>
-                                                                        <ul
-                                                                            class="m-0 p-0 list-unstyled">
-                                                                            <li
-                                                                                *ngFor="
-                                                                                    let zone of zone_playlists
-                                                                                ">
+                                                                        <ul class="m-0 p-0 list-unstyled">
+                                                                            <li *ngFor="let zone of zone_playlists">
                                                                                 <span
                                                                                     class="fas fa-circle mr-2 align-middle d-inline-block"
-                                                                                    style="
-                                                                                        font-size: 6px;
-                                                                                    "></span>
+                                                                                    style="font-size: 6px"></span>
 
                                                                                 <ng-container
                                                                                     *ngIf="
@@ -740,32 +597,22 @@
                                                                                         else no_url
                                                                                     ">
                                                                                     <a
-                                                                                        [routerLink]="
-                                                                                            zone.link
-                                                                                        "
+                                                                                        [routerLink]="zone.link"
                                                                                         target="_blank">
                                                                                         <h5
                                                                                             class="hoverable d-inline-block align-middle title m-0">
-                                                                                            {{
-                                                                                                zone.name
-                                                                                            }}
+                                                                                            {{ zone.name }}
                                                                                             -
-                                                                                            {{
-                                                                                                zone.playlist_name
-                                                                                            }}
+                                                                                            {{ zone.playlist_name }}
                                                                                         </h5>
                                                                                     </a>
                                                                                 </ng-container>
 
-                                                                                <ng-template
-                                                                                    #no_url>
+                                                                                <ng-template #no_url>
                                                                                     <h5
                                                                                         class="d-inline-block align-middle title m-0">
-                                                                                        {{
-                                                                                            zone.name
-                                                                                        }}
-                                                                                        - No
-                                                                                        Playlist
+                                                                                        {{ zone.name }}
+                                                                                        - No Playlist
                                                                                     </h5>
                                                                                 </ng-template>
                                                                             </li>
@@ -780,40 +627,24 @@
                                                 <!-- Other Details -->
                                                 <div class="w-100 mb-3">
                                                     <mat-card class="p-4">
-                                                        <h5 class="mb-0 font-weight-medium">
-                                                            Other Details
-                                                        </h5>
+                                                        <h5 class="mb-0 font-weight-medium">Other Details</h5>
                                                         <hr class="my-2" />
 
                                                         <div class="row">
                                                             <!-- Notes -->
-                                                            <div
-                                                                class="col-lg-4"
-                                                                *ngIf="!isCurrentUserDealer">
+                                                            <div class="col-lg-4" *ngIf="!isCurrentUserDealer">
                                                                 <div class="notes">
-                                                                    <span class="title"
-                                                                        >Host Notes
-                                                                    </span>
+                                                                    <span class="title">Host Notes </span>
                                                                     <ng-container
-                                                                        *ngIf="
-                                                                            host_notes;
-                                                                            else noNotes
-                                                                        "></ng-container>
-                                                                    <p
-                                                                        (click)="onShowNotes()"
-                                                                        class="title hoverable">
-                                                                        {{
-                                                                            host_notes
-                                                                                | substring: 200
-                                                                        }}
+                                                                        *ngIf="host_notes; else noNotes"></ng-container>
+                                                                    <p (click)="onShowNotes()" class="title hoverable">
+                                                                        {{ host_notes | substring: 200 }}
                                                                     </p>
                                                                 </div>
                                                             </div>
 
                                                             <ng-template #noNotes>
-                                                                <p class="title">
-                                                                    No notes available
-                                                                </p>
+                                                                <p class="title">No notes available</p>
                                                             </ng-template>
 
                                                             <!-- Pictures -->
@@ -822,28 +653,17 @@
 
                                                                 <div class="pictures__main d-flex">
                                                                     <ng-container
-                                                                        *ngIf="
-                                                                            images.length;
-                                                                            else noPictures
-                                                                        ">
-                                                                        <div
-                                                                            *ngFor="
-                                                                                let i of images
-                                                                            ">
-                                                                            <a
-                                                                                [href]="i.url"
-                                                                                target="_blank">
+                                                                        *ngIf="images.length; else noPictures">
+                                                                        <div *ngFor="let i of images">
+                                                                            <a [href]="i.url" target="_blank">
                                                                                 <img
                                                                                     [src]="i.url"
                                                                                     class="mr-2 mb-2 pictures__main-pictures"
                                                                                     alt="pictures"
                                                                                     matTooltip="{{
                                                                                         i.dateCreated
-                                                                                            | date
-                                                                                                : 'MMMM d, y'
-                                                                                    }} {{
-                                                                                        i.filename
-                                                                                    }}" />
+                                                                                            | date: 'MMMM d, y'
+                                                                                    }} {{ i.filename }}" />
                                                                             </a>
                                                                         </div>
                                                                     </ng-container>
@@ -851,19 +671,13 @@
                                                             </div>
 
                                                             <ng-template #noPictures>
-                                                                <p class="title">
-                                                                    No pictures available
-                                                                </p>
+                                                                <p class="title">No pictures available</p>
                                                             </ng-template>
 
                                                             <!-- Ticket -->
                                                             <div class="col-lg-3">
                                                                 <span class="title">Tickets</span>
-                                                                <ng-container
-                                                                    *ngIf="
-                                                                        !no_support_data;
-                                                                        else noTicket
-                                                                    ">
+                                                                <ng-container *ngIf="!no_support_data; else noTicket">
                                                                     <p
                                                                         (click)="onShowTickets()"
                                                                         class="title hoverable">
@@ -873,9 +687,7 @@
                                                             </div>
 
                                                             <ng-template #noTicket>
-                                                                <p class="title">
-                                                                    No tickets available
-                                                                </p>
+                                                                <p class="title">No tickets available</p>
                                                             </ng-template>
                                                         </div>
                                                     </mat-card>
@@ -888,21 +700,16 @@
                                                 <!-- System Info -->
                                                 <div class="w-100 mb-3">
                                                     <mat-card class="p-4">
-                                                        <h5 class="mb-0 font-weight-medium">
-                                                            System Info
-                                                        </h5>
+                                                        <h5 class="mb-0 font-weight-medium">System Info</h5>
 
                                                         <hr class="my-2" />
 
                                                         <!-- Speedtest -->
                                                         <div class="align-items-center">
                                                             <div class="last-speedtest-date mb-3">
-                                                                <span class="title"
-                                                                    >Last Speedtest</span
-                                                                >
+                                                                <span class="title">Last Speedtest</span>
                                                                 <div>
-                                                                    <h5
-                                                                        class="d-inline-block mr-4 title">
+                                                                    <h5 class="d-inline-block mr-4 title">
                                                                         {{
                                                                             internet_connection.date
                                                                                 ? internet_connection.date
@@ -916,31 +723,22 @@
                                                                             else disable_speedtest_btn
                                                                         ">
                                                                         <button
-                                                                            *ngIf="
-                                                                                license_data.speedtestSettings ==
-                                                                                1
-                                                                            "
+                                                                            *ngIf="license_data.speedtestSettings == 1"
                                                                             class="card-button"
-                                                                            (click)="
-                                                                                internetSpeedTest()
-                                                                            "
+                                                                            (click)="internetSpeedTest()"
                                                                             title="Test Internet Speed">
-                                                                            <span
-                                                                                class="fas fa-sync md-text"></span>
+                                                                            <span class="fas fa-sync md-text"></span>
                                                                         </button>
                                                                     </ng-container>
 
-                                                                    <ng-template
-                                                                        #disable_speedtest_btn>
+                                                                    <ng-template #disable_speedtest_btn>
                                                                         <button
                                                                             class="card-button disabled rotate mr-2"
                                                                             title="Speedtest Running">
-                                                                            <span
-                                                                                class="fas fa-sync md-text"></span>
+                                                                            <span class="fas fa-sync md-text"></span>
                                                                         </button>
 
-                                                                        <span
-                                                                            class="sm-text text-gray">
+                                                                        <span class="sm-text text-gray">
                                                                             Speed Test Running
                                                                         </span>
                                                                     </ng-template>
@@ -950,37 +748,26 @@
                                                             <div class="d-flex">
                                                                 <!-- Connection -->
                                                                 <div class="flex-even">
-                                                                    <span class="title"
-                                                                        >Connection Status</span
-                                                                    >
+                                                                    <span class="title">Connection Status</span>
                                                                     <ng-container
-                                                                        *ngIf="
-                                                                            apps && apps.server;
-                                                                            else netstatus_v1
-                                                                        ">
+                                                                        *ngIf="apps && apps.server; else netstatus_v1">
                                                                         <h5
                                                                             class="title"
                                                                             *ngIf="
-                                                                                internet_connection.status &&
-                                                                                    pi_status;
+                                                                                internet_connection.status && pi_status;
                                                                                 else offline_net
                                                                             "
                                                                             [ngClass]="
-                                                                                internet_connection.status ==
-                                                                                'Good'
+                                                                                internet_connection.status == 'Good'
                                                                                     ? 'good'
                                                                                     : 'slow'
                                                                             ">
-                                                                            {{
-                                                                                internet_connection.status
-                                                                            }}
+                                                                            {{ internet_connection.status }}
                                                                         </h5>
 
                                                                         <ng-template #offline_net>
                                                                             <h5
-                                                                                *ngIf="
-                                                                                    license_data.internetSpeed
-                                                                                "
+                                                                                *ngIf="license_data.internetSpeed"
                                                                                 class="bad sm-text">
                                                                                 Offline
                                                                             </h5>
@@ -991,24 +778,18 @@
                                                                         <h5
                                                                             class="title"
                                                                             [ngClass]="
-                                                                                license_data.internetSpeed ==
-                                                                                'Good'
+                                                                                license_data.internetSpeed == 'Good'
                                                                                     ? 'good'
                                                                                     : 'slow'
                                                                             ">
-                                                                            {{
-                                                                                license_data.internetSpeed
-                                                                            }}
+                                                                            {{ license_data.internetSpeed }}
                                                                         </h5>
                                                                     </ng-template>
                                                                 </div>
 
                                                                 <!-- Connection Type -->
-                                                                <div
-                                                                    class="flex-even connection-type">
-                                                                    <span class="title"
-                                                                        >Connection Type</span
-                                                                    >
+                                                                <div class="flex-even connection-type">
+                                                                    <span class="title">Connection Type</span>
                                                                     <h5 class="title">
                                                                         {{
                                                                             license_data.internetType
@@ -1020,38 +801,26 @@
 
                                                                 <!-- Download Speed -->
                                                                 <div class="flex-even storage">
-                                                                    <span class="title"
-                                                                        >Download Speed</span
-                                                                    >
+                                                                    <span class="title">Download Speed</span>
                                                                     <h5 class="title">
-                                                                        {{
-                                                                            internet_connection.downloadMbps
-                                                                        }}
+                                                                        {{ internet_connection.downloadMbps }}
                                                                     </h5>
                                                                 </div>
 
                                                                 <!-- Upload Speed -->
                                                                 <div class="flex-even storage">
-                                                                    <span class="title"
-                                                                        >Upload Speed</span
-                                                                    >
+                                                                    <span class="title">Upload Speed</span>
                                                                     <h5 class="title">
-                                                                        {{
-                                                                            internet_connection.uploadMbps
-                                                                        }}
+                                                                        {{ internet_connection.uploadMbps }}
                                                                     </h5>
                                                                 </div>
 
                                                                 <!-- Storage -->
                                                                 <div class="flex-even storage">
-                                                                    <span class="title"
-                                                                        >Storage</span
-                                                                    >
+                                                                    <span class="title">Storage</span>
                                                                     <h5 class="title">
                                                                         {{
-                                                                            storage_capacity
-                                                                                ? storage_capacity
-                                                                                : 'N/A'
+                                                                            storage_capacity ? storage_capacity : 'N/A'
                                                                         }}
                                                                     </h5>
                                                                 </div>
@@ -1063,9 +832,7 @@
                                                         <div class="d-flex">
                                                             <!-- Memory -->
                                                             <div class="flex-even memory">
-                                                                <span class="title"
-                                                                    >RAM/Memory</span
-                                                                >
+                                                                <span class="title">RAM/Memory</span>
                                                                 <h5 class="title">
                                                                     {{
                                                                         license_data.memory
@@ -1077,57 +844,36 @@
 
                                                             <!-- Player Version -->
                                                             <div class="flex-even player-version">
-                                                                <span class="title"
-                                                                    >Player Version</span
-                                                                >
+                                                                <span class="title">Player Version</span>
                                                                 <h5 class="title">
                                                                     {{
-                                                                        apps && apps.server
-                                                                            ? 'Version 2'
-                                                                            : 'Version 1'
+                                                                        apps && apps.server ? 'Version 2' : 'Version 1'
                                                                     }}
                                                                 </h5>
                                                             </div>
 
                                                             <!-- Player Server -->
-                                                            <div
-                                                                class="flex-even player-server-version">
-                                                                <span class="title"
-                                                                    >Server Version</span
-                                                                >
+                                                            <div class="flex-even player-server-version">
+                                                                <span class="title">Server Version</span>
                                                                 <h5 class="title">
-                                                                    {{
-                                                                        apps && apps.server
-                                                                            ? apps.server
-                                                                            : 'N/A'
-                                                                    }}
+                                                                    {{ apps && apps.server ? apps.server : 'N/A' }}
                                                                 </h5>
                                                             </div>
 
                                                             <!-- Player UI -->
                                                             <div class="flex-even ui-version">
-                                                                <span class="title"
-                                                                    >UI Version</span
-                                                                >
+                                                                <span class="title">UI Version</span>
                                                                 <h5 class="title">
-                                                                    {{
-                                                                        apps && apps.ui
-                                                                            ? apps.ui
-                                                                            : 'N/A'
-                                                                    }}
+                                                                    {{ apps && apps.ui ? apps.ui : 'N/A' }}
                                                                 </h5>
                                                             </div>
 
                                                             <!-- Pi Version -->
                                                             <div class="flex-even storage">
-                                                                <span class="title"
-                                                                    >Pi Version</span
-                                                                >
+                                                                <span class="title">Pi Version</span>
                                                                 <h5 class="title">
                                                                     {{
-                                                                        apps && apps.rpi_model
-                                                                            ? apps.rpi_model
-                                                                            : 'N/A'
+                                                                        apps && apps.rpi_model ? apps.rpi_model : 'N/A'
                                                                     }}
                                                                 </h5>
                                                             </div>
@@ -1138,24 +884,15 @@
                                                         <div class="d-flex">
                                                             <!-- Player UI -->
                                                             <div class="flex-even chromium-version">
-                                                                <span class="title"
-                                                                    >Chromium Version</span
-                                                                >
+                                                                <span class="title">Chromium Version</span>
                                                                 <h5 class="title">
-                                                                    {{
-                                                                        apps && apps.chromium
-                                                                            ? apps.chromium
-                                                                            : 'N/A'
-                                                                    }}
+                                                                    {{ apps && apps.chromium ? apps.chromium : 'N/A' }}
                                                                 </h5>
                                                             </div>
 
-                                                            <ng-container
-                                                                *ngIf="isCurrentUserAdmin">
+                                                            <ng-container *ngIf="isCurrentUserAdmin">
                                                                 <div class="flex-even">
-                                                                    <span class="title"
-                                                                        >Current IP</span
-                                                                    >
+                                                                    <span class="title">Current IP</span>
                                                                     <br />
                                                                     <h5 class="title">
                                                                         {{
@@ -1166,9 +903,7 @@
                                                                     </h5>
                                                                 </div>
                                                                 <div class="flex-even">
-                                                                    <span class="title"
-                                                                        >Previous IP</span
-                                                                    >
+                                                                    <span class="title">Previous IP</span>
                                                                     <br />
                                                                     <h5 class="title">
                                                                         {{
@@ -1179,9 +914,7 @@
                                                                     </h5>
                                                                 </div>
                                                                 <div class="flex-even">
-                                                                    <span class="title"
-                                                                        >MAC Address</span
-                                                                    >
+                                                                    <span class="title">MAC Address</span>
                                                                     <br />
                                                                     <h5 class="title">
                                                                         {{
@@ -1213,69 +946,53 @@
                                         <div class="col-lg-3">
                                             <div class="playlist-details">
                                                 <div>
-                                                    <h2>
-                                                        {{ current_zone_name_selected }} Section
-                                                    </h2>
+                                                    <h2>{{ current_zone_name_selected }} Section</h2>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-lg-10">
-                                                        <a
-                                                            class="playlist-name"
-                                                            [routerLink]="playlist_route"
-                                                            >{{ screen_zone.playlistName }}</a
-                                                        >
+                                                        <a class="playlist-name" [routerLink]="playlist_route">{{
+                                                            screen_zone.playlistName
+                                                        }}</a>
                                                     </div>
                                                 </div>
                                                 <br />
                                                 <div>
-                                                    <span class="sm-text"
-                                                        ><b>Duration Breakdown</b></span
-                                                    >
+                                                    <span class="sm-text"><b>Duration Breakdown</b></span>
                                                 </div>
                                                 <div class="hosts-duration">
                                                     <span class="sm-text"
-                                                        >Hosts:
-                                                        {{ duration_breakdown_text.hosts }}</span
+                                                        >Hosts: {{ duration_breakdown_text.hosts }}</span
                                                     >
                                                 </div>
                                                 <div class="advertisers-duration">
                                                     <span class="sm-text"
-                                                        >Advertisers:
-                                                        {{
-                                                            duration_breakdown_text.advertisers
-                                                        }}</span
+                                                        >Advertisers: {{ duration_breakdown_text.advertisers }}</span
                                                     >
                                                 </div>
                                                 <div class="fillers-duration">
                                                     <span class="sm-text"
-                                                        >Filler:
-                                                        {{ duration_breakdown_text.fillers }}</span
+                                                        >Filler: {{ duration_breakdown_text.fillers }}</span
                                                     >
                                                 </div>
                                                 <div class="feeds-duration">
                                                     <span class="sm-text"
-                                                        >Feeds:
-                                                        {{ duration_breakdown_text.feeds }}</span
+                                                        >Feeds: {{ duration_breakdown_text.feeds }}</span
                                                     >
                                                 </div>
                                                 <div class="others-duration">
                                                     <span class="sm-text"
-                                                        >Other:
-                                                        {{ duration_breakdown_text.others }}</span
+                                                        >Other: {{ duration_breakdown_text.others }}</span
                                                     >
                                                 </div>
                                                 <div class="total-duration">
                                                     <span class="sm-text"
                                                         ><b
-                                                            >Total playtime:
-                                                            {{ duration_breakdown_text.total }}</b
+                                                            >Total playtime: {{ duration_breakdown_text.total }}</b
                                                         ></span
                                                     >
                                                 </div>
                                                 <ng-template #no_playlist>
-                                                    <span class="sm-text"
-                                                        >No playlist for this zone</span
-                                                    >
+                                                    <span class="sm-text">No playlist for this zone</span>
                                                 </ng-template>
                                             </div>
                                         </div>
@@ -1295,9 +1012,7 @@
                                                 </app-template-minimap>
 
                                                 <!-- Background Section Toggle -->
-                                                <div
-                                                    class="toggle-background-zone"
-                                                    *ngIf="has_background_zone">
+                                                <div class="toggle-background-zone" *ngIf="has_background_zone">
                                                     <mat-slide-toggle
                                                         [checked]="background_zone_selected"
                                                         (click)="onSelectBackgroundZone($event)">
@@ -1317,9 +1032,7 @@
                                         <!-- Duration Breakdown -->
                                         <div class="col-lg-3">
                                             <div class="duration-chart-container">
-                                                <canvas
-                                                    id="durationBreakdown"
-                                                    height="250"></canvas>
+                                                <canvas id="durationBreakdown" height="250"></canvas>
                                             </div>
                                         </div>
                                     </div>
@@ -1334,31 +1047,19 @@
                                             <button
                                                 mat-button
                                                 mat-raised-button
-                                                [matMenuTriggerFor]="
-                                                    playlistContentScheduleStatusFilters
-                                                "
+                                                [matMenuTriggerFor]="playlistContentScheduleStatusFilters"
                                                 mat-raised-button
                                                 class="theme-btn">
-                                                <span class="button-label"
-                                                    >Content Schedule Status</span
-                                                >
+                                                <span class="button-label">Content Schedule Status</span>
                                                 <span class="fas fa-angle-down ml-2"></span>
                                             </button>
-                                            <mat-menu
-                                                #playlistContentScheduleStatusFilters="matMenu">
+                                            <mat-menu #playlistContentScheduleStatusFilters="matMenu">
                                                 <button
                                                     *ngFor="let status of content_schedule_statuses"
                                                     mat-menu-item
-                                                    (click)="
-                                                        onFilterContent(
-                                                            'schedule_status',
-                                                            status.toLowerCase()
-                                                        )
-                                                    "
+                                                    (click)="onFilterContent('schedule_status', status.toLowerCase())"
                                                     [ngClass]="
-                                                        content_filters.includes(
-                                                            status.toLowerCase()
-                                                        )
+                                                        content_filters.includes(status.toLowerCase())
                                                             ? 'selected-filter'
                                                             : ''
                                                     ">
@@ -1382,9 +1083,7 @@
                                                 <button
                                                     *ngFor="let type of content_owner_types"
                                                     mat-menu-item
-                                                    (click)="
-                                                        onFilterContent('owner', type.toLowerCase())
-                                                    ">
+                                                    (click)="onFilterContent('owner', type.toLowerCase())">
                                                     {{ type | titlecase }}
                                                 </button>
                                             </mat-menu>
@@ -1405,12 +1104,7 @@
                                                 <button
                                                     *ngFor="let type of content_types"
                                                     mat-menu-item
-                                                    (click)="
-                                                        onFilterContent(
-                                                            'content_type',
-                                                            type.toLowerCase()
-                                                        )
-                                                    ">
+                                                    (click)="onFilterContent('content_type', type.toLowerCase())">
                                                     {{ type | titlecase }}
                                                 </button>
                                             </mat-menu>
@@ -1427,11 +1121,7 @@
                                                     </div>
                                                     <div
                                                         class="remove-btn cursor-pointer"
-                                                        (click)="
-                                                            onRemoveContentFilter(
-                                                                filter.name.toLowerCase()
-                                                            )
-                                                        ">
+                                                        (click)="onRemoveContentFilter(filter.name.toLowerCase())">
                                                         <mat-icon class="no-select">close</mat-icon>
                                                     </div>
                                                 </div>
@@ -1455,9 +1145,7 @@
                                         <!-- CONTENT SEARCH FIELD -->
                                         <div class="content-search mr-2">
                                             <div class="flex-even form-field">
-                                                <mat-form-field
-                                                    class="full-width"
-                                                    appearance="fill">
+                                                <mat-form-field class="full-width" appearance="fill">
                                                     <mat-label>Search a content</mat-label>
                                                     <input
                                                         matInput
@@ -1475,35 +1163,24 @@
                                 <div class="row no-gutters" *ngIf="has_playlist">
                                     <div
                                         class="col-md-1"
-                                        *ngFor="
-                                            let a of content_per_zone[selected_zone_index].contents;
-                                            let i = index
-                                        ">
+                                        *ngFor="let a of content_per_zone[selected_zone_index].contents; let i = index">
                                         <div class="mr-2">
                                             <app-thumbnail-card
                                                 (click)="
-                                                    onOpenMediaViewer(
-                                                        content_per_zone[selected_zone_index]
-                                                            .contents,
-                                                        i
-                                                    )
+                                                    onOpenMediaViewer(content_per_zone[selected_zone_index].contents, i)
                                                 "
                                                 [content_id]="a.content_id"
                                                 [disconnect_to_socket]="thumb_no_socket"
                                                 [classification]="a.classification"
                                                 [file_url]="a.file_url"
-                                                [filename]="
-                                                    a.file_type !== 'feed' ? a.file_name : a.title
-                                                "
+                                                [filename]="a.file_type !== 'feed' ? a.file_name : a.title"
                                                 [filetype]="a.file_type"
                                                 [handle]="a.handler_id"
                                                 [image_uri]="a.thumbnail"
                                                 [is_converted]="a.is_converted"
                                                 [is_fullscreen]="a.is_fullscreen"
                                                 [is_protected]="a.is_protected"
-                                                [is_scheduled_content]="
-                                                    a.playlist_content_schedule.type === 3
-                                                "
+                                                [is_scheduled_content]="a.playlist_content_schedule.type === 3"
                                                 [sequence]="a.seq"
                                                 [is_view_only]="true"
                                                 [uuid]="a.uuid"
@@ -1541,10 +1218,7 @@
                                                 <button
                                                     (click)="submitTerminalCommand()"
                                                     class="terminal-submit-button"
-                                                    [disabled]="
-                                                        terminal_value === undefined ||
-                                                        terminal_value === ''
-                                                    ">
+                                                    [disabled]="terminal_value === undefined || terminal_value === ''">
                                                     Run
                                                     <span class="fas fa-play sm-text ml-2"></span>
                                                 </button>
@@ -1563,8 +1237,7 @@
 
                     <!-- Activity Tab -->
                     <mat-tab label="Activity" *ngIf="isCurrentUserAdmin">
-                        <ng-container
-                            *ngIf="activities && activities.length > 0; else noLicenseActivity">
+                        <ng-container *ngIf="activities && activities.length > 0; else noLicenseActivity">
                             <div class="row mt-4">
                                 <div class="col-lg-4">
                                     <mat-card class="p-3 mb-3" *ngFor="let a of activities">
@@ -1590,17 +1263,14 @@
                                             <div class="flex-even">
                                                 <h4>Enable Scheduled Screenshot</h4>
                                                 <p class="sm-text mb-0">
-                                                    For players with limited internet data,
-                                                    Disabling this feature is recommended. Manual
-                                                    screenshot will still be available of use.
+                                                    For players with limited internet data, Disabling this feature is
+                                                    recommended. Manual screenshot will still be available of use.
                                                 </p>
                                             </div>
                                             <div class="ml-5 text-right">
                                                 <mat-slide-toggle
                                                     (change)="disableScreenshot($event)"
-                                                    [checked]="
-                                                        license_data.screenshotSettings === 1
-                                                    ">
+                                                    [checked]="license_data.screenshotSettings === 1">
                                                 </mat-slide-toggle>
                                             </div>
                                         </div>
@@ -1612,17 +1282,14 @@
                                             <div class="flex-even">
                                                 <h4>Enable Speedtest</h4>
                                                 <p class="sm-text mb-0">
-                                                    Internet Speedtest uses almost 200MB of internet
-                                                    data. For players with limited internet data,
-                                                    disabling this feature is recommended.
+                                                    Internet Speedtest uses almost 200MB of internet data. For players
+                                                    with limited internet data, disabling this feature is recommended.
                                                 </p>
                                             </div>
                                             <div class="ml-5 text-right">
                                                 <mat-slide-toggle
                                                     (change)="disableSpeedtest($event)"
-                                                    [checked]="
-                                                        license_data.speedtestSettings === 1
-                                                    ">
+                                                    [checked]="license_data.speedtestSettings === 1">
                                                 </mat-slide-toggle>
                                             </div>
                                         </div>
@@ -1634,18 +1301,13 @@
                                             <div class="flex-even">
                                                 <h4>Enable Email Settings</h4>
                                                 <p class="sm-text mb-0">
-                                                    Allows the dealer to receive EMAIL notifications
-                                                    from this license when the device is offline.
+                                                    Allows the dealer to receive EMAIL notifications from this license
+                                                    when the device is offline.
                                                 </p>
                                             </div>
                                             <div class="ml-5 text-right">
                                                 <mat-slide-toggle
-                                                    (change)="
-                                                        onUpdateNotificationSettings(
-                                                            $event,
-                                                            'email'
-                                                        )
-                                                    "
+                                                    (change)="onUpdateNotificationSettings($event, 'email')"
                                                     [checked]="license_data.emailSettings === 1">
                                                 </mat-slide-toggle>
                                             </div>
@@ -1658,16 +1320,14 @@
                                             <div class="flex-even">
                                                 <h4>Display Control Settings</h4>
                                                 <p class="sm-text mb-0">
-                                                    Allows the player to control the TV display
-                                                    based on the business hour schedule.
+                                                    Allows the player to control the TV display based on the business
+                                                    hour schedule.
                                                 </p>
                                             </div>
                                             <div class="ml-5 text-right">
                                                 <mat-slide-toggle
                                                     (change)="onDisplayControlSettingsSet($event)"
-                                                    [checked]="
-                                                        license_data.displayControlSettings === 1
-                                                    ">
+                                                    [checked]="license_data.displayControlSettings === 1">
                                                 </mat-slide-toggle>
                                             </div>
                                         </div>
@@ -1679,21 +1339,14 @@
                                             <div class="flex-even">
                                                 <h4>Enable Notification Settings</h4>
                                                 <p class="sm-text mb-0">
-                                                    Allows the dealer to receive ALERT notifications
-                                                    from this license when the device is offline.
+                                                    Allows the dealer to receive ALERT notifications from this license
+                                                    when the device is offline.
                                                 </p>
                                             </div>
                                             <div class="ml-5 text-right">
                                                 <mat-slide-toggle
-                                                    (change)="
-                                                        onUpdateNotificationSettings(
-                                                            $event,
-                                                            'notification'
-                                                        )
-                                                    "
-                                                    [checked]="
-                                                        license_data.notificationSettings === 1
-                                                    ">
+                                                    (change)="onUpdateNotificationSettings($event, 'notification')"
+                                                    [checked]="license_data.notificationSettings === 1">
                                                 </mat-slide-toggle>
                                             </div>
                                         </div>
@@ -1705,9 +1358,8 @@
                                             <div class="flex-even">
                                                 <h4>Enable Resource Log Sending</h4>
                                                 <p class="sm-text mb-0">
-                                                    This will send the player's CPU and RAM average
-                                                    usage every 2 hours. Requires data usage, toggle
-                                                    off to disable.
+                                                    This will send the player's CPU and RAM average usage every 2 hours.
+                                                    Requires data usage, toggle off to disable.
                                                 </p>
                                             </div>
                                             <div class="ml-5 text-right">
@@ -1726,8 +1378,7 @@
                                         <div class="flex-even mb-3">
                                             <h4>Enable FE-DCP Tool</h4>
                                             <p class="sm-text">
-                                                Enables DCP Monitoring Tool. Enter password to
-                                                enable.
+                                                Enables DCP Monitoring Tool. Enter password to enable.
                                             </p>
                                         </div>
                                         <div *ngIf="fastEdgeSettingsSaving">
@@ -1741,10 +1392,7 @@
                                                 <div class="flex-even">
                                                     <mat-form-field class="w-100" appearance="fill">
                                                         <mat-label>Enter Password*</mat-label>
-                                                        <input
-                                                            matInput
-                                                            formControlName="password"
-                                                            type="password" />
+                                                        <input matInput formControlName="password" type="password" />
                                                     </mat-form-field>
                                                 </div>
                                                 <div class="pt-3 ml-5 text-right">
@@ -1752,9 +1400,7 @@
                                                         (change)="toggleFastEdgeTool($event)"
                                                         [disabled]="!fastEdgeSettings.valid"
                                                         [checked]="
-                                                            license_data.fastEdgeMonitoringTool == 1
-                                                                ? true
-                                                                : false
+                                                            license_data.fastEdgeMonitoringTool == 1 ? true : false
                                                         ">
                                                     </mat-slide-toggle>
                                                 </div>
@@ -1769,61 +1415,42 @@
                                     <mat-card class="p-4">
                                         <h4 class="mb-4">Additional Settings</h4>
 
-                                        <ng-container
-                                            *ngIf="
-                                                license_data && additional_license_settings_form
-                                            ">
+                                        <ng-container *ngIf="license_data && additional_license_settings_form">
                                             <form
                                                 [formGroup]="additional_license_settings_form"
                                                 (ngSubmit)="saveAdditionalLicenseSettings()">
                                                 <div class="row flex-column">
                                                     <div
-                                                        *ngFor="
-                                                            let control of additional_license_settings_form_fields
-                                                        "
+                                                        *ngFor="let control of additional_license_settings_form_fields"
                                                         class="col-lg-6">
                                                         <ng-container
                                                             *ngIf="
-                                                                control.type === 'number' ||
-                                                                    control.type === 'text';
+                                                                control.type === 'number' || control.type === 'text';
                                                                 else otherFieldTypes
                                                             ">
                                                             <mat-form-field class="full-width">
-                                                                <mat-label>{{
-                                                                    control.label
-                                                                }}</mat-label>
+                                                                <mat-label>{{ control.label }}</mat-label>
 
                                                                 <input
                                                                     matInput
                                                                     appearance="fill"
                                                                     placeholder="Enter number of seconds, ex: 20"
-                                                                    [formControlName]="
-                                                                        control.form_control_name
-                                                                    "
+                                                                    [formControlName]="control.form_control_name"
                                                                     [type]="control.type" />
                                                             </mat-form-field>
                                                         </ng-container>
 
                                                         <ng-template #otherFieldTypes>
-                                                            <ng-container
-                                                                *ngIf="control.type === 'time'">
-                                                                <div
-                                                                    class="d-flex align-items-center reboot-time">
-                                                                    <span
-                                                                        >{{ control.label }}:</span
-                                                                    >
+                                                            <ng-container *ngIf="control.type === 'time'">
+                                                                <div class="d-flex align-items-center reboot-time">
+                                                                    <span>{{ control.label }}:</span>
 
                                                                     <ngb-timepicker
-                                                                        [formControlName]="
-                                                                            control.form_control_name
-                                                                        "
+                                                                        [formControlName]="control.form_control_name"
                                                                         [meridian]="true"
                                                                         [size]="'small'">
                                                                     </ngb-timepicker>
-                                                                    <ng-container
-                                                                        *ngIf="
-                                                                            control
-                                                                        "></ng-container>
+                                                                    <ng-container *ngIf="control"></ng-container>
                                                                     <mat-icon
                                                                         class="remove-reboot-btn"
                                                                         (click)="
@@ -1845,8 +1472,7 @@
                                                         mat-raised-button
                                                         class="theme-btn mr-2"
                                                         [disabled]="
-                                                            saving_license_settings ||
-                                                            !has_unsaved_additional_settings
+                                                            saving_license_settings || !has_unsaved_additional_settings
                                                         ">
                                                         Save
                                                     </button>
@@ -1909,9 +1535,7 @@
                 <div class="loader text-center py-5 d-flex align-items-center vh-50">
                     <div class="w-100">
                         <h3 class="mt-4 mb-2">No Data Found</h3>
-                        <p class="sm-text">
-                            There are no recorded plays of content during this date.
-                        </p>
+                        <p class="sm-text">There are no recorded plays of content during this date.</p>
                     </div>
                 </div>
             </div>

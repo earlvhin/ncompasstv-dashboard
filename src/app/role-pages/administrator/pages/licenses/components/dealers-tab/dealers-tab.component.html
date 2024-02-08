@@ -26,9 +26,7 @@
                     class="theme-btn _primary"
                     (click)="addToTable()"
                     [disabled]="hasNoData || !isPreloadDataReady">
-                    <ng-container *ngIf="isPreloadDataReady; else preloadingData">
-                        Load more dealers...
-                    </ng-container>
+                    <ng-container *ngIf="isPreloadDataReady; else preloadingData"> Load more dealers... </ng-container>
                     <ng-template #preloadingData> Loading dealers... </ng-template>
                 </button>
             </div>

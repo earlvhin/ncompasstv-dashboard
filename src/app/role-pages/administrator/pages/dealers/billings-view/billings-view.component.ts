@@ -62,12 +62,7 @@ export class BillingsViewComponent implements OnInit {
         this.is_loading = false;
         this.subscription.add(
             this._dealer
-                .get_all_dealer_values(
-                    page,
-                    this.search_key,
-                    this.sort_column_billings,
-                    this.sort_order_billings,
-                )
+                .get_all_dealer_values(page, this.search_key, this.sort_column_billings, this.sort_order_billings)
                 .pipe(takeUntil(this._unsubscribe))
                 .subscribe((response) => {
                     this.setDealerValuesData(response);
@@ -184,10 +179,7 @@ export class BillingsViewComponent implements OnInit {
         this.workbook.created = new Date();
         this.worksheet = this.workbook.addWorksheet('Billings View');
         Object.keys(this.billings_table_column).forEach((key) => {
-            if (
-                this.billings_table_column[key].name &&
-                !this.billings_table_column[key].no_export
-            ) {
+            if (this.billings_table_column[key].name && !this.billings_table_column[key].no_export) {
                 header.push({
                     header: this.billings_table_column[key].name,
                     key: this.billings_table_column[key].key,
@@ -201,16 +193,9 @@ export class BillingsViewComponent implements OnInit {
     }
 
     getDataForExport() {
-        const EXCEL_TYPE =
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
         this._dealer
-            .get_all_dealer_values(
-                1,
-                this.search_key,
-                this.sort_column_billings,
-                this.sort_order_billings,
-                0,
-            )
+            .get_all_dealer_values(1, this.search_key, this.sort_column_billings, this.sort_order_billings, 0)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((response) => {
                 if (response.message) {

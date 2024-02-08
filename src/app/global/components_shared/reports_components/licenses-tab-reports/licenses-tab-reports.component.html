@@ -1,8 +1,6 @@
 <div class="statistics-graph col-lg-12 p-0 flex">
     <div class="col-lg-5">
-        <mat-card
-            class="card-graph"
-            *ngIf="licenses_graph_data_detailed.length > 0; else no_data_for_year">
+        <mat-card class="card-graph" *ngIf="licenses_graph_data_detailed.length > 0; else no_data_for_year">
             <app-data-statistics-card
                 *ngIf="value_graph_detailed.length > 0"
                 [id]="'total-view'"

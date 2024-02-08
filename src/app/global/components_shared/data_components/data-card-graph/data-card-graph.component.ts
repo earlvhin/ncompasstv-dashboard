@@ -83,9 +83,7 @@ export class DataCardGraphComponent implements OnInit, OnDestroy, AfterViewInit 
     }
 
     generateChart() {
-        const canvas = (<HTMLCanvasElement>(
-            document.getElementById(`breakdown-${this.id}`)
-        )) as HTMLCanvasElement;
+        const canvas = (<HTMLCanvasElement>document.getElementById(`breakdown-${this.id}`)) as HTMLCanvasElement;
         const labels = this.label_array;
         const data = this.no_data_display ? [-1] : this.value_array;
 

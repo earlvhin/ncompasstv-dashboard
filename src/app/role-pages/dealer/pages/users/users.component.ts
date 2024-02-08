@@ -226,12 +226,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 
     private subscribeToToggleEmailNotification(): void {
         this._helper.onToggleEmailNotification.pipe(takeUntil(this._unsubscribe)).subscribe(
-            (response: {
-                userId: string;
-                value: boolean;
-                tableDataIndex: number;
-                currentEmail: string;
-            }) => {
+            (response: { userId: string; value: boolean; tableDataIndex: number; currentEmail: string }) => {
                 const { userId, value, tableDataIndex, currentEmail } = response;
                 this.confirmEmailNotificationToggle(userId, value, tableDataIndex, currentEmail);
             },

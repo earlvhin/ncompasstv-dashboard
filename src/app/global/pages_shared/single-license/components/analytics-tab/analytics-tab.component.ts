@@ -73,9 +73,7 @@ export class AnalyticsTabComponent implements OnInit, OnDestroy {
         if (this.selected_zone == -1) return true;
 
         if (
-            this.content_per_zone[this.selected_zone].contents.filter(
-                (i) => i.content_id === cc.contentId,
-            ).length > 0
+            this.content_per_zone[this.selected_zone].contents.filter((i) => i.content_id === cc.contentId).length > 0
         ) {
             return true;
         } else {

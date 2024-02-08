@@ -93,11 +93,7 @@ export class GenerateFillerFeed {
     feedFillerSettings: FEED_FILLER_SETTINGS;
     feedFillers: FEED_FILLERS[];
 
-    constructor(
-        feeds: FEED_INFO,
-        feedFillerSettings: FEED_FILLER_SETTINGS,
-        feedFillers: FEED_FILLERS[],
-    ) {
+    constructor(feeds: FEED_INFO, feedFillerSettings: FEED_FILLER_SETTINGS, feedFillers: FEED_FILLERS[]) {
         this.feeds = feeds;
         this.feedFillerSettings = feedFillerSettings;
         this.feedFillers = feedFillers;

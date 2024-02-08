@@ -190,10 +190,7 @@ export class UserSettingComponent implements OnInit {
 
     readyUpdateForm() {
         this.update_user = this._form.group({
-            usertype: [
-                { value: this.user_data.userRoles[0].roleName, disabled: true },
-                Validators.required,
-            ],
+            usertype: [{ value: this.user_data.userRoles[0].roleName, disabled: true }, Validators.required],
             firstname: [{ value: this.user_data.firstName, disabled: true }, Validators.required],
             lastname: [{ value: this.user_data.lastName, disabled: true }, Validators.required],
             email: [{ value: this.user_data.email, disabled: true }, Validators.required],

@@ -63,9 +63,7 @@ export class CreateFillerFeedComponent implements OnInit {
 
         setTimeout(() => {
             data.fillerGroups.map((groups) => {
-                const existing_list = this.filler_groups.filter(
-                    (list) => list.fillerGroupId == groups.fillerGroupId,
-                );
+                const existing_list = this.filler_groups.filter((list) => list.fillerGroupId == groups.fillerGroupId);
                 groups.count = existing_list[0].count;
             });
 
@@ -221,8 +219,7 @@ export class CreateFillerFeedComponent implements OnInit {
     }
 
     disableSelectionField() {
-        if ((this.filler_groups.length == 0 && this.groups_loaded) || this.filler_name != '')
-            return true;
+        if ((this.filler_groups.length == 0 && this.groups_loaded) || this.filler_name != '') return true;
         else return false;
     }
 
@@ -237,10 +234,8 @@ export class CreateFillerFeedComponent implements OnInit {
 
     enforceMinMax(el) {
         if (el.target.value != '') {
-            if (parseInt(el.target.value) < parseInt(el.target.min))
-                el.target.value = el.target.min;
-            if (parseInt(el.target.value) > parseInt(el.target.max))
-                el.target.value = el.target.max;
+            if (parseInt(el.target.value) < parseInt(el.target.min)) el.target.value = el.target.min;
+            if (parseInt(el.target.value) > parseInt(el.target.max)) el.target.value = el.target.max;
         }
     }
 

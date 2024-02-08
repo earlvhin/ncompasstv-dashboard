@@ -9,9 +9,7 @@
                 title="Export to CSV"
                 [disabled]="isExporting">
                 <span class="{{ isExporting ? 'fas fa-spinner' : 'fas fa-file-excel' }}"></span>
-                <span class="ml-2 button_text_animation">{{
-                    isExporting ? 'Generating CSV' : 'Export'
-                }}</span>
+                <span class="ml-2 button_text_animation">{{ isExporting ? 'Generating CSV' : 'Export' }}</span>
             </button>
         </div>
 
@@ -63,9 +61,7 @@
                     class="theme-btn _primary"
                     (click)="addToTable()"
                     [disabled]="hasNoData || !isPreloadDataReady">
-                    <ng-container *ngIf="isPreloadDataReady; else preloadingData">
-                        Load more licenses...
-                    </ng-container>
+                    <ng-container *ngIf="isPreloadDataReady; else preloadingData"> Load more licenses... </ng-container>
                     <ng-template #preloadingData> Loading licenses... </ng-template>
                 </button>
             </div>

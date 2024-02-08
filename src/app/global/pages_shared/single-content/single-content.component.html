@@ -28,17 +28,11 @@
                         <img [src]="data.content.url + data.content.fileName" />
                     </ng-container>
                     <ng-container
-                        *ngIf="
-                            data.content.fileType == 'feed' &&
-                            data.content.classification !== 'live_stream'
-                        ">
+                        *ngIf="data.content.fileType == 'feed' && data.content.classification !== 'live_stream'">
                         <img [src]="fs_screenshot + '/' + data.content.url | sanitize" />
                     </ng-container>
                     <ng-container
-                        *ngIf="
-                            data.content.fileType == 'feed' &&
-                            data.content.classification === 'live_stream'
-                        ">
+                        *ngIf="data.content.fileType == 'feed' && data.content.classification === 'live_stream'">
                         <iframe [src]="data.content.url | sanitize"></iframe>
                     </ng-container>
                 </div>
@@ -196,17 +190,13 @@
                             <div class="col-lg-6">
                                 <h2 class="m-0">Playlist Reports</h2>
                                 <p class="sm-text">
-                                    Select Start and End Date then click the Generate button to get
-                                    started.
+                                    Select Start and End Date then click the Generate button to get started.
                                 </p>
                             </div>
                             <div class="col-lg-6">
                                 <div class="d-flex">
                                     <div class="flex-even">
-                                        <mat-form-field
-                                            class="w-100"
-                                            appearance="fill"
-                                            appDefaultDateFormat>
+                                        <mat-form-field class="w-100" appearance="fill" appDefaultDateFormat>
                                             <mat-label class="md-text">Start Date</mat-label>
                                             <input
                                                 (dateInput)="onSelectStartDate($event.value)"
@@ -214,18 +204,13 @@
                                                 matInput
                                                 [matDatepicker]="datePicker"
                                                 readonly />
-                                            <mat-datepicker-toggle
-                                                matSuffix
-                                                [for]="datePicker"></mat-datepicker-toggle>
+                                            <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
                                             <mat-datepicker #datePicker></mat-datepicker>
                                         </mat-form-field>
                                     </div>
 
                                     <div class="flex-even mx-3">
-                                        <mat-form-field
-                                            class="w-100"
-                                            appearance="fill"
-                                            appDefaultDateFormat>
+                                        <mat-form-field class="w-100" appearance="fill" appDefaultDateFormat>
                                             <mat-label class="md-text">End Date</mat-label>
                                             <input
                                                 (dateInput)="onSelectEndDate($event.value)"
@@ -246,9 +231,7 @@
                                             mat-button
                                             mat-raised-button
                                             class="theme-btn px-4 height-60"
-                                            [disabled]="
-                                                !start_date || !end_date || generating_report
-                                            "
+                                            [disabled]="!start_date || !end_date || generating_report"
                                             title="Generate Report"
                                             (click)="generateReport()">
                                             <div class="d-flex align-items-center">
@@ -271,8 +254,7 @@
                         <div class="row no-gutters mt-3" *ngIf="report_generated">
                             <!-- From -->
                             <div class="col-lg-3">
-                                <div
-                                    class="bg-dark px-3 d-flex align-items-center rounded height-60 mr-2">
+                                <div class="bg-dark px-3 d-flex align-items-center rounded height-60 mr-2">
                                     <h5 class="mb-0 text-white pt-1 align-vertical">
                                         Showing records from
                                         <span class="text-primary">{{ start_date | date }}</span> to
@@ -282,8 +264,7 @@
                             </div>
                             <!-- To -->
                             <div class="col-lg-4">
-                                <div
-                                    class="bg-dark px-3 d-flex align-items-center rounded height-60 mr-2">
+                                <div class="bg-dark px-3 d-flex align-items-center rounded height-60 mr-2">
                                     <h5 class="mb-0 text-white pt-1">
                                         Summary : Total Play Count:
                                         <span class="text-primary">{{ total_playcount }}</span>
@@ -303,9 +284,7 @@
                                     title="Export to CSV">
                                     <span
                                         class="{{
-                                            !workbook_generation
-                                                ? 'fas fa-file-excel'
-                                                : 'fas fa-spinner fa-spin'
+                                            !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin'
                                         }}"
                                         [ngStyle]="{
                                             color: workbook_generation ? '#222' : 'white'
@@ -380,11 +359,7 @@
                         <i class="text-gray fa-5x far fa-file-alt"></i>
                     </div>
                     <h3 class="text-gray col-lg-12">
-                        {{
-                            generating_report
-                                ? 'Generating Content Logs Report, Please Wait ...'
-                                : 'No Data Found'
-                        }}
+                        {{ generating_report ? 'Generating Content Logs Report, Please Wait ...' : 'No Data Found' }}
                     </h3>
                 </mat-card>
             </div>

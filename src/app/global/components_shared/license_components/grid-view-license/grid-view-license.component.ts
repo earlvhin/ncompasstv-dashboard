@@ -54,11 +54,7 @@ export class GridViewLicenseComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((response) => {
                 if (!response) {
-                    this.openConfirmationModal(
-                        'success',
-                        'Success!',
-                        'License successfully removed to Favorites',
-                    );
+                    this.openConfirmationModal('success', 'Success!', 'License successfully removed to Favorites');
                     this.license_data_for_grid_view.push(license);
                 } else {
                     this.openConfirmationModal('error', 'Error!', response.message);
@@ -72,16 +68,10 @@ export class GridViewLicenseComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((response) => {
                 if (!response) {
-                    this.license_data_for_grid_view = this.license_data_for_grid_view.filter(
-                        (license) => {
-                            return license.licenseId != id;
-                        },
-                    );
-                    this.openConfirmationModal(
-                        'success',
-                        'Success!',
-                        'License successfully added to Favorites',
-                    );
+                    this.license_data_for_grid_view = this.license_data_for_grid_view.filter((license) => {
+                        return license.licenseId != id;
+                    });
+                    this.openConfirmationModal('success', 'Success!', 'License successfully added to Favorites');
                 } else {
                     this.openConfirmationModal('error', 'Error!', response.message);
                 }
@@ -119,11 +109,7 @@ export class GridViewLicenseComponent implements OnInit {
             license.piStatus === 0
         ) {
             return 'text-danger';
-        } else if (
-            new Date(license.installDate) > currentDate &&
-            license.hostName &&
-            license.isActivated === 1
-        ) {
+        } else if (new Date(license.installDate) > currentDate && license.hostName && license.isActivated === 1) {
             return 'text-orange';
         } else if (license.isActivated === 0 && license.hostName) {
             return 'text-light-gray';
@@ -141,16 +127,12 @@ export class GridViewLicenseComponent implements OnInit {
     }
 
     navigateToDealer(id) {
-        const url = this.router.serializeUrl(
-            this.router.createUrlTree([`/${this.roleRoute}/dealers/${id}`], {}),
-        );
+        const url = this.router.serializeUrl(this.router.createUrlTree([`/${this.roleRoute}/dealers/${id}`], {}));
         window.open(url, '_blank');
     }
 
     navigateToHost(id) {
-        const url = this.router.serializeUrl(
-            this.router.createUrlTree([`/${this.roleRoute}/hosts/${id}`], {}),
-        );
+        const url = this.router.serializeUrl(this.router.createUrlTree([`/${this.roleRoute}/hosts/${id}`], {}));
         window.open(url, '_blank');
     }
 
@@ -159,9 +141,7 @@ export class GridViewLicenseComponent implements OnInit {
     }
 
     navigateToAlias(id) {
-        const url = this.router.serializeUrl(
-            this.router.createUrlTree([`/${this.roleRoute}/licenses/${id}`], {}),
-        );
+        const url = this.router.serializeUrl(this.router.createUrlTree([`/${this.roleRoute}/licenses/${id}`], {}));
         window.open(url, '_blank');
     }
 

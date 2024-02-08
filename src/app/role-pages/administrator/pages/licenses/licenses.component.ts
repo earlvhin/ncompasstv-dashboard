@@ -161,9 +161,7 @@ export class LicensesComponent implements OnInit {
                     return;
                 }
 
-                this.license_data_for_grid_view = this.license_data_for_grid_view.filter(
-                    (x) => x.licenseId != id,
-                );
+                this.license_data_for_grid_view = this.license_data_for_grid_view.filter((x) => x.licenseId != id);
             });
     }
 
@@ -286,10 +284,7 @@ export class LicensesComponent implements OnInit {
             case 'licenses':
                 this.worksheet = this.workbook.addWorksheet('License View');
                 Object.keys(this.license_table_column).forEach((key) => {
-                    if (
-                        this.license_table_column[key].name &&
-                        !this.license_table_column[key].no_export
-                    ) {
+                    if (this.license_table_column[key].name && !this.license_table_column[key].no_export) {
                         header.push({
                             header: this.license_table_column[key].name,
                             key: this.license_table_column[key].key,
@@ -302,10 +297,7 @@ export class LicensesComponent implements OnInit {
             case 'hosts':
                 this.worksheet = this.workbook.addWorksheet('Host View');
                 Object.keys(this.hosts_table_column).forEach((key) => {
-                    if (
-                        this.hosts_table_column[key].name &&
-                        !this.hosts_table_column[key].no_export
-                    ) {
+                    if (this.hosts_table_column[key].name && !this.hosts_table_column[key].no_export) {
                         header.push({
                             header: this.hosts_table_column[key].name,
                             key: this.hosts_table_column[key].key,
@@ -484,9 +476,7 @@ export class LicensesComponent implements OnInit {
             sortOrder: this.sort_order_hosts,
         };
 
-        let request = this.has_sort
-            ? this._host.get_host_by_page(filters)
-            : this._host.get_host_fetch(filters);
+        let request = this.has_sort ? this._host.get_host_by_page(filters) : this._host.get_host_fetch(filters);
 
         request
             .pipe(takeUntil(this._unsubscribe))
@@ -637,10 +627,7 @@ export class LicensesComponent implements OnInit {
             if (this.no_favorites) {
                 return this.paging_data_licenses.totalEntities;
             } else {
-                return (
-                    this.paging_data_favorites.totalEntities +
-                    this.paging_data_licenses.totalEntities
-                );
+                return this.paging_data_favorites.totalEntities + this.paging_data_licenses.totalEntities;
             }
         } else {
             return this.paging_data_licenses.totalEntities;
@@ -764,8 +751,7 @@ export class LicensesComponent implements OnInit {
     }
 
     getDataForExport(tab: string): void {
-        const EXCEL_TYPE =
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 
         switch (tab) {
             case 'licenses':
@@ -798,18 +784,12 @@ export class LicensesComponent implements OnInit {
                         }
 
                         data.licenses.map((license) => {
-                            license.apps = license.appVersion
-                                ? JSON.parse(license.appVersion)
-                                : null;
+                            license.apps = license.appVersion ? JSON.parse(license.appVersion) : null;
 
                             if (license.internetInfo) {
                                 license.internetInfo = JSON.parse(license.internetInfo);
-                                license.upload =
-                                    Math.round(license.internetInfo.uploadMbps * 100) / 100 +
-                                    ' mbps';
-                                license.download =
-                                    Math.round(license.internetInfo.downloadMbps * 100) / 100 +
-                                    ' mbps';
+                                license.upload = Math.round(license.internetInfo.uploadMbps * 100) / 100 + ' mbps';
+                                license.download = Math.round(license.internetInfo.downloadMbps * 100) / 100 + ' mbps';
                             }
                         });
 
@@ -904,8 +884,7 @@ export class LicensesComponent implements OnInit {
             address: data.hostAddress,
             schedule:
                 storehours[this.now] && storehours[this.now].status
-                    ? (storehours[this.now].periods[0].open == '' &&
-                          storehours[this.now].periods[0].close == '') ||
+                    ? (storehours[this.now].periods[0].open == '' && storehours[this.now].periods[0].close == '') ||
                       isAlmostOpenAllDay
                         ? 'Open 24 Hours'
                         : storehours[this.now].periods.map((i) => {
@@ -973,14 +952,10 @@ export class LicensesComponent implements OnInit {
 
                     if (this.licenses_details) {
                         this.temp_label.push(
-                            this.licenses_details.ad_value_label +
-                                ': ' +
-                                this.licenses_details.ad_value,
+                            this.licenses_details.ad_value_label + ': ' + this.licenses_details.ad_value,
                         );
                         this.temp_label.push(
-                            this.licenses_details.menu_value_label +
-                                ': ' +
-                                this.licenses_details.menu_value,
+                            this.licenses_details.menu_value_label + ': ' + this.licenses_details.menu_value,
                         );
                         this.temp_label.push(
                             this.licenses_details.unassigned_value_label +
@@ -988,9 +963,7 @@ export class LicensesComponent implements OnInit {
                                 this.licenses_details.unassigned_value,
                         );
                         this.temp_label.push(
-                            this.licenses_details.closed_value_label +
-                                ': ' +
-                                this.licenses_details.closed_value,
+                            this.licenses_details.closed_value_label + ': ' + this.licenses_details.closed_value,
                         );
                         this.temp_array.push(this.licenses_details.ad_value);
                         this.temp_array.push(this.licenses_details.menu_value);
@@ -998,14 +971,10 @@ export class LicensesComponent implements OnInit {
                         this.temp_array.push(this.licenses_details.closed_value);
 
                         this.temp_label_this_week.push(
-                            this.licenses_details.ad_value_label +
-                                ': ' +
-                                this.licenses_details.this_week_ad_value,
+                            this.licenses_details.ad_value_label + ': ' + this.licenses_details.this_week_ad_value,
                         );
                         this.temp_label_this_week.push(
-                            this.licenses_details.menu_value_label +
-                                ': ' +
-                                this.licenses_details.this_week_menu_value,
+                            this.licenses_details.menu_value_label + ': ' + this.licenses_details.this_week_menu_value,
                         );
                         this.temp_label_this_week.push(
                             this.licenses_details.closed_value_label +
@@ -1019,22 +988,14 @@ export class LicensesComponent implements OnInit {
                         );
                         this.temp_array_this_week.push(this.licenses_details.this_week_ad_value);
                         this.temp_array_this_week.push(this.licenses_details.this_week_menu_value);
-                        this.temp_array_this_week.push(
-                            this.licenses_details.this_week_closed_value,
-                        );
-                        this.temp_array_this_week.push(
-                            this.licenses_details.this_week_unassigned_value,
-                        );
+                        this.temp_array_this_week.push(this.licenses_details.this_week_closed_value);
+                        this.temp_array_this_week.push(this.licenses_details.this_week_unassigned_value);
 
                         this.temp_label_last_week.push(
-                            this.licenses_details.ad_value_label +
-                                ': ' +
-                                this.licenses_details.last_week_ad_value,
+                            this.licenses_details.ad_value_label + ': ' + this.licenses_details.last_week_ad_value,
                         );
                         this.temp_label_last_week.push(
-                            this.licenses_details.menu_value_label +
-                                ': ' +
-                                this.licenses_details.last_week_menu_value,
+                            this.licenses_details.menu_value_label + ': ' + this.licenses_details.last_week_menu_value,
                         );
                         this.temp_label_last_week.push(
                             this.licenses_details.closed_value_label +
@@ -1048,12 +1009,8 @@ export class LicensesComponent implements OnInit {
                         );
                         this.temp_array_last_week.push(this.licenses_details.last_week_ad_value);
                         this.temp_array_last_week.push(this.licenses_details.last_week_menu_value);
-                        this.temp_array_last_week.push(
-                            this.licenses_details.last_week_closed_value,
-                        );
-                        this.temp_array_last_week.push(
-                            this.licenses_details.last_week_unassigned_value,
-                        );
+                        this.temp_array_last_week.push(this.licenses_details.last_week_closed_value);
+                        this.temp_array_last_week.push(this.licenses_details.last_week_unassigned_value);
                     }
                 },
                 (error) => {
@@ -1084,23 +1041,17 @@ export class LicensesComponent implements OnInit {
     }
 
     navigateToAlias(id: string) {
-        const url = this.router.serializeUrl(
-            this.router.createUrlTree([`/${this._roleRoute}/licenses/${id}`], {}),
-        );
+        const url = this.router.serializeUrl(this.router.createUrlTree([`/${this._roleRoute}/licenses/${id}`], {}));
         window.open(url, '_blank');
     }
 
     navigateToDealer(id: string) {
-        const url = this.router.serializeUrl(
-            this.router.createUrlTree([`/${this._roleRoute}/dealers/${id}`], {}),
-        );
+        const url = this.router.serializeUrl(this.router.createUrlTree([`/${this._roleRoute}/dealers/${id}`], {}));
         window.open(url, '_blank');
     }
 
     navigateToHost(id: string) {
-        const url = this.router.serializeUrl(
-            this.router.createUrlTree([`/${this._roleRoute}/hosts/${id}`], {}),
-        );
+        const url = this.router.serializeUrl(this.router.createUrlTree([`/${this._roleRoute}/hosts/${id}`], {}));
         window.open(url, '_blank');
     }
 

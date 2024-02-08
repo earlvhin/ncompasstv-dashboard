@@ -5,18 +5,8 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import {
-    API_ADVERTISER,
-    API_DEALER,
-    UI_ROLE_DEFINITION,
-    UI_ROLE_DEFINITION_TEXT,
-} from 'src/app/global/models';
-import {
-    AdvertiserService,
-    AuthService,
-    DealerService,
-    UserService,
-} from 'src/app/global/services';
+import { API_ADVERTISER, API_DEALER, UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
+import { AdvertiserService, AuthService, DealerService, UserService } from 'src/app/global/services';
 import { ConfirmationModalComponent } from '../../../page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
@@ -282,13 +272,7 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
         this.loading_data_adv = true;
 
         this._advertiser
-            .get_advertisers_unassigned_to_user(
-                this.selected_dealer,
-                page,
-                this.search_data_adv,
-                '',
-                '',
-            )
+            .get_advertisers_unassigned_to_user(this.selected_dealer, page, this.search_data_adv, '', '')
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data) => {
                 this.advertisers = data.advertisers;
@@ -337,50 +321,38 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
             else this.form_invalid = true;
         });
 
-        this.form_controls.password.valueChanges
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(() => {
-                if (this.form_controls.password.invalid) {
-                    this.password_is_valid = false;
-                    this.password_is_valid_msg = 'Must be at least 8 characters';
-                } else {
-                    this.password_is_valid = true;
-                    this.password_is_valid_msg = 'Password is valid';
-                }
+        this.form_controls.password.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+            if (this.form_controls.password.invalid) {
+                this.password_is_valid = false;
+                this.password_is_valid_msg = 'Must be at least 8 characters';
+            } else {
+                this.password_is_valid = true;
+                this.password_is_valid_msg = 'Password is valid';
+            }
 
-                if (
-                    !this.form_controls.password.value ||
-                    this.form_controls.password.value.length === 0
-                ) {
-                    this.form_controls.re_password.setValue(null);
-                    this.form_controls.re_password.disable();
-                } else {
-                    this.form_controls.re_password.enable();
-                }
-            });
+            if (!this.form_controls.password.value || this.form_controls.password.value.length === 0) {
+                this.form_controls.re_password.setValue(null);
+                this.form_controls.re_password.disable();
+            } else {
+                this.form_controls.re_password.enable();
+            }
+        });
 
-        this.form_controls.re_password.valueChanges
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(() => {
-                if (
-                    this.form_controls.password.value == this.form_controls.re_password.value &&
-                    this.form_controls.password.value.length !== 0
-                ) {
-                    this.password_is_match = true;
-                    this.password_match_msg = 'Passwords match';
-                } else {
-                    this.password_is_match = false;
-                    this.password_match_msg = 'Passwords do not match';
-                }
-            });
+        this.form_controls.re_password.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+            if (
+                this.form_controls.password.value == this.form_controls.re_password.value &&
+                this.form_controls.password.value.length !== 0
+            ) {
+                this.password_is_match = true;
+                this.password_match_msg = 'Passwords match';
+            } else {
+                this.password_is_match = false;
+                this.password_match_msg = 'Passwords do not match';
+            }
+        });
     }
 
-    private openConfirmationModal(
-        status: string,
-        message: string,
-        data: any,
-        redirect: boolean,
-    ): void {
+    private openConfirmationModal(status: string, message: string, data: any, redirect: boolean): void {
         const dialog = this._dialog.open(ConfirmationModalComponent, {
             width: '500px',
             height: '350px',

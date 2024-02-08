@@ -1,8 +1,6 @@
 <ng-container>
     <div class="assign-media-modal p-4 position-relative" *ngIf="!no_dealer_data; else no_dealers">
-        <button
-            class="modal-close-btn no-border top-0 right-0 no-background p-absolute"
-            [mat-dialog-close]="false">
+        <button class="modal-close-btn no-border top-0 right-0 no-background p-absolute" [mat-dialog-close]="false">
             <span class="fas fa-times"></span>
         </button>
         <ng-container *ngIf="checkInitialLoad(); else loading">
@@ -108,11 +106,7 @@
                             [disabled]="no_dealer">
                             Done
                         </button>
-                        <button
-                            mat-button
-                            mat-raised-button
-                            class="theme-btn mt-4"
-                            [mat-dialog-close]="assign_data">
+                        <button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="assign_data">
                             Skip
                         </button>
                     </div>
@@ -136,13 +130,7 @@
                     [disabled]="no_dealer && !is_floating">
                     Update
                 </button>
-                <button
-                    mat-button
-                    mat-raised-button
-                    class="theme-btn mt-4"
-                    [mat-dialog-close]="false">
-                    Cancel
-                </button>
+                <button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="false">Cancel</button>
             </ng-template>
         </ng-container>
     </div>
@@ -156,9 +144,7 @@
     <ng-template #no_dealers>
         <div class="p-3">
             <h3>No Dealers Available</h3>
-            <p class="sm-text mb-4">
-                The media files you'll be uploading will be tagged as "Floating".
-            </p>
+            <p class="sm-text mb-4">The media files you'll be uploading will be tagged as "Floating".</p>
             <button
                 mat-button
                 mat-raised-button
@@ -167,9 +153,7 @@
                 [routerLink]="['administrator/users/create-user/dealer']">
                 Create Dealer First
             </button>
-            <button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="true">
-                Continue
-            </button>
+            <button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="true">Continue</button>
         </div>
     </ng-template>
 </ng-container>

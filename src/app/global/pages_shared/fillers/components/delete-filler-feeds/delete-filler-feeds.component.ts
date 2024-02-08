@@ -20,9 +20,7 @@ export class DeleteFillerFeedsComponent implements OnInit {
     ngOnInit() {}
 
     openPlaylist(id) {
-        const url = this._router.serializeUrl(
-            this._router.createUrlTree([`/${this.roleRoute}/playlists/${id}`], {}),
-        );
+        const url = this._router.serializeUrl(this._router.createUrlTree([`/${this.roleRoute}/playlists/${id}`], {}));
         window.open(url, '_blank');
     }
 

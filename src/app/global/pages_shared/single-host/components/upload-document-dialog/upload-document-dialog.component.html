@@ -21,10 +21,7 @@
             <h5>.pdf, .doc, or .docx</h5>
             <br />
             <h5>or</h5>
-            <button
-                mat-raised-button
-                class="choose-file-btn theme-btn _primary"
-                (click)="onClickChooseFilesBtn()">
+            <button mat-raised-button class="choose-file-btn theme-btn _primary" (click)="onClickChooseFilesBtn()">
                 Choose a document
             </button>
         </div>
@@ -48,10 +45,7 @@
                     (onUpload)="uploaded($event)"
                     [file]="files"
                     [id]="i"
-                    *ngFor="
-                        let files of documentUploadQueue.files;
-                        let i = index
-                    "></mat-file-upload>
+                    *ngFor="let files of documentUploadQueue.files; let i = index"></mat-file-upload>
             </mat-file-upload-queue>
         </div>
     </div>

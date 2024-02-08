@@ -35,11 +35,7 @@
                 </mat-form-field>
 
                 <mat-form-field class="tag-description full-width">
-                    <input
-                        matInput
-                        type="text"
-                        formControlName="description"
-                        placeholder="Tag Description" />
+                    <input matInput type="text" formControlName="description" placeholder="Tag Description" />
                 </mat-form-field>
 
                 <mat-slide-toggle
@@ -104,9 +100,7 @@
                             <mat-icon matTooltip="This tag is excluded">visibility_off</mat-icon>
                         </div>
                     </ng-container>
-                    <div
-                        class="remove-btn cursor-pointer sm-text ml-2"
-                        (click)="onRemoveTag(i, 'new')">
+                    <div class="remove-btn cursor-pointer sm-text ml-2" (click)="onRemoveTag(i, 'new')">
                         <i class="fas fa-times"></i>
                     </div>
                 </div>
@@ -126,9 +120,7 @@
                             <mat-icon matTooltip="This tag is excluded">visibility_off</mat-icon>
                         </div>
                     </ng-container>
-                    <div
-                        class="remove-btn cursor-pointer sm-text ml-2"
-                        (click)="onRemoveTag(i, 'existing')">
+                    <div class="remove-btn cursor-pointer sm-text ml-2" (click)="onRemoveTag(i, 'existing')">
                         <i class="fas fa-times"></i>
                     </div>
                 </div>
@@ -148,9 +140,7 @@
                             <mat-icon matTooltip="This tag is excluded">visibility_off</mat-icon>
                         </div>
                     </ng-container>
-                    <div
-                        class="remove-btn cursor-pointer sm-text ml-2"
-                        (click)="onRemoveTag(i, 'current', tag)">
+                    <div class="remove-btn cursor-pointer sm-text ml-2" (click)="onRemoveTag(i, 'current', tag)">
                         <i class="fas fa-times"></i>
                     </div>
                 </div>

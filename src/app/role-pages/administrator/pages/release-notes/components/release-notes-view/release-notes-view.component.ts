@@ -69,17 +69,13 @@ export class ReleaseNotesViewComponent implements OnInit {
         const config = { width: '1000px', height: '750px', disableClose: true };
         const dialog = this._dialog.open(CreateUpdateDialogComponent, config);
         dialog.componentInstance.dialogMode = 'update';
-        dialog.componentInstance.note = this.release_notes.filter(
-            (note) => note.releaseNoteId === release_note_id,
-        )[0];
+        dialog.componentInstance.note = this.release_notes.filter((note) => note.releaseNoteId === release_note_id)[0];
 
         dialog.afterClosed().subscribe((response: boolean | API_RELEASE_NOTE) => {
             if (!response) return;
             const data = response as API_RELEASE_NOTE;
             const all_releases = [...this.release_notes];
-            const indexToReplace = all_releases.findIndex(
-                (note) => note.releaseNoteId === release_note_id,
-            );
+            const indexToReplace = all_releases.findIndex((note) => note.releaseNoteId === release_note_id);
             data.dateCreated = moment(data.dateCreated).format('MMM DD, YYYY');
             all_releases[indexToReplace] = data;
             this.setDataForDisplay(all_releases);
@@ -99,14 +95,7 @@ export class ReleaseNotesViewComponent implements OnInit {
         );
     }
 
-    warningModal(
-        status: string,
-        message: string,
-        data: string,
-        return_msg: string,
-        action: string,
-        id: any,
-    ): void {
+    warningModal(status: string, message: string, data: string, return_msg: string, action: string, id: any): void {
         this._dialog
             .open(ConfirmationModalComponent, {
                 width: '500px',
@@ -121,9 +110,7 @@ export class ReleaseNotesViewComponent implements OnInit {
                         .pipe(takeUntil(this._unsubscribe))
                         .subscribe(() => {
                             const all_releases = this.release_notes;
-                            const indexToDelete = all_releases.findIndex(
-                                (note) => note.releaseNoteId === id,
-                            );
+                            const indexToDelete = all_releases.findIndex((note) => note.releaseNoteId === id);
                             all_releases.splice(indexToDelete, 1);
                             this.setDataForDisplay(all_releases);
                         });

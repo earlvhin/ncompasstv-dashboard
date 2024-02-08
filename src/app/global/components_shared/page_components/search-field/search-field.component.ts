@@ -43,36 +43,22 @@ export class SearchFieldComponent implements OnInit {
             this.search_result = this.data_reference.filter((res) => {
                 if (typeof res[this.primary_keyword] === 'object') {
                     if (
-                        res[this.primary_keyword].value
-                            .toLowerCase()
-                            .includes(this.search_keyword.toLowerCase()) ||
-                        res[this.secondary_keyword].value
-                            .toLowerCase()
-                            .includes(this.search_keyword.toLowerCase())
+                        res[this.primary_keyword].value.toLowerCase().includes(this.search_keyword.toLowerCase()) ||
+                        res[this.secondary_keyword].value.toLowerCase().includes(this.search_keyword.toLowerCase())
                     ) {
                         return res;
                     } else if (
-                        res[this.primary_keyword].value
-                            .toLowerCase()
-                            .includes(this.search_keyword.toLowerCase())
+                        res[this.primary_keyword].value.toLowerCase().includes(this.search_keyword.toLowerCase())
                     ) {
                         return res;
                     }
                 } else {
                     if (
-                        res[this.primary_keyword]
-                            .toLowerCase()
-                            .includes(this.search_keyword.toLowerCase()) ||
-                        res[this.secondary_keyword]
-                            .toLowerCase()
-                            .includes(this.search_keyword.toLowerCase())
+                        res[this.primary_keyword].toLowerCase().includes(this.search_keyword.toLowerCase()) ||
+                        res[this.secondary_keyword].toLowerCase().includes(this.search_keyword.toLowerCase())
                     ) {
                         return res;
-                    } else if (
-                        res[this.primary_keyword]
-                            .toLowerCase()
-                            .includes(this.search_keyword.toLowerCase())
-                    ) {
+                    } else if (res[this.primary_keyword].toLowerCase().includes(this.search_keyword.toLowerCase())) {
                         return res;
                     }
                 }
@@ -85,9 +71,7 @@ export class SearchFieldComponent implements OnInit {
     }
 
     searchByApi() {
-        this.search_control.setValidators(
-            !this.allow_one ? [Validators.minLength(3)] : [Validators.minLength(1)],
-        );
+        this.search_control.setValidators(!this.allow_one ? [Validators.minLength(3)] : [Validators.minLength(1)]);
         // clearTimeout(this.timeOut);
         // this.timeOut = setTimeout(() => {
         // 	if(this.search_keyword.length >= 3) {
@@ -100,16 +84,14 @@ export class SearchFieldComponent implements OnInit {
         // }, this.timeOutDuration);
 
         this.subscription.add(
-            this.search_control.valueChanges
-                .pipe(debounceTime(1000), distinctUntilChanged())
-                .subscribe((data) => {
-                    if (this.search_control.valid) {
-                        this.search_form_invalid = false;
-                        this.searched.emit(data);
-                    } else {
-                        this.search_form_invalid = true;
-                    }
-                }),
+            this.search_control.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((data) => {
+                if (this.search_control.valid) {
+                    this.search_form_invalid = false;
+                    this.searched.emit(data);
+                } else {
+                    this.search_form_invalid = true;
+                }
+            }),
         );
     }
 }

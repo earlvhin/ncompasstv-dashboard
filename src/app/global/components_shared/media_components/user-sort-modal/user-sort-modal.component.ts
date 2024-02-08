@@ -227,16 +227,14 @@ export class UserSortModalComponent implements OnInit {
         this.loading_data_host = true;
         if (e > 1) {
             this.subscription.add(
-                this._host
-                    .get_host_by_dealer_id(this.dealer_id, e, this.search_host_data)
-                    .subscribe((data) => {
-                        data.paging.entities.map((i) => {
-                            this.hosts.push(i);
-                            this.hosts_data.push(i);
-                        });
-                        this.paging_host = data.paging;
-                        this.loading_data_host = false;
-                    }),
+                this._host.get_host_by_dealer_id(this.dealer_id, e, this.search_host_data).subscribe((data) => {
+                    data.paging.entities.map((i) => {
+                        this.hosts.push(i);
+                        this.hosts_data.push(i);
+                    });
+                    this.paging_host = data.paging;
+                    this.loading_data_host = false;
+                }),
             );
         } else {
             this.hosts_data = [];
@@ -248,32 +246,30 @@ export class UserSortModalComponent implements OnInit {
                 this.hosts = [];
             }
             this.subscription.add(
-                this._host
-                    .get_host_by_dealer_id(this.dealer_id, e, this.search_host_data)
-                    .subscribe((data) => {
-                        if (!data.message) {
-                            if (this.search_host_data == '') {
-                                data.paging.entities.map((i) => {
-                                    this.hosts.push(i);
-                                    this.hosts_data.push(i);
-                                });
-                            } else {
-                                if (data.paging.entities.length > 0) {
-                                    this.hosts_data = data.paging.entities;
-                                    this.loading_search = false;
-                                }
-                            }
-                            this.paging_host = data.paging;
+                this._host.get_host_by_dealer_id(this.dealer_id, e, this.search_host_data).subscribe((data) => {
+                    if (!data.message) {
+                        if (this.search_host_data == '') {
+                            data.paging.entities.map((i) => {
+                                this.hosts.push(i);
+                                this.hosts_data.push(i);
+                            });
                         } else {
-                            this.filter_data.host.name = '';
-                            if (this.search_host_data != '') {
-                                this.hosts_data = [];
+                            if (data.paging.entities.length > 0) {
+                                this.hosts_data = data.paging.entities;
                                 this.loading_search = false;
                             }
                         }
-                        this.loading_data_host = false;
-                        this.loading_search_host = false;
-                    }),
+                        this.paging_host = data.paging;
+                    } else {
+                        this.filter_data.host.name = '';
+                        if (this.search_host_data != '') {
+                            this.hosts_data = [];
+                            this.loading_search = false;
+                        }
+                    }
+                    this.loading_data_host = false;
+                    this.loading_search_host = false;
+                }),
             );
         }
     }

@@ -29,8 +29,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
-        if (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin)
-            this.is_dealer_admin = true;
+        if (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) this.is_dealer_admin = true;
 
         this._router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(
             (event: NavigationEnd) => {
