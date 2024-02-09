@@ -36,6 +36,7 @@ export interface API_LICENSE_PROPS {
     hostId: string;
     hostName: string;
     installDate: string;
+    installRequestDate: string;
     internetInfo: string;
     internetSpeed: string;
     internetType: string;

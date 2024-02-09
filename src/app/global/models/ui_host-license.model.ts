@@ -16,6 +16,7 @@ export class UI_HOST_LICENSE {
     pi_status?: TABLE_ROW_FORMAT;
     player_status?: TABLE_ROW_FORMAT;
     install_date?: TABLE_ROW_FORMAT;
+    request_date?: TABLE_ROW_FORMAT;
 }
 
 export class UI_HOST_VIEW {

@@ -35,8 +35,7 @@ export class ExportService {
 
         const file: Buffer = await workbook.xlsx.writeBuffer();
         const blob = new Blob([file], { type: EXCEL_TYPE });
-        const timestamp = moment().format('YYYY-DD-MM-hhssmm');
-        const fileName = `${pageSource}-${timestamp}.xlsx`;
+        const fileName = `${pageSource}.xlsx`;
         saveAs(blob, fileName);
     }
 

@@ -30,7 +30,7 @@ export class TabContentComponent implements OnInit, OnDestroy {
     @Input() initialLoad: boolean;
     @Input() installation_count: any;
     @Input() installations: INSTALLATION[];
-    @Input() isExporting = false;
+    @Input() isExporting: boolean;
     @Input() pagingData: PAGING;
     @Input() resetDatePicker: Observable<void>;
     @Input() searching: boolean;
