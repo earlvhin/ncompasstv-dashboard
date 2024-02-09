@@ -17,7 +17,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
     icons_only = false;
     is_dealer_admin = false;
     installations_count = 0;
+    isAdmin = false;
     isDealer = false;
+    isDealerAdmin = false;
 
     protected _unsubscribe: Subject<void> = new Subject<void>();
 
@@ -45,7 +47,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
         if (this.currentUser) {
             const { role_id } = this.currentUser;
-            this.isDealer = role_id === UI_ROLE_DEFINITION.dealer;
+            const subDealer = UI_ROLE_DEFINITION['sub-dealer'];
+            this.isAdmin = role_id === UI_ROLE_DEFINITION.administrator;
+            this.isDealerAdmin = role_id === UI_ROLE_DEFINITION.dealeradmin;
+            this.isDealer = role_id === UI_ROLE_DEFINITION.dealer || role_id === subDealer;
 
             if (!this.isDealer) {
                 this.getInstallationStats();
