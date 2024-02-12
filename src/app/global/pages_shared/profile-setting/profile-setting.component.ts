@@ -132,6 +132,8 @@ export class ProfileSettingComponent implements OnInit {
                         this.paging_data_activity = res.paging;
                         this.activity_data = [...mappedData];
                         this.reload_data = true;
+
+                        console.log(res.paging, 'rp');
                     });
                 },
                 (error) => {
