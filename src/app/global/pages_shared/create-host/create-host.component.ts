@@ -566,7 +566,6 @@ export class CreateHostComponent implements OnInit {
     }
 
     setTimezone(data, name) {
-        console.log(data, name);
         this.newHostFormControls.timezone.setValue(data);
         this.newHostFormControls.zone.setValue(name);
     }
