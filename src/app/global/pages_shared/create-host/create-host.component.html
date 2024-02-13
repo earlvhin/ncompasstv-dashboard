@@ -145,7 +145,7 @@
 
                                     <app-autocomplete-field
                                         *ngIf="field.control == 'timezone'"
-                                        (data_value)="setTimezone($event.data, $event.name)"
+                                        (data_value)="setTimezone($event)"
                                         [data_reference]="timezone"
                                         [primary_keyword]="'name'"
                                         [key_of_value]="'id'"

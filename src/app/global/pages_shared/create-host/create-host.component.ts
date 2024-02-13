@@ -500,7 +500,8 @@ export class CreateHostComponent implements OnInit {
                         break;
                 }
 
-                this.setTimezone(timezoneData[0].id, timezoneData[0].name);
+                this.setTimezone(timezoneData[0].id);
+				this.setZone(timezoneData[0].name);
             },
             (error) => {
                 console.error('Error getting timezone:', error);
@@ -565,10 +566,13 @@ export class CreateHostComponent implements OnInit {
             });
     }
 
-    setTimezone(data, name) {
+    setTimezone(data) {
         this.newHostFormControls.timezone.setValue(data);
-        this.newHostFormControls.zone.setValue(name);
     }
+
+	setZone(data){
+		this.newHostFormControls.zone.setValue(data);
+	}
 
     setToDealer(id: string) {
         this.newHostFormControls.dealerId.setValue(id);
