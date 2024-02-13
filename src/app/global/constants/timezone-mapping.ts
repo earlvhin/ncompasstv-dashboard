@@ -1,12 +1,10 @@
 export const TIMEZONE_MAPPING = {
+    // United States
     'America/New_York': 'Eastern',
     'America/Chicago': 'Central',
     'America/Denver': 'Mountain',
     'America/Los_Angeles': 'Pacific',
-    'America/Anchorage': 'Alaska',
-    'Pacific/Honolulu': 'Hawaii',
-    'America/Phoenix': 'Arizona',
-    'America/Boise': 'Mountain',
+    'America/Phoenix': 'Mountain',
     'America/Indiana/Indianapolis': 'Eastern',
     'America/Indiana/Knox': 'Central',
     'America/Indiana/Marengo': 'Eastern',
@@ -22,4 +20,15 @@ export const TIMEZONE_MAPPING = {
     'America/North_Dakota/Beulah': 'Central',
     'America/North_Dakota/Center': 'Central',
     'America/North_Dakota/New_Salem': 'Central',
+    // Canada
+    'America/Toronto': 'Eastern',
+    'America/Montreal': 'Eastern',
+    'America/Ottawa': 'Eastern',
+    'America/Vancouver': 'Pacific',
+    'America/Edmonton': 'Mountain',
+    'America/Regina': 'Central',
+    'America/Winnipeg': 'Central',
+    'America/Yellowknife': 'Mountain',
+    'America/Iqaluit': 'Eastern',
+    'America/Whitehorse': 'Pacific',
 };
