@@ -4,12 +4,10 @@ import { MatDialog } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { Workbook } from 'exceljs';
-import { saveAs } from 'file-saver';
 import * as moment from 'moment';
 
 import { environment } from 'src/environments/environment';
-import { AuthService, HostService, LicenseService } from 'src/app/global/services';
+import { AuthService, HostService, LicenseService, ExportService } from 'src/app/global/services';
 import {
     UI_LICENSE,
     UI_HOST_VIEW,
@@ -17,6 +15,7 @@ import {
     API_HOST,
     UI_ROLE_DEFINITION_TEXT,
     API_LICENSE_PROPS,
+    WORKSHEET,
 } from 'src/app/global/models';
 import { UserSortModalComponent } from 'src/app/global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
 import { LicenseModalComponent } from 'src/app/global/components_shared/license_components/license-modal/license-modal.component';
@@ -85,9 +84,7 @@ export class LicensesComponent implements OnInit {
     hosts_to_export: API_HOST[] = [];
     licenses_to_export: any[] = [];
     pageSize: number;
-    workbook: any;
     workbook_generation = false;
-    worksheet: any;
     temp_label: any = [];
     temp_array: any = [];
     temp_label_this_week: any = [];
@@ -95,6 +92,7 @@ export class LicensesComponent implements OnInit {
     temp_label_last_week: any = [];
     temp_array_last_week: any = [];
     url_link: any;
+    worksheet: WORKSHEET[];
 
     // UI Table Column Header
     license_table_column = this._licenseTableColumns;
@@ -132,6 +130,7 @@ export class LicensesComponent implements OnInit {
         private cdr: ChangeDetectorRef,
         private _activatedRoute: ActivatedRoute,
         private router: Router,
+        private _export: ExportService,
     ) {}
 
     ngOnInit() {
@@ -187,26 +186,19 @@ export class LicensesComponent implements OnInit {
             license.isActivated === 1 &&
             license.hostName != null &&
             license.piStatus === 1
-        ) {
+        )
             return 'text-primary';
-        } else if (
+        else if (
             new Date(license.installDate) <= currentDate &&
             license.isActivated === 1 &&
             license.hostName != null &&
             license.piStatus === 0
-        ) {
+        )
             return 'text-danger';
-        } else if (
-            new Date(license.installDate) > currentDate &&
-            license.hostName != null &&
-            license.isActivated === 1
-        ) {
+        else if (new Date(license.installDate) > currentDate && license.hostName != null && license.isActivated === 1)
             return 'text-orange';
-        } else if (license.isActivated === 0 && license.hostName != null) {
-            return 'text-light-gray';
-        } else {
-            return 'text-gray';
-        }
+        else if (license.isActivated === 0 && license.hostName != null) return 'text-light-gray';
+        else return 'text-gray';
     }
 
     checkStatusForExport(license: API_LICENSE_PROPS) {
@@ -217,26 +209,19 @@ export class LicensesComponent implements OnInit {
             license.isActivated == 1 &&
             license.hostName != null &&
             license.piStatus == 1
-        ) {
+        )
             return 'Online';
-        } else if (
+        else if (
             new Date(license.installDate) <= currentDate &&
             license.isActivated == 1 &&
             license.hostName != null &&
             license.piStatus == 0
-        ) {
+        )
             return 'Offline';
-        } else if (
-            new Date(license.installDate) > currentDate &&
-            license.hostName != null &&
-            license.isActivated === 1
-        ) {
+        else if (new Date(license.installDate) > currentDate && license.hostName != null && license.isActivated === 1)
             return 'Pending';
-        } else if (license.isActivated == 0 && license.hostName != null) {
-            return 'Inactive';
-        } else {
-            return 'Unassigned';
-        }
+        else if (license.isActivated == 0 && license.hostName != null) return 'Inactive';
+        else return 'Unassigned';
     }
 
     clearFilter() {
@@ -275,41 +260,6 @@ export class LicensesComponent implements OnInit {
 
     exportTable(tab: string) {
         this.workbook_generation = true;
-        const header = [];
-        this.workbook = new Workbook();
-        this.workbook.creator = 'NCompass TV';
-        this.workbook.useStyles = true;
-        this.workbook.created = new Date();
-        switch (tab) {
-            case 'licenses':
-                this.worksheet = this.workbook.addWorksheet('License View');
-                Object.keys(this.license_table_column).forEach((key) => {
-                    if (this.license_table_column[key].name && !this.license_table_column[key].no_export) {
-                        header.push({
-                            header: this.license_table_column[key].name,
-                            key: this.license_table_column[key].key,
-                            width: 30,
-                            style: { font: { name: 'Arial', bold: true } },
-                        });
-                    }
-                });
-                break;
-            case 'hosts':
-                this.worksheet = this.workbook.addWorksheet('Host View');
-                Object.keys(this.hosts_table_column).forEach((key) => {
-                    if (this.hosts_table_column[key].name && !this.hosts_table_column[key].no_export) {
-                        header.push({
-                            header: this.hosts_table_column[key].name,
-                            key: this.hosts_table_column[key].key,
-                            width: 30,
-                            style: { font: { name: 'Arial', bold: true } },
-                        });
-                    }
-                });
-                break;
-            default:
-        }
-        this.worksheet.columns = header;
         this.getDataForExport(tab);
     }
 
@@ -328,9 +278,8 @@ export class LicensesComponent implements OnInit {
                     const filter = { column: 'TimeIn', order: 'desc' };
                     this.getColumnsAndOrder(filter, 'licenses');
                     return;
-                } else {
-                    this.sortList('desc');
                 }
+                this.sortList('desc');
                 break;
 
             case 'zone':
@@ -448,20 +397,14 @@ export class LicensesComponent implements OnInit {
             )
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data) => {
-                if (data.licenses.length === 0) {
-                    this.no_favorites = true;
-                } else {
-                    data.licenses.map((entities) => {
-                        this.favorites_list.push(entities);
-                    });
+                if (data.licenses.length === 0) this.no_favorites = true;
+                else {
+                    data.licenses.map((entities) => this.favorites_list.push(entities));
                     this.favorites_list_cache = this.favorites_list;
                     this.no_favorites = false;
                     this.paging_data_favorites = data.paging;
                 }
-                if (reset) {
-                    this.favorites_list_cache = this.favorites_list;
-                    // this.no_favorites = false;
-                }
+                if (reset) this.favorites_list_cache = this.favorites_list;
             });
     }
 
@@ -493,9 +436,7 @@ export class LicensesComponent implements OnInit {
                     this.hosts_data = [...mappedData];
                     this.filtered_data_host = [...mappedData];
                 },
-                (error) => {
-                    console.error(error);
-                },
+                (error) => console.error(error),
             )
             .add(() => {
                 this.initial_load_hosts = false;
@@ -511,11 +452,8 @@ export class LicensesComponent implements OnInit {
             favorite = '';
             this.searching_licenses = true;
         } else {
-            if (page > 1) {
-                this.searching_licenses = false;
-            } else {
-                this.searching_licenses = true;
-            }
+            if (page > 1) this.searching_licenses = false;
+            else this.searching_licenses = true;
             favorite = false;
         }
         this._license
@@ -567,9 +505,7 @@ export class LicensesComponent implements OnInit {
                             this.license_data_for_grid_view = this.grid_list_cache;
                         }
 
-                        if (page === 1) {
-                            this.grid_list_cache = this.license_data_for_grid_view;
-                        }
+                        if (page === 1) this.grid_list_cache = this.license_data_for_grid_view;
 
                         this.hideLicenseSpinner();
                         return;
@@ -580,9 +516,7 @@ export class LicensesComponent implements OnInit {
                     this.filtered_data_licenses = [...mapped];
                     this.hideLicenseSpinner();
                 },
-                (error) => {
-                    console.error(error);
-                },
+                (error) => console.error(error),
             );
     }
 
@@ -605,73 +539,48 @@ export class LicensesComponent implements OnInit {
                                 time_end = new Date(time_end.getTime() + 60 * 60 * 24 * 1000);
                             this.diff_hours = (time_end.getTime() - time_start.getTime()) / 1000;
                         }
-
                         this.hour_diff_temp.push(this.diff_hours);
                     });
-                } else {
                 }
             });
 
             this.hour_diff = 0;
-
-            this.hour_diff_temp.map((hour) => {
-                this.hour_diff += hour;
-            });
+            this.hour_diff_temp.map((hour) => (this.hour_diff += hour));
         }
-
         return this.msToTime(this.hour_diff);
     }
 
     getTotalLicenses() {
         if (this.active_view === 'grid') {
-            if (this.no_favorites) {
-                return this.paging_data_licenses.totalEntities;
-            } else {
-                return this.paging_data_favorites.totalEntities + this.paging_data_licenses.totalEntities;
-            }
-        } else {
-            return this.paging_data_licenses.totalEntities;
+            if (this.no_favorites) return this.paging_data_licenses.totalEntities;
+            return this.paging_data_favorites.totalEntities + this.paging_data_licenses.totalEntities;
         }
+
+        return this.paging_data_licenses.totalEntities;
     }
 
     getZoneHours(data: API_LICENSE_PROPS) {
-        if (data.templateName == 'Fullscreen') {
-            return `Main: ${this.msToTime(parseInt(data.templateMain))}`;
-        }
+        if (data.templateName == 'Fullscreen') return 'Main: ' + this.msToTime(parseInt(data.templateMain));
 
-        let data_to_return: any = '';
+        let data_to_return = '';
+        const templates = [
+            'Background',
+            'Bottom',
+            'Horizontal',
+            'HorizontalSmall',
+            'LowerLeft',
+            'Main',
+            'UpperLeft',
+            'Vertical',
+        ];
 
-        if (data.templateBackground != 'NO DATA') {
-            data_to_return = `${data_to_return} 'Background: ${this.msToTime(parseInt(data.templateBackground))}`;
-        }
-
-        if (data.templateBottom != 'NO DATA') {
-            data_to_return = `${data_to_return} \n Bottom: ${this.msToTime(parseInt(data.templateBottom))}`;
-        }
-
-        if (data.templateHorizontal != 'NO DATA') {
-            data_to_return = `${data_to_return} \n Horizontal: ${this.msToTime(parseInt(data.templateHorizontal))}`;
-        }
-
-        if (data.templateHorizontalSmall != 'NO DATA') {
-            data_to_return = `${data_to_return} \n Horizontal Small: ${this.msToTime(parseInt(data.templateHorizontalSmall))}`;
-        }
-
-        if (data.templateLowerLeft != 'NO DATA') {
-            data_to_return = `${data_to_return} \n Lower Left: ${this.msToTime(parseInt(data.templateLowerLeft))}`;
-        }
-
-        if (data.templateMain != 'NO DATA') {
-            data_to_return = `${data_to_return} \n Main: ${this.msToTime(parseInt(data.templateMain))}`;
-        }
-
-        if (data.templateUpperLeft != 'NO DATA') {
-            data_to_return = `${data_to_return} \n Upper Left: ${this.msToTime(parseInt(data.templateUpperLeft))}`;
-        }
-
-        if (data.templateVertical != 'NO DATA') {
-            data_to_return = `${data_to_return} \n Vertical: ${this.msToTime(parseInt(data.templateUpperLeft))}`;
-        }
+        templates.forEach((template, index) => {
+            const templateKey = 'template' + template;
+            if (data[templateKey] != 'NO DATA') {
+                data_to_return +=
+                    (index === 0 ? '' : '\n') + template + ': ' + this.msToTime(parseInt(data[templateKey]));
+            }
+        });
 
         return data_to_return;
     }
@@ -693,34 +602,33 @@ export class LicensesComponent implements OnInit {
     }
 
     sortByUser() {
-        const dialog = this._dialog.open(UserSortModalComponent, {
-            width: '500px',
-            data: 'license',
-        });
+        this._dialog
+            .open(UserSortModalComponent, {
+                width: '500px',
+                data: 'license',
+            })
+            .afterClosed()
+            .subscribe((data) => {
+                if (!data) return;
 
-        dialog.afterClosed().subscribe((data) => {
-            if (!data) return;
+                if (data.dealer.id) {
+                    this.filters.dealer = data.dealer.id;
+                    this.filters.label_dealer = data.dealer.name;
+                }
 
-            if (data.dealer.id) {
-                this.filters.dealer = data.dealer.id;
-                this.filters.label_dealer = data.dealer.name;
-            }
+                if (data.host.id) {
+                    this.filters.host = data.host.id;
+                    this.filters.label_host = data.host.name;
+                }
 
-            if (data.host.id) {
-                this.filters.host = data.host.id;
-                this.filters.label_host = data.host.name;
-            }
+                if (this.active_view === 'grid') {
+                    this.license_data_for_grid_view = [];
+                    this.getFavoriteLicenses(false);
+                    this.getLicenses(1, 24, false);
+                } else this.getLicenses(1);
 
-            if (this.active_view === 'grid') {
-                this.license_data_for_grid_view = [];
-                this.getFavoriteLicenses(false);
-                this.getLicenses(1, 24, false);
-            } else {
-                this.getLicenses(1);
-            }
-
-            this.hide_all_license = false;
-        });
+                this.hide_all_license = false;
+            });
     }
 
     filterData(keyword: string, tab: string) {
@@ -733,12 +641,9 @@ export class LicensesComponent implements OnInit {
                     this.license_data_for_grid_view = [];
                     this.getFavoriteLicenses(false);
                     this.getLicenses(1, 24, false);
-                } else {
-                    this.getLicenses(1);
-                }
+                } else this.getLicenses(1);
 
                 if (keyword) this.hide_all_license = false;
-
                 break;
 
             case 'hosts':
@@ -751,8 +656,6 @@ export class LicensesComponent implements OnInit {
     }
 
     getDataForExport(tab: string): void {
-        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-
         switch (tab) {
             case 'licenses':
                 this._license
@@ -791,32 +694,17 @@ export class LicensesComponent implements OnInit {
                                 license.upload = Math.round(license.internetInfo.uploadMbps * 100) / 100 + ' mbps';
                                 license.download = Math.round(license.internetInfo.downloadMbps * 100) / 100 + ' mbps';
                             }
+
+                            if (license.storeHours) this.getStoreHourseParse(license);
                         });
 
                         this.licenses_to_export = data.licenses;
 
-                        this.licenses_to_export.forEach((item) => {
-                            this.mapLicensesForExport(item);
-                            this.worksheet.addRow(item).font = { bold: false };
-                        });
+                        this.licenses_to_export.forEach((item) => this.mapLicensesForExport(item));
 
-                        let rowIndex = 1;
-                        for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
-                            this.worksheet.getRow(rowIndex).alignment = {
-                                vertical: 'middle',
-                                horizontal: 'center',
-                                wrapText: true,
-                            };
-                        }
-
-                        this.workbook.xlsx.writeBuffer().then((file: any) => {
-                            const blob = new Blob([file], { type: EXCEL_TYPE });
-                            const filename = 'Licenses' + '.xlsx';
-                            saveAs(blob, filename);
-                        });
-
-                        this.workbook_generation = false;
-                    });
+                        this.prepareForExport(tab, this._licenseTableColumns, this.licenses_to_export);
+                    })
+                    .add(() => (this.workbook_generation = false));
 
                 break;
 
@@ -829,44 +717,42 @@ export class LicensesComponent implements OnInit {
                     pageSize: 0,
                 };
 
-                this._host.get_host_fetch_export(filters).subscribe((response) => {
-                    if (response.message) {
-                        this.hosts_to_export = [];
-                        return;
-                    } else {
-                        response.host.map((host) => {
-                            host.storeHours = this.getTotalHours(host);
-                            this.mapHostsForExport(host);
-                        });
-                        this.hosts_to_export = response.host;
-                    }
-
-                    this.hosts_to_export.forEach((item) => {
-                        this.worksheet.addRow(item).font = { bold: false };
-                    });
-
-                    let rowIndex = 1;
-
-                    for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
-                        this.worksheet.getRow(rowIndex).alignment = {
-                            vertical: 'middle',
-                            horizontal: 'center',
-                            wrapText: true,
-                        };
-                    }
-
-                    this.workbook.xlsx.writeBuffer().then((file: any) => {
-                        const blob = new Blob([file], { type: EXCEL_TYPE });
-                        const filename = 'Hosts' + '.xlsx';
-                        saveAs(blob, filename);
-                    });
-
-                    this.workbook_generation = false;
-                });
+                this._host
+                    .get_host_fetch_export(filters)
+                    .subscribe((response) => {
+                        if (response.message) {
+                            this.hosts_to_export = [];
+                            return;
+                        } else {
+                            response.host.map((host) => {
+                                host.storeHours = this.getTotalHours(host);
+                                this.mapHostsForExport(host);
+                            });
+                            this.hosts_to_export = response.host;
+                        }
+                        this.prepareForExport(tab, this._hostTableColumns, this.hosts_to_export);
+                    })
+                    .add(() => (this.workbook_generation = false));
 
                 break;
             default:
         }
+    }
+
+    private prepareForExport(tab, column, dataToExport) {
+        const filename = tab;
+        let tables_to_export = column;
+        tables_to_export = tables_to_export.filter(function (column) {
+            return !column.no_export;
+        });
+        this.worksheet = [
+            {
+                name: filename,
+                columns: tables_to_export,
+                data: dataToExport,
+            },
+        ];
+        this._export.generate(filename, this.worksheet);
     }
 
     getLabel(data: API_HOST) {
@@ -1021,14 +907,9 @@ export class LicensesComponent implements OnInit {
 
     getTotalShownLicenses() {
         if (this.active_view === 'grid') {
-            if (this.favorite_view) {
-                return this.favorites_list.length + this.paging_data_licenses.entities.length;
-            } else {
-                return this.paging_data_licenses.entities.length;
-            }
-        } else {
-            return this.paging_data_licenses.entities.length;
-        }
+            if (this.favorite_view) return this.favorites_list.length + this.paging_data_licenses.entities.length;
+            else return this.paging_data_licenses.entities.length;
+        } else return this.paging_data_licenses.entities.length;
     }
 
     msToTime(input: number) {
@@ -1056,27 +937,27 @@ export class LicensesComponent implements OnInit {
     }
 
     openConfirmationModal(status: string, message: string, data: any): void {
-        const dialog = this._dialog.open(ConfirmationModalComponent, {
-            width: '500px',
-            height: '350px',
-            data: { status, message, data },
-        });
-
-        dialog.afterClosed().subscribe(() => {
-            if (status !== 'success') return;
-            this.getFavoriteLicenses(false);
-        });
+        this._dialog
+            .open(ConfirmationModalComponent, {
+                width: '500px',
+                height: '350px',
+                data: { status, message, data },
+            })
+            .afterClosed()
+            .subscribe(() => {
+                if (status !== 'success') return;
+                this.getFavoriteLicenses(false);
+            });
     }
 
     openGenerateLicenseModal(): void {
-        let dialogRef = this._dialog.open(LicenseModalComponent, {
-            height: '400px',
-            width: '500px',
-        });
-
-        dialogRef.afterClosed().subscribe(() => {
-            this.ngOnInit();
-        });
+        this._dialog
+            .open(LicenseModalComponent, {
+                height: '400px',
+                width: '500px',
+            })
+            .afterClosed()
+            .subscribe(() => this.ngOnInit());
     }
 
     resetFilterStatus() {
@@ -1130,18 +1011,38 @@ export class LicensesComponent implements OnInit {
         this.favorite_view = true;
     }
 
+    getStoreHourseParse(data) {
+        let days = [];
+        if (data.storeHours) {
+            let storehours = JSON.parse(data.storeHours);
+            storehours = storehours.sort((a, b) => {
+                return a.id - b.id;
+            });
+            storehours.map((day) => {
+                if (day.status) {
+                    day.periods.map((period) => {
+                        if (period.open == '' && period.close == '') {
+                            days.push(day.day + ' : Open 24 hrs');
+                        } else {
+                            days.push(day.day + ' : ' + period.open + ' - ' + period.close);
+                        }
+                    });
+                } else {
+                    days.push(day.day + ' : ' + 'Closed');
+                }
+            });
+            data.storeHoursParsed = days.toString();
+            data.storeHoursParsed = data.storeHoursParsed.split(',').join('\n');
+        }
+    }
+
     private getInternetType(value: string): string {
         if (!value) return;
 
         value = value.toLowerCase();
 
-        if (value.includes('w')) {
-            return 'WiFi';
-        }
-
-        if (value.includes('eth')) {
-            return 'LAN';
-        }
+        if (value.includes('w')) return 'WiFi';
+        if (value.includes('eth')) return 'LAN';
     }
 
     private hideLicenseSpinner() {
@@ -1166,6 +1067,7 @@ export class LicensesComponent implements OnInit {
         item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
         item.timeIn = item.timeIn ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a') : '';
         item.installDate = this._date.transform(item.installDate, 'MMM dd, yyyy');
+        item.installRequestDate = this._date.transform(item.installRequestDate, 'MMM dd, yyyy');
         item.dateCreated = this._date.transform(item.dateCreated, 'MMM dd, yyyy');
         item.internetType = this.getInternetType(item.internetType);
         item.internetSpeed = item.internetSpeed == 'Fast' ? 'Good' : item.internetSpeed;
@@ -1179,9 +1081,7 @@ export class LicensesComponent implements OnInit {
     private mapToHostsTable(data: API_HOST[]): UI_HOST_VIEW[] {
         let count = this.paging_data_host.pageStart;
         let role = this._auth.current_role;
-        if (role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-            role = UI_ROLE_DEFINITION_TEXT.administrator;
-        }
+        if (role === UI_ROLE_DEFINITION_TEXT.dealeradmin) role = UI_ROLE_DEFINITION_TEXT.administrator;
 
         return data.map((h: API_HOST) => {
             const table = new UI_HOST_VIEW(
@@ -1335,6 +1235,15 @@ export class LicensesComponent implements OnInit {
                     id: l.licenseId,
                 },
                 {
+                    value:
+                        l.installRequestDate && !l.installRequestDate.includes('Invalid')
+                            ? this._date.transform(l.installRequestDate, 'MMM dd, y')
+                            : '--',
+                    link: null,
+                    label: 'Install Request Date',
+                    hidden: false,
+                },
+                {
                     value: this.checkStatus(l),
                     link: null,
                     editable: false,
@@ -1406,6 +1315,34 @@ export class LicensesComponent implements OnInit {
             { name: 'Host', sortable: true, column: 'HostName', key: 'hostName' },
             { name: 'Alias', sortable: true, column: 'Alias', key: 'alias' },
             {
+                name: 'Address',
+                sortable: false,
+                key: 'hostAddress',
+                hidden: true,
+                no_show: true,
+            },
+            {
+                name: 'City',
+                sortable: false,
+                key: 'city',
+                hidden: true,
+                no_show: true,
+            },
+            {
+                name: 'State',
+                sortable: false,
+                key: 'state',
+                hidden: true,
+                no_show: true,
+            },
+            {
+                name: 'Business Hours',
+                sortable: false,
+                key: 'storeHoursParsed',
+                hidden: true,
+                no_show: true,
+            },
+            {
                 name: 'Last Push',
                 sortable: true,
                 column: 'ContentsUpdated',
@@ -1463,6 +1400,12 @@ export class LicensesComponent implements OnInit {
                 sortable: true,
                 column: 'InstallDate',
                 key: 'installDate',
+            },
+            {
+                name: 'Install Request Date',
+                sortable: true,
+                column: 'InstallRequestDate',
+                key: 'installRequestDate',
             },
             {
                 name: 'Creation Date',

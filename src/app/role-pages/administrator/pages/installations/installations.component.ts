@@ -2,12 +2,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TitleCasePipe, DatePipe } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { Workbook } from 'exceljs';
-import { saveAs } from 'file-saver';
 import * as moment from 'moment';
-
-import { AuthService, HelperService, LicenseService } from 'src/app/global/services';
-import { API_FILTERS, INSTALLATION, PAGING, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
+import { AuthService, HelperService, LicenseService, ExportService } from 'src/app/global/services';
+import { API_FILTERS, INSTALLATION, PAGING, UI_ROLE_DEFINITION_TEXT, WORKSHEET } from 'src/app/global/models';
 import { MatTabChangeEvent } from '@angular/material';
 
 @Component({
@@ -17,6 +14,7 @@ import { MatTabChangeEvent } from '@angular/material';
     providers: [TitleCasePipe, DatePipe],
 })
 export class InstallationsComponent implements OnInit, OnDestroy {
+    current_tab: string;
     currentFilters: API_FILTERS = { page: 1, installDate: moment().format('MM-DD-YYYY') };
     filteredData = [];
     initialLoad = false;
@@ -28,13 +26,12 @@ export class InstallationsComponent implements OnInit, OnDestroy {
     pagingData: PAGING;
     searching = false;
     tabs = this._tabs;
+    worksheet: WORKSHEET[];
 
     private licenses_to_export = [];
     private currentMonth = '';
     private nextMonth = '';
     private previousMonth = '';
-    private workbook: any;
-    private worksheet: any;
     protected _unsubscribe: Subject<void> = new Subject<void>();
 
     constructor(
@@ -43,6 +40,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
         private _helper: HelperService,
         private _license: LicenseService,
         private _titlecase: TitleCasePipe,
+        private _export: ExportService,
     ) {}
 
     ngOnInit() {
@@ -75,28 +73,8 @@ export class InstallationsComponent implements OnInit, OnDestroy {
     }
 
     exportTable(tab = 'default'): void {
-        const header = [];
         this.isExporting = true;
-        this.workbook = new Workbook();
-        this.workbook.creator = 'NCompass TV';
-        this.workbook.useStyles = true;
-        this.workbook.created = new Date();
-        this.worksheet = this.workbook.addWorksheet('Installations');
-
-        Object.keys(this._columnsForExport).forEach((key) => {
-            if (this._columnsForExport[key].name && !this._columnsForExport[key].no_export) {
-                header.push({
-                    header: this._columnsForExport[key].name,
-                    key: this._columnsForExport[key].key,
-                    width: 30,
-                    style: { font: { name: 'Arial', bold: true } },
-                });
-            }
-        });
-
-        this.worksheet.columns = header;
-        this.isExporting = true;
-        this.getDataForExport(tab).add(() => (this.isExporting = false));
+        this.getDataForExport(tab);
     }
 
     loadInstallationsData(type = 'default'): void {
@@ -128,8 +106,8 @@ export class InstallationsComponent implements OnInit, OnDestroy {
     }
 
     private getDataForExport(tab = 'default') {
-        this.currentFilters.pageSize = 10000;
-
+        this.currentFilters.pageSize = 0;
+        this.current_tab = tab;
         return this._license
             .get_installations(this.currentFilters, tab)
             .pipe(takeUntil(this._unsubscribe))
@@ -140,32 +118,28 @@ export class InstallationsComponent implements OnInit, OnDestroy {
                     this.licenses_to_export = [];
                     return;
                 }
-
-                const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-
                 this.licenses_to_export = response.paging.entities;
 
-                this.licenses_to_export.forEach((item, i) => {
-                    this.modifyItem(item);
-                    this.worksheet.addRow(item).font = { bold: false };
-                });
+                this.licenses_to_export.forEach((item) => this.modifyItem(item));
+                this.prepareForExport();
+            })
+            .add(() => (this.isExporting = false));
+    }
 
-                let rowIndex = 1;
-
-                for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
-                    this.worksheet.getRow(rowIndex).alignment = {
-                        vertical: 'middle',
-                        horizontal: 'center',
-                        wrapText: true,
-                    };
-                }
-
-                this.workbook.xlsx.writeBuffer().then((file: any) => {
-                    const blob = new Blob([file], { type: EXCEL_TYPE });
-                    const filename = `${this._titlecase.transform(tab)} Installations for ${this.currentFilters.installDate}.xlsx`;
-                    saveAs(blob, filename);
-                });
-            });
+    private prepareForExport() {
+        const filename = `${this._titlecase.transform(this.current_tab)} Installations for ${this.currentFilters.installDate}`;
+        let tables_to_export = this._tableColumns;
+        tables_to_export = tables_to_export.filter(function (column) {
+            return !column.no_export;
+        });
+        this.worksheet = [
+            {
+                name: filename,
+                columns: tables_to_export,
+                data: this.licenses_to_export,
+            },
+        ];
+        this._export.generate(filename, this.worksheet);
     }
 
     private getInstallations(type = 'default') {
@@ -280,13 +254,20 @@ export class InstallationsComponent implements OnInit, OnDestroy {
                     hidden: false,
                     past: isPast,
                 },
+                {
+                    value: this._dates.transform(license.installRequestDate, 'MMM d, y'),
+                    link: null,
+                    hidden: false,
+                    past: isPast,
+                },
             );
         });
     }
 
-    private modifyItem(item: { screenTypeName: string; installDate: string }): void {
+    private modifyItem(item: { screenTypeName: string; installDate: string; installRequestDate: string }): void {
         item.screenTypeName = this._titlecase.transform(item.screenTypeName);
         item.installDate = this._dates.transform(item.installDate, 'MMM d, y');
+        item.installRequestDate = this._dates.transform(item.installRequestDate, 'MMM d, y');
     }
 
     private subscribeToUpdateInstallationDate() {
@@ -297,7 +278,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 
     protected get _tableColumns() {
         return [
-            { name: '#', sortable: false, key: 'licenseKey', hidden: true },
+            { name: '#', sortable: false, key: 'licenseKey', hidden: true, no_export: true },
             { name: 'License Key', sortable: true, column: 'LicenseKey', key: 'licenseKey' },
             { name: 'Host', sortable: true, column: 'HostName', key: 'hostName' },
             { name: 'Dealer Alias', sortable: true, column: 'DealerIdAlias', key: 'dealerIdAlias' },
@@ -314,17 +295,12 @@ export class InstallationsComponent implements OnInit, OnDestroy {
                 column: 'InstallDate',
                 key: 'installDate',
             },
-        ];
-    }
-
-    protected get _columnsForExport() {
-        return [
-            { name: 'License Key', key: 'licenseKey' },
-            { name: 'Host', key: 'hostName' },
-            { name: 'Dealer Alias', key: 'dealerIdAlias' },
-            { name: 'Business Name', key: 'businessName' },
-            { name: 'License Type', key: 'screenTypeName' },
-            { name: 'Installation Date', key: 'installDate' },
+            {
+                name: 'Install Request Date',
+                sortable: true,
+                column: 'InstallRequestDate',
+                key: 'installRequestDate',
+            },
         ];
     }
 

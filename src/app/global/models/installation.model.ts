@@ -7,6 +7,7 @@ export class INSTALLATION {
     dealer_name: object;
     license_type: object;
     installation_date: object;
+    request_date: object;
 
     constructor(
         id: object,
@@ -17,6 +18,7 @@ export class INSTALLATION {
         dealer_name: object,
         license_type: object,
         installation_date: object,
+        request_date: object,
     ) {
         this.license_id = id;
         this.index = index;
@@ -26,5 +28,6 @@ export class INSTALLATION {
         this.dealer_name = dealer_name;
         this.license_type = license_type;
         this.installation_date = installation_date;
+        this.request_date = request_date;
     }
 }

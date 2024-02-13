@@ -439,6 +439,7 @@ export class LicenseService extends BaseService {
         pending?,
         online?,
         isActivated?,
+        page?,
     ) {
         const base = `${this.getters.api_get_licenses_duration}`;
         const params = this.setUrlParams(
@@ -459,6 +460,7 @@ export class LicenseService extends BaseService {
                 pending,
                 online,
                 isActivated,
+                page: 1,
             },
             false,
             true,

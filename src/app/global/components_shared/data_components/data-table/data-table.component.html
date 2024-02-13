@@ -351,22 +351,24 @@
                                                     title="Copy {{ data[d].label }}"></button>
                                             </div>
                                             <ng-template #anydesk>
-                                                <div>
-                                                    ID -
-                                                    {{ data[d].value != '' ? data[d].value : '' }}
-                                                    <button
-                                                        class="fas fa-copy text-primary no-border"
-                                                        *ngIf="data[d].copy && data[d].value != '--'"
-                                                        (click)="copyToClipboard(data[d].value)"
-                                                        title="Copy ID"></button>
-                                                </div>
-                                                <div>
-                                                    PW - {{ data[d].password }}
-                                                    <button
-                                                        class="fas fa-copy text-primary no-border"
-                                                        *ngIf="data[d].copy && data[d].password != '--'"
-                                                        (click)="copyToClipboard(data[d].password)"
-                                                        title="Copy Password"></button>
+                                                <div class="anydesk_id_pw_holder d-block">
+                                                    <div>
+                                                        ID -
+                                                        {{ data[d].value != '' ? data[d].value : '' }}
+                                                        <button
+                                                            class="fas fa-copy text-primary no-border"
+                                                            *ngIf="data[d].copy && data[d].value != '--'"
+                                                            (click)="copyToClipboard(data[d].value)"
+                                                            title="Copy ID"></button>
+                                                    </div>
+                                                    <div>
+                                                        PW - {{ data[d].password }}
+                                                        <button
+                                                            class="fas fa-copy text-primary no-border"
+                                                            *ngIf="data[d].copy && data[d].password != '--'"
+                                                            (click)="copyToClipboard(data[d].password)"
+                                                            title="Copy Password"></button>
+                                                    </div>
                                                 </div>
                                             </ng-template>
                                             <div

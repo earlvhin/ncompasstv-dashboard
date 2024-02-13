@@ -1,61 +1,63 @@
-<div *ngIf="!initial_load_dma; else loader">
-    <div class="flex mt-3">
-        <div class="flex-even">
-            <button
-                mat-button
-                mat-raised-button
-                class="theme-btn pi-control sm-text _primary mr-2"
-                (click)="exportTable()"
-                [disabled]="workbook_generation"
-                title="Export to CSV">
-                <span
-                    class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
-                    [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
-                <span class="ml-2 button_text_animation">{{ !workbook_generation ? 'Export' : 'Generating CSV' }}</span>
-            </button>
+<div class="dma-view-wrapper">
+    <div *ngIf="!initial_load_dma; else loader">
+        <div class="flex mt-3">
+            <div class="flex-even">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn pi-control sm-text _primary mr-2"
+                    (click)="exportTable()"
+                    [disabled]="workbook_generation"
+                    title="Export to CSV">
+                    <span
+                        class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
+                        [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
+                    <span class="ml-2 button_text_animation">{{ !workbook_generation ? 'Export' : 'Generating CSV' }}</span>
+                </button>
+            </div>
+            <div class="search-field-container">
+                <app-search-field
+                    [form_title]="'Search via Rank, Name or Code'"
+                    [placeholder]="'Example: 501'"
+                    [data_reference]="dma_data"
+                    [primary_keyword]="'dmaRank'"
+                    [secondary_keyword]="'dmaCode'"
+                    (searched)="filterData($event)"
+                    [api_search]="true"
+                    [allow_one]="true"></app-search-field>
+            </div>
         </div>
-        <div class="search-field-container">
-            <app-search-field
-                [form_title]="'Search via Rank, Name or Code'"
-                [placeholder]="'Example: 501'"
-                [data_reference]="dma_data"
-                [primary_keyword]="'dmaRank'"
-                [secondary_keyword]="'dmaCode'"
-                (searched)="filterData($event)"
-                [api_search]="true"
-                [allow_one]="true"></app-search-field>
+
+        <div class="flex">
+            <div class="full-width">
+                <ng-container *ngIf="!searching_dma; else loader">
+                    <mat-card *ngIf="filtered_data_dma.length > 0; else nodata">
+                        <app-data-table
+                            [table_data]="filtered_data_dma"
+                            [table_columns]="dma_table_column"
+                            [new_table]="true"
+                            [paging_details]="paging_data"
+                            (page_triggered)="getDMA($event)">
+                        </app-data-table>
+                    </mat-card>
+                </ng-container>
+            </div>
         </div>
     </div>
 
-    <div class="flex">
-        <div class="full-width">
-            <ng-container *ngIf="!searching_dma; else loader">
-                <mat-card *ngIf="filtered_data_dma.length > 0; else nodata">
-                    <app-data-table
-                        [table_data]="filtered_data_dma"
-                        [table_columns]="dma_table_column"
-                        [new_table]="true"
-                        [paging_details]="paging_data"
-                        (page_triggered)="getDMA($event)">
-                    </app-data-table>
-                </mat-card>
-            </ng-container>
+    <ng-template #loader>
+        <div class="py-4 white-bg h-500">
+            <app-spinner></app-spinner>
         </div>
-    </div>
+    </ng-template>
+
+    <ng-template #nodata>
+        <div class="flex">
+            <mat-card class="py-5 full-width text-center text-gray">
+                <span class="fa-5x far fa-file-alt mb-4"></span>
+                <h3>No Results Found.</h3>
+                <span>Try adjusting your search to find what you're looking for.</span>
+            </mat-card>
+        </div>
+    </ng-template>
 </div>
-
-<ng-template #loader>
-    <div class="py-4 white-bg h-500">
-        <app-spinner></app-spinner>
-    </div>
-</ng-template>
-
-<ng-template #nodata>
-    <div class="flex">
-        <mat-card class="py-5 full-width text-center text-gray">
-            <span class="fa-5x far fa-file-alt mb-4"></span>
-            <h3>No Results Found.</h3>
-            <span>Try adjusting your search to find what you're looking for.</span>
-        </mat-card>
-    </div>
-</ng-template>

@@ -18,6 +18,7 @@ import {
     LicenseService,
     RoleService,
     UserService,
+    ExportService,
 } from 'src/app/global/services';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { SubstringPipe } from '../../pipes/substring.pipe';
@@ -38,6 +39,7 @@ import {
     UI_ACTIVITY_LOGS,
     API_ADVERTISER,
     UI_ADVERTISER,
+    WORKSHEET,
 } from 'src/app/global/models';
 import { MatSnackBar } from '@angular/material';
 
@@ -160,11 +162,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     temp_label: any = [];
     timeout_duration: number;
     timeout_message: string;
-    title: string = 'The Dealer';
     user: API_USER_DATA;
     workbook_generation: boolean = false;
-    workbook: any;
-    worksheet: any;
+    worksheet: WORKSHEET[];
 
     saved_license_page: any;
     saved_hosts_page: any;
@@ -254,6 +254,34 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         { name: 'Dealer', sortable: true, key: 'dealer', hidden: true, no_show: true },
         { name: 'Host', sortable: true, column: 'HostName', key: 'hostName' },
         { name: 'Alias', sortable: true, column: 'Alias', key: 'alias' },
+        {
+            name: 'Address',
+            sortable: false,
+            key: 'hostAddress',
+            hidden: true,
+            no_show: true,
+        },
+        {
+            name: 'City',
+            sortable: false,
+            key: 'city',
+            hidden: true,
+            no_show: true,
+        },
+        {
+            name: 'State',
+            sortable: false,
+            key: 'state',
+            hidden: true,
+            no_show: true,
+        },
+        {
+            name: 'Business Hours',
+            sortable: false,
+            key: 'storeHoursParse',
+            hidden: true,
+            no_show: true,
+        },
         { name: 'Last Push', sortable: true, column: 'ContentsUpdated', key: 'contentsUpdated' },
         { name: 'Last Disconnect', sortable: true, column: 'TimeOut', key: 'timeIn' },
         {
@@ -298,6 +326,12 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         },
         { name: 'Zone & Duration', sortable: false, hidden: true, key: 'zone', no_show: true },
         { name: 'Installation Date', sortable: true, column: 'InstallDate', key: 'installDate' },
+        {
+            name: 'Install Request Date',
+            sortable: true,
+            column: 'InstallRequestDate',
+            key: 'installRequestDate',
+        },
         { name: 'Creation Date', sortable: false, key: 'dateCreated', hidden: true, no_show: true },
         { name: 'Tags', key: 'tagsToString', hidden: true, no_show: true },
     ];
@@ -359,6 +393,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         private _titlecase: TitleCasePipe,
         private _user: UserService,
         private cd: ChangeDetectorRef,
+        private _export: ExportService,
     ) {}
 
     ngOnInit() {
@@ -372,13 +407,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
         this._params.queryParams.subscribe((params) => {
             this.saved_tab = params['tab'] || 0;
-            if (this.saved_tab == 0) {
-                this.saved_license_page = params['page'] || 1;
-            } else if (this.saved_tab == 1) {
-                this.saved_hosts_page = params['page'] || 1;
-            } else if (this.saved_tab == 2) {
-                this.saved_adv_page = params['page'] || 1;
-            }
+            if (this.saved_tab == 0) this.saved_license_page = params['page'] || 1;
+            else if (this.saved_tab == 1) this.saved_hosts_page = params['page'] || 1;
+            else if (this.saved_tab == 2) this.saved_adv_page = params['page'] || 1;
         });
 
         this._socket.on('connect', () => {});
@@ -388,9 +419,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         if (
             this._role.get_user_role() == UI_ROLE_DEFINITION_TEXT.administrator ||
             this._role.get_user_role() == UI_ROLE_DEFINITION_TEXT.dealeradmin
-        ) {
+        )
             this.show_admin_buttons = true;
-        }
 
         this.setCurrentTabOnLoad();
 
@@ -409,18 +439,14 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                     this.adminButton();
                     this.getDealerLicenses();
                 },
-                (error) => {
-                    console.error(error);
-                },
+                (error) => console.error(error),
             ),
         );
 
         this.subscription.add(
             this._params.queryParams.subscribe(
                 (data) => (this.selected_index = data.tab),
-                (error) => {
-                    console.error(error);
-                },
+                (error) => console.error(error),
             ),
         );
 
@@ -429,9 +455,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     ngAfterViewInit() {
-        if (this.current_tab === 'licenses') {
-            this.getLicenseStatisticsByDealer(this.dealer_id);
-        }
+        if (this.current_tab === 'licenses') this.getLicenseStatisticsByDealer(this.dealer_id);
     }
 
     ngOnDestroy() {
@@ -445,9 +469,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         this.subscription.add(
             this._license.activate_license(e).subscribe(
                 () => this.warningModal('success', 'License Activated', 'License successfully activated.', '', ''),
-                (error) => {
-                    console.error(error);
-                },
+                (error) => console.error(error),
             ),
         );
     }
@@ -607,13 +629,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     private calculateTime(duration: number): string {
-        if (duration < 60) {
-            return `${Math.round(duration)}s`;
-        }
-
-        if (duration === 60) {
-            return '1m';
-        }
+        if (duration < 60) return `${Math.round(duration)}s`;
+        if (duration === 60) return '1m';
 
         const minutes = Math.floor(duration / 60);
         const seconds = Math.round(duration - minutes * 60);
@@ -625,9 +642,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         this.subscription.add(
             this._license.deactivate_license(e).subscribe(
                 () => this.warningModal('success', 'License Deactivated', 'License successfully deactivated.', '', ''),
-                (error) => {
-                    console.error(error);
-                },
+                (error) => console.error(error),
             ),
         );
     }
@@ -653,23 +668,19 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                     }
                     this.getUserById(res.paging.entities.map((a) => a.initiatedBy)).subscribe((responses) => {
                         this.created_by = responses;
-
                         const mappedData = this.activity_mapToUI(res.paging.entities);
                         this.paging_data = res.paging;
                         this.activity_data = [...mappedData];
                         this.reload_data = true;
                     });
                 },
-                (error) => {
-                    console.error(error);
-                },
+                (error) => console.error(error),
             )
             .add(() => (this.initial_load_activity = false));
     }
 
     getUserById(ids: any[]) {
         const userObservables = ids.map((id) => this._user.get_user_by_id(id).pipe(takeUntil(this._unsubscribe)));
-
         return forkJoin(userObservables);
     }
 
@@ -761,9 +772,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                         bad_value_label: 'Inactive',
                     };
                 },
-                (error) => {
-                    console.error(error);
-                },
+                (error) => console.error(error),
             ),
         );
     }
@@ -796,16 +805,12 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                         this.advertiser_filtered_data = [...advertisers];
                         this.no_advertisers = false;
                     } else {
-                        if (this.search_data_advertiser == '') {
-                            this.no_advertisers = true;
-                        }
+                        if (this.search_data_advertiser == '') this.no_advertisers = true;
                         this.advertiser_data = [];
                         this.advertiser_filtered_data = [];
                     }
                 },
-                (error) => {
-                    console.error(error);
-                },
+                (error) => console.error(error),
             );
     }
 
@@ -841,27 +846,17 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                         this.host_filtered_data = this.hostTable_mapToUI(this.temp_array);
                         this.no_hosts = false;
                     } else {
-                        if (this.search_data == '') {
-                            this.no_hosts = true;
-                        }
-
+                        if (this.search_data == '') this.no_hosts = true;
                         this.host_data = [];
                         this.host_filtered_data = [];
                     }
                 },
-                (error) => {
-                    console.error(error);
-                },
+                (error) => console.error(error),
             ),
         );
     }
 
     getHostTotalCount(dealerId: string): void {
-        let isAdmin =
-            this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin ||
-            this._auth.current_role === UI_ROLE_DEFINITION_TEXT.administrator
-                ? true
-                : false;
         this.subscription.add(
             this._host
                 .get_host_total_per_dealer(dealerId)
@@ -876,9 +871,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                             bad_value_label: 'Inactive',
                         };
                     },
-                    (error) => {
-                        console.error(error);
-                    },
+                    (error) => console.error(error),
                 )
                 .add(() => (this.is_host_stats_loaded = true)),
         );
@@ -920,9 +913,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                     this.filters.isactivated,
                 )
                 .subscribe(
-                    (response: { paging; statistics; message }) => {
-                        this.setLicensesData(response);
-                    },
+                    (response: { paging; statistics; message }) => this.setLicensesData(response),
                     (error) => {
                         this.no_licenses = true;
                         this.license_data = [];
@@ -936,27 +927,17 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
     setLicensesData(response) {
         if (response.message) {
-            if (this.search_data_license == '') {
-                this.no_licenses = true;
-            }
-
+            if (this.search_data_license == '') this.no_licenses = true;
             this.license_data = [];
             this.license_filtered_data = [];
         } else {
-            if (this.is_dealer_admin) {
-                this.license_data_api = response.licenses;
-            } else {
-                this.license_data_api = response.licenses;
-            }
+            if (this.is_dealer_admin) this.license_data_api = response.licenses;
+            else this.license_data_api = response.licenses;
 
             this.no_licenses = false;
-
             this.license_data_api.map((i) => {
-                if (i.appVersion) {
-                    i.apps = JSON.parse(i.appVersion);
-                } else {
-                    i.apps = null;
-                }
+                if (i.appVersion) i.apps = JSON.parse(i.appVersion);
+                else i.apps = null;
             });
             this.paging_data_license = response.paging;
             const mappedLicenses = this.licenseTable_mapToUI(this.license_data_api);
@@ -970,9 +951,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
     getLicenseTotalCount(id): void {
         this.subscription.add(
-            this._license.get_licenses_total_by_dealer(id).subscribe((data: any) => {
-                this.setLicensesCount(data);
-            }),
+            this._license.get_licenses_total_by_dealer(id).subscribe((data: any) => this.setLicensesCount(data)),
         );
     }
 
@@ -1052,7 +1031,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 { value: h.postalCode, link: null, editable: false, hidden: false },
                 { value: h.totalLicences, link: null, editable: false, hidden: false },
                 { value: h.status, link: null, editable: false, hidden: false },
-                // { value: this._date.transform(h.installDate), link: null, editable: false, hidden: false},
             );
         });
     }
@@ -1091,7 +1069,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 {
                     value: l.licenseKey,
                     link: '/administrator/licenses/' + l.licenseId,
-                    // compressed: true,
                     editable: false,
                     hidden: false,
                     status: true,
@@ -1145,14 +1122,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                     anydesk: true,
                     password: l.anydeskId ? this.splitKey(l.licenseId) : '--',
                 },
-                // {
-                // 	value: l.anydeskId ? this.splitKey(l.licenseId) : '--',
-                // 	link: null,
-                // 	editable: false,
-                // 	hidden: false,
-                // 	copy: true,
-                // 	label: 'Anydesk Password'
-                // },
                 {
                     value: l.screenName ? l.screenName : '--',
                     compressed: true,
@@ -1170,6 +1139,14 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                     label: 'Install Date',
                     hidden: false,
                     id: l.licenseId,
+                },
+                {
+                    value:
+                        l.installRequestDate && !l.installRequestDate.includes('Invalid')
+                            ? this._date.transform(l.installRequestDate, 'MMM dd, y')
+                            : '--',
+                    link: null,
+                    hidden: false,
                 },
                 { value: l.isActivated, link: null, editable: false, hidden: true },
                 { value: l.hostId ? true : false, link: null, editable: false, hidden: true },
@@ -1200,26 +1177,19 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
             license.isActivated === 1 &&
             license.hostName != null &&
             license.piStatus === 1
-        ) {
+        )
             return 'text-primary';
-        } else if (
+        else if (
             new Date(license.installDate) <= currentDate &&
             license.isActivated === 1 &&
             license.hostName != null &&
             license.piStatus === 0
-        ) {
+        )
             return 'text-danger';
-        } else if (
-            new Date(license.installDate) > currentDate &&
-            license.hostName != null &&
-            license.isActivated === 1
-        ) {
+        else if (new Date(license.installDate) > currentDate && license.hostName != null && license.isActivated === 1)
             return 'text-orange';
-        } else if (license.isActivated === 0 && license.hostName != null) {
-            return 'text-light-gray';
-        } else {
-            return 'text-gray';
-        }
+        else if (license.isActivated === 0 && license.hostName != null) return 'text-light-gray';
+        else return 'text-gray';
     }
 
     checkStatusForExport(license) {
@@ -1230,26 +1200,19 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
             license.isActivated === 1 &&
             license.hostName != null &&
             license.piStatus === 1
-        ) {
+        )
             return 'Online';
-        } else if (
+        else if (
             new Date(license.installDate) <= currentDate &&
             license.isActivated === 1 &&
             license.hostName != null &&
             license.piStatus === 0
-        ) {
+        )
             return 'Offline';
-        } else if (
-            new Date(license.installDate) > currentDate &&
-            license.hostName != null &&
-            license.isActivated === 1
-        ) {
+        else if (new Date(license.installDate) > currentDate && license.hostName != null && license.isActivated === 1)
             return 'Pending';
-        } else if (license.isActivated === 0 && license.hostName != null) {
-            return 'Inactive';
-        } else {
-            return 'Unassigned';
-        }
+        else if (license.isActivated === 0 && license.hostName != null) return 'Inactive';
+        else return 'Unassigned';
     }
 
     getLabel(data) {
@@ -1307,10 +1270,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
             default:
                 this.current_tab = 'licenses';
-
-                if (!this.no_licenses) {
-                    this.getLicenseStatisticsByDealer(this.dealer_id);
-                }
+                if (!this.no_licenses) this.getLicenseStatisticsByDealer(this.dealer_id);
         }
 
         this._router.navigate([], {
@@ -1329,37 +1289,28 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         };
         this.getColumnsAndOrder(filter);
 
-        if (this.saved_tab == 0) {
-            this.getLicensesofDealer(parseInt(this.saved_license_page));
-        } else {
-            this.getLicensesofDealer(1);
-        }
+        if (this.saved_tab == 0) this.getLicensesofDealer(parseInt(this.saved_license_page));
+        else this.getLicensesofDealer(1);
     }
 
     getDealers(e) {
         this.loading_data = true;
         if (e > 1) {
             this.subscription.add(
-                this._dealer.get_dealers_with_page(e, '').subscribe((data) => {
-                    this.setDealersDropdownDataWithPage(data);
-                }),
+                this._dealer
+                    .get_dealers_with_page(e, '')
+                    .subscribe((data) => this.setDealersDropdownDataWithPage(data)),
             );
         } else {
-            if (this.is_search) {
-                this.loading_search = true;
-            }
+            if (this.is_search) this.loading_search = true;
             this.subscription.add(
-                this._dealer.get_dealers_with_page(e, '').subscribe((data) => {
-                    this.setDealersDropdownData(data);
-                }),
+                this._dealer.get_dealers_with_page(e, '').subscribe((data) => this.setDealersDropdownData(data)),
             );
         }
     }
 
     setDealersDropdownDataWithPage(data) {
-        data.dealers.map((i) => {
-            this.dealers.push(i);
-        });
+        data.dealers.map((i) => this.dealers.push(i));
         this.paging = data.paging;
         this.loading_data = false;
     }
@@ -1376,9 +1327,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         this.searching_license_zone = true;
         this.subscription.add(
             this._dealer.get_dealer_license_zone(this.search_data_license_zone, this.dealer_id, page).subscribe(
-                (data) => {
-                    this.setZoneData(data);
-                },
+                (data) => this.setZoneData(data),
                 (error) => {
                     this.initial_load_zone = false;
                     this.searching_license_zone = false;
@@ -1400,9 +1349,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 this.license_zone_filtered_data = [...licenseContents];
                 this.no_license_zone = false;
             } else {
-                if (this.search_data_license_zone == '') {
-                    this.no_license_zone = true;
-                }
+                if (this.search_data_license_zone == '') this.no_license_zone = true;
                 this.license_zone_data = [];
                 this.license_zone_filtered_data = [];
             }
@@ -1433,7 +1380,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                             if (dealer.dealerId === this.dealer_id) response.paging.entities.splice(index, 1);
                         });
                     }
-
                     return response;
                 })
                 .subscribe(
@@ -1449,19 +1395,14 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
                         this.paging = response.paging;
                     },
-                    (error) => {
-                        console.error(error);
-                    },
+                    (error) => console.error(error),
                 ),
         );
     }
 
     toggleActivateDeactivate(e): void {
-        if (e.status) {
-            this.activateLicense(e.id);
-        } else {
-            this.deactivateLicense(e.id);
-        }
+        if (e.status) this.activateLicense(e.id);
+        else this.deactivateLicense(e.id);
     }
 
     rebootPi(): void {
@@ -1494,9 +1435,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         this.getLicensesofDealer(this.saved_license_page);
         this.getLicenseStatisticsByDealer(this.dealer_id, true);
 
-        if (this.licenses) {
-            this.resyncSocketConnection();
-        }
+        if (this.licenses) this.resyncSocketConnection();
     }
 
     screenshotDealer(): void {
@@ -1538,77 +1477,68 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
             this._auth.current_user_value.user_id,
         );
 
-        let dialogRef = this._dialog.open(ConfirmationModalComponent, {
-            width: '500px',
-            height: '350px',
-            data: {
-                status: status,
-                message: message,
-                data: data,
-                return_msg: return_msg,
-                action: action,
-            },
-        });
-
-        dialogRef.afterClosed().subscribe((result) => {
-            switch (result) {
-                case 'system_update':
-                    this.licenses.forEach((i) => {
-                        this._socket.emit('D_system_update_by_license', i.licenseId);
-                    });
-
-                    this.createActivity(updateLicenseActivity);
-                    break;
-                case 'reboot':
-                    this.licenses.forEach((i) => {
-                        this._socket.emit('D_pi_restart', i.licenseId);
-                    });
-
-                    this.createActivity(rebootPiActivity);
-
-                    break;
-                case 'reboot_player':
-                    this.licenses.forEach((i) => {
-                        this._socket.emit('D_player_restart', i.licenseId);
-                        this._host.emitActivity();
-                    });
-
-                    this.createActivity(rebootPlayerActivity);
-
-                    break;
-                case 'license_delete':
-                    this.subscription.add(
-                        this._license.delete_license(this.array_to_delete).subscribe((data) => {
-                            this.warningModal('success', 'License Deleted', 'License successfully deleted.', '', ''),
-                                this.reloadLicense();
-                        }),
-                    );
-
-                    this.createActivity(deletedLicenseActivity);
-
-                    break;
-                case 'upgrade_to_v2':
-                    this.licenses.forEach((i) => {
-                        this._socket.emit('D_upgrade_to_v2_by_license', i.licenseId);
-                    });
-                    break;
-                case 'screenshot':
-                    if (this.licenses) {
+        this._dialog
+            .open(ConfirmationModalComponent, {
+                width: '500px',
+                height: '350px',
+                data: {
+                    status: status,
+                    message: message,
+                    data: data,
+                    return_msg: return_msg,
+                    action: action,
+                },
+            })
+            .afterClosed()
+            .subscribe((result) => {
+                switch (result) {
+                    case 'system_update':
+                        this.licenses.forEach((i) => this._socket.emit('D_system_update_by_license', i.licenseId));
+                        this.createActivity(updateLicenseActivity);
+                        break;
+                    case 'reboot':
+                        this.licenses.forEach((i) => this._socket.emit('D_pi_restart', i.licenseId));
+                        this.createActivity(rebootPiActivity);
+                        break;
+                    case 'reboot_player':
                         this.licenses.forEach((i) => {
-                            this._socket.emit('D_screenshot_pi', i.licenseId);
+                            this._socket.emit('D_player_restart', i.licenseId);
+                            this._host.emitActivity();
                         });
-                    }
-                    break;
-                default:
-            }
-            const now = moment().format('MMMM Do YYYY, h:mm:ss a');
-            localStorage.setItem(`${this.dealer_id}`, now);
-            this.timeout_duration = 0;
-            this.timeout_message = `Will be available after ${10 - this.timeout_duration} minutes`;
-            this.remote_reboot_disabled = true;
-            this.remote_update_disabled = true;
-            this.screenshot_disabled = true;
-        });
+                        this.createActivity(rebootPlayerActivity);
+                        break;
+                    case 'license_delete':
+                        this.subscription.add(
+                            this._license.delete_license(this.array_to_delete).subscribe((data) => {
+                                this.warningModal(
+                                    'success',
+                                    'License Deleted',
+                                    'License successfully deleted.',
+                                    '',
+                                    '',
+                                );
+                                this.reloadLicense();
+                            }),
+                        );
+                        this.createActivity(deletedLicenseActivity);
+                        break;
+                    case 'upgrade_to_v2':
+                        this.licenses.forEach((i) => this._socket.emit('D_upgrade_to_v2_by_license', i.licenseId));
+                        break;
+                    case 'screenshot':
+                        if (this.licenses)
+                            this.licenses.forEach((i) => this._socket.emit('D_screenshot_pi', i.licenseId));
+                        break;
+                    default:
+                }
+                const now = moment().format('MMMM Do YYYY, h:mm:ss a');
+                localStorage.setItem(`${this.dealer_id}`, now);
+                this.timeout_duration = 0;
+                this.timeout_message = `Will be available after ${10 - this.timeout_duration} minutes`;
+                this.remote_reboot_disabled = true;
+                this.remote_update_disabled = true;
+                this.screenshot_disabled = true;
+            });
     }
 
     createActivity(activity) {
@@ -1619,9 +1549,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 (data) => {
                     return data;
                 },
-                (error) => {
-                    console.error(error);
-                },
+                (error) => console.error(error),
             );
     }
 
@@ -1662,7 +1590,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         this.subscription.add(
             this._license.get_license_to_export(this.dealer_id).subscribe((response) => {
                 if ('message' in response) return;
-
                 this.setDealerAllLicenses(response);
             }),
         );
@@ -1671,20 +1598,15 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     setDealerAllLicenses(data) {
         data.licenses.map((i) => {
             i.new_status = this.checkStatusForExport(i);
-            if (i.appVersion) {
-                i.apps = JSON.parse(i.appVersion);
-            } else {
-                i.apps = null;
-            }
+            if (i.appVersion) i.apps = JSON.parse(i.appVersion);
+            else i.apps = null;
         });
         this.licenses = data.licenses;
         if (this.licenses) this.resyncSocketConnection();
     }
 
     resyncSocketConnection() {
-        this.licenses.forEach((i) => {
-            this._socket.emit('D_is_electron_running', i.licenseId);
-        });
+        this.licenses.forEach((i) => this._socket.emit('D_is_electron_running', i.licenseId));
     }
 
     runTerminalScript(script: string) {
@@ -1725,22 +1647,14 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                         )
                         .subscribe((data) => {
                             data.licenseTemplateZoneExports.map((i) => {
-                                if (i.appVersion) {
-                                    i.apps = JSON.parse(i.appVersion);
-                                } else {
-                                    i.apps = null;
-                                }
+                                if (i.appVersion) i.apps = JSON.parse(i.appVersion);
+                                else i.apps = null;
+                                this.modifyItem(i, tab);
                             });
                             this.licenses_to_export = data.licenseTemplateZoneExports;
-                            this.licenses_to_export.forEach((item, i) => {
-                                item.new_status = this.checkStatusForExport(item);
-                                this.modifyItem(item, tab);
-                                this.worksheet.addRow(item).font = {
-                                    bold: false,
-                                };
-                            });
-                            this.generateExcel(tab);
-                        }),
+                            this.prepareForExport(tab, this.license_table_columns, this.licenses_to_export);
+                        })
+                        .add(() => (this.workbook_generation = false)),
                 );
                 break;
             case 'Hosts':
@@ -1754,16 +1668,16 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 };
 
                 this.subscription.add(
-                    this._host.get_host_by_dealer_id_with_sort(hostFilters).subscribe((data) => {
-                        this.hosts_to_export = data.paging.entities;
-                        this.hosts_to_export.forEach((item, i) => {
-                            this.modifyItem(item, tab);
-                            this.worksheet.addRow(item).font = {
-                                bold: false,
-                            };
-                        });
-                        this.generateExcel(tab);
-                    }),
+                    this._host
+                        .get_host_by_dealer_id_with_sort(hostFilters)
+                        .subscribe((data) => {
+                            this.hosts_to_export = data.paging.entities;
+                            this.hosts_to_export.forEach((item, i) => {
+                                this.modifyItem(item, tab);
+                            });
+                            this.prepareForExport(tab, this.host_table_col, this.hosts_to_export);
+                        })
+                        .add(() => (this.workbook_generation = false)),
                 );
                 break;
 
@@ -1788,48 +1702,52 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                             this.advertiser_to_export = data;
                             this.advertiser_to_export.forEach((item, i) => {
                                 this.modifyItem(item, tab);
-                                this.worksheet.addRow(item).font = {
-                                    bold: false,
-                                };
                             });
-                            this.generateExcel(tab);
-                        }),
+                            this.prepareForExport(tab, this.advertiser_table_columns, this.advertiser_to_export);
+                        })
+                        .add(() => (this.workbook_generation = false)),
                 );
                 break;
         }
     }
 
-    generateExcel(tab) {
-        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-        let rowIndex = 1;
-        for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
-            this.worksheet.getRow(rowIndex).alignment = {
-                vertical: 'middle',
-                horizontal: 'center',
-                wrapText: true,
-            };
-        }
-        this.workbook.xlsx.writeBuffer().then((file: any) => {
-            const blob = new Blob([file], { type: EXCEL_TYPE });
-            const filename = this.dealer.businessName + '-' + tab + '.xlsx';
-            saveAs(blob, filename);
+    prepareForExport(tab, columns, data) {
+        const filename = this.dealer_name + '-' + tab;
+        let tables_to_export = columns;
+        tables_to_export = tables_to_export.filter(function (column) {
+            return !column.no_export;
         });
-        this.workbook_generation = false;
+        this.worksheet = [
+            {
+                name: filename,
+                columns: tables_to_export,
+                data: data,
+            },
+        ];
+        this._export.generate(filename, this.worksheet);
     }
 
     modifyItem(item, tab) {
         switch (tab) {
             case 'Licenses':
-                item.dealer = this.dealer.businessName;
+                item.new_status = this.checkStatusForExport(item);
+                item.dealer = this.dealer_name;
                 item.piVersion = item.apps ? item.apps.rpi_model : '';
                 item.zone = this.getZoneHours(item);
                 item.displayStatus = item.displayStatus == 1 ? 'ON' : '';
                 item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';
                 item.piStatus = item.piStatus == 0 ? 'Offline' : 'Online';
                 item.screenType = this._titlecase.transform(item.screenType);
-                item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
-                item.timeIn = item.timeIn ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a') : '';
+                item.contentsUpdated = this._date.transform(
+                    item.contentsUpdated,
+                    'MMM dd, yyyy h:mm a',
+                );
+                item.timeIn = item.timeIn
+                    ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a')
+                    : '';
+                item.storeHoursParse = this.getStoreHourseParse(item);
                 item.installDate = this._date.transform(item.installDate, 'MMM dd, yyyy');
+                item.installRequestDate = this._date.transform(item.installRequestDate, 'MMM dd, yyyy');
                 item.dateCreated = this._date.transform(item.dateCreated, 'MMM dd, yyyy');
                 item.internetType = this.getInternetType(item.internetType);
                 item.internetSpeed = item.internetSpeed == 'Fast' ? 'Good' : item.internetSpeed;
@@ -1867,10 +1785,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
             case 'Advertisers':
                 item.contentsCount = item.contentCount;
-
-                if (item.contents && item.contents.length > 0) {
-                    item.contentsFormatted = item.contents.join(', ');
-                }
+                if (item.contents && item.contents.length > 0) item.contentsFormatted = item.contents.join('\n');
                 break;
         }
     }
@@ -1885,15 +1800,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
             storehours.map((day) => {
                 if (day.status) {
                     day.periods.map((period) => {
-                        if (period.open == '' && period.close == '') {
-                            days.push(day.day + ' : Open 24 hrs');
-                        } else {
-                            days.push(day.day + ' : ' + period.open + ' - ' + period.close);
-                        }
+                        if (period.open == '' && period.close == '') days.push(day.day + ' : Open 24 hrs');
+                        else days.push(day.day + ' : ' + period.open + ' - ' + period.close);
                     });
-                } else {
-                    days.push(day.day + ' : ' + 'Closed');
-                }
+                } else days.push(day.day + ' : ' + 'Closed');
             });
             data.storeHoursParse = days.toString();
             return data.storeHoursParse.split(',').join('\n');
@@ -1901,119 +1811,40 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     getZoneHours(data) {
-        if (data.templateName == 'Fullscreen') {
-            return 'Main: ' + this.msToTime(data.templateMain);
-        } else {
-            let data_to_return: any = '';
-            if (data.templateBackground != 'NO DATA') {
-                data_to_return = data_to_return + 'Background: ' + this.msToTime(data.templateBackground);
+        if (data.templateName == 'Fullscreen') return 'Main: ' + this.msToTime(data.templateMain);
+
+        let data_to_return = '';
+        const templates = [
+            'Background',
+            'Bottom',
+            'Horizontal',
+            'HorizontalSmall',
+            'LowerLeft',
+            'Main',
+            'UpperLeft',
+            'Vertical',
+        ];
+
+        templates.forEach((template, index) => {
+            const templateKey = 'template' + template;
+            if (data[templateKey] != 'NO DATA') {
+                data_to_return += (index === 0 ? '' : '\n') + template + ': ' + this.msToTime(data[templateKey]);
             }
-            if (data.templateBottom != 'NO DATA') {
-                data_to_return = data_to_return + '\n' + 'Bottom: ' + this.msToTime(data.templateBottom);
-            }
-            if (data.templateHorizontal != 'NO DATA') {
-                data_to_return = data_to_return + '\n' + 'Horizontal: ' + this.msToTime(data.templateHorizontal);
-            }
-            if (data.templateHorizontalSmall != 'NO DATA') {
-                data_to_return =
-                    data_to_return + '\n' + 'Horizontal Small: ' + this.msToTime(data.templateHorizontalSmall);
-            }
-            if (data.templateLowerLeft != 'NO DATA') {
-                data_to_return = data_to_return + '\n' + 'Lower Left: ' + this.msToTime(data.templateLowerLeft);
-            }
-            if (data.templateMain != 'NO DATA') {
-                data_to_return = data_to_return + '\n' + 'Main: ' + this.msToTime(data.templateMain);
-            }
-            if (data.templateUpperLeft != 'NO DATA') {
-                data_to_return = data_to_return + '\n' + 'Upper Left: ' + this.msToTime(data.templateUpperLeft);
-            }
-            if (data.templateVertical != 'NO DATA') {
-                data_to_return = data_to_return + '\n' + 'Vertical: ' + this.msToTime(data.templateVertical);
-            }
-            return data_to_return;
-        }
+        });
+
+        return data_to_return;
     }
 
     msToTime(input) {
-        let totalSeconds = input;
-        let hours = Math.floor(totalSeconds / 3600);
-        totalSeconds %= 3600;
-        let minutes = Math.floor(totalSeconds / 60);
-        let seconds = totalSeconds % 60;
-
+        const totalSeconds = input;
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
         return hours.toFixed(0) + 'h ' + minutes.toFixed(0) + 'm ' + seconds.toFixed(0) + 's ';
     }
 
     exportTable(tab) {
         this.workbook_generation = true;
-        const header = [];
-        this.workbook = new Workbook();
-        this.workbook.creator = 'NCompass TV';
-        this.workbook.created = new Date();
-        this.worksheet = this.workbook.addWorksheet(tab);
-        switch (tab) {
-            case 'Licenses':
-                Object.keys(this.license_table_columns).forEach((key) => {
-                    if (this.license_table_columns[key].name && !this.license_table_columns[key].no_export) {
-                        header.push({
-                            header: this.license_table_columns[key].name,
-                            key: this.license_table_columns[key].key,
-                            width: 30,
-                            style: { font: { name: 'Arial', bold: true } },
-                        });
-                    }
-                });
-                header.push({
-                    header: 'Activated',
-                    key: 'isActivated',
-                    width: 30,
-                    style: { font: { name: 'Arial', bold: true, color: '8EC641' } },
-                });
-                break;
-            case 'Hosts':
-                for (let i = 1; i < 13; i++) {
-                    this.host_table_col.push(
-                        {
-                            name: moment(i, 'M').format('MMM') + ' - Average Dwell Time',
-                            no_show: true,
-                            hidden: true,
-                            key: 'averageDwellTime-' + i,
-                        },
-                        {
-                            name: moment(i, 'M').format('MMM') + ' - Foot Traffic',
-                            no_show: true,
-                            hidden: true,
-                            key: 'footTraffic-' + i,
-                        },
-                    );
-                }
-                Object.keys(this.host_table_col).forEach((key) => {
-                    if (this.host_table_col[key].name && !this.host_table_col[key].no_export) {
-                        header.push({
-                            header: this.host_table_col[key].name,
-                            key: this.host_table_col[key].key,
-                            width: 30,
-                            style: { font: { name: 'Arial', bold: true } },
-                        });
-                    }
-                });
-                break;
-
-            case 'Advertisers':
-                const table_style = {
-                    font: { name: 'Arial', bold: true },
-                };
-                this.advertiser_table_columns.forEach((column) => {
-                    header.push({
-                        header: column.name,
-                        key: column.key,
-                        width: 30,
-                        style: { table_style },
-                    });
-                });
-                break;
-        }
-        this.worksheet.columns = header;
         this.getDataForExport(this.dealer_id, tab);
     }
 
@@ -2053,15 +1884,11 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                     this.dealer_name = response.businessName;
                     this.getDealerUserData(response.userId);
                     this.dealer_data = response;
-
                     this.createdBy = response.createdBy;
                     this.dateCreated = response.dateCreated;
-
                     this.getDealerActivity(1);
                 },
-                (error) => {
-                    console.error(error);
-                },
+                (error) => console.error(error),
             );
     }
 
@@ -2082,21 +1909,15 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                     this.dealer_and_user_data = { dealer: this.dealer, user: this.user };
                     this.loaded = true;
                 },
-                (error) => {
-                    console.error(error);
-                },
+                (error) => console.error(error),
             );
     }
 
     private getInternetType(value: string): string {
         if (value) {
             value = value.toLowerCase();
-            if (value.includes('w')) {
-                return 'WiFi';
-            }
-            if (value.includes('eth')) {
-                return 'LAN';
-            }
+            if (value.includes('w')) return 'WiFi';
+            if (value.includes('eth')) return 'LAN';
         }
     }
 
@@ -2105,14 +1926,12 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
             this._license.get_statistics_by_dealer(id).subscribe(
                 (response) => {
                     let hasNull = false;
-
                     for (let [key, value] of Object.entries(response)) {
                         if (value == null) {
                             hasNull = true;
                             break;
                         }
                     }
-
                     if (hasNull) {
                         response = {
                             activityActive: '0',
@@ -2126,12 +1945,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                             statusOnline: '0',
                         };
                     }
-
                     this.statistics = response;
                 },
-                (error) => {
-                    console.error(error);
-                },
+                (error) => console.error(error),
             ),
         );
     }
@@ -2141,34 +1957,28 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
             this.current_tab = 'hosts';
             return;
         }
-
         if (this.isAdvertisersTabOnLoad) {
             this.current_tab = 'advertisers';
             return;
         }
-
         if (this.isZoneTabOnLoad) {
             this.current_tab = 'zone';
             return;
         }
-
         if (this.isActivityTabOnLoad) {
             this.current_tab = 'activity';
             return;
         }
-
         if (this.isTerminalTabOnLoad) {
             this.current_tab = 'terminal';
             return;
         }
-
         if (this.isBillingTabOnLoad) {
             this.current_tab = 'billing';
             this.reload_billing = true;
             this.cd.detectChanges();
             return;
         }
-
         this.current_tab = 'licenses';
     }
 
@@ -2176,9 +1986,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         this.subscription.add(
             this._dealer.onSuccessReassigningDealer.subscribe(
                 () => this.ngOnInit(),
-                (error) => {
-                    console.error(error);
-                },
+                (error) => console.error(error),
             ),
         );
     }
@@ -2198,7 +2006,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         switch (type) {
             case 'status':
                 this.resetFilterStatus();
-                // this.filters.status = value;
                 this.filters.activated = true;
                 this.filters.label_status = value == 1 ? 'Online' : 'Offline';
                 this.filters.online = value == 1 ? true : false;
@@ -2210,9 +2017,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                         order: 'desc',
                     };
                     this.getColumnsAndOrder(filter);
-                } else {
-                    this.sortList('desc');
+                    return;
                 }
+                this.sortList('desc');
                 break;
             case 'zone':
                 this.filters.zone = value;

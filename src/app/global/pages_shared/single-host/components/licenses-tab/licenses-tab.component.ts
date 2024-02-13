@@ -221,6 +221,13 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
                     hidden: false,
                     id: license.licenseId,
                 },
+                request_date: {
+                    value: license.installRequestDate
+                        ? this._date.transform(license.installRequestDate, 'MMM dd, y')
+                        : '--',
+                    link: null,
+                    hidden: false,
+                },
                 pi_status: { value: license.piStatus, link: null, editable: false, hidden: true },
                 player_status: {
                     value: license.playerStatus,
@@ -359,6 +366,7 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
             'Last Startup',
             'Last Disconnect',
             'Installation Date',
+            'Install Request Date',
         ];
     }
 }
