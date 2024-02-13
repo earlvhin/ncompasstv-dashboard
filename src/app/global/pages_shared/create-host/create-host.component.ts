@@ -484,9 +484,7 @@ export class CreateHostComponent implements OnInit {
                 // Set the value based on the detected timezone
                 switch (timezone) {
                     case pacific:
-                        const pacific_zone = this.timezone.filter((data) => data.name == 'US/Pacific');
-                        this.setTimezone(pacific_zone[0].id, pacific_zone[0].name);
-                        this.newHostFormControls.timezone.setValue(pacific_zone[0].name);
+                        timezoneData = this.timezone.filter((data) => data.name == 'US/Pacific');
                         break;
                     case eastern:
                         timezoneData = this.timezone.filter((data) => data.name == 'US/Eastern');
@@ -568,6 +566,7 @@ export class CreateHostComponent implements OnInit {
     }
 
     setTimezone(data, name) {
+        console.log(data, name)
         this.newHostFormControls.timezone.setValue(data);
         this.newHostFormControls.zone.setValue(name);
     }
