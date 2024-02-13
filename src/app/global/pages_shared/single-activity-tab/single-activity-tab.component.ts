@@ -31,9 +31,7 @@ export class SingleActivityTabComponent implements OnInit {
     constructor() {}
     protected _unsubscribe: Subject<void> = new Subject<void>();
 
-    ngOnInit() {
-        console.log(this.activity_data, 'ad');
-    }
+    ngOnInit() {}
 
     ngOnDestroy() {
         this._unsubscribe.next();

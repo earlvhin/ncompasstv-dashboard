@@ -1,7 +1,6 @@
 export class API_ACTIVITY {
     index: any;
     activityCode: any;
-
     activityLogId: any;
     activityDescription: any;
     dateCreated: any;
@@ -15,7 +14,6 @@ export class API_ACTIVITY {
         activityCode: any,
         activityLogId: any,
         activityDescription: any,
-
         dateCreated: any,
         initiatedBy: any,
         initiatedById: any,
@@ -26,7 +24,6 @@ export class API_ACTIVITY {
         this.activityCode = activityCode;
         this.activityLogId = activityLogId;
         this.activityDescription = activityDescription;
-
         this.dateCreated = dateCreated;
         this.dateUpdated = dateUpdated;
         this.initiatedBy = initiatedBy;

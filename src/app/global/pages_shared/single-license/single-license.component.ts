@@ -1603,22 +1603,18 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     }
 
     getActivityColumnsAndOrder(data: { column: string; order: string }): void {
-        console.log(data, 'col');
         this.sort_column = data.column;
         this.sort_order = data.order;
         this.getLicenseActivity(1);
     }
 
     getLicenseActivity(page: number) {
-        console.log(this.sort_column, this.sort_order);
         this._license
             .get_activities(this.license_id, page)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (response) => {
                     //this.activities = response.paging.entities as API_ACTIVITY[];
-
-                    console.log(response, response.paging);
 
                     const mappedData = this.activity_mapToUI(response.paging.entities);
                     this.paging_data_activity = response.paging;
