@@ -220,6 +220,12 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         return date.toLocaleTimeString('en-US', options);
     }
 
+    activity_table = [
+        { name: '#', sortable: false },
+        { name: 'Date Created', column: 'dateCreated', sortable: false },
+        { name: 'Activity', column: 'activityCode', sortable: false },
+    ];
+
     constructor(
         private _auth: AuthService,
         private _confirmDialog: ConfirmationDialogService,
@@ -1597,14 +1603,16 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     }
 
     getActivityColumnsAndOrder(data: { column: string; order: string }): void {
+        console.log(data, 'col');
         this.sort_column = data.column;
         this.sort_order = data.order;
         this.getLicenseActivity(1);
     }
 
     getLicenseActivity(page: number) {
+        console.log(this.sort_column, this.sort_order);
         this._license
-            .get_activities(this.license_id, this.sort_column, this.sort_order, page)
+            .get_activities(this.license_id, page)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (response) => {
@@ -1630,7 +1638,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 { value: count++, editable: false },
                 { value: a.activityCode, hidden: true },
                 { value: a.activityLogId, hidden: true },
-                { value: this._date.transform(a.dateCreated, 'MMMM d, y'), hidden: false },
+                { value: this._date.transform(a.dateCreated, 'MMMM d, y, h:mm a'), hidden: false },
                 { value: `${a.activityDescription} initiated by ${a.initiatedBy}`, hidden: false },
                 { value: a.dateUpdated, hidden: true },
                 { value: a.initiatedBy, hidden: true },

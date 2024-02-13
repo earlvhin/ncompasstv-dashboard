@@ -1237,15 +1237,15 @@
 
                     <!-- Activity Tab -->
                     <mat-tab label="Activity" *ngIf="isCurrentUserAdmin">
-                        <ng-container>
+                        <ng-container *ngIf="activities && activities.length > 0; else noLicenseActivity">
                             <div class="row mt-4">
                                 <div class="col-lg-12">
                                     <app-single-activity-tab
-                                        *ngIf="activities && activities.length > 0; else noLicenseActivity"
                                         [activity_data]="activities"
                                         [paging_data]="paging_data_activity"
                                         [sort_column]="sort_column"
                                         [sort_order]="sort_order"
+                                        [activity_table]="activity_table"
                                         (pageChanged)="getLicenseActivity($event)"
                                         (sortColumnEvent)="getActivityColumnsAndOrder($event)">
                                     </app-single-activity-tab>
