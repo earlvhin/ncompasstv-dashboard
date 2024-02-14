@@ -14,6 +14,8 @@ export class API_CREATE_HOST {
     timezone: string;
     logo?: string;
     images?: string[];
+    contactPerson: string;
+    contactNumber: string;
 
     constructor(hostData: {
         dealerId: string;
@@ -30,6 +32,8 @@ export class API_CREATE_HOST {
         category: string;
         timezone: string;
         logo: string;
+        contactPerson: string;
+        contactNumber: string;
     }) {
         this.dealerId = hostData.dealerId;
         this.businessName = hostData.businessName;
@@ -45,5 +49,7 @@ export class API_CREATE_HOST {
         this.category = hostData.category;
         this.timezone = hostData.timezone;
         this.logo = hostData.logo;
+        this.contactPerson = hostData.contactPerson;
+        this.contactNumber = hostData.contactNumber;
     }
 }

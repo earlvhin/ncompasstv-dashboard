@@ -1,6 +1,22 @@
 <div class="theme-container">
     <div class="title-section">
-        <h1 class="page-title">{{ title }}</h1>
+        <div class="row">
+            <div class="col-lg-6">
+                <h1 class="page-title">{{ title }}</h1>
+            </div>
+            <div class="col-lg-6 text-right">
+                <button
+                    *ngIf="!is_dealer_admin"
+                    mat-button
+                    mat-raised-button
+                    (click)="addNewHostPlace()"
+                    class="theme-btn pi-control _info sm-text mr-2"
+                    title="Add Host Owner">
+                    <span class="fas fa-user"></span>
+                    <span class="ml-2 button_text_animation">Add New Host Owner</span>
+                </button>
+            </div>
+        </div>
         <hr class="my-4" />
     </div>
 
@@ -41,9 +57,12 @@
                                     class="full-width">
                                     <mat-label>{{ field.label }}</mat-label>
                                     <input
+                                        class="no-spinners"
                                         matInput
                                         [formControlName]="field.control"
                                         [placeholder]="field.placeholder"
+                                        [type]="field.type"
+                                        [min]="field.min"
                                         [required]="field.is_required" />
                                 </mat-form-field>
 
