@@ -36,6 +36,11 @@ export class PlacerService extends BaseService {
         return this.getRequest(url);
     }
 
+    get_unassigned_host() {
+        const url = `${this.getters.api_get_unassigned_host_to_placer}?pageSize=0`;
+        return this.getRequest(url);
+    }
+
     update_placer_host(hostId: string, placerId: string, placername?: string) {
         const url = this.updaters.placer_host;
         const body = { hostId, placerId, placername };

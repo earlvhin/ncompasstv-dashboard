@@ -42,8 +42,14 @@
     <!-- DROPDOWNS -->
     <ng-template #dropdown>
         <div class="form-wrapper">
-            <div class="form-header mb-4">
-                <h3 class="form-header-title m-0">Edit {{ message }}</h3>
+            <div class="d-flex mb-4">
+                <div class="flex-even">
+                    <h3 class="form-header-title m-0">Edit {{ message }}</h3>
+                </div>
+                <div class="editing" *ngIf="message === 'Hosts'">
+                    <span class="font-weight-bold sm-text text-primary">Placer: </span>
+                    <span class="sm-text text-primary">{{ status.additional_params.placername }}</span>
+                </div>
             </div>
             <div class="form-body mb-3" *ngIf="status.label == 'Screen Type'">
                 <ng-container *ngIf="screen_types.length > 0; else loader">

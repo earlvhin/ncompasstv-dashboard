@@ -8,6 +8,7 @@ export interface UI_AUTOCOMPLETE {
     allowSearchTrigger?: boolean;
     initialValue?: UI_AUTOCOMPLETE_DATA[];
     noData?: any;
+    unselect?: boolean;
     trigger?: Observable<any>;
 }
 

@@ -171,6 +171,7 @@ export const API_ENDPOINTS = {
         api_get_template_by_dealer_id: 'template/gettemplatebydealerid?dealerid=',
         api_get_template_by_id: 'template/gettemplatebyid?templateId=',
         api_get_templates: 'template/getall',
+        api_get_unassigned_host_to_placer: 'placer/host/unassigned',
         api_get_user_by_id: 'user/getbyid',
         api_get_users: 'user/getall',
         api_get_users_total: 'user/gettotal',
