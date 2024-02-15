@@ -53,6 +53,12 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
     table_columns = ['#', 'Name', 'Type', 'Upload Date', 'Uploaded By'];
     user: API_USER_DATA;
 
+    activity_table = [
+        { name: '#', sortable: false },
+        { name: 'Date Created', column: 'dateCreated', sortable: true },
+        { name: 'Activity', column: 'activityCode', sortable: false },
+    ];
+
     private is_loading = false;
     protected _unsubscribe: Subject<void> = new Subject<void>();
 

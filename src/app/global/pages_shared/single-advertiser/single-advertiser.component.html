@@ -51,6 +51,7 @@
                                         <app-single-activity-tab
                                             *ngIf="activity_data.length; else loadingContents"
                                             [activity_data]="activity_data"
+                                            [activity_table]="activity_table"
                                             [paging_data]="paging_data_activity"
                                             [sort_column]="sort_column_activity"
                                             [sort_order]="sort_order_activity"

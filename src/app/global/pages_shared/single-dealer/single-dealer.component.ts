@@ -1738,13 +1738,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';
                 item.piStatus = item.piStatus == 0 ? 'Offline' : 'Online';
                 item.screenType = this._titlecase.transform(item.screenType);
-                item.contentsUpdated = this._date.transform(
-                    item.contentsUpdated,
-                    'MMM dd, yyyy h:mm a',
-                );
-                item.timeIn = item.timeIn
-                    ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a')
-                    : '';
+                item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
+                item.timeIn = item.timeIn ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a') : '';
                 item.storeHoursParse = this.getStoreHourseParse(item);
                 item.installDate = this._date.transform(item.installDate, 'MMM dd, yyyy');
                 item.installRequestDate = this._date.transform(item.installRequestDate, 'MMM dd, yyyy');

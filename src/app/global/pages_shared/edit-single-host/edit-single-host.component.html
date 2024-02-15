@@ -94,6 +94,32 @@
                                 <div class="flex">
                                     <div class="flex-even pr-3">
                                         <mat-form-field class="full-width">
+                                            <mat-label>Contact Person</mat-label>
+                                            <input
+                                                matInput
+                                                type="string"
+                                                formControlName="contactPerson"
+                                                placeholder="Ex. Bob Dylan" />
+                                        </mat-form-field>
+                                    </div>
+
+                                    <div class="flex-even pr-3">
+                                        <mat-form-field class="full-width">
+                                            <mat-label>Contact Number</mat-label>
+                                            <input
+                                                class="no-spinners"
+                                                matInput
+                                                type="number"
+                                                formControlName="contactNumber"
+                                                min="0"
+                                                placeholder="Ex. 1 222 3456 7890" />
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+
+                                <div class="flex">
+                                    <div class="flex-even pr-3">
+                                        <mat-form-field class="full-width">
                                             <mat-label>Latitude</mat-label>
                                             <input
                                                 matInput

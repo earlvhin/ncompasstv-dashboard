@@ -1,5 +1,5 @@
-<div class="autocomplete-field w-100">
-    <mat-form-field appearance="standard" class="w-100 custom-autocomplete">
+<div class="autocomplete-field">
+    <mat-form-field appearance="standard" class="custom-autocomplete w-100">
         <mat-label>{{ field_data.label }}</mat-label>
         <input
             type="text"
@@ -18,7 +18,13 @@
             </mat-option>
         </mat-autocomplete>
     </mat-form-field>
-
+    <button
+        *ngIf="field_data.unselect && autoCompleteControl.value"
+        class="selection-remover naked-btn mt-3 bg-danger text-white"
+        title="Remove Selection"
+        (click)="removeSelection()">
+        <i class="fas fa-times"></i>
+    </button>
     <div class="autocomplete-error-msg bg-danger text-white" *ngIf="field_data.noData">
         <span>{{ field_data.noData }}</span>
     </div>

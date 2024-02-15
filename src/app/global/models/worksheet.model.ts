@@ -1,5 +1,5 @@
 export interface WORKSHEET {
     name: string;
-    columns: { name: string; key: string }[];
+    columns: any[];
     data: any[];
 }

@@ -1,4 +1,13 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {
+    Component,
+    ElementRef,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output,
+    ViewChild,
+    ChangeDetectorRef,
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs/operators';
@@ -17,6 +26,7 @@ export class AutocompleteComponent implements OnInit {
         data: [],
         initialValue: [],
         noData: null,
+        unselect: false,
     };
     @Output() value_selected: EventEmitter<{ id: string; value: string }> = new EventEmitter();
     @Output() no_data_found: EventEmitter<string> = new EventEmitter();
@@ -60,10 +70,7 @@ export class AutocompleteComponent implements OnInit {
     }
 
     displayOption(option: any): string {
-        if (option && option.display) {
-            return option.display;
-        }
-
+        if (option && option.display) return option.display;
         return option ? option.value : '';
     }
 
@@ -79,9 +86,7 @@ export class AutocompleteComponent implements OnInit {
         const newKeyword = keyword.length && this.keyword !== keyword;
 
         if (noDataFound) {
-            if (newKeyword) {
-                this.no_data_found.emit(keyword);
-            }
+            if (newKeyword) this.no_data_found.emit(keyword);
 
             // This means that the field_data.data source has been changed by the parent
             // and we need to fire it again for the existing search.
@@ -90,9 +95,7 @@ export class AutocompleteComponent implements OnInit {
                     option.value.toLowerCase().includes(filterValue),
                 );
 
-                if (!filterResult.length && this.field_data.data.length) {
-                    filterResult = this.field_data.data;
-                }
+                if (!filterResult.length && this.field_data.data.length) filterResult = this.field_data.data;
             }
         }
 
@@ -107,6 +110,11 @@ export class AutocompleteComponent implements OnInit {
 
     valueSelected(e) {
         this.value_selected.emit(e.option.value);
+    }
+
+    removeSelection() {
+        this.autoCompleteControl.setValue('');
+        this.value_selected.emit();
     }
 
     startTriggerListener() {
