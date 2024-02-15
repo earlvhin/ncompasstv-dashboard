@@ -1239,14 +1239,16 @@
                     <mat-tab label="Activity" *ngIf="isCurrentUserAdmin">
                         <ng-container *ngIf="activities && activities.length > 0; else noLicenseActivity">
                             <div class="row mt-4">
-                                <div class="col-lg-4">
-                                    <mat-card class="p-3 mb-3" *ngFor="let a of activities">
-                                        <h4>{{ a.activityDescription }}</h4>
-                                        <p class="sm-text">
-                                            Initiated by {{ a.initiatedBy }} on
-                                            {{ a.dateCreated | date: 'MMM dd, y hh:mm a' }}
-                                        </p>
-                                    </mat-card>
+                                <div class="col-lg-12">
+                                    <app-single-activity-tab
+                                        [activity_data]="activities"
+                                        [paging_data]="paging_data_activity"
+                                        [sort_column]="sort_column"
+                                        [sort_order]="sort_order"
+                                        [activity_table]="activity_table"
+                                        (pageChanged)="getLicenseActivity($event)"
+                                        (sortColumnEvent)="getActivityColumnsAndOrder($event)">
+                                    </app-single-activity-tab>
                                 </div>
                             </div>
                         </ng-container>

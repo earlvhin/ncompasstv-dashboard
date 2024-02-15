@@ -21,16 +21,12 @@ export class SingleActivityTabComponent implements OnInit {
     @Input() reload_data: boolean;
     @Input() sort_column: string;
     @Input() sort_order: string;
+    @Input() activity_table = [];
+
     @Output() pageChanged = new EventEmitter<number>();
     @Output() sortColumnEvent = new EventEmitter<{ column: string; order: string }>();
 
     dateFormatted: any;
-
-    activity_table_column = [
-        { name: '#', sortable: false },
-        { name: 'Date Created', column: 'dateCreated', sortable: true },
-        { name: 'Activity', column: 'activityCode', sortable: false },
-    ];
 
     constructor() {}
     protected _unsubscribe: Subject<void> = new Subject<void>();
