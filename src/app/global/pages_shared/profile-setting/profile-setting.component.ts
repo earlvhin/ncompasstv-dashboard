@@ -62,6 +62,12 @@ export class ProfileSettingComponent implements OnInit {
 
     protected _unsubscribe: Subject<void> = new Subject<void>();
 
+    activity_table = [
+        { name: '#', sortable: false },
+        { name: 'Date Created', column: 'dateCreated', sortable: true },
+        { name: 'Activity', column: 'activityCode', sortable: false },
+    ];
+
     constructor(
         private _advertiser: AdvertiserService,
         private _auth: AuthService,

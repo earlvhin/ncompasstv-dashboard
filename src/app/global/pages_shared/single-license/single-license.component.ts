@@ -1,4 +1,4 @@
-import { TitleCasePipe } from '@angular/common';
+import { DatePipe, TitleCasePipe } from '@angular/common';
 import { Component, OnInit, EventEmitter, OnDestroy, HostListener } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MatSlideToggleChange, MatSnackBar } from '@angular/material';
@@ -29,7 +29,6 @@ import {
 } from 'src/app/global/services';
 
 import {
-    API_ACTIVITY,
     API_SINGLE_LICENSE_PAGE,
     API_DEALER,
     ACTIVITY_CODES,
@@ -53,6 +52,7 @@ import {
     API_HOST_FILE,
     UI_HOST_FILE,
     UI_HOST_SUPPORT,
+    API_ACTIVITY,
 } from 'src/app/global/models';
 import { UpdateTvBrandDialogComponent } from './components/update-tv-brand-dialog/update-tv-brand-dialog.component';
 
@@ -63,7 +63,7 @@ import { UpdateTvBrandDialogComponent } from './components/update-tv-brand-dialo
     providers: [TitleCasePipe],
 })
 export class SingleLicenseComponent implements OnInit, OnDestroy {
-    activities: API_ACTIVITY[];
+    activities: API_ACTIVITY[] = [];
     additional_license_settings_form: FormGroup;
     additional_license_settings_form_fields = this._additionalLicenseSettingsFormFields;
     anydesk_id: string;
@@ -187,6 +187,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     tooltipMessage: string = 'Copy license key';
     showCopiedTooltip: boolean = false;
 
+    paging_data_activity: any;
+
     pacificTime: string;
     easternTime: string;
     centralTime: string;
@@ -218,11 +220,18 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         return date.toLocaleTimeString('en-US', options);
     }
 
+    activity_table = [
+        { name: '#', sortable: false },
+        { name: 'Date Created', column: 'dateCreated', sortable: false },
+        { name: 'Activity', column: 'activityCode', sortable: false },
+    ];
+
     constructor(
         private _auth: AuthService,
         private _confirmDialog: ConfirmationDialogService,
         private _content: ContentService,
         private _dialog: MatDialog,
+        private _date: DatePipe,
         private _form: FormBuilder,
         private _helper: HelperService,
         private _host: HostService,
@@ -253,7 +262,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             this.getLicenseData();
             this.getScreenshots();
             this.getContents();
-            this.getLicenseActivity();
+            this.getLicenseActivity(1);
         });
 
         this.subscribeToContentSearch();
@@ -1593,18 +1602,46 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             });
     }
 
-    private getLicenseActivity() {
+    getActivityColumnsAndOrder(data: { column: string; order: string }): void {
+        this.sort_column = data.column;
+        this.sort_order = data.order;
+        this.getLicenseActivity(1);
+    }
+
+    getLicenseActivity(page: number) {
         this._license
-            .get_activities(this.license_id)
+            .get_activities(this.license_id, page)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (response) => {
-                    this.activities = response.paging.entities as API_ACTIVITY[];
+                    //this.activities = response.paging.entities as API_ACTIVITY[];
+
+                    const mappedData = this.activity_mapToUI(response.paging.entities);
+                    this.paging_data_activity = response.paging;
+                    this.activities = [...mappedData];
                 },
                 (error) => {
                     console.error(error);
                 },
             );
+    }
+
+    activity_mapToUI(activity): any {
+        let count = 1;
+
+        return activity.map((a: any) => {
+            return new API_ACTIVITY(
+                { value: count++, editable: false },
+                { value: a.activityCode, hidden: true },
+                { value: a.activityLogId, hidden: true },
+                { value: this._date.transform(a.dateCreated, 'MMMM d, y, h:mm a'), hidden: false },
+                { value: `${a.activityDescription} initiated by ${a.initiatedBy}`, hidden: false },
+                { value: a.dateUpdated, hidden: true },
+                { value: a.initiatedBy, hidden: true },
+                { value: a.initiatedById, hidden: true },
+                { value: a.licenseId, hidden: true },
+            );
+        });
     }
 
     private getLicenseTags(): void {
@@ -1892,7 +1929,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             .save_activity(data)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
-                () => this.getLicenseActivity(),
+                () => this.getLicenseActivity(1),
                 (error) => {
                     console.error(error);
                 },

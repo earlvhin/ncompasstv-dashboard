@@ -46,3 +46,9 @@
         padding-bottom: 1px;
     }
 }
+
+::ng-deep .no-spinners::-webkit-inner-spin-button,
+::ng-deep .no-spinners::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

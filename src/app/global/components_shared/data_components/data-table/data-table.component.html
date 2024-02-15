@@ -341,7 +341,14 @@
                                                     [innerHTML]="data[d].value"></span>
                                                 <ng-template #default>
                                                     <ng-container *ngIf="!data[d].notes; else notesValue">
-                                                        {{ data[d].value }}
+                                                        <span
+                                                            *ngIf="data[d].compressed; else notcompressed"
+                                                            [title]="data[d].value"
+                                                            >{{ data[d].value | substring: 10 }}</span
+                                                        >
+                                                        <ng-template #notcompressed>
+                                                            {{ data[d].value }}
+                                                        </ng-template>
                                                     </ng-container>
                                                 </ng-template>
                                                 <button
