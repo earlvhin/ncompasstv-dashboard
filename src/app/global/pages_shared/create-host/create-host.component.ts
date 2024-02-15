@@ -506,7 +506,7 @@ export class CreateHostComponent implements OnInit {
                 }
 
                 this.setTimezone(timezoneData[0].id);
-				this.setZone(timezoneData[0].name);
+                this.setZone(timezoneData[0].name);
             },
             (error) => {
                 console.error('Error getting timezone:', error);
@@ -575,9 +575,9 @@ export class CreateHostComponent implements OnInit {
         this.newHostFormControls.timezone.setValue(data);
     }
 
-	setZone(data){
-		this.newHostFormControls.zone.setValue(data);
-	}
+    setZone(data) {
+        this.newHostFormControls.zone.setValue(data);
+    }
 
     setToDealer(id: string) {
         this.newHostFormControls.dealerId.setValue(id);

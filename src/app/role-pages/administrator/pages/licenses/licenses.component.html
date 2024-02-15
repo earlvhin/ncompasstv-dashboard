@@ -86,7 +86,7 @@
                     <mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event)">
                         <!-- LICENSES TAB -->
                         <mat-tab id="licenses-view-tab" label="Licenses View">
-                            <div class="licenses-view-tab-container mt-30" *ngIf="tabGroup.selectedIndex === 0">
+                            <div class="licenses-view-tab-container mt-3" *ngIf="tabGroup.selectedIndex === 0">
                                 <div class="flex">
                                     <div class="flex-2 d-inline-flex">
                                         <button
@@ -477,7 +477,7 @@
                         <!-- HOSTS TAB -->
                         <mat-tab id="hosts-view-tab" label="Hosts View">
                             <div
-                                class="hosts-view-tab-container mt-30"
+                                class="hosts-view-tab-container mt-3"
                                 *ngIf="is_dealer_admin ? tabGroup.selectedIndex === 2 : tabGroup.selectedIndex === 3">
                                 <div *ngIf="!initial_load_hosts; else loader">
                                     <div *ngIf="!no_host; else no_data">
