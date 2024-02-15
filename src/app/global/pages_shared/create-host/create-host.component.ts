@@ -26,6 +26,7 @@ import {
     UI_OPERATION_DAYS,
     UI_STORE_HOUR,
     UI_STORE_HOUR_PERIOD,
+    UI_ROLE_DEFINITION_TEXT,
 } from 'src/app/global/models';
 
 import {
@@ -74,6 +75,7 @@ export class CreateHostComponent implements OnInit {
     is_page_ready = false;
     lat = 39.7395247;
     lng = -105.1524133;
+    is_dealer_admin = false;
     loading_data = true;
     loading_search = false;
     location_field = true;
@@ -130,6 +132,7 @@ export class CreateHostComponent implements OnInit {
     ) {}
 
     ngOnInit() {
+        if (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) this.is_dealer_admin = true;
         this.current_host_image = this.default_host_image;
         this.initializeCreateHostForm();
         this.initializeGooglePlaceForm();
@@ -267,6 +270,8 @@ export class CreateHostComponent implements OnInit {
             category: this.newHostFormControls.category.value,
             timezone: this.newHostFormControls.timezone.value,
             logo: this.current_host_image,
+            contactNumber: this.newHostFormControls.contactNumber.value,
+            contactPerson: this.newHostFormControls.contactPerson.value,
         });
 
         if (this.logo_data) {
@@ -484,9 +489,7 @@ export class CreateHostComponent implements OnInit {
                 // Set the value based on the detected timezone
                 switch (timezone) {
                     case pacific:
-                        const pacific_zone = this.timezone.filter((data) => data.name == 'US/Pacific');
-                        this.setTimezone(pacific_zone[0].id, pacific_zone[0].name);
-                        this.newHostFormControls.timezone.setValue(pacific_zone[0].name);
+                        timezoneData = this.timezone.filter((data) => data.name == 'US/Pacific');
                         break;
                     case eastern:
                         timezoneData = this.timezone.filter((data) => data.name == 'US/Eastern');
@@ -502,7 +505,8 @@ export class CreateHostComponent implements OnInit {
                         break;
                 }
 
-                this.setTimezone(timezoneData[0].id, timezoneData[0].name);
+                this.setTimezone(timezoneData[0].id);
+				this.setZone(timezoneData[0].name);
             },
             (error) => {
                 console.error('Error getting timezone:', error);
@@ -567,10 +571,13 @@ export class CreateHostComponent implements OnInit {
             });
     }
 
-    setTimezone(data, name) {
+    setTimezone(data) {
         this.newHostFormControls.timezone.setValue(data);
-        this.newHostFormControls.zone.setValue(name);
     }
+
+	setZone(data){
+		this.newHostFormControls.zone.setValue(data);
+	}
 
     setToDealer(id: string) {
         this.newHostFormControls.dealerId.setValue(id);
@@ -644,6 +651,8 @@ export class CreateHostComponent implements OnInit {
             lat: ['', Validators.required],
             timezone: ['', Validators.required],
             zone: [''],
+            contactPerson: ['', Validators.required],
+            contactNumber: ['', Validators.required],
             createdBy: this._auth.current_user_value.user_id,
         });
 
@@ -856,6 +865,13 @@ export class CreateHostComponent implements OnInit {
         }
     }
 
+    addNewHostPlace() {
+        const url = this._router.serializeUrl(
+            this._router.createUrlTree([`/${this.roleRoute}/users/create-user/host`], {}),
+        );
+        window.open(url, '_blank');
+    }
+
     private mapOperationHours(
         data: { close: { day: number; time: number }; open: { day: number; time: number } }[],
     ): void {
@@ -986,6 +1002,23 @@ export class CreateHostComponent implements OnInit {
                 col: 'col-lg-6',
                 autocomplete: true,
                 is_required: false,
+            },
+            {
+                label: 'Contact Person',
+                control: 'contactPerson',
+                placeholder: 'Ex. Bob Dylan',
+                type: 'string',
+                col: 'col-lg-6',
+                is_required: true,
+            },
+            {
+                label: 'Contact Number',
+                control: 'contactNumber',
+                placeholder: 'Ex. 1 222 3456 7890',
+                col: 'col-lg-6',
+                type: 'number',
+                min: '0',
+                is_required: true,
             },
             {
                 label: 'Latitude',

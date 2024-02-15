@@ -91,12 +91,14 @@ export class EditableFieldModalComponent implements OnInit {
                 placeholder: 'Ex. NCompass TV Host',
                 data: hostsData,
                 initialValue: hostId ? [{ id: hostId, value: initialValueHostWithAddress }] : [],
+                unselect: true,
             };
         }, 100);
     }
 
     setHost(host) {
-        this.host_selected = host.id;
+        if (host) this.host_selected = host.id;
+        else this.host_selected = '';
     }
 
     setScreenType(type) {

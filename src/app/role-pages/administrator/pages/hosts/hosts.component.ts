@@ -472,14 +472,15 @@ export class HostsComponent implements OnInit {
                     for (let i = 1; i < 13; i++) {
                         this.hosts_table_column.push(
                             {
-                                name: moment(i, 'M').format('MMM') + ' - Average Dwell Time',
+                                name:
+                                    moment(i, 'M').format('MMM') + ' ' + new Date().getFullYear() + ' - Avg Dwell Time',
                                 no_show: true,
                                 hidden: true,
                                 key: 'averageDwellTime-' + i,
                                 no_show_to_da: true,
                             },
                             {
-                                name: moment(i, 'M').format('MMM') + ' - Foot Traffic',
+                                name: moment(i, 'M').format('MMM') + ' ' + new Date().getFullYear() + ' - Foot Traffic',
                                 no_show: true,
                                 hidden: true,
                                 key: 'footTraffic-' + i,

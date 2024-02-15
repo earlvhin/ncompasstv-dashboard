@@ -15,6 +15,8 @@ export class API_UPDATE_HOST {
     notes?: string;
     others?: string;
     vistarVenueId: string;
+    contactNumber: string;
+    contactPerson: string;
     status = 'A' || 'I';
 
     constructor(hostData: {
@@ -33,6 +35,8 @@ export class API_UPDATE_HOST {
         timezone: string;
         vistarVenueId: string;
         status: string;
+        contactNumber: string;
+        contactPerson: string;
     }) {
         this.hostId = hostData.hostId;
         this.dealerId = hostData.dealerId;
@@ -49,5 +53,7 @@ export class API_UPDATE_HOST {
         this.timezone = hostData.timezone;
         this.vistarVenueId = hostData.vistarVenueId;
         this.status = hostData.status;
+        this.contactNumber = hostData.contactNumber;
+        this.contactPerson = hostData.contactPerson;
     }
 }

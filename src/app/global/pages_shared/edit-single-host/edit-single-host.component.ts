@@ -378,6 +378,8 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
             storeHours: JSON.stringify(updatedBusinessHours),
             timezone: this._formControls.timezone.value,
             vistarVenueId: this._formControls.vistar_venue_id.value,
+            contactNumber: this._formControls.contactNumber.value,
+            contactPerson: this._formControls.contactPerson.value,
             status: status,
         });
 
@@ -548,6 +550,8 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
         this._formControls.notes.setValue(host.notes, { emitEvent: false });
         this._formControls.others.setValue(host.others, { emitEvent: false });
         this._formControls.vistar_venue_id.setValue(host.vistarVenueId, { emitEvent: false });
+        this._formControls.contactPerson.setValue(host.contactPerson, { emitEvent: false });
+        this._formControls.contactNumber.setValue(host.contactNumber, { emitEvent: false });
     }
 
     private getCategories(): void {
@@ -614,6 +618,8 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
             timezone: ['', Validators.required],
             vistar_venue_id: [''],
             notes: [''],
+            contactPerson: ['', Validators.required],
+            contactNumber: ['', Validators.required],
             others: [''],
         });
 
@@ -835,6 +841,18 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
                 placeholder: 'Ex. School',
                 col: 'col-lg-6',
                 type: 'autocomplete',
+            },
+            {
+                label: 'Contact Person',
+                control: 'contactPerson',
+                placeholder: 'Ex. Bob Dylan',
+                col: 'col-lg-6',
+            },
+            {
+                label: 'Contact Number',
+                control: 'contactNumber',
+                placeholder: 'Ex. 1 222 3456 7890',
+                col: 'col-lg-6',
             },
             {
                 label: 'Latitude',
