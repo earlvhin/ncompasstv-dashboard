@@ -550,8 +550,8 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
         this._formControls.notes.setValue(host.notes, { emitEvent: false });
         this._formControls.others.setValue(host.others, { emitEvent: false });
         this._formControls.vistar_venue_id.setValue(host.vistarVenueId, { emitEvent: false });
-        this._formControls.contactPerson.setValue(host.contactPerson, { emitEvent: false });
-        this._formControls.contactNumber.setValue(host.contactNumber, { emitEvent: false });
+        this._formControls.contactPerson.setValue(host.contactPerson ? host.contactPerson  : '---', { emitEvent: false });
+        this._formControls.contactNumber.setValue(host.contactNumber ? host.contactNumber : '0000000000', { emitEvent: false });
     }
 
     private getCategories(): void {
