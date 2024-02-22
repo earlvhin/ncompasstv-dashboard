@@ -1,25 +1,16 @@
-import {
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    OnInit,
-    Output,
-    ViewChild,
-    ChangeDetectorRef,
-} from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, OnDestroy, Output, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, startWith, takeUntil } from 'rxjs/operators';
 import { AUTOCOMPLETE_ACTIONS } from 'src/app/global/constants/autocomplete';
-import { UI_AUTOCOMPLETE } from 'src/app/global/models';
+import { UI_AUTOCOMPLETE, UI_AUTOCOMPLETE_DATA } from 'src/app/global/models';
 
 @Component({
     selector: 'app-autocomplete',
     templateUrl: './autocomplete.component.html',
     styleUrls: ['./autocomplete.component.scss'],
 })
-export class AutocompleteComponent implements OnInit {
+export class AutocompleteComponent implements OnInit, OnDestroy {
     @Input() field_data: UI_AUTOCOMPLETE = {
         label: 'Label',
         placeholder: 'Type anything',
@@ -28,7 +19,9 @@ export class AutocompleteComponent implements OnInit {
         noData: null,
         unselect: false,
     };
+    @Input() trigger_input_update = new Observable<UI_AUTOCOMPLETE_DATA | string>();
     @Output() value_selected: EventEmitter<{ id: string; value: string }> = new EventEmitter();
+    @Output() input_changed = new EventEmitter<string>();
     @Output() no_data_found: EventEmitter<string> = new EventEmitter();
     @ViewChild('autoCompleteInputField', { static: false })
     autoCompleteInputField: ElementRef;
@@ -36,6 +29,10 @@ export class AutocompleteComponent implements OnInit {
     filteredOptions!: Observable<any[]>;
     keyword = '';
     staticVal: boolean = false;
+
+    protected _unsubscribe = new Subject<void>();
+
+    constructor() {}
 
     ngOnInit() {
         this.filteredOptions = this.autoCompleteControl.valueChanges.pipe(
@@ -48,6 +45,23 @@ export class AutocompleteComponent implements OnInit {
             distinctUntilChanged(),
             map((keyword) => this._filter(keyword)),
         );
+
+        // watch for update from parent component and update the control value
+        this.trigger_input_update.pipe(takeUntil(this._unsubscribe)).subscribe((response) => {
+            this.autoCompleteControl.setValue(response, { emitEvent: false });
+        });
+
+        // emit change on input field
+        this.autoCompleteControl.valueChanges
+            .pipe(takeUntil(this._unsubscribe), debounceTime(1000))
+            .subscribe((response) => {
+                this.input_changed.emit(response);
+            });
+    }
+
+    ngOnDestroy(): void {
+        this._unsubscribe.next();
+        this._unsubscribe.complete();
     }
 
     ngAfterViewInit() {

@@ -286,7 +286,15 @@ export class HostService extends BaseService {
 
     get_time_zones(): Observable<API_TIMEZONE[]> {
         const url = `${this.getters.api_get_timezone}`;
-        return this.getRequest(url);
+
+        return this.getRequest(url).map((response) => {
+            let newOrder = [];
+            newOrder.push(response.find((t) => t.name.toLowerCase().includes('eastern')));
+            newOrder.push(response.find((t) => t.name.toLowerCase().includes('central')));
+            newOrder.push(response.find((t) => t.name.toLowerCase().includes('mountain')));
+            newOrder.push(response.find((t) => t.name.toLowerCase().includes('pacific')));
+            return newOrder;
+        });
     }
 
     get_host_place_images(placeId: string): Observable<{ images: string[] }> {

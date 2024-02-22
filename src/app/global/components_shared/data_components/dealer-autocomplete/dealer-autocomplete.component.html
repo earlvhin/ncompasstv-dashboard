@@ -1,0 +1,5 @@
+<app-autocomplete
+    [field_data]="dealers_data"
+    *ngIf="dealers_data && dealers_data.data.length"
+    (value_selected)="setDealer($event)">
+</app-autocomplete>

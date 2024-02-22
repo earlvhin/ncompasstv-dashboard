@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { FillerService, AuthService } from 'src/app/global/services';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
@@ -14,15 +15,23 @@ import { ConfirmationModalComponent } from 'src/app/global/components_shared/pag
     styleUrls: ['./create-filler-feed.component.scss'],
 })
 export class CreateFillerFeedComponent implements OnInit {
+    active_btn_filter: string = 'ALL';
+    assignee_loaded: boolean = false;
     enable_add_button: boolean = false;
     existing_data: any;
     form: FormGroup;
     filler_name: string = '';
     filler_groups: any = [];
+    filler_groups_original: any = [];
+    filters = ['ALL', 'ADMIN', 'DEALER ADMIN', 'DEALER'];
     groups_loaded: boolean = false;
     groups_to_remove: any = [];
+    is_current_user_admin = this._isAdmin;
+    selected_assignee: any = [];
     selected_group: any = this.page_data.group;
     selected_groups: any = [];
+    selected_dealer: any = [];
+    unselected_dealer: any = [];
     final_data_to_upload: any;
     fillerQuantity: any = {};
     total_quantity = 0;
@@ -50,8 +59,13 @@ export class CreateFillerFeedComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data: any) => {
                 this.existing_data = data;
+                this.selected_assignee.push({
+                    id: this.existing_data.assignedDealers[0].dealerId,
+                    value: this.existing_data.assignedDealers[0].businessName,
+                });
             })
             .add(() => {
+                this.assignee_loaded = true;
                 this.fillUpForm(this.existing_data);
             });
     }
@@ -97,27 +111,49 @@ export class CreateFillerFeedComponent implements OnInit {
     }
 
     //is_Dealer temporary only until has API
-    getAllFillers(key?) {
+    getAllFillers(key?, assignee?) {
         this._filler
-            .get_filler_group_for_feeds()
+            .get_filler_group_for_feeds(assignee)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data: any) => {
                 let groups_with_count_only = data.paging.entities.filter((group) => {
                     return group.count > 0;
                 });
                 this.filler_groups = groups_with_count_only;
-                this.groups_loaded = true;
+                this.filler_groups_original = this.filler_groups;
             })
             .add(() => {
-                if (this.page_data.from_edit_table) this.getFillerFeedDetail(this.page_data.id);
-                else {
-                    if (this.selected_group.length != 0) {
-                        this.filler_name = this.selected_group.name;
-                        this.setFillerGroup(this.selected_group.fillerGroupId);
-                        this.addToSelectedFillerGroup();
-                    }
+                this.groups_loaded = true;
+                if (this.page_data.from_edit_table) {
+                    this.getFillerFeedDetail(this.page_data.id);
+                    return;
+                }
+                this.assignee_loaded = true;
+                if (this.selected_group.length != 0) {
+                    this.filler_name = this.selected_group.name;
+                    this.setFillerGroup(this.selected_group.fillerGroupId);
+                    this.addToSelectedFillerGroup();
                 }
             });
+    }
+
+    onFilterGroup(filter) {
+        this.active_btn_filter = filter;
+        this.active_btn_filter = filter;
+
+        switch (filter) {
+            case 'ALL':
+                this.filler_groups = this.filler_groups_original;
+                break;
+            case 'ADMIN':
+            case 'DEALER':
+            case 'DEALER ADMIN':
+                this.filler_groups = this.filler_groups_original.filter((group) => {
+                    return group.role == (filter === 'ADMIN' ? 1 : filter === 'DEALER' ? 2 : 3);
+                });
+                break;
+            default:
+        }
     }
 
     onSubmit(data) {
@@ -199,6 +235,8 @@ export class CreateFillerFeedComponent implements OnInit {
             name: this._formControls.fillerGroupName.value,
             Interval: this._formControls.fillerInterval.value,
             Duration: this._formControls.fillerDuration.value,
+            AssignedDealerIds: this.selected_dealer,
+            DeleteAssignedDealers: this.unselected_dealer,
             PlaylistGroups: [],
         };
 
@@ -251,7 +289,23 @@ export class CreateFillerFeedComponent implements OnInit {
         window.open(url, '_blank');
     }
 
+    setAssignedTo(data) {
+        if (data) {
+            this.selected_dealer.push(data.id);
+            this.getAllFillers('', data.id);
+            //just incase there has been a group selected before assigning to an assignee so remove selected groups
+            this.selected_groups = [];
+            this.countTotalQuantity();
+            return;
+        }
+        this.unselected_dealer.push(this.existing_data.assignedDealers[0].dealerId);
+    }
+
     protected get roleRoute() {
         return this._auth.roleRoute;
+    }
+
+    protected get _isAdmin() {
+        return this._auth.current_role === UI_ROLE_DEFINITION_TEXT.administrator;
     }
 }

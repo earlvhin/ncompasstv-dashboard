@@ -1240,8 +1240,10 @@ export class LicensesComponent implements OnInit {
                             ? this._date.transform(l.installRequestDate, 'MMM dd, y')
                             : '--',
                     link: null,
-                    label: 'Install Request Date',
                     hidden: false,
+                    editable: true,
+                    label: 'Install Request Date',
+                    id: l.licenseId,
                 },
                 {
                     value: this.checkStatus(l),

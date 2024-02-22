@@ -714,6 +714,9 @@ export class DataTableComponent implements OnInit {
                             ),
                         );
                         break;
+                    case 'Install Request Date':
+                        this.updateInstallRequestDate(fields.id, response);
+                        break;
                     case 'Screen Type':
                         const filter_screen = {
                             screen: {
@@ -760,39 +763,44 @@ export class DataTableComponent implements OnInit {
         );
     }
 
-    deletePlaylistModal(value) {
-        let dialogRef = this._dialog.open(DeletePlaylistComponent, {
-            width: '600px',
-            panelClass: 'app-media-modal',
-            data: value,
-            disableClose: true,
-        });
+    updateInstallRequestDate(id, response) {
+        this._license.update_install_request_date(id, response).subscribe(
+            () => this.openConfirmationModal('success', 'Success!', 'License Installation Request Date Updated!'),
+            (error) => console.error(error),
+        );
+    }
 
-        dialogRef.afterClosed().subscribe((data) => {
-            if (data != false) {
-                this.update_info.emit(true);
-            }
-        });
+    deletePlaylistModal(value) {
+        this._dialog
+            .open(DeletePlaylistComponent, {
+                width: '600px',
+                panelClass: 'app-media-modal',
+                data: value,
+                disableClose: true,
+            })
+            .afterClosed()
+            .subscribe((data) => {
+                if (!data) this.update_info.emit(true);
+            });
     }
 
     openConfirmationModal(status, message, data): void {
-        const dialog = this._dialog.open(ConfirmationModalComponent, {
-            width: '500px',
-            height: '350px',
-            data: { status, message, data },
-        });
-
-        dialog.afterClosed().subscribe(() => this.update_info.emit(true));
+        this._dialog
+            .open(ConfirmationModalComponent, {
+                width: '500px',
+                height: '350px',
+                data: { status, message, data },
+            })
+            .afterClosed()
+            .subscribe(() => this.update_info.emit(true));
     }
 
     viewListModal(status, message, data): void {
-        const dialog = this._dialog.open(ViewDmaHostComponent, {
+        this._dialog.open(ViewDmaHostComponent, {
             width: '500px',
             height: '350px',
             data: { status, message, data },
         });
-
-        // dialog.afterClosed().subscribe(() => this.update_info.emit(true));
     }
 
     onCheckboxSelect(id, event, data) {

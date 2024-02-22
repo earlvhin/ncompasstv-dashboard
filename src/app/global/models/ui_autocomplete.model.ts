@@ -17,3 +17,11 @@ export interface UI_AUTOCOMPLETE_DATA {
     value: any;
     display?: any;
 }
+
+export interface UI_CITY_AUTOCOMPLETE extends UI_AUTOCOMPLETE {
+    data: UI_CITY_AUTOCOMPLETE_DATA[];
+}
+
+export interface UI_CITY_AUTOCOMPLETE_DATA extends UI_AUTOCOMPLETE_DATA {
+    country: string;
+}

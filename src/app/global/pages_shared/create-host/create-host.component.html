@@ -93,27 +93,12 @@
                                         [disabled]="true">
                                     </app-autocomplete-field>
 
-                                    <!-- New Autocomplete Implementation-->
-                                    <!-- <app-autocomplete-field
-											*ngIf="field.control === 'city'"
-											(data_value)="setCity($event)"
-											[key_of_value]="'city_state'"
-											[placeholder]="field.placeholder"
-											[label]="field.label"
-											[data_reference]="city_state"
-											[search_keyword]="'city_state'"
-											[primary_keyword]="'city_state'"
-											[new_value]="city_selected"
-											[initial_value]="city_selected"
-											[is_city]="true">
-										</app-autocomplete-field> -->
-
                                     <ng-container *ngIf="field.control === 'city'">
                                         <app-autocomplete
                                             #autoCompleteFieldCity
                                             *ngIf="city_field_data.data.length; else searching"
                                             [field_data]="city_field_data"
-                                            (no_data_found)="searchCity($event)"
+                                            (no_data_found)="resetCityList($event)"
                                             (value_selected)="searchCityById($event)"></app-autocomplete>
 
                                         <ng-template #searching>
@@ -162,16 +147,16 @@
                                         </mat-form-field>
                                     </ng-template>
 
-                                    <app-autocomplete-field
-                                        *ngIf="field.control == 'timezone'"
-                                        (data_value)="setTimezone($event)"
-                                        [data_reference]="timezone"
-                                        [primary_keyword]="'name'"
-                                        [key_of_value]="'id'"
-                                        [required]="field.is_required"
-                                        [label]="field.label"
-                                        [control]="newHostFormControls.zone">
-                                    </app-autocomplete-field>
+                                    <ng-container *ngIf="field.control === 'timezone'">
+                                        <mat-form-field class="full-width">
+                                            <mat-label>Timezone</mat-label>
+                                            <mat-select formControlName="timezone">
+                                                <mat-option *ngFor="let timezone of timezones" [value]="timezone.id">
+                                                    {{ timezone.name }}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </ng-container>
                                 </ng-template>
                             </div>
                             <div class="col-lg-12">

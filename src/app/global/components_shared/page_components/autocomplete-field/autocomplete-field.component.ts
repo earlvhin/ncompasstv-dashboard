@@ -131,9 +131,10 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
         this.emptySearch();
     };
 
-    dataSelected(data) {
-        this.data_value.emit(data.target.getAttribute('data-value'));
-        this.view_value = data.target.getAttribute('data-text');
+    dataSelected(data: PointerEvent) {
+        const target = data.target as HTMLInputElement;
+        this.data_value.emit(target.getAttribute('data-value'));
+        this.view_value = target.getAttribute('data-text');
         if (this.is_city) this.view_value = this.view_value.split(',')[0].trim();
     }
 
