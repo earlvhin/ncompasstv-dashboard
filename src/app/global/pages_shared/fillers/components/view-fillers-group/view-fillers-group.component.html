@@ -93,8 +93,8 @@
                 <div *ngIf="filler_group_contents.length > 0; else noContent">
                     <div *ngIf="!no_search_result; else noResultsFound">
                         <ng-container *ngIf="!is_loading; else loader">
-                            <div class="d-flex flex-row thumbnail-parent-container">
-                                <div class="thumbnail-container m-2" *ngFor="let data of filler_group_contents">
+                            <div class="thumbnail-parent-container">
+                                <div class="thumbnail-container" *ngFor="let data of filler_group_contents">
                                     <app-thumbnail-card
                                         (click)="gotoFileURL(data.url)"
                                         [content_id]="data.fillerContentId"

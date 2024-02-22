@@ -3,11 +3,7 @@
 }
 
 .thumbnail-parent-container {
-    flex-wrap: wrap;
-
-    .thumbnail-container {
-        min-width: 155px;
-        max-width: 166px;
-        flex: 1;
-    }
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    column-gap: 10px;
 }
