@@ -49,7 +49,7 @@ export class EditableFieldModalComponent implements OnInit {
 
         if (this.status.label.includes('Date')) {
             const data = this.data;
-            let value: any = moment(data).toDate();
+            let value: any = moment(data, 'MMM D, YYYY').toDate();
             if (!data || data.trim().length <= 0 || data.includes('--')) value = moment();
             this.date = value;
         }

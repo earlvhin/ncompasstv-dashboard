@@ -58,7 +58,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
     }
 
     dateSelected(value, type = 'default'): void {
-        this.currentFilters = { page: 1, installDate: moment(value).format('MM-DD-YYYY') };
+        this.currentFilters = { page: 1, installDate: moment(value, 'llll').format('MM-DD-YYYY') };
         this.loadInstallationsData(type);
     }
 
@@ -201,7 +201,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 
         return data.map((license) => {
             // subtract 1 day from date today, because todays date is considered as past
-            const isPast = moment(license.installDate).isBefore(moment().subtract(1, 'd'));
+            const isPast = moment(license.installDate, 'MMM dd, y').isBefore(moment().subtract(1, 'd'));
 
             return new INSTALLATION(
                 { value: license.licenseKey, link: null, editable: false, hidden: true },
@@ -259,6 +259,9 @@ export class InstallationsComponent implements OnInit, OnDestroy {
                     link: null,
                     hidden: false,
                     past: isPast,
+                    editable: true,
+                    label: 'Install Request Date',
+                    id: license.licenseId,
                 },
             );
         });

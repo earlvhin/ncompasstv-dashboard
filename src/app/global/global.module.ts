@@ -55,6 +55,7 @@ import { DataStatisticsCardComponent } from './components_shared/data_components
 import { DataStatisticsCardWithPickerComponent } from './components_shared/data_components/data-statistics-card-with-picker/data-statistics-card-with-picker.component';
 import { DataTotalComponent } from './components_shared/data_components/data-total/data-total.component';
 import { DataTableComponent } from './components_shared/data_components/data-table/data-table.component';
+import { DealerAutocompleteComponent } from './components_shared/data_components/dealer-autocomplete/dealer-autocomplete.component';
 import { DealerContentTabComponent } from './components_purpose-built/single-dealer-tabs/dealer-content-tab/dealer-content-tab.component';
 import { DealerDetailsTabComponent } from './components_purpose-built/single-dealer-tabs/dealer-details-tab/dealer-details-tab.component';
 import { DealerHistoryTabComponent } from './components_purpose-built/single-dealer-tabs/dealer-history-tab/dealer-history-tab.component';
@@ -288,6 +289,7 @@ const ngComponents = [
     DataStatisticsCardWithPickerComponent,
     DataTableComponent,
     DataTotalComponent,
+    DealerAutocompleteComponent,
     DealerContentTabComponent,
     DealerDetailsTabComponent,
     DeleteFillerFeedsComponent,

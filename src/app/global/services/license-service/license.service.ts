@@ -567,6 +567,10 @@ export class LicenseService extends BaseService {
         return this.postRequest(`${this.updaters.install_date}`, data, options);
     }
 
+    update_install_request_date(licenseId: string, installRequestDate: string): Observable<any> {
+        return this.postRequest(`${this.updaters.install_request_date}`, { licenseId, installRequestDate });
+    }
+
     //  Updates the installation date on multiple licenses
     update_install_date_list(data: { licenseId: string; installDate: string }[]): Observable<any> {
         const options = {

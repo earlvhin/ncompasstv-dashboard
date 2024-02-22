@@ -1,32 +1,34 @@
-<div class="theme-container mt-3" *ngIf="filler_group_data">
-    <div class="row no-gutters">
-        <div class="col-lg-6">
-            <h1 class="page-title">{{ filler_group_data.name }}</h1>
-            <i class="sm-text text-gray">Total of {{ filler_group_data.count }} fillers</i>
-        </div>
-        <div class="col-lg-6 text-right">
-            <div *ngIf="isActiveTab == 0">
-                <button
-                    *ngIf="!restricted"
-                    mat-button
-                    mat-raised-button
-                    class="theme-btn pi-control _info sm-text mr-2"
-                    (click)="addFillerContent(filler_group_data)"
-                    [disabled]="restricted"
-                    title="Upload Filler">
-                    <span class="fas fa-upload"></span>
-                    <span class="ml-2 button_text_animation">Upload Filler</span>
-                </button>
-                <button
-                    mat-button
-                    mat-raised-button
-                    class="theme-btn pi-control _cool sm-text mr-2"
-                    (click)="createFillerFeed(filler_group_data, true)"
-                    title="Create Filler Feed"
-                    [disabled]="filler_group_contents.length == 0">
-                    <span class="fas fa-list-ol"></span>
-                    <span class="ml-2 button_text_animation">Create Filler Feed</span>
-                </button>
+<div class="theme-container" *ngIf="filler_group_data">
+    <div class="title-section">
+        <div class="row no-gutters">
+            <div class="col-lg-6">
+                <h1 class="page-title">{{ filler_group_data.name }}</h1>
+                <i class="sm-text text-gray">Total of {{ filler_group_data.count }} fillers</i>
+            </div>
+            <div class="col-lg-6 text-right">
+                <div *ngIf="isActiveTab == 0">
+                    <button
+                        *ngIf="!restricted"
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn pi-control _info sm-text mr-2"
+                        (click)="addFillerContent(filler_group_data)"
+                        [disabled]="restricted"
+                        title="Upload Filler">
+                        <span class="fas fa-upload"></span>
+                        <span class="ml-2 button_text_animation">Upload Filler</span>
+                    </button>
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn pi-control _cool sm-text mr-2"
+                        (click)="createFillerFeed(filler_group_data, true)"
+                        title="Create Filler Feed"
+                        [disabled]="filler_group_contents.length == 0">
+                        <span class="fas fa-list-ol"></span>
+                        <span class="ml-2 button_text_animation">Create Filler Feed</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -91,8 +93,8 @@
                 <div *ngIf="filler_group_contents.length > 0; else noContent">
                     <div *ngIf="!no_search_result; else noResultsFound">
                         <ng-container *ngIf="!is_loading; else loader">
-                            <div class="d-flex flex-row thumbnail-parent-container">
-                                <div class="thumbnail-container m-2" *ngFor="let data of filler_group_contents">
+                            <div class="thumbnail-parent-container">
+                                <div class="thumbnail-container" *ngFor="let data of filler_group_contents">
                                     <app-thumbnail-card
                                         (click)="gotoFileURL(data.url)"
                                         [content_id]="data.fillerContentId"

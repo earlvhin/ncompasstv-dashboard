@@ -56,8 +56,8 @@ export class FillerService extends BaseService {
         return this.postRequest(url, data);
     }
 
-    get_filler_group_for_feeds() {
-        let url = `${this.getters.api_get_filler_group_for_feeds}?pageSize=0`;
+    get_filler_group_for_feeds(assignee = '') {
+        let url = `${this.getters.api_get_filler_group_for_feeds}?pageSize=0&assignedTo=${assignee}`;
         return this.getRequest(url);
     }
 

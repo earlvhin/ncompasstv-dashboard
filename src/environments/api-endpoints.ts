@@ -356,6 +356,7 @@ export const API_ENDPOINTS = {
         dealer_status: 'dealer/updatestatus',
         host_file_alias: 'host/update/file/alias',
         install_date: 'license/updateinstalldate',
+        install_request_date: 'license/updateinstallrequestdate',
         install_date_list: 'license/updateinstalldatelist',
         license_cec_status: 'notification/update/cec',
         license_notification_settings: 'license/update/notification/settings',

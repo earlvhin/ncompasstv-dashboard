@@ -107,12 +107,14 @@
                                         <mat-form-field class="full-width">
                                             <mat-label>Contact Number</mat-label>
                                             <input
-                                                class="no-spinners"
                                                 matInput
-                                                type="number"
                                                 formControlName="contactNumber"
-                                                min="0"
-                                                placeholder="Ex. 1 222 3456 7890" />
+                                                class="no-spinners"
+                                                type="tel"
+                                                min="10"
+                                                max="10"
+                                                pattern="^[0-9]{10,10}$"
+                                                placeholder="Ex. 1 234 567 890" />
                                         </mat-form-field>
                                     </div>
                                 </div>
@@ -205,15 +207,16 @@
 
                                     <div class="timezone-container pr-3">
                                         <div *ngIf="timezones_loaded; else loadingTimezones">
-                                            <app-autocomplete-field
-                                                [data_reference]="timezones"
-                                                [primary_keyword]="'name'"
-                                                [key_of_value]="'id'"
-                                                (data_value)="setTimezone($event)"
-                                                [required]="true"
-                                                [label]="'Timezone'"
-                                                [initial_value]="host.timeZoneData.name">
-                                            </app-autocomplete-field>
+                                            <mat-form-field>
+                                                <mat-label>Timezone</mat-label>
+                                                <mat-select formControlName="timezone">
+                                                    <mat-option
+                                                        *ngFor="let timezone of timezones"
+                                                        [value]="timezone.id">
+                                                        {{ timezone.name }}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
                                         </div>
                                     </div>
 
@@ -404,12 +407,7 @@
                             type="submit"
                             class="theme-btn mt-4 mr-2"
                             color="primary"
-                            [disabled]="
-                                has_invalid_schedule ||
-                                edit_host_form.invalid ||
-                                (canada_selected && edit_host_form.get('zip').value.length !== 6) ||
-                                (!canada_selected && edit_host_form.get('zip').value.length !== 5)
-                            ">
+                            [disabled]="has_invalid_schedule || edit_host_form.invalid">
                             Update
                         </button>
                         <button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="false">

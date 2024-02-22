@@ -227,6 +227,9 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
                         : '--',
                     link: null,
                     hidden: false,
+                    editable: true,
+                    label: 'Install Request Date',
+                    id: license.licenseId,
                 },
                 pi_status: { value: license.piStatus, link: null, editable: false, hidden: true },
                 player_status: {

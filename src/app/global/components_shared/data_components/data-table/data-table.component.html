@@ -343,9 +343,9 @@
                                                     <ng-container *ngIf="!data[d].notes; else notesValue">
                                                         <span
                                                             *ngIf="data[d].compressed; else notcompressed"
-                                                            [title]="data[d].value"
-                                                            >{{ data[d].value | substring: 10 }}</span
-                                                        >
+                                                            [title]="data[d].value">
+                                                            {{ data[d].value | substring: 10 }}
+                                                        </span>
                                                         <ng-template #notcompressed>
                                                             {{ data[d].value }}
                                                         </ng-template>

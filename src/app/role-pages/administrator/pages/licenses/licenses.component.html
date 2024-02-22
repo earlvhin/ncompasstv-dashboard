@@ -413,7 +413,8 @@
                                                             (to_sort_column)="getColumnsAndOrder($event, 'licenses')"
                                                             [active_tab]="sort_column"
                                                             [sort_column]="sort_column"
-                                                            [sort_order]="sort_order">
+                                                            [sort_order]="sort_order"
+                                                            (update_info)="getLicenses(1)">
                                                         </app-data-table>
                                                     </mat-card>
                                                 </div>
