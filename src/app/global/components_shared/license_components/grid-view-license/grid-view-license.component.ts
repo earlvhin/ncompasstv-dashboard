@@ -54,7 +54,7 @@ export class GridViewLicenseComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((response) => {
                 if (!response) {
-                    this.openConfirmationModal('success', 'Success!', 'License successfully removed to Favorites');
+                    this.openConfirmationModal('success', 'Success!', 'License successfully removed from Favorites');
                     this.license_data_for_grid_view.push(license);
                 } else {
                     this.openConfirmationModal('error', 'Error!', response.message);
@@ -71,7 +71,7 @@ export class GridViewLicenseComponent implements OnInit {
                     this.license_data_for_grid_view = this.license_data_for_grid_view.filter((license) => {
                         return license.licenseId != id;
                     });
-                    this.openConfirmationModal('success', 'Success!', 'License successfully added to Favorites');
+                    this.openConfirmationModal('success', 'Success!', 'License successfully added from Favorites');
                 } else {
                     this.openConfirmationModal('error', 'Error!', response.message);
                 }

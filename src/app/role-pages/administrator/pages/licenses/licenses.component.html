@@ -16,7 +16,7 @@
                 </button>
             </div>
         </div>
-        <hr class="my-4" />
+        <hr class="mat-bl-em" />
     </div>
 
     <div>
@@ -78,15 +78,14 @@
             </div>
         </div>
 
-        <hr class="my-4" />
-
+        <hr class="mat-bl-em" />
         <div class="row">
             <div class="col-lg-12">
                 <div class="custom-mat-tab">
                     <mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event)">
                         <!-- LICENSES TAB -->
                         <mat-tab id="licenses-view-tab" label="Licenses View">
-                            <div class="licenses-view-tab-container mt-3" *ngIf="tabGroup.selectedIndex === 0">
+                            <div class="licenses-view-tab-container mat-top-em" *ngIf="tabGroup.selectedIndex === 0">
                                 <div class="flex">
                                     <div class="flex-2 d-inline-flex">
                                         <button
@@ -339,7 +338,8 @@
                                         filters.label_zone ||
                                         filters.label_dealer ||
                                         filters.label_host ||
-                                        filters.admin_licenses
+                                        filters.admin_licenses ||
+                                        licenses_data_result == true
                                     ">
                                     <div class="col-lg-12">
                                         <div class="d-flex align-items-center p-2 bg-gray-2">
@@ -348,38 +348,86 @@
                                                     <div class="filetype-pill pill" *ngIf="filters.label_status">
                                                         License Status:
                                                         <strong>{{ filters.label_status }}</strong>
+                                                        <span
+                                                            class="fas fa-times x-btn ml-2"
+                                                            (click)="clearLabelStatusFilter(filters)"></span>
                                                     </div>
 
                                                     <div class="order-pill pill" *ngIf="filters.label_zone">
                                                         Timezone:
                                                         <strong>{{ filters.label_zone }}</strong>
+                                                        <span
+                                                            class="fas fa-times x-btn ml-2"
+                                                            (click)="clearLabelZoneFilter(filters)"></span>
                                                     </div>
 
                                                     <div class="dealer-pill pill" *ngIf="filters.label_dealer">
                                                         Dealer:
                                                         <strong>{{ filters.label_dealer }}</strong>
+                                                        <span
+                                                            class="fas fa-times x-btn ml-2"
+                                                            (click)="clearLabelDealerFilter(filters)"></span>
                                                     </div>
 
                                                     <div class="host-pill pill" *ngIf="filters.label_host">
                                                         Host:
                                                         <strong>{{ filters.label_host }}</strong>
+                                                        <span
+                                                            class="fas fa-times x-btn ml-2"
+                                                            (click)="clearLabelHostFilter(filters)"></span>
                                                     </div>
 
-                                                    <div class="host-pill pill" *ngIf="filters.admin_licenses">
-                                                        Show Admin Licenses:
-                                                        <strong>{{ filters.admin_licenses }}</strong>
+                                                    <div
+                                                        class="host-pill pill"
+                                                        *ngIf="filters.admin_licenses == 'true'">
+                                                        Admin Licenses : <strong>Shown</strong>
+                                                        <span
+                                                            class="fas fa-times x-btn ml-2"
+                                                            (click)="clearAdminFilter(filters)"></span>
+                                                    </div>
+                                                    <div
+                                                        class="host-pill pill"
+                                                        *ngIf="filters.admin_licenses == 'false'">
+                                                        Admin Licenses : <strong>Hidden</strong>
+                                                        <span
+                                                            class="fas fa-times x-btn ml-2"
+                                                            (click)="clearAdminFilter(filters)"></span>
                                                     </div>
                                                 </div>
                                                 <div class="pl-2" *ngIf="!searching_licenses">
-                                                    <p class="sm-text py-2 m-0">
-                                                        Showing
-                                                        <span class="text-danger">{{ getTotalShownLicenses() }}</span>
-                                                        out of
-                                                        <span class="text-danger">{{ getTotalLicenses() }}</span>
-                                                        licenses result.
-                                                        <span class="text-danger" *ngIf="filters.admin_licenses"
-                                                            >Including admin licenses.</span
-                                                        >
+                                                    <ng-container *ngIf="no_licenses_result == false; else noLicenses">
+                                                        <p class="sm-text py-2 m-0">
+                                                            <span class="info-text font-weight-bold">{{
+                                                                total_license_results
+                                                            }}</span>
+                                                            Results /
+                                                            <span class="lc-online font-weight-bold">{{
+                                                                total_online_results
+                                                            }}</span>
+                                                            Online /
+                                                            <span class="text-danger font-weight-bold">{{
+                                                                total_offline_results
+                                                            }}</span>
+                                                            Offline /
+                                                            <span class="text-gray font-weight-bold">{{
+                                                                total_inactive_results
+                                                            }}</span>
+                                                            Inactive /
+                                                            <span class="text-gray font-weight-bold">{{
+                                                                total_unassigned_results
+                                                            }}</span>
+                                                            Unassigned
+                                                        </p>
+                                                    </ng-container>
+                                                    <ng-template #noLicenses>
+                                                        <p class="sm-text py-2 m-0 font-weight-bold">
+                                                            No License(s) found.
+                                                        </p>
+                                                    </ng-template>
+                                                </div>
+                                                <div class="pl-2" *ngIf="searching_licenses">
+                                                    <p class="sm-text py-2 m-0 font-weight-regular">
+                                                        Searching for licenses, please wait...
                                                     </p>
                                                 </div>
                                             </div>
@@ -388,7 +436,14 @@
                                                     mat-button
                                                     mat-raised-button
                                                     class="theme-btn"
-                                                    (click)="clearFilter()">
+                                                    (click)="clearFilter()"
+                                                    *ngIf="
+                                                        filters.label_status ||
+                                                        filters.label_zone ||
+                                                        filters.label_dealer ||
+                                                        filters.label_host ||
+                                                        filters.admin_licenses
+                                                    ">
                                                     <span class="button-label"> Clear Filter </span>
                                                     <span class="fas fa-times ml-2 sm-text"></span>
                                                 </button>
@@ -401,7 +456,12 @@
                                         <div class="col-lg-12 mr-2 p-0" *ngIf="active_view === 'list'; else grid">
                                             <ng-container>
                                                 <div *ngIf="!searching_licenses; else loader">
-                                                    <mat-card *ngIf="filtered_data_licenses.length > 0; else nodata">
+                                                    <mat-card
+                                                        *ngIf="
+                                                            filtered_data_licenses.length > 0 ||
+                                                                no_licenses_result == false;
+                                                            else nodata
+                                                        ">
                                                         <app-data-table
                                                             [table_data]="filtered_data_licenses"
                                                             [table_columns]="license_table_column"
@@ -449,7 +509,7 @@
                                                     <button
                                                         mat-button
                                                         mat-raised-button
-                                                        class="theme-btn sm-text _info mr-2 mt-3"
+                                                        class="theme-btn sm-text _info mr-2 mat-top-em"
                                                         title="Show All Licenses"
                                                         (click)="showAllLicenses()">
                                                         <span class="fas fa-eye"></span>
@@ -478,7 +538,7 @@
                         <!-- HOSTS TAB -->
                         <mat-tab id="hosts-view-tab" label="Hosts View">
                             <div
-                                class="hosts-view-tab-container mt-3"
+                                class="hosts-view-tab-container mat-top-em"
                                 *ngIf="is_dealer_admin ? tabGroup.selectedIndex === 2 : tabGroup.selectedIndex === 3">
                                 <div *ngIf="!initial_load_hosts; else loader">
                                     <div *ngIf="!no_host; else no_data">

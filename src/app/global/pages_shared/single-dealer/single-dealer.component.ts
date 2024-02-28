@@ -282,6 +282,20 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
             hidden: true,
             no_show: true,
         },
+        {
+            name: 'Contact Person',
+            sortable: false,
+            key: 'contactPerson',
+            hidden: true,
+            no_show: true,
+        },
+        {
+            name: 'Contact Number',
+            sortable: false,
+            key: 'contactNumber',
+            hidden: true,
+            no_show: true,
+        },
         { name: 'Last Push', sortable: true, column: 'ContentsUpdated', key: 'contentsUpdated' },
         { name: 'Last Disconnect', sortable: true, column: 'TimeOut', key: 'timeIn' },
         {

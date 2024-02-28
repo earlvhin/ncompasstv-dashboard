@@ -1,26 +1,28 @@
-<div class="content-section">
+<div class="content-section p-0">
     <div class="col-lg-12 p-0">
-        <div class="row mb-2">
+        <div class="row mat-top-em">
             <div class="col-lg-5">
-                <mat-form-field class="col-lg-5 full-width content-filter-dropdown">
-                    <mat-label>Search Options</mat-label>
-                    <mat-select (selectionChange)="onSearchOption($event.value)" [(value)]="currentSearchOption">
-                        <mat-option [value]="'host'">Search by Host</mat-option>
-                        <mat-option [value]="'state'">Search by State</mat-option>
-                        <mat-option [value]="'category'">Search by Category</mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <button
-                    mat-button
-                    mat-raised-button
-                    class="theme-btn pi-control sm-text _cool mr-2"
-                    (click)="toggleOverMap()"
-                    title="{{ status ? 'Show Search Result' : 'Hide Search Results' }}">
-                    <span [ngClass]="status ? 'fas fa-eye' : 'fas fa-eye-slash'"></span>
-                    <span class="ml-2 button_text_animation">{{
-                        status ? 'Show Search Result' : 'Hide Search Results'
-                    }}</span>
-                </button>
+                <div class="d-flex">
+                    <mat-form-field class="col-lg-5 full-width content-filter-dropdown">
+                        <mat-label>Search Options</mat-label>
+                        <mat-select (selectionChange)="onSearchOption($event.value)" [(value)]="currentSearchOption">
+                            <mat-option [value]="'host'">Search by Host</mat-option>
+                            <mat-option [value]="'state'">Search by State</mat-option>
+                            <mat-option [value]="'category'">Search by Category</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn pi-control sm-text _cool mr-2"
+                        (click)="toggleOverMap()"
+                        title="{{ status ? 'Show Search Result' : 'Hide Search Results' }}">
+                        <span [ngClass]="status ? 'fas fa-eye' : 'fas fa-eye-slash'"></span>
+                        <span class="ml-2 button_text_animation">{{
+                            status ? 'Show Search Result' : 'Hide Search Results'
+                        }}</span>
+                    </button>
+                </div>
             </div>
             <div class="col-lg-7 float-right">
                 <div class="col-lg-12 justify-flex p-0 d-flex">

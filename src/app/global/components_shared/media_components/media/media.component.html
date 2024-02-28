@@ -1,6 +1,6 @@
 <div>
     <div class="media-component" *ngIf="!no_content; else no_data">
-        <div class="row mb-3">
+        <div class="row">
             <div class="col-lg-12">
                 <app-media-library-options
                     *ngIf="fillers | async as f"
@@ -16,13 +16,13 @@
             </div>
         </div>
 
-        <div class="row mb-3">
+        <div class="row">
             <div class="col-lg-12">
                 <app-filter-labels [filters]="filters" (clear_filter)="clearFilter($event)"></app-filter-labels>
             </div>
         </div>
 
-        <div class="col-lg-12 p-0">
+        <div class="col-lg-12 p-0 mat-top-em bottom-spacing">
             <div class="flex-even text-right ml-3 p-0">
                 <mat-slide-toggle
                     *ngIf="!no_content"

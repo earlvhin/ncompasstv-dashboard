@@ -137,7 +137,7 @@ export class ChangeTemplateComponent implements OnInit, OnDestroy {
         const title = 'Change Template Confirmation';
         const status = 'warning';
         const return_msg = 'Confirmed Template Change';
-        const width = '500px';
+        const width = '480px';
         const height = '350px';
         return this._dialog
             .open(ConfirmationModalComponent, {

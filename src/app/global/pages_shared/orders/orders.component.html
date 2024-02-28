@@ -1,10 +1,10 @@
 <div>
     <div class="row table-row">
-        <div class="col-lg-12 p-0 d-flex" *ngIf="!initial_load_orders">
-            <div class="col-lg-8 pl-0 pb-4">
-                <div class="col-lg-12 d-flex">
+        <div class="col-lg-12 p-0 d-flex align-items-center" *ngIf="!initial_load_orders">
+            <div class="col-lg-8 pl-0">
+                <div class="col-lg-12 d-flex align-items-center">
                     <div class="col-lg-6 p-0">
-                        <div class="col-lg-12 mb-2 p-0">
+                        <div class="col-lg-12 p-0">
                             <div class="col-lg-12 p-0">
                                 <span class="md-text"> Select Date Range </span>
                             </div>
@@ -41,7 +41,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-2 pt-4">
+                    <div class="col-lg-2">
                         <button
                             id="filter-by-status-btn"
                             mat-button
@@ -58,7 +58,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 pt-5">
+            <div class="col-lg-4">
                 <app-search-field
                     *ngIf="dealerId === ''"
                     [form_title]="'Search Dealer Name or Alias'"

@@ -36,7 +36,7 @@
                 </button>
             </div>
         </div>
-        <hr class="my-4" />
+        <hr class="mat-bl-em" />
     </div>
 
     <div class="content-section">
@@ -207,9 +207,9 @@
                             *ngIf="screen_licenses.length > 0; else no_record"
                             [table_columns]="license_column"
                             [table_data]="screen_licenses"
-                            [ctrl_column]="true"
+                            [ctrl_column]="is_admin"
                             [license_status_column]="true"
-                            [ctrl_toggle]="true"
+                            [ctrl_toggle]="is_admin"
                             [new_table]="true"
                             [paging_details]="paging_data"
                             [is_view_only]="is_view_only"

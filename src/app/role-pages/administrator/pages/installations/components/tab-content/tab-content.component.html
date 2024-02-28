@@ -1,8 +1,8 @@
 <div class="col-lg-12 pl-0 pr-0 pb-4">
-    <div class="tab-actions-section d-flex align-items-center">
+    <div class="tab-actions-section d-flex mat-top-em">
         <div class="col-lg-8 pl-0">
-            <div class="datepicker-container flex mt-2">
-                <div class="">
+            <div class="datepicker-container d-flex">
+                <div>
                     <!-- DATEPICKER -->
                     <ng-container *ngIf="isDatePickerEnabled">
                         <mat-form-field
@@ -26,7 +26,9 @@
 
                     <!-- DATE VIEW BUTTONS -->
                     <ng-container *ngIf="isDatePickerViewEnabled">
-                        <div class="date-views-container align-items-center col-lg-12 p-0 pt-2" name="view-toggle">
+                        <div
+                            class="date-views-container d-flex align-items-center col-lg-12 p-0 mat-bl-em"
+                            name="view-toggle">
                             <button
                                 class="sm-text theme-btn _neutral cursor-pointer mr-1"
                                 *ngFor="let view of dateViews"
@@ -47,8 +49,7 @@
                 <button
                     mat-button
                     mat-raised-button
-                    class="theme-btn pi-control sm-text _primary"
-                    [ngClass]="isDatePickerViewEnabled ? 'mr-2 ml-3 mt-3' : ''"
+                    class="theme-btn pi-control sm-text _primary ml-2 mt-2"
                     title="Export to CSV"
                     (click)="onExport.emit()"
                     [disabled]="isExporting">
@@ -58,7 +59,7 @@
             </div>
         </div>
 
-        <div class="col-lg-4" [ngClass]="isDatePickerViewEnabled ? 'mt-4' : 'mt-2'">
+        <div class="col-lg-4">
             <!-- SEARCH FIELD -->
             <app-search-field
                 *ngIf="!initialLoad"
@@ -74,7 +75,7 @@
         </div>
     </div>
 
-    <div class="mb-3 col-lg-12 p-0 pt-2">
+    <div class="p-0">
         <span class="sm-text"
             >Note: Licenses colored in <span class="text-danger">Red</span> are expired installations.</span
         >

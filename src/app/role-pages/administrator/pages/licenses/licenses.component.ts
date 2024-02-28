@@ -119,6 +119,14 @@ export class LicensesComponent implements OnInit {
     };
 
     protected _unsubscribe = new Subject<void>();
+    total_license_results: any;
+    total_online_results: any;
+    total_offline_results: any;
+    total_inactive_results: any;
+    total_unassigned_results: any;
+    licenses_data_result: boolean = false;
+    licenseSearchKeyword: string;
+    hostSearchKeyword: string;
 
     constructor(
         private _auth: AuthService,
@@ -168,7 +176,6 @@ export class LicensesComponent implements OnInit {
         this.active_view = view;
 
         if (view === 'grid') {
-            this.getFavoriteLicenses(true);
             this.has_sort = true;
             this.license_data_for_grid_view = [];
             this.getLicenses(1, this.grid_list_cache.length > 0 ? this.grid_list_cache.length : 24);
@@ -403,6 +410,12 @@ export class LicensesComponent implements OnInit {
                     this.favorites_list_cache = this.favorites_list;
                     this.no_favorites = false;
                     this.paging_data_favorites = data.paging;
+
+                    this.total_license_results = data.totalCounts.total;
+                    this.total_online_results = data.totalCounts.totalOnline;
+                    this.total_offline_results = data.totalCounts.totalOffline;
+                    this.total_inactive_results = data.totalCounts.totalInActive;
+                    this.total_unassigned_results = data.totalCounts.totalUnAssigned;
                 }
                 if (reset) this.favorites_list_cache = this.favorites_list;
             });
@@ -454,7 +467,7 @@ export class LicensesComponent implements OnInit {
         } else {
             if (page > 1) this.searching_licenses = false;
             else this.searching_licenses = true;
-            favorite = false;
+            favorite = '';
         }
         this._license
             .get_all_licenses(
@@ -482,7 +495,6 @@ export class LicensesComponent implements OnInit {
             .subscribe(
                 (data) => {
                     this.paging_data_licenses = data.paging;
-
                     if (data.licenses.length <= 0) {
                         this.hideLicenseSpinner();
 
@@ -507,14 +519,26 @@ export class LicensesComponent implements OnInit {
 
                         if (page === 1) this.grid_list_cache = this.license_data_for_grid_view;
 
+                        this.total_license_results = data.totalCounts.total;
+                        this.total_online_results = data.totalCounts.totalOnline;
+                        this.total_offline_results = data.totalCounts.totalOffline;
+                        this.total_inactive_results = data.totalCounts.totalInActive;
+                        this.total_unassigned_results = data.totalCounts.totalUnAssigned;
+
                         this.hideLicenseSpinner();
                         return;
                     }
 
                     const mapped = this.mapToLicensesTable(data.licenses);
+
                     this.licenses_data = [...mapped];
                     this.filtered_data_licenses = [...mapped];
                     this.hideLicenseSpinner();
+                    this.total_license_results = data.totalCounts.total;
+                    this.total_online_results = data.totalCounts.totalOnline;
+                    this.total_offline_results = data.totalCounts.totalOffline;
+                    this.total_inactive_results = data.totalCounts.totalInActive;
+                    this.total_unassigned_results = data.totalCounts.totalUnAssigned;
                 },
                 (error) => console.error(error),
             );
@@ -589,15 +613,21 @@ export class LicensesComponent implements OnInit {
         switch (tab.index) {
             case 0:
                 this.getLicenses(1);
+                this.resetSearchInput('licenses');
+                this.clearFilter();
+                this.licenses_data_result = false;
                 break;
             case 2:
                 if (!this.is_dealer_admin) return;
                 this.getHosts(1);
+                this.resetSearchInput('hosts');
                 break;
             case 3:
                 this.getHosts(1);
+                this.resetSearchInput('hosts');
                 break;
             default:
+                break;
         }
     }
 
@@ -639,11 +669,13 @@ export class LicensesComponent implements OnInit {
 
                 if (this.active_view === 'grid') {
                     this.license_data_for_grid_view = [];
-                    this.getFavoriteLicenses(false);
                     this.getLicenses(1, 24, false);
-                } else this.getLicenses(1);
+                } else {
+                    this.getLicenses(1);
+                }
 
-                if (keyword) this.hide_all_license = false;
+                this.showAllLicenses();
+                this.licenses_data_result = keyword ? true : false;
                 break;
 
             case 'hosts':
@@ -651,8 +683,148 @@ export class LicensesComponent implements OnInit {
                 this.search_data_host = keyword ? keyword : '';
                 this.getHosts(1);
                 break;
+
             default:
+                break;
         }
+    }
+
+    resetSearchInput(tab: string) {
+        switch (tab) {
+            case 'licenses':
+                this.search_data_licenses = '';
+                break;
+            case 'hosts':
+                this.search_data_host = '';
+                break;
+            default:
+                break;
+        }
+    }
+
+    clearLabelStatusFilter(filters): void {
+        this.filters = {
+            admin_licenses: filters.admin_licenses,
+            assigned: '',
+            isactivated: '',
+            online: '',
+            pending: filters.pending,
+            activated: '',
+            recent: '',
+            days_offline_from: filters.days_offline_from,
+            days_offline_to: filters.days_offline_to,
+            zone: filters.zone,
+            status: '',
+            dealer: filters.dealer,
+            host: filters.host,
+            label_status: '',
+            label_zone: filters.label_zone,
+            label_dealer: filters.label_dealer,
+            label_host: '',
+            label_admin: filters.label_admin,
+        };
+        this.sortList('desc');
+        this.getLicenses(1);
+    }
+
+    clearLabelZoneFilter(filters): void {
+        this.filters = {
+            admin_licenses: filters.admin_licenses,
+            assigned: filters.assigned,
+            isactivated: filters.isactivated,
+            online: filters.online,
+            pending: filters.pending,
+            activated: filters.activated,
+            recent: filters.recent,
+            days_offline_from: filters.days_offline_from,
+            days_offline_to: filters.days_offline_to,
+            zone: '',
+            status: filters.status,
+            dealer: filters.dealer,
+            host: filters.host,
+            label_status: filters.label_status,
+            label_zone: '',
+            label_dealer: filters.label_dealer,
+            label_host: filters.label_host,
+            label_admin: filters.label_admin,
+        };
+        this.sortList('desc');
+        this.getLicenses(1);
+    }
+
+    clearLabelDealerFilter(filters): void {
+        this.filters = {
+            admin_licenses: filters.admin_licenses,
+            assigned: filters.assigned,
+            isactivated: filters.isactivated,
+            online: filters.online,
+            pending: filters.pending,
+            activated: filters.activated,
+            recent: filters.recent,
+            days_offline_from: filters.days_offline_from,
+            days_offline_to: filters.days_offline_to,
+            zone: filters.zone,
+            status: filters.status,
+            dealer: '',
+            host: filters.host,
+            label_status: filters.label_status,
+            label_zone: filters.label_zone,
+            label_dealer: '',
+            label_host: filters.label_host,
+            label_admin: filters.label_admin,
+        };
+        this.sortList('desc');
+        this.getLicenses(1);
+    }
+
+    clearLabelHostFilter(filters): void {
+        this.filters = {
+            admin_licenses: filters.admin_licenses,
+            assigned: filters.assigned,
+            isactivated: filters.isactivated,
+            online: filters.online,
+            pending: filters.pending,
+            activated: filters.activated,
+            recent: filters.recent,
+            days_offline_from: filters.days_offline_from,
+            days_offline_to: filters.days_offline_to,
+            zone: filters.zone,
+            status: filters.status,
+            dealer: filters.dealer,
+            host: '',
+            label_status: filters.label_status,
+            label_zone: filters.label_zone,
+            label_dealer: filters.label_dealer,
+            label_host: '',
+            label_admin: filters.label_admin,
+        };
+        this.sortList('desc');
+        this.getLicenses(1);
+    }
+
+    clearAdminFilter(filters): void {
+        this.filters = {
+            admin_licenses: false,
+            assigned: filters.assigned,
+            isactivated: filters.isactivated,
+            online: filters.online,
+            pending: filters.pending,
+            activated: filters.activated,
+            recent: filters.recent,
+            days_offline_from: filters.days_offline_from,
+            days_offline_to: filters.days_offline_to,
+            zone: filters.zone,
+            status: filters.status,
+            dealer: filters.dealer,
+            host: filters.host,
+            label_status: filters.label_status,
+            label_zone: filters.label_zone,
+            label_dealer: filters.label_dealer,
+            label_host: filters.label_host,
+            label_admin: filters.label_admin,
+        };
+        this.sortList('desc');
+        this.getLicenses(1);
     }
 
     getDataForExport(tab: string): void {
@@ -1003,12 +1175,14 @@ export class LicensesComponent implements OnInit {
     toggleFavorites(value: string) {
         if (value === 'false') {
             this.favorite_view = false;
+            this.getLicenses(1);
             return;
         }
 
         this.favorites_list = this.favorites_list_cache;
         this.no_favorites = false;
         this.favorite_view = true;
+        this.getFavoriteLicenses(true);
     }
 
     getStoreHourseParse(data) {
@@ -1341,6 +1515,20 @@ export class LicensesComponent implements OnInit {
                 name: 'Business Hours',
                 sortable: false,
                 key: 'storeHoursParsed',
+                hidden: true,
+                no_show: true,
+            },
+            {
+                name: 'Contact Person',
+                sortable: false,
+                key: 'contactPerson',
+                hidden: true,
+                no_show: true,
+            },
+            {
+                name: 'Contact Number',
+                sortable: false,
+                key: 'contactNumber',
                 hidden: true,
                 no_show: true,
             },

@@ -111,7 +111,7 @@
                                 <div *ngIf="!no_licenses; else no_data">
                                     <div *ngIf="!initial_load_license; else loader">
                                         <!-- BUTTONS ROW -->
-                                        <div class="row mt-4">
+                                        <div class="row mat-top-em">
                                             <div class="col-lg-8">
                                                 <button
                                                     mat-button
@@ -492,9 +492,9 @@
                                                             id="licenseTable"
                                                             [table_columns]="license_table_columns"
                                                             [table_data]="license_filtered_data"
-                                                            [ctrl_column]="true"
+                                                            [ctrl_column]="is_admin"
                                                             [ctrl_column_label]="'Activate'"
-                                                            [ctrl_toggle]="true"
+                                                            [ctrl_toggle]="is_admin"
                                                             [new_table]="true"
                                                             [license_status_column]="true"
                                                             (toggle_triggered)="toggleActivateDeactivate($event)"
@@ -621,7 +621,7 @@
                         <mat-tab label="Advertisers">
                             <div *ngIf="current_tab === 'advertisers'">
                                 <div *ngIf="!initial_load_advertiser; else loader">
-                                    <div class="d-flex pt-2 table-controls">
+                                    <div class="d-flex mat-top-em table-controls">
                                         <div class="status-filter-container">
                                             <button
                                                 mat-button
@@ -720,7 +720,7 @@
                             <div *ngIf="current_tab === 'zone'">
                                 <div *ngIf="!initial_load_zone; else loader">
                                     <div *ngIf="!no_license_zone; else no_data">
-                                        <div class="row pt-2">
+                                        <div class="row mat-top-em">
                                             <div class="col-lg-8"></div>
                                             <div class="col-lg-4">
                                                 <app-search-field

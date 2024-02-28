@@ -6,7 +6,7 @@
             </div>
         </div>
     </div>
-    <hr class="my-4" />
+    <hr class="mat-bl-em" />
 
     <div class="row cards">
         <div class="col-lg" *ngIf="!_isDealer()">
@@ -75,7 +75,7 @@
 </div>
 
 <ng-template #tags_normal_view>
-    <div class="mt-5 row">
+    <div class="row mat-top-em">
         <div class="col-lg-4">
             <ng-container *ngIf="isContentReady; else loading">
                 <app-tags-section

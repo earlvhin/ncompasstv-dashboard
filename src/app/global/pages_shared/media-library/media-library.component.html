@@ -16,7 +16,7 @@
                 </button>
             </div>
         </div>
-        <hr class="my-4" />
+        <hr class="mat-bl-em" />
     </div>
 
     <div>
@@ -51,7 +51,7 @@
                 </app-data-card-count>
             </div>
         </div>
-        <hr class="my-4" *ngIf="compare != false" />
+        <hr class="mat-bl-em" *ngIf="compare != false" />
         <app-media
             (send_stats)="displayStats($event)"
             [reload]="eventsSubject.asObservable()"

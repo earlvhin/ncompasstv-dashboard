@@ -59,7 +59,7 @@
                 </button>
             </div>
         </div>
-        <hr class="my-4" />
+        <hr class="mat-bl-em" />
     </div>
 
     <div>
@@ -105,14 +105,14 @@
                 <app-spinner [diameter]="60"></app-spinner>
             </div>
         </ng-template>
-        <hr class="my-4" />
+        <hr class="mat-bl-em" />
 
         <div class="custom-mat-tab">
             <mat-tab-group dynamicHeight (selectedTabChange)="tabSelected($event)">
                 <mat-tab label="Dealers View">
                     <div class="col-lg-12 p-0" *ngIf="current_tab === 'Dealer'">
                         <div class="row">
-                            <div class="col-lg-12 mt-4">
+                            <div class="col-lg-12 mat-top-em">
                                 <app-dealers-table [update_info]="update_info"></app-dealers-table>
                             </div>
                         </div>
@@ -122,7 +122,7 @@
                 <mat-tab label="Billings" *ngIf="!is_dealer_admin">
                     <div class="col-lg-12 px-0" *ngIf="current_tab === 'Bills'">
                         <div class="row">
-                            <div class="col-lg-12 mt-4">
+                            <div class="col-lg-12 mat-top-em">
                                 <app-billings-view class="full-width"></app-billings-view>
                             </div>
                         </div>
@@ -132,7 +132,7 @@
                 <mat-tab label="Invoice" *ngIf="!is_dealer_admin">
                     <div class="col-lg-12 px-0" *ngIf="current_tab === 'Invoice'">
                         <div class="row no-gutters">
-                            <div class="col-lg-12 p-0 mt-4">
+                            <div class="col-lg-12 p-0 mat-top-em">
                                 <app-invoice-view class="full-width"></app-invoice-view>
                             </div>
                         </div>
@@ -142,7 +142,7 @@
                 <mat-tab label="Orders ({{ orders }})" *ngIf="!is_dealer_admin">
                     <div class="col-lg-12 px-0" *ngIf="current_tab === 'Orders'">
                         <div class="row no-gutters">
-                            <div class="col-lg-12 p-0 mt-4">
+                            <div class="col-lg-12 p-0 mat-top-em">
                                 <app-orders class="full-width"></app-orders>
                             </div>
                         </div>

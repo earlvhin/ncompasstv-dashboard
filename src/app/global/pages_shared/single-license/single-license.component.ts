@@ -2273,28 +2273,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             this.internet_connection.uploadMbps = `${uploadMbps.toFixed(2)} Mbps`;
             this.internet_connection.ping = `${pingLatency.toFixed(2)} ms`;
             this.internet_connection.date = date;
-            this.license_data.d = downloadMbps > 7 ? 'Good' : 'Slow';
+            this.internet_connection.status = downloadMbps > 7 ? 'Good' : 'Slow';
             this.speedtest_running = false;
-
-            const params = {
-                licenseId: this.license_id,
-                internetInfo: JSON.stringify({
-                    downloadMbps: downloadMbps,
-                    uploadMbps: uploadMbps,
-                    ping: pingLatency,
-                    date: date,
-                }),
-            };
-
-            this._license
-                .update_internet_info(params)
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    () => {},
-                    (error) => {
-                        console.error(error);
-                    },
-                );
         });
     }
 

@@ -1,34 +1,39 @@
 <div class="theme-container">
     <div class="title-section">
         <div class="row">
-            <div class="col-lg-6">
-                <h1 class="page-title">{{ title }}</h1>
-            </div>
-            <div class="col-lg-6 text-right">
-                <a [routerLink]="['/administrator/hosts/create-host']" target="_blank">
-                    <button
-                        mat-button
-                        mat-raised-button
-                        class="theme-btn pi-control _teal sm-text mr-2"
-                        title="Add Host Place">
-                        <span class="fas fa-map-marker"></span>
-                        <span class="ml-2 button_text_animation">Add Host Place</span>
-                    </button>
-                </a>
+            <div class="col-12 p-0 d-flex align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="page-title">{{ title }}</h1>
+                </div>
+                <div class="col-lg-6 text-right">
+                    <a [routerLink]="['/administrator/hosts/create-host']" target="_blank">
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn pi-control _teal sm-text mr-2"
+                            title="Add Host Place">
+                            <span class="fas fa-map-marker"></span>
+                            <span class="ml-2 button_text_animation">Add Host Place</span>
+                        </button>
+                    </a>
 
-                <a [routerLink]="['/administrator/users/create-user/host']" target="_blank" *ngIf="!is_dealer_admin">
-                    <button
-                        mat-button
-                        mat-raised-button
-                        class="theme-btn pi-control _info sm-text mr-2"
-                        title="Add Host User">
-                        <span class="fas fa-user"></span>
-                        <span class="ml-2 button_text_animation">Add Host User</span>
-                    </button>
-                </a>
+                    <a
+                        [routerLink]="['/administrator/users/create-user/host']"
+                        target="_blank"
+                        *ngIf="!is_dealer_admin">
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn pi-control _info sm-text mr-2"
+                            title="Add Host User">
+                            <span class="fas fa-user"></span>
+                            <span class="ml-2 button_text_animation">Add Host User</span>
+                        </button>
+                    </a>
+                </div>
             </div>
         </div>
-        <hr class="my-4" />
+        <hr class="mat-bl-em" />
     </div>
 
     <div>
@@ -70,7 +75,7 @@
             </div>
         </div>
 
-        <hr class="my-4" />
+        <hr class="mat-bl-em" />
 
         <div class="flex custom-mat-tab p-0">
             <mat-tab-group class="full-width" dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event)">
@@ -79,7 +84,7 @@
                     <div class="flex-even pb-4" *ngIf="tabGroup.selectedIndex === 0">
                         <div *ngIf="!initial_load_hosts; else loader">
                             <div *ngIf="!no_host; else no_data">
-                                <div class="flex mt-3 table-controls">
+                                <div class="flex mat-top-em table-controls">
                                     <div class="export-button-container flex-even">
                                         <button
                                             mat-button
@@ -148,7 +153,7 @@
 
                 <!-- Dealers Tab -->
                 <mat-tab label="Dealers View">
-                    <div class="dealers-view-container py-4" *ngIf="tabGroup.selectedIndex === 1">
+                    <div class="dealers-view-container mat-top-em" *ngIf="tabGroup.selectedIndex === 1">
                         <div *ngIf="!initial_load; else loader">
                             <div *ngIf="!no_dealer; else no_data">
                                 <div class="flex justify-content-end">
