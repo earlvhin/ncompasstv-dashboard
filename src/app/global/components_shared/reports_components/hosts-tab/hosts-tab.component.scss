@@ -1,0 +1,31 @@
+.details-title {
+    padding: 0.7em;
+}
+
+.statistics-content {
+    gap: 20px;
+}
+
+.statistics-table {
+    flex: 1;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.reports-details {
+    overflow-y: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.reports-details::-webkit-scrollbar {
+    width: 0;
+}
+
+.report-results {
+    height: 600px;
+}
+
+.hidden {
+    display: none;
+}

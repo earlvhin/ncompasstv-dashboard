@@ -1,50 +1,43 @@
-<div class="dialog-container change-template-dialog d-flex flex-column p-2">
-    <div class="d-flex align-items-center heading">
-        <div class="flex-even">
-            <h1 mat-dialog-title>{{ title }}</h1>
-        </div>
-        <button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
-            <span class="fas fa-times"></span>
-        </button>
+<div class="dialog-container h-100 change-template-dialog d-flex p-2 flex-column position-relative">
+    <div class="text-left c-p5">
+        <h1 class="font-weight-semibold" mat-dialog-title>
+            {{ title }}
+        </h1>
     </div>
 
-    <br />
-    <div mat-dialog-content>
-        <div class="content-container d-flex justify-content-between">
-            <!-- CURRENT TEMPLATE -->
-            <div class="template current-template d-flex flex-column">
-                <h4><b>Current Template:</b></h4>
-                <br />
-
-                <!-- TEMPLATE -->
+    <div class="inner-container">
+        <div mat-dialog-content>
+            <div class="d-flex flex-column gap-15 mb-4 c-p5">
+                <!-- CURRENT TEMPLATE -->
                 <h4>
-                    <u>{{ currentTemplate.template.name }}</u>
+                    <b>Current Template:</b>
+                    <span>
+                        {{ currentTemplate.template.name }}
+                    </span>
                 </h4>
-                <br />
 
                 <!-- ZONE PLAYLISTS -->
                 <ng-container *ngFor="let zone of screenZonePlaylists">
-                    <mat-card class="playlist-zones">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <label class="zone-name"
-                                ><b>{{ zone.screen_template.name | titlecase }} Zone</b></label
-                            >
-                            <p class="playlist-name">Playlist: {{ zone.screen_template.playlist_name }}</p>
-                        </div>
-                    </mat-card>
-                    <br />
+                    <div class="d-flex text-black">
+                        <h4 class="mr-3 text-14">
+                            <b>{{ zone.screen_template.name | titlecase }}:</b>
+                        </h4>
+
+                        <p class="playlist-name sm-text font-weight-md">
+                            Playlist: {{ zone.screen_template.playlist_name }}
+                        </p>
+                    </div>
                 </ng-container>
             </div>
 
-            <!-- PREVIEW TEMPLATE -->
-            <div class="template preview-template d-flex flex-column">
-                <h4><b>New Template:</b></h4>
+            <div class="lower-template">
+                <h4 class="font-weight-semibold mb-2 c-p5">Select New Template</h4>
 
                 <ng-container *ngIf="isFormReady; else loading">
                     <form [formGroup]="changeTemplateForm" class="d-flex flex-column">
                         <ng-container *ngFor="let control of formControls">
                             <ng-container *ngIf="fieldInputList.includes(control.type)">
-                                <mat-form-field>
+                                <mat-form-field class="template-form mb-2 c-m5" appearance="none">
                                     <ng-container *ngIf="control.type === 'select'; else defaultInputField">
                                         <mat-select [formControlName]="control.name" [placeholder]="control.label">
                                             <mat-option *ngFor="let option of control.options" [value]="option">
@@ -63,29 +56,40 @@
                             </ng-container>
                         </ng-container>
 
-                        <ng-container *ngIf="hasSelectedTemplate">
-                            <mat-accordion>
-                                <mat-expansion-panel *ngFor="let zone of selectedTemplate.templateZones">
-                                    <mat-expansion-panel-header>
-                                        <mat-panel-title class="font-weight-medium">
-                                            {{ zone.name | titlecase }} Zone
-                                        </mat-panel-title>
-                                    </mat-expansion-panel-header>
-                                    <mat-form-field>
-                                        <mat-select
-                                            [placeholder]="'Select playlist...'"
-                                            (selectionChange)="onSelectPlaylist(zone, $event)">
-                                            <mat-option
-                                                *ngFor="let playlist of dealerPlaylists"
-                                                [attr.data-zone-id]="playlist.playlistId"
-                                                [value]="playlist">
-                                                {{ playlist.name }}
-                                            </mat-option>
-                                        </mat-select>
-                                    </mat-form-field>
-                                </mat-expansion-panel>
-                            </mat-accordion>
+                        <ng-container *ngIf="!hasSelectedTemplate; else hasSelectedTemplates">
+                            <div class="no-template">
+                                <h3 class="font-weight-semibold text-16">New Template</h3>
+                                <p class="text-14">Select your new template for this screen.</p>
+                            </div>
                         </ng-container>
+
+                        <ng-template #hasSelectedTemplates>
+                            <hr class="mt-1 mb-2 c-m5" />
+                            <div class="accordion-container">
+                                <mat-accordion class="template-accordion">
+                                    <mat-expansion-panel *ngFor="let zone of selectedTemplate.templateZones">
+                                        <mat-expansion-panel-header>
+                                            <mat-panel-title class="font-weight-medium">
+                                                {{ zone.name | titlecase }} Zone
+                                            </mat-panel-title>
+                                        </mat-expansion-panel-header>
+
+                                        <mat-form-field appearance="none">
+                                            <mat-select
+                                                [placeholder]="'Select playlist...'"
+                                                (selectionChange)="onSelectPlaylist(zone, $event)">
+                                                <mat-option
+                                                    *ngFor="let playlist of dealerPlaylists"
+                                                    [attr.data-zone-id]="playlist.playlistId"
+                                                    [value]="playlist">
+                                                    {{ playlist.name }}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </mat-expansion-panel>
+                                </mat-accordion>
+                            </div>
+                        </ng-template>
                     </form>
                 </ng-container>
             </div>
@@ -93,25 +97,25 @@
     </div>
 
     <div mat-dialog-actions>
-        <div class="actions-container d-flex margin-left-auto">
+        <div class="template-buttons d-flex">
             <button
                 mat-raised-button
-                class="submit"
+                class="theme-btn"
                 color="primary"
                 (click)="onSubmit()"
                 [disabled]="changeTemplateForm.invalid">
                 Submit
             </button>
-            <button mat-raised-button color="warn" [mat-dialog-close]="false">Cancel</button>
+            <button mat-raised-button color="warn" class="theme-btn" [mat-dialog-close]="false">Cancel</button>
         </div>
     </div>
-</div>
 
-<ng-template #loading>
-    <div class="d-flex align-items-center justify-content-center w-100 h-100 py-5">
-        <div class="py-5">
-            <app-spinner></app-spinner>
-            <h5 class="mt-4 text-center">Please wait...</h5>
+    <ng-template #loading>
+        <div class="d-flex align-items-center justify-content-center w-100 h-100 py-5">
+            <div class="py-5">
+                <app-spinner></app-spinner>
+                <h5 class="mt-4 text-center">Please wait...</h5>
+            </div>
         </div>
-    </div>
-</ng-template>
+    </ng-template>
+</div>

@@ -33,6 +33,7 @@ import {
     UI_AUTOCOMPLETE,
     UI_CONTENT,
     UI_ROLE_DEFINITION,
+    UI_ROLE_DEFINITION_TEXT,
     UI_SINGLE_SCREEN,
     UI_SCREEN_LICENSE_SCREENS,
     UI_SCREEN_ZONE_PLAYLIST,
@@ -63,6 +64,7 @@ export class SingleScreenComponent implements OnInit {
     host: API_SINGLE_SCREEN['host'];
     hostUrl: string;
     initial_load = false;
+    is_admin = this._auth.current_role === UI_ROLE_DEFINITION_TEXT.administrator;
     is_dealer = false;
     is_initial_load_for_dealer = true;
     is_search = false;
@@ -501,9 +503,10 @@ export class SingleScreenComponent implements OnInit {
 
     onChangeTemplate(): void {
         const config: MatDialogConfig = {
-            height: '600px',
-            minWidth: '900px',
+            minHeight: '500px',
+            minWidth: '500px',
             disableClose: true,
+            panelClass: 'change-template',
             data: {
                 currentTemplate: this.currentTemplate,
                 dealerPlaylists: this.dealer_playlist,

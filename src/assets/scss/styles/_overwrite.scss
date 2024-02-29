@@ -259,6 +259,72 @@ breadcrumb {
         }
     }
 }
+
+.change-template {
+    mat-dialog-container {
+        padding: 12px;
+    }
+}
+
+.template-form .mat-select-arrow-wrapper::after,
+.template-accordion .mat-select-arrow-wrapper::after {
+    content: '';
+    background-image: url('/assets/media-files/angle-down-solid.svg');
+    height: 13px;
+    width: 13px;
+    background-size: cover;
+    display: inline-block;
+}
+
+.template-accordion .mat-select-arrow,
+.template-form .mat-select-arrow {
+    opacity: 0;
+}
+
+.template-accordion span,
+.template-form span {
+    font-size: 14px;
+}
+
+.template-form {
+    .mat-form-field-wrapper {
+        padding-top: 8px !important;
+        padding-bottom: 4px !important;
+    }
+
+    .mat-form-field-infix {
+        border: 0;
+    }
+
+    .mat-select-arrow-wrapper::after {
+        margin-left: 3px;
+    }
+}
+
+.template-accordion {
+    .mat-form-field-wrapper {
+        padding-bottom: 0px !important;
+    }
+
+    .mat-expansion-panel-body {
+        padding: 6px 16px;
+    }
+
+    .mat-expansion-panel-header {
+        height: 50px !important;
+    }
+
+    .mat-select-arrow-wrapper::after {
+        margin-left: 1px;
+    }
+}
+
+.inner-container {
+    .mat-select-value-text {
+        color: $primary !important;
+    }
+}
+
 .mat-menu-item {
     line-height: 40px !important;
 }

@@ -20,7 +20,7 @@
                 </div>
             </div>
         </div>
-        <hr class="my-4" />
+        <hr class="mat-bl-em" />
         <div class="row">
             <div class="col-4 col-lg">
                 <mat-card class="h-100">
@@ -56,7 +56,7 @@
                 </mat-card>
             </div>
         </div>
-        <hr class="my-4" />
+        <hr class="mat-bl-em" />
         <!-- <div class="mb-3">
             
         </div> -->
@@ -128,7 +128,7 @@
 
                 <mat-tab id="licenses-view-tab" label="License View">
                     <div class="col-lg-12 pl-0 pr-0 pb-4" *ngIf="tabGroup.selectedIndex === 1">
-                        <div class="row pt-2 mt-3">
+                        <div class="row mat-top-em mt-3">
                             <div class="col-lg-8">
                                 <button
                                     mat-button
@@ -275,7 +275,7 @@
                     <div class="col-lg-12 pl-0 pr-0 pb-4" *ngIf="tabGroup.selectedIndex === 2">
                         <div *ngIf="!initial_load_advertiser; else loader">
                             <div *ngIf="!no_advertisers; else no_data">
-                                <div class="row pt-2">
+                                <div class="row mat-top-em">
                                     <div class="col-lg-8"></div>
                                     <div class="col-lg-4">
                                         <app-search-field

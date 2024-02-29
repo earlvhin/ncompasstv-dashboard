@@ -5,7 +5,7 @@
                 <h1 class="page-title">{{ title }}</h1>
             </div>
         </div>
-        <hr class="my-4" />
+        <hr class="mat-bl-em" />
     </div>
 
     <div>
@@ -13,7 +13,7 @@
             <div class="col-lg-3">
                 <div class="filter-table p-3 md-text white-bg full-width">
                     <div class="title pt-2 font-weight-bold">Dealer Search</div>
-                    <hr class="my-4" />
+                    <hr class="mat-bl-em" />
                     <div class="">
                         <app-search-field
                             *ngIf="!initial_load"
@@ -25,9 +25,9 @@
                             (searched)="filterData($event, 'dealer')"
                             [api_search]="true"></app-search-field>
                     </div>
-                    <hr class="my-4" />
+                    <hr class="mat-bl-em" />
                     <div class="title pt-2 font-weight-bold">Host Search</div>
-                    <hr class="my-4" />
+                    <hr class="mat-bl-em" />
                     <div class="">
                         <app-search-field
                             *ngIf="!initial_load"

@@ -21,7 +21,7 @@
                 </div>
             </div>
         </div>
-        <hr class="my-4" />
+        <hr class="mat-bl-em" />
     </div>
 
     <div class="row" *ngIf="!no_header">
@@ -59,11 +59,11 @@
             </mat-card>
         </div>
     </div>
-    <hr class="my-4" *ngIf="!no_header" />
+    <hr class="mat-bl-em" *ngIf="!no_header" />
 
     <div *ngIf="!initial_load_advertiser; else loader">
         <div *ngIf="!no_advertisers; else no_data">
-            <div class="row pt-2">
+            <div class="row mat-top-em">
                 <div class="col-lg-8">
                     <button
                         mat-button
