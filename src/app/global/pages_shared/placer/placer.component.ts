@@ -32,7 +32,6 @@ export class PlacerComponent implements OnInit {
         { name: 'Placer Name', key: 'placerName', sortable: true, column: 'PlacerName' },
         { name: 'Host Name', key: 'hostName', sortable: true, column: 'HostName', unassigned: false },
         { name: 'Host ID', key: 'hostId', no_show: true, hidden: true, unassigned: false },
-        { name: 'Unassigned Host', key: 'unassignedHost', no_show: true, hidden: true, color: 'red' },
         { name: 'Dealer', key: 'dealerName', no_show: true, hidden: true, unassigned: false },
         { name: 'Category', key: 'category', no_show: true, hidden: true, unassigned: false },
         { name: 'General Category', key: 'generalCategory', no_show: true, hidden: true, unassigned: false },
@@ -195,15 +194,6 @@ export class PlacerComponent implements OnInit {
         if (is_export) {
             this.placer_to_export = [...placer_data.paging.entities];
             this.modifyDataForExport(this.placer_to_export);
-
-            //to concat exceeded unassignedhost IF its greater than placer data count
-            if (this.unassigned_hosts.length > this.placer_to_export.length) {
-                for (let i = this.placer_to_export.length; i < this.unassigned_hosts.length; i++) {
-                    this.placer_to_export.push({
-                        unassignedHost: this.unassigned_hosts[this.placer_to_export.length].hostName,
-                    });
-                }
-            }
         } else {
             this.total_placer = placer_data.paging.totalEntities;
             this.paging_data = placer_data.paging;
