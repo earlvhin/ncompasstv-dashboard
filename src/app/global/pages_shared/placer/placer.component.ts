@@ -128,7 +128,7 @@ export class PlacerComponent implements OnInit {
 
     //Export
     tableColumnToExport = [];
-    workbook_hosts = false;
+    unassignedGeneration = false;
     workbook_generation = false;
     worksheet: WORKSHEET[];
 
@@ -289,6 +289,7 @@ export class PlacerComponent implements OnInit {
         ];
         this._export.generate(filename, this.worksheet);
         this.workbook_generation = false;
+        this.unassignedGeneration = false;
         this.placer_table_column = this.original_placer_table_column;
     }
 
@@ -385,7 +386,7 @@ export class PlacerComponent implements OnInit {
     }
 
     public exportUnassignedHosts(): void {
-        this.workbook_hosts = true;
+        this.unassignedGeneration = true;
         this.getUnassignedHosts();
     }
 
@@ -415,6 +416,7 @@ export class PlacerComponent implements OnInit {
             data.map((data) => {
                 this.getStoreHourseParse(data);
                 data.storeHoursTotal = this.getTotalHours(data);
+                if (data.tags && data.tags.length > 0) data.tagsToString = data.tags.join(',');
             });
         }
         data.map((placer, index) => {

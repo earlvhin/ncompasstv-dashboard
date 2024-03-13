@@ -58,13 +58,13 @@
                         mat-raised-button
                         class="theme-btn pi-control sm-text _info mr-2"
                         (click)="exportUnassignedHosts()"
-                        [disabled]="workbook_generation"
+                        [disabled]="unassignedGeneration"
                         title="Export Unassigned Hosts">
                         <span
-                            class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
-                            [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
+                            class="{{ !unassignedGeneration ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
+                            [ngStyle]="{ color: unassignedGeneration ? '#222' : 'white' }"></span>
                         <span class="ml-2 button_text_animation">{{
-                            !workbook_generation ? 'Export Unassigned Hosts' : 'Generating CSV'
+                            !unassignedGeneration ? 'Export Unassigned Hosts' : 'Generating CSV'
                         }}</span>
                     </button>
                     <button
