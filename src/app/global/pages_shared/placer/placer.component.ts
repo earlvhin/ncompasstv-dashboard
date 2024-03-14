@@ -61,8 +61,49 @@ export class PlacerComponent implements OnInit {
         { name: 'Action', sortable: false, no_export: true },
     ];
 
+    hosts_table_column = [
+        { name: '#', sortable: false, no_export: true },
+        { name: 'Host ID', sortable: true, key: 'hostId', hidden: true, no_show: true },
+        { name: 'Host Name', sortable: true, column: 'HostName', key: 'hostName' },
+        { name: 'Category', hidden: true, no_show: true, key: 'category' },
+        { name: 'General Category', hidden: true, no_show: true, key: 'generalCategory' },
+        { name: 'Dealer Name', sortable: true, column: 'BusinessName', key: 'businessName' },
+        { name: 'Address', sortable: true, column: 'Address', key: 'address' },
+        { name: 'City', sortable: true, column: 'City', key: 'city' },
+        { name: 'State', sortable: true, column: 'State', key: 'state' },
+        { name: 'Postal Code', sortable: true, column: 'PostalCode', key: 'postalCode' },
+        { name: 'Timezone', sortable: true, column: 'TimezoneName', key: 'timezoneName' },
+        { name: 'Total Licenses', sortable: true, column: 'TotalLicenses', key: 'totalLicenses' },
+        { name: 'Tags', hidden: true, no_show: true, key: 'tagsToString' },
+        {
+            name: 'Business Hours',
+            sortable: false,
+            key: 'storeHoursParse',
+            hidden: true,
+            no_show: true,
+        },
+        {
+            name: 'Total Business Hours',
+            sortable: false,
+            key: 'storeHoursTotal',
+            hidden: true,
+            no_show: true,
+        },
+        { name: 'DMA Rank', sortable: false, hidden: true, key: 'dmaRank', no_show: true },
+        { name: 'DMA Code', sortable: false, hidden: true, key: 'dmaCode', no_show: true },
+        { name: 'DMA Name', sortable: false, hidden: true, key: 'dmaName', no_show: true },
+        { name: 'Latitude', sortable: false, hidden: true, key: 'latitude', no_show: true },
+        { name: 'Longitude', sortable: false, hidden: true, key: 'longitude', no_show: true },
+        { name: 'Vistar ID', no_show: true, key: 'vistarVenueId', no_show_to_da: true },
+        { name: 'Notes', no_show: true, hidden: true, key: 'notes', no_show_to_da: true },
+        { name: 'Others', no_show: true, hidden: true, key: 'others', no_show_to_da: true },
+    ];
+
     date = new FormControl(moment());
+    differentHours = 0;
     hostsData = [];
+    hoursToStore = 0;
+    hoursDifferentTempStore = [];
     placer_data: any[] = [];
     filtered_placer_data: any[] = [];
     filter: any = {
@@ -83,10 +124,12 @@ export class PlacerComponent implements OnInit {
     sort_column: string = '';
     sort_order: string = '';
     total_placer: number = 0;
-    unassigned_hosts: any[] = [];
+    unassignedHosts = [];
 
     //Export
-    workbook_generation = false;
+    tableColumnToExport = [];
+    unassignedGeneration = false;
+    workbookGeneration = false;
     worksheet: WORKSHEET[];
 
     today: Date = new Date();
@@ -208,30 +251,37 @@ export class PlacerComponent implements OnInit {
         this._placer
             .get_unassigned_host()
             .pipe(takeUntil(this._unsubscribe))
-            .subscribe((data) => (this.unassigned_hosts = data.paging.entities));
+            .subscribe((data) => {
+                this.unassignedHosts = data.paging.entities;
+                this.modifyDataForExport(this.unassignedHosts, true);
+            })
+            .add(() => {
+                this.readyForExport(true);
+            });
     }
 
-    private readyForExport() {
-        const filename = this.host_id != '' ? this.host_name + '_placer_data' : 'Placer_Data';
-        if (this.filter.assignee != 2) {
-            this.placer_table_column = this.placer_table_column.filter(function (column) {
-                return column.key != 'unassignedHost';
-            });
-        } else this.placer_table_column = this.placer_table_column.filter((column) => column.unassigned != false);
+    private readyForExport(isHost?: boolean) {
+        // underscore is used because this part is for csv filename
+        const filename = isHost
+            ? 'Unassigned_Hosts'
+            : this.host_id != ''
+              ? this.host_name + '_placer_data'
+              : 'Placer_Data';
 
-        let tables_to_export = this.placer_table_column;
-        tables_to_export = tables_to_export.filter(function (column) {
+        this.tableColumnToExport = isHost ? this.hosts_table_column : this.placer_table_column;
+        this.tableColumnToExport = this.tableColumnToExport.filter(function (column) {
             return !column.no_export;
         });
         this.worksheet = [
             {
                 name: filename,
-                columns: tables_to_export,
-                data: this.placer_to_export,
+                columns: this.tableColumnToExport,
+                data: isHost ? this.unassignedHosts : this.placer_to_export,
             },
         ];
         this._export.generate(filename, this.worksheet);
-        this.workbook_generation = false;
+        this.workbookGeneration = false;
+        this.unassignedGeneration = false;
         this.placer_table_column = this.original_placer_table_column;
     }
 
@@ -323,8 +373,13 @@ export class PlacerComponent implements OnInit {
     }
 
     exportTable() {
-        this.workbook_generation = true;
+        this.workbookGeneration = true;
         this.getDataForExport();
+    }
+
+    public exportUnassignedHosts(): void {
+        this.unassignedGeneration = true;
+        this.getUnassignedHosts();
     }
 
     private getDataForExport(): void {
@@ -348,14 +403,81 @@ export class PlacerComponent implements OnInit {
         if (this.filter.date_to_label || this.filter.assignee_label != '') this.checkForApiToCall();
     }
 
-    private modifyDataForExport(data) {
+    private modifyDataForExport(data, isHost?: boolean) {
+        if (isHost) {
+            data.map((data) => {
+                this.getStoreHourseParse(data);
+                data.storeHoursTotal = this.getTotalHours(data);
+                if (data.tags && data.tags.length > 0) data.tagsToString = data.tags.join(',');
+            });
+        }
         data.map((placer, index) => {
             placer.dateUploaded = this._date.transform(placer.dateUploaded, 'MMM d, y');
             placer.publicationDate = this._date.transform(placer.publicationDate, 'MMM d, y');
 
             //to map unassigned host column view on export
-            if (this.unassigned_hosts.length) placer.unassignedHost = this.unassigned_hosts[index].hostName;
+            if (this.unassignedHosts.length) placer.unassignedHost = this.unassignedHosts[index].hostName;
         });
+    }
+
+    getTotalHours(data) {
+        if (data.storeHours) {
+            data.storeHoursForTotal = JSON.parse(data.storeHours);
+            this.hoursDifferentTempStore = [];
+            data.storeHoursForTotal.map((hours) => {
+                if (hours.status) {
+                    hours.periods.map((period) => {
+                        this.differentHours = 0;
+                        if (period.open && period.close) {
+                            let close = moment(period.close, 'H:mm A');
+                            let open = moment(period.open, 'H:mm A');
+
+                            let time_start = new Date('01/01/2007 ' + open.format('HH:mm:ss'));
+                            let time_end = new Date('01/01/2007 ' + close.format('HH:mm:ss'));
+
+                            if (time_start.getTime() > time_end.getTime()) {
+                                time_end = new Date(time_end.getTime() + 60 * 60 * 24 * 1000);
+                                this.differentHours = (time_end.getTime() - time_start.getTime()) / 1000;
+                            } else this.differentHours = (time_end.getTime() - time_start.getTime()) / 1000;
+                        } else this.differentHours = 86400;
+                        this.hoursDifferentTempStore.push(this.differentHours);
+                    });
+                }
+            });
+            this.hoursToStore = 0;
+            this.hoursDifferentTempStore.map((hour) => (this.hoursToStore += hour));
+        }
+        return this.msToTime(this.hoursToStore);
+    }
+
+    private msToTime(input) {
+        let totalSeconds = input;
+        let hours = Math.floor(totalSeconds / 3600);
+        totalSeconds %= 3600;
+        let minutes = Math.floor(totalSeconds / 60);
+        let seconds = totalSeconds % 60;
+
+        return hours + 'h ' + minutes + 'm ' + seconds + 's ';
+    }
+
+    private getStoreHourseParse(data): void {
+        let days = [];
+        if (data.storeHours) {
+            let storehours = JSON.parse(data.storeHours);
+            storehours = storehours.sort((a, b) => {
+                return a.id - b.id;
+            });
+            storehours.map((day) => {
+                if (day.status) {
+                    day.periods.map((period) => {
+                        if (period.open == '' && period.close == '') days.push(day.day + ' : Open 24 hrs');
+                        else days.push(day.day + ' : ' + period.open + ' - ' + period.close);
+                    });
+                } else days.push(day.day + ' : ' + 'Closed');
+            });
+            data.storeHoursParse = days.toString();
+            data.storeHoursParse = data.storeHoursParse.split(',').join('\n');
+        }
     }
 
     reloadPage(e: boolean): void {
