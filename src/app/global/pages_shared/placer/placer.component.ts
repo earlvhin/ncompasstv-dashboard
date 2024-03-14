@@ -261,12 +261,9 @@ export class PlacerComponent implements OnInit {
     }
 
     private readyForExport(isHost?: boolean) {
-        // underscore is used because this part is for csv filename
-        const filename = isHost
-            ? 'Unassigned_Hosts'
-            : this.host_id != ''
-              ? this.host_name + '_placer_data'
-              : 'Placer_Data';
+        let filename = 'Placer_Data';
+        if (isHost) filename = 'Unassigned_Hosts';
+        if (this.host_id != '') filename = `${this.host_name}_placer_data`;
 
         this.tableColumnToExport = isHost ? this.hosts_table_column : this.placer_table_column;
         this.tableColumnToExport = this.tableColumnToExport.filter(function (column) {
