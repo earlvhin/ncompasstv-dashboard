@@ -100,10 +100,10 @@ export class PlacerComponent implements OnInit {
     ];
 
     date = new FormControl(moment());
-    diff_hours: any;
+    differentHours = 0;
     hostsData = [];
-    hour_diff: any;
-    hour_diff_temp: any;
+    hoursToStore = 0;
+    hoursDifferentTempStore = [];
     placer_data: any[] = [];
     filtered_placer_data: any[] = [];
     filter: any = {
@@ -124,12 +124,12 @@ export class PlacerComponent implements OnInit {
     sort_column: string = '';
     sort_order: string = '';
     total_placer: number = 0;
-    unassigned_hosts: any[] = [];
+    unassignedHosts = [];
 
     //Export
     tableColumnToExport = [];
     unassignedGeneration = false;
-    workbook_generation = false;
+    workbookGeneration = false;
     worksheet: WORKSHEET[];
 
     today: Date = new Date();
@@ -239,10 +239,10 @@ export class PlacerComponent implements OnInit {
             this.modifyDataForExport(this.placer_to_export);
 
             //to concat exceeded unassignedhost IF its greater than placer data count
-            if (this.unassigned_hosts.length > this.placer_to_export.length) {
-                for (let i = this.placer_to_export.length; i < this.unassigned_hosts.length; i++) {
+            if (this.unassignedHosts.length > this.placer_to_export.length) {
+                for (let i = this.placer_to_export.length; i < this.unassignedHosts.length; i++) {
                     this.placer_to_export.push({
-                        unassignedHost: this.unassigned_hosts[this.placer_to_export.length].hostName,
+                        unassignedHost: this.unassignedHosts[this.placer_to_export.length].hostName,
                     });
                 }
             }
@@ -261,8 +261,8 @@ export class PlacerComponent implements OnInit {
             .get_unassigned_host()
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data) => {
-                this.unassigned_hosts = data.paging.entities;
-                this.modifyDataForExport(this.unassigned_hosts, true);
+                this.unassignedHosts = data.paging.entities;
+                this.modifyDataForExport(this.unassignedHosts, true);
             })
             .add(() => {
                 this.readyForExport(true);
@@ -270,6 +270,7 @@ export class PlacerComponent implements OnInit {
     }
 
     private readyForExport(isHost?: boolean) {
+        // underscore is used because this part is for csv filename
         const filename = isHost
             ? 'Unassigned_Hosts'
             : this.host_id != ''
@@ -284,11 +285,11 @@ export class PlacerComponent implements OnInit {
             {
                 name: filename,
                 columns: this.tableColumnToExport,
-                data: isHost ? this.unassigned_hosts : this.placer_to_export,
+                data: isHost ? this.unassignedHosts : this.placer_to_export,
             },
         ];
         this._export.generate(filename, this.worksheet);
-        this.workbook_generation = false;
+        this.workbookGeneration = false;
         this.unassignedGeneration = false;
         this.placer_table_column = this.original_placer_table_column;
     }
@@ -381,7 +382,7 @@ export class PlacerComponent implements OnInit {
     }
 
     exportTable() {
-        this.workbook_generation = true;
+        this.workbookGeneration = true;
         this.getDataForExport();
     }
 
@@ -424,18 +425,18 @@ export class PlacerComponent implements OnInit {
             placer.publicationDate = this._date.transform(placer.publicationDate, 'MMM d, y');
 
             //to map unassigned host column view on export
-            if (this.unassigned_hosts.length) placer.unassignedHost = this.unassigned_hosts[index].hostName;
+            if (this.unassignedHosts.length) placer.unassignedHost = this.unassignedHosts[index].hostName;
         });
     }
 
     getTotalHours(data) {
         if (data.storeHours) {
             data.storeHoursForTotal = JSON.parse(data.storeHours);
-            this.hour_diff_temp = [];
+            this.hoursDifferentTempStore = [];
             data.storeHoursForTotal.map((hours) => {
                 if (hours.status) {
                     hours.periods.map((period) => {
-                        this.diff_hours = 0;
+                        this.differentHours = 0;
                         if (period.open && period.close) {
                             let close = moment(period.close, 'H:mm A');
                             let open = moment(period.open, 'H:mm A');
@@ -445,28 +446,20 @@ export class PlacerComponent implements OnInit {
 
                             if (time_start.getTime() > time_end.getTime()) {
                                 time_end = new Date(time_end.getTime() + 60 * 60 * 24 * 1000);
-                                this.diff_hours = (time_end.getTime() - time_start.getTime()) / 1000;
-                            } else {
-                                this.diff_hours = (time_end.getTime() - time_start.getTime()) / 1000;
-                            }
-                        } else {
-                            this.diff_hours = 86400;
-                        }
-                        this.hour_diff_temp.push(this.diff_hours);
+                                this.differentHours = (time_end.getTime() - time_start.getTime()) / 1000;
+                            } else this.differentHours = (time_end.getTime() - time_start.getTime()) / 1000;
+                        } else this.differentHours = 86400;
+                        this.hoursDifferentTempStore.push(this.differentHours);
                     });
-                } else {
                 }
             });
-            this.hour_diff = 0;
-            this.hour_diff_temp.map((hour) => {
-                this.hour_diff += hour;
-            });
-        } else {
+            this.hoursToStore = 0;
+            this.hoursDifferentTempStore.map((hour) => (this.hoursToStore += hour));
         }
-        return this.msToTime(this.hour_diff);
+        return this.msToTime(this.hoursToStore);
     }
 
-    msToTime(input) {
+    private msToTime(input) {
         let totalSeconds = input;
         let hours = Math.floor(totalSeconds / 3600);
         totalSeconds %= 3600;
@@ -486,15 +479,10 @@ export class PlacerComponent implements OnInit {
             storehours.map((day) => {
                 if (day.status) {
                     day.periods.map((period) => {
-                        if (period.open == '' && period.close == '') {
-                            days.push(day.day + ' : Open 24 hrs');
-                        } else {
-                            days.push(day.day + ' : ' + period.open + ' - ' + period.close);
-                        }
+                        if (period.open == '' && period.close == '') days.push(day.day + ' : Open 24 hrs');
+                        else days.push(day.day + ' : ' + period.open + ' - ' + period.close);
                     });
-                } else {
-                    days.push(day.day + ' : ' + 'Closed');
-                }
+                } else days.push(day.day + ' : ' + 'Closed');
             });
             data.storeHoursParse = days.toString();
             data.storeHoursParse = data.storeHoursParse.split(',').join('\n');
