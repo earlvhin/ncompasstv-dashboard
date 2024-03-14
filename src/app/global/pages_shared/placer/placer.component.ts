@@ -413,19 +413,16 @@ export class PlacerComponent implements OnInit {
     }
 
     private modifyDataForExport(data, isHost?: boolean) {
-        if (isHost) {
-            data.map((data) => {
-                this.getStoreHourseParse(data);
-                data.storeHoursTotal = this.getTotalHours(data);
-                if (data.tags && data.tags.length > 0) data.tagsToString = data.tags.join(',');
-            });
-        }
         data.map((placer, index) => {
+            if (isHost) {
+                this.getStoreHourseParse(placer);
+                placer.storeHoursTotal = this.getTotalHours(placer);
+                if (placer.tags && placer.tags.length) placer.tagsToString = placer.tags.join(',');
+                return;
+            }
+
             placer.dateUploaded = this._date.transform(placer.dateUploaded, 'MMM d, y');
             placer.publicationDate = this._date.transform(placer.publicationDate, 'MMM d, y');
-
-            //to map unassigned host column view on export
-            if (this.unassignedHosts.length) placer.unassignedHost = this.unassignedHosts[index].hostName;
         });
     }
 
