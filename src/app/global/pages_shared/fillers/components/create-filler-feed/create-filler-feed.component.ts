@@ -27,6 +27,7 @@ export class CreateFillerFeedComponent implements OnInit {
     groups_loaded: boolean = false;
     groups_to_remove: any = [];
     is_current_user_admin = this._isAdmin;
+    isCurrentUserDealerAdmin = this.isDealerAdmin;
     selected_assignee: any = [];
     selected_group: any = this.page_data.group;
     selected_groups: any = [];
@@ -307,5 +308,9 @@ export class CreateFillerFeedComponent implements OnInit {
 
     protected get _isAdmin() {
         return this._auth.current_role === UI_ROLE_DEFINITION_TEXT.administrator;
+    }
+
+    protected get isDealerAdmin() {
+        return this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin;
     }
 }

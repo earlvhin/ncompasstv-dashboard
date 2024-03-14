@@ -237,15 +237,6 @@ export class PlacerComponent implements OnInit {
         if (is_export) {
             this.placer_to_export = [...placer_data.paging.entities];
             this.modifyDataForExport(this.placer_to_export);
-
-            //to concat exceeded unassignedhost IF its greater than placer data count
-            if (this.unassignedHosts.length > this.placer_to_export.length) {
-                for (let i = this.placer_to_export.length; i < this.unassignedHosts.length; i++) {
-                    this.placer_to_export.push({
-                        unassignedHost: this.unassignedHosts[this.placer_to_export.length].hostName,
-                    });
-                }
-            }
         } else {
             this.total_placer = placer_data.paging.totalEntities;
             this.paging_data = placer_data.paging;
