@@ -266,9 +266,7 @@ export class PlacerComponent implements OnInit {
         if (this.host_id != '') filename = `${this.host_name}_placer_data`;
 
         this.tableColumnToExport = isHost ? this.hosts_table_column : this.placer_table_column;
-        this.tableColumnToExport = this.tableColumnToExport.filter(function (column) {
-            return !column.no_export;
-        });
+        this.tableColumnToExport = this.tableColumnToExport.filter((column) => !column.no_export);
         this.worksheet = [
             {
                 name: filename,
