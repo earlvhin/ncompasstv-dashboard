@@ -424,13 +424,13 @@ export class PlacerComponent implements OnInit {
                             let close = moment(period.close, 'H:mm A');
                             let open = moment(period.open, 'H:mm A');
 
-                            let time_start = new Date('01/01/2007 ' + open.format('HH:mm:ss'));
-                            let time_end = new Date('01/01/2007 ' + close.format('HH:mm:ss'));
+                            let timeStart = new Date('01/01/2007 ' + open.format('HH:mm:ss'));
+                            let timeEnd = new Date('01/01/2007 ' + close.format('HH:mm:ss'));
 
-                            if (time_start.getTime() > time_end.getTime()) {
-                                time_end = new Date(time_end.getTime() + 60 * 60 * 24 * 1000);
-                                this.differentHours = (time_end.getTime() - time_start.getTime()) / 1000;
-                            } else this.differentHours = (time_end.getTime() - time_start.getTime()) / 1000;
+                            if (timeStart.getTime() > timeEnd.getTime()) {
+                                timeEnd = new Date(timeEnd.getTime() + 60 * 60 * 24 * 1000);
+                                this.differentHours = (timeEnd.getTime() - timeStart.getTime()) / 1000;
+                            } else this.differentHours = (timeEnd.getTime() - timeStart.getTime()) / 1000;
                         } else this.differentHours = 86400;
                         this.hoursDifferentTempStore.push(this.differentHours);
                     });
@@ -439,6 +439,7 @@ export class PlacerComponent implements OnInit {
             this.hoursToStore = 0;
             this.hoursDifferentTempStore.map((hour) => (this.hoursToStore += hour));
         }
+
         return this.msToTime(this.hoursToStore);
     }
 
@@ -455,11 +456,11 @@ export class PlacerComponent implements OnInit {
     private getStoreHourseParse(data): void {
         let days = [];
         if (data.storeHours) {
-            let storehours = JSON.parse(data.storeHours);
-            storehours = storehours.sort((a, b) => {
+            let storeHours = JSON.parse(data.storeHours);
+            storeHours = storeHours.sort((a, b) => {
                 return a.id - b.id;
             });
-            storehours.map((day) => {
+            storeHours.map((day) => {
                 if (day.status) {
                     day.periods.map((period) => {
                         if (period.open == '' && period.close == '') days.push(day.day + ' : Open 24 hrs');
