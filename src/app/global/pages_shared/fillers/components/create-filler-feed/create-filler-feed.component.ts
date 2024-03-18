@@ -56,7 +56,7 @@ export class CreateFillerFeedComponent implements OnInit {
 
     private getFillerFeedDetail(id) {
         this._filler
-            .get_filler_group_solo(id)
+            .getFillerGroupSolo(id)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data: any) => {
                 this.existing_data = data;

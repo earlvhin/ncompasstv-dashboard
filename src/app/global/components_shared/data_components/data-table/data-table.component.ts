@@ -39,6 +39,7 @@ import { EditFeedComponent } from '../../feed_components/edit-feed/edit-feed.com
 import { CreateFillerFeedComponent } from 'src/app/global/pages_shared/fillers/components/create-filler-feed/create-filler-feed.component';
 import { MediaViewerComponent } from '../../../components_shared/media_components/media-viewer/media-viewer.component';
 import { CloneFeedDialogComponent } from './dialogs/clone-feed-dialog/clone-feed-dialog.component';
+import { CloneFillerDialogComponent } from './dialogs/clone-filler-dialog/clone-filler-dialog.component';
 import { ViewDmaHostComponent } from './dialogs/view-dma-host/view-dma-host.component';
 import { dateFormat } from 'highcharts';
 import { DeleteFillerFeedsComponent } from 'src/app/global/pages_shared/fillers/components/delete-filler-feeds/delete-filler-feeds.component';
@@ -121,7 +122,7 @@ export class DataTableComponent implements OnInit {
     selectAll: boolean = false;
     subscription: Subscription = new Subscription();
     pagesWithStatusIndicator = this._pagesWithStatusIndicator;
-    protected _unsubscribe = new Subject<void>();
+    protected ngUnsubscribe = new Subject<void>();
 
     constructor(
         private _auth: AuthService,
@@ -157,8 +158,8 @@ export class DataTableComponent implements OnInit {
 
     ngOnDestroy() {
         this.subscription.unsubscribe();
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     copyToClipboard(val: string) {
@@ -207,7 +208,7 @@ export class DataTableComponent implements OnInit {
 
         this._billing
             .set_order_as_viewed({ orderId: order.order_no.value, createdBy: currentUserId })
-            .pipe(takeUntil(this._unsubscribe))
+            .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(
                 () => {
                     const orders = [...(this.table_data as UI_DEALER_ORDERS[])];
@@ -566,7 +567,7 @@ export class DataTableComponent implements OnInit {
     createActivity(activity) {
         this._dealer
             .create_dealer_activity_logs(activity)
-            .pipe(takeUntil(this._unsubscribe))
+            .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(
                 (data) => {
                     return data;
@@ -742,14 +743,14 @@ export class DataTableComponent implements OnInit {
                     case 'Host Photo Alias':
                         this._host
                             .update_file_alias(fields.id, response)
-                            .pipe(takeUntil(this._unsubscribe))
+                            .pipe(takeUntil(this.ngUnsubscribe))
                             .subscribe(() => this.openConfirmationModal('success', 'Success!', 'Alias changed'));
                         break;
                     case 'Placer Name':
                     case 'Hosts':
                         this._placer
                             .update_placer_host(response.hostId, response.placerId, response.placername)
-                            .pipe(takeUntil(this._unsubscribe))
+                            .pipe(takeUntil(this.ngUnsubscribe))
                             .subscribe(() =>
                                 this.openConfirmationModal('success', 'Success!', 'Placer Record Updated'),
                             );
@@ -816,22 +817,56 @@ export class DataTableComponent implements OnInit {
     }
 
     onCloneFeed(contentId: string) {
-        const dialog = this._dialog.open(CloneFeedDialogComponent, { width: '500px' });
+        this._feed.getFeedById(contentId).subscribe((data) => {
+            const feedName = data.cFeed.feed.feedTitle;
 
-        dialog.afterClosed().subscribe((response: boolean | string) => {
-            if (typeof response === 'boolean') return;
+            this._dialog
+                .open(CloneFeedDialogComponent, {
+                    width: '500px',
+                    data: `${feedName}`,
+                })
+                .afterClosed()
+                .subscribe((response: boolean | string) => {
+                    if (typeof response === 'boolean') return;
 
-            this._feed
-                .clone_feed(contentId, response, this.current_user.user_id)
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    () => {
-                        this.openConfirmationModal('success', 'Success!', 'Feed cloned');
-                    },
-                    (error) => {
-                        console.error(error);
-                    },
-                );
+                    this._feed
+                        .clone_feed(contentId, response, this.current_user.user_id)
+                        .pipe(takeUntil(this.ngUnsubscribe))
+                        .subscribe(
+                            () => {
+                                this.openConfirmationModal('success', 'Success!', 'Feed cloned');
+                            },
+                            (error) => {
+                                console.error('Error cloning feed', error);
+                            },
+                        );
+                });
+        });
+    }
+
+    onCloneFiller(fillerPlaylistId: string) {
+        this._filler.getFillerGroupSolo(fillerPlaylistId).subscribe((data) => {
+            this._dialog
+                .open(CloneFillerDialogComponent, {
+                    width: '500px',
+                    data: `${data.name}`,
+                })
+                .afterClosed()
+                .subscribe((response: boolean | string) => {
+                    if (typeof response === 'boolean') return;
+
+                    this._filler
+                        .cloneFiller(fillerPlaylistId, response, this._auth.current_user_value.user_id)
+                        .pipe(takeUntil(this.ngUnsubscribe))
+                        .subscribe(
+                            () => {
+                                this.openConfirmationModal('success', 'Success!', 'Filler cloned');
+                            },
+                            (error) => {
+                                console.error('Error cloning filler', error);
+                            },
+                        );
+                });
         });
     }
 
@@ -971,7 +1006,7 @@ export class DataTableComponent implements OnInit {
     private deleteUser(userId: string): void {
         this._user
             .deleteUser(userId)
-            .pipe(takeUntil(this._unsubscribe))
+            .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(
                 () => this._helper.onRefreshUsersPage.next(),
                 (error) => {
@@ -984,7 +1019,7 @@ export class DataTableComponent implements OnInit {
         this._playlist
             .get_playlist_by_id(playlistId)
             .pipe(
-                takeUntil(this._unsubscribe),
+                takeUntil(this.ngUnsubscribe),
                 map((response) => {
                     if (!response.licenses || response.licenses.length <= 0) return [];
                     return response.licenses.map((license) => license.licenseId);
@@ -1009,7 +1044,7 @@ export class DataTableComponent implements OnInit {
     }
 
     private subscribeToEmailNotificationToggleResult(): void {
-        this._helper.onResultToggleEmailNotification.pipe(takeUntil(this._unsubscribe)).subscribe(
+        this._helper.onResultToggleEmailNotification.pipe(takeUntil(this.ngUnsubscribe)).subscribe(
             (response: { tableDataIndex: number; updated: boolean }) => {
                 const { updated, tableDataIndex } = response;
 
