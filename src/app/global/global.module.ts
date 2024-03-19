@@ -25,6 +25,7 @@ import { CategoryModalComponent } from './components_shared/category_components/
 import { ChangeTemplateComponent } from './components_shared/screen_components/change-template/change-template.component';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { CloneFeedDialogComponent } from './components_shared/data_components/data-table/dialogs/clone-feed-dialog/clone-feed-dialog.component';
+import { CloneFillerDialogComponent } from './components_shared/data_components/data-table/dialogs/clone-filler-dialog/clone-filler-dialog.component';
 import { ClonePlaylistComponent } from './components_shared/playlist_components/clone-playlist/clone-playlist.component';
 import { CloneScreenComponent } from './components_shared/screen_components/clone-screen/clone-screen.component';
 import { ColorPickerModule } from 'ngx-color-picker';
@@ -260,6 +261,7 @@ const ngComponents = [
     CategoryModalComponent,
     ChangeTemplateComponent,
     CloneFeedDialogComponent,
+    CloneFillerDialogComponent,
     ClonePlaylistComponent,
     CloneScreenComponent,
     ConfirmTemplateModalComponent,
@@ -494,6 +496,7 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
         CategoryModalComponent,
         ChangeTemplateComponent,
         CloneFeedDialogComponent,
+        CloneFillerDialogComponent,
         ClonePlaylistComponent,
         CloneScreenComponent,
         CreateFillerFeedComponent,

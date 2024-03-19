@@ -132,7 +132,7 @@ export class FillerService extends BaseService {
     }
 
     // SOLO CONTENT
-    get_filler_group_solo(id: string) {
+    getFillerGroupSolo(id: string) {
         let url = `${this.getters.api_get_filler_feed_solo}?id=${id}`;
         return this.getRequest(url).map((data) => data.data[0]);
     }
@@ -179,5 +179,11 @@ export class FillerService extends BaseService {
     check_if_filler_is_in_playlist(id) {
         let url = `${this.getters.api_get_filler_check_if_in_playlist}?playlistId=${id}`;
         return this.getRequest(url);
+    }
+
+    cloneFiller(fillerPlaylistId: string, newName: string, createdBy: string) {
+        const url = `${this.creators.filler_clone}`;
+        const body = { fillerPlaylistId, createdBy, newName };
+        return this.postRequest(url, body);
     }
 }
