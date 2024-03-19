@@ -1,31 +1,76 @@
-// .datepicker-container {
-// 	padding: 10px;
+@import 'src/assets/scss/styles/_variables.scss';
 
-// 	.datepicker {
-// 		font-size: 12px;
-// 		flex: 1;
-// 	}
+.datepicker-container {
+    height: 40px;
 
-// 	.date-views-container {
-// 		flex: 2;
-// 		font-size: 12px;
-// 		min-height: 46px;
-// 		max-height: 46px;
-// 		margin-left: 10px;
+    .datepicker {
+        font-size: 12px;
+        flex: 1;
+        background-color: $light;
+        width: 296px !important;
+        height: 40px !important;
+        padding: 10px;
+    }
 
-// 		mat-button-toggle {
-// 			border-right: 1px solid gray;
+    .button_default {
+        background-color: $muted;
+    }
 
-// 			&.mat-button-toggle-checked {
-// 				color: white;
-// 				background-color: gray;
-// 			}
-// 		}
-// 	}
-// }
+    .button_clicked {
+        background-color: $primary;
+    }
 
-// .search-field {
-// 	width: 300px;
-// 	margin-right: 10px;
-// 	font-size: 14px;
-// }
+    .inbtn-view-theme {
+        border: 0;
+        border-radius: 2px;
+        color: $black;
+        min-width: 43px !important;
+        height: 20px;
+        // padding: 3px 4px;
+        transition: 0.1s linear;
+    }
+
+    .inbtn-filter-theme {
+        background-color: #f0f0f000;
+        border: 0;
+        min-width: 20px !important;
+        height: 20px;
+        padding: 3px 4px;
+        transition: 0.1s linear;
+    }
+
+    .mat-icon-pos {
+        margin-left: 5.5rem !important;
+    }
+
+    .search-field {
+        width: 300px;
+        margin-right: 10px;
+        font-size: 14px;
+    }
+}
+
+.isdatepicker-enabled {
+    margin-right: 0.5rem !important;
+    margin-left: 1rem !important;
+    margin-top: 0.5rem !important;
+}
+
+.datepicker-toggle {
+    width: 14px;
+    height: 15.96px;
+}
+
+.mt-span-ctrl {
+    margin-top: -1.5rem !important;
+}
+
+.pi-control {
+    width: 40px;
+    height: 40px;
+    padding-left: 0.75rem;
+}
+
+.fa-clr {
+    color: $primary;
+}

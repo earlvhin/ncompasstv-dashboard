@@ -1,69 +1,63 @@
 <div class="col-lg-12 pl-0 pr-0 pb-4">
-    <div class="tab-actions-section d-flex mat-top-em">
-        <div class="col-lg-8 pl-0">
-            <div class="datepicker-container d-flex">
-                <div>
-                    <!-- DATEPICKER -->
-                    <ng-container *ngIf="isDatePickerEnabled">
-                        <mat-form-field
-                            class="datepicker mat-form-field-no-padding-bottom"
-                            appearance="fill"
-                            appDefaultDateFormat>
-                            <mat-label>Current / Selected Date</mat-label>
-                            <input
-                                [formControl]="date"
-                                (dateInput)="dateSelected($event.value)"
-                                matInput
-                                [matDatepicker]="datePicker"
-                                readonly />
-                            <mat-datepicker-toggle
-                                matSuffix
-                                [for]="datePicker"
-                                [disabled]="searching"></mat-datepicker-toggle>
-                            <mat-datepicker #datePicker></mat-datepicker>
-                        </mat-form-field>
-                    </ng-container>
-
-                    <!-- DATE VIEW BUTTONS -->
-                    <ng-container *ngIf="isDatePickerViewEnabled">
-                        <div
-                            class="date-views-container d-flex align-items-center col-lg-12 p-0 mat-bl-em"
-                            name="view-toggle">
-                            <button
-                                class="sm-text theme-btn _neutral cursor-pointer mr-1"
-                                *ngFor="let view of dateViews"
-                                (click)="onSelectDateView.emit(view.index)">
-                                <ng-container *ngIf="view.index === 0; else defaultViewButton">
-                                    <span class="fas fa-times" data-toggle="tooltip" title="Clear Filter"></span>
-                                </ng-container>
-
-                                <ng-template #defaultViewButton>
-                                    {{ view.name }}
-                                </ng-template>
-                            </button>
-                        </div>
-                    </ng-container>
-                </div>
-
-                <!-- EXPORT BUTTON -->
-                <button
-                    mat-button
-                    mat-raised-button
-                    class="theme-btn pi-control sm-text _primary ml-2 mt-2"
-                    title="Export to CSV"
-                    (click)="onExport.emit()"
-                    [disabled]="isExporting">
-                    <span class="{{ !isExporting ? 'fas fa-file-excel' : 'fas fa-spinner' }}"></span>
-                    <span class="ml-2 button_text_animation">{{ !isExporting ? 'Export' : 'Generating CSV' }}</span>
-                </button>
+    <div class="tab-actions-section d-flex justify-content-between align-items-center mb-3">
+        <div class="datepicker-container flex">
+            <div>
+                <!-- DATEPICKER -->
+                <ng-container *ngIf="isDatePickerEnabled">
+                    <div class="datepicker position-relative flex mt-2" appearance="standard" appDefaultDateFormat>
+                        <button
+                            id="{{ view.name }}"
+                            class="xsm-text inbtn-view-theme cursor-pointer mr-2"
+                            *ngFor="let view of dateViews; trackBy: trackByDateValue"
+                            (click)="onSelectDateView.emit(view.index); selectView(view.name)"
+                            [ngClass]="
+                                selectedElementId === view.name && isClicked ? 'button_clicked' : 'button_default'
+                            ">
+                            <ng-container *ngIf="isDateSelected; else defaultViewButton">
+                                {{ view.value }}
+                            </ng-container>
+                            <ng-template #defaultViewButton>
+                                {{ view.name }}
+                            </ng-template>
+                        </button>
+                        <button class="xsm-text ml-cstm inbtn-filter-theme cursor-pointer" (click)="clearDate()">
+                            <span class="fas fa-clr fa-times" data-toggle="tooltip" title="Clear Filter"> </span>
+                        </button>
+                        <input
+                            class="cdk-visually-hidden"
+                            [formControl]="date"
+                            (dateInput)="dateSelected($event.value)"
+                            matInput
+                            [matDatepicker]="datePicker"
+                            readonly />
+                        <mat-datepicker-toggle
+                            class="mat-icon-pos position-absolute right-0 top-0"
+                            matSuffix
+                            [for]="datePicker"
+                            white-bg
+                            [disabled]="searching"></mat-datepicker-toggle>
+                        <mat-datepicker #datePicker></mat-datepicker>
+                    </div>
+                </ng-container>
             </div>
+            <!-- EXPORT BUTTON -->
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn pi-control sm-text _primary ml-2 mt-2"
+                title="Export to CSV"
+                (click)="onExport.emit()"
+                [disabled]="isExporting">
+                <span class="{{ !isExporting ? 'fas fa-file-excel' : 'fas fa-spinner' }}"></span>
+                <span class="ml-2 button_text_animation">{{ !isExporting ? 'Export' : 'Generating CSV' }}</span>
+            </button>
         </div>
 
-        <div class="col-lg-4">
+        <div class="search-field-wrapper mt-1">
             <!-- SEARCH FIELD -->
             <app-search-field
                 *ngIf="!initialLoad"
-                class="search-field margin-left-auto"
+                class="search-field margin-left-auto sm-text"
                 [form_title]="'Search Dealer Name'"
                 [placeholder]="'Example: N-Compass'"
                 [data_reference]="installations"
@@ -72,13 +66,13 @@
                 (searched)="searchInstallations($event)"
                 [api_search]="true">
             </app-search-field>
-        </div>
-    </div>
 
-    <div class="p-0">
-        <span class="sm-text"
-            >Note: Licenses colored in <span class="text-danger">Red</span> are expired installations.</span
-        >
+            <div class="mt-span-ctrl col-sm-12 p-0 pt-2">
+                <span class="xsm-text"
+                    >Note: Licenses colored in <span class="text-danger">Red</span> are expired installations.</span
+                >
+            </div>
+        </div>
     </div>
 
     <div *ngIf="!initialLoad; else loader">

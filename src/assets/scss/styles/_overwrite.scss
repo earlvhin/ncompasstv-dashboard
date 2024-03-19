@@ -393,3 +393,9 @@ breadcrumb {
         overflow-y: hidden !important;
     }
 }
+
+#clone-modal {
+    .mat-form-field-flex {
+        padding: 0 0.75em;
+    }
+}

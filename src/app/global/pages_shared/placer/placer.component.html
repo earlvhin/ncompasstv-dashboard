@@ -44,13 +44,27 @@
                         mat-raised-button
                         class="theme-btn pi-control sm-text _primary mr-2"
                         (click)="exportTable()"
-                        [disabled]="workbook_generation"
+                        [disabled]="workbookGeneration"
                         title="Export to CSV">
                         <span
-                            class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
-                            [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
+                            class="{{ !workbookGeneration ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
+                            [ngStyle]="{ color: workbookGeneration ? '#222' : 'white' }"></span>
                         <span class="ml-2 button_text_animation">{{
-                            !workbook_generation ? 'Export' : 'Generating CSV'
+                            !workbookGeneration ? 'Export Placer' : 'Generating CSV'
+                        }}</span>
+                    </button>
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn pi-control sm-text _info mr-2"
+                        (click)="exportUnassignedHosts()"
+                        [disabled]="unassignedGeneration"
+                        title="Export Unassigned Hosts">
+                        <span
+                            class="{{ !unassignedGeneration ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
+                            [ngStyle]="{ color: unassignedGeneration ? '#222' : 'white' }"></span>
+                        <span class="ml-2 button_text_animation">{{
+                            !unassignedGeneration ? 'Export Unassigned Hosts' : 'Generating CSV'
                         }}</span>
                     </button>
                     <button

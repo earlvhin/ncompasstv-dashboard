@@ -429,7 +429,7 @@
                                                     ngbDropdownMenu>
                                                     <span class="sm-text pl-2">QUANTITY BREAKDOWN:</span>
                                                     <a
-                                                        class="dropdown-item sm-text text-white"
+                                                        class="dropdown-item sm-text text-white quantity-items"
                                                         *ngFor="let group of data[d].filler_groups"
                                                         (click)="navigateToFiller(group.fillerGroupId)">
                                                         {{ group.quantity }} - {{ group.name }}
@@ -579,6 +579,11 @@
                         class="fas fa-trash cursor-pointer mx-2 text-danger"
                         title="Delete"
                         (click)="deleteFillers(data.id.value)"></i>
+                    <i
+                        class="fas fa-copy cursor-pointer mx-2 text-primary"
+                        title="Clone Filler"
+                        *ngIf="!is_view_only"
+                        (click)="onCloneFiller(data.id.value)"></i>
                 </td>
 
                 <td class="p-3 control-toggle" *ngIf="advertiser_delete">

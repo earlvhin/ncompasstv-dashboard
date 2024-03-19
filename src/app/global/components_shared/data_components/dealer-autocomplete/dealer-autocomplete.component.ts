@@ -15,6 +15,7 @@ export class DealerAutocompleteComponent implements OnInit {
 
     @Input() initial_value: any;
     @Input() active_only: boolean = false;
+    @Input() isDealerAdmin = false;
     @Output() dealer_selected: EventEmitter<any> = new EventEmitter();
 
     protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -22,6 +23,7 @@ export class DealerAutocompleteComponent implements OnInit {
     constructor(private _dealer: DealerService) {}
 
     ngOnInit() {
+        if (this.isDealerAdmin) this.getDealerAdminDealers();
         this.getDealersMinified();
     }
 
@@ -52,5 +54,20 @@ export class DealerAutocompleteComponent implements OnInit {
 
     setDealer(id) {
         id ? this.dealer_selected.emit(id) : this.dealer_selected.emit(null);
+    }
+
+    private getDealerAdminDealers(): void {
+        this._dealer
+            .get_dealers()
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe(
+                (response) => {
+                    response.paging.entities.map((dealer) =>
+                        this.dealers.push({ id: dealer.dealerId, value: dealer.businessName }),
+                    );
+                    this.setAutocomplete();
+                },
+                (error) => console.error(error),
+            );
     }
 }
