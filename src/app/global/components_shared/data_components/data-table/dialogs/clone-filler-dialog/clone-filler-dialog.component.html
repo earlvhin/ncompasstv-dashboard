@@ -7,7 +7,7 @@
         </div>
         <div class="mat-top-em">
             <mat-form-field appearance="fill" class="full-width">
-                <input matInput placeholder="Feed Name" [formControl]="feedName" />
+                <input matInput placeholder="Filler Name" [formControl]="fillerName" />
             </mat-form-field>
         </div>
         <div class="text-right">
@@ -15,8 +15,8 @@
                 mat-button
                 mat-raised-button
                 class="theme-btn _primary mr-2"
-                [mat-dialog-close]="feedName.value"
-                [disabled]="!feedName.valid">
+                [mat-dialog-close]="fillerName.value"
+                [disabled]="!fillerName.valid">
                 Submit
             </button>
             <button mat-button mat-raised-button class="theme-btn" [mat-dialog-close]="false">Cancel</button>

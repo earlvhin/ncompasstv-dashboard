@@ -25,8 +25,10 @@ export class TabContentComponent implements OnInit, OnDestroy {
 
     @Input() currentFilters: API_FILTERS;
     @Input() filteredData: any[];
+    @Input() isCategory: boolean;
     @Input() isDatePickerEnabled = true;
     @Input() isDatePickerViewEnabled = true;
+    @Input() isDateSelected: boolean;
     @Input() initialLoad: boolean;
     @Input() installation_count: any;
     @Input() installations: INSTALLATION[];
@@ -37,41 +39,83 @@ export class TabContentComponent implements OnInit, OnDestroy {
     @Input() tableColumns: any[];
     @Input() tab: string;
 
-    dateViews = this._dateViews;
     date = new FormControl(moment());
+    dateViews = [];
+    isClicked: boolean;
+    isCleared: boolean = false;
+    selectedElementId: string | null = null;
+    currDate;
 
-    protected _unsubscribe = new Subject<void>();
+    private selectedDay = '';
+    private selectedMonth = '';
+    private selectedYear = '';
+
+    protected unsubscribe = new Subject<void>();
 
     constructor() {}
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.subscribeToResetDatePicker();
+        this.currDate = new Date();
+
+        this.dateViews = [
+            { index: 1, name: 'Day', value: '' },
+            { index: 2, name: 'Month', value: '' },
+            { index: 3, name: 'Year', value: '' },
+        ];
     }
 
     ngOnDestroy(): void {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this.unsubscribe.next();
+        this.unsubscribe.complete();
+        this.unsubscribe.next();
+        this.unsubscribe.complete();
     }
 
-    dateSelected(value: moment.Moment): void {
+    public dateSelected(value: moment.Moment): void {
+        this.isDateSelected = true;
         this.onSelectDate.emit(value);
         this.datePicker.close();
+        this.isClicked = false;
+        this.parseDate();
     }
 
-    searchInstallations(keyword: string): void {
+    public searchInstallations(keyword: string): void {
         this.onSearch.emit(keyword);
     }
 
     private subscribeToResetDatePicker(): void {
-        this.resetDatePicker.pipe(takeUntil(this._unsubscribe)).subscribe(() => this.date.setValue(new Date()));
+        this.resetDatePicker.pipe(takeUntil(this.unsubscribe)).subscribe(() => this.date.setValue(new Date()));
     }
 
-    protected get _dateViews() {
-        return [
-            { name: '', value: '', index: 0 },
-            { name: 'Day', value: 'day', index: 1 },
-            { name: 'Month', value: 'month', index: 2 },
-            { name: 'Year', value: 'year', index: 3 },
+    public parseDate(): void {
+        this.selectedDay = moment(this.date.value).format('DD');
+        this.selectedMonth = moment(this.date.value).format('MMM');
+        this.selectedYear = moment(this.date.value).format('YYYY');
+
+        this.dateViews = [
+            { index: 1, name: 'Day', value: this.selectedDay },
+            { index: 2, name: 'Month', value: this.selectedMonth },
+            { index: 3, name: 'Year', value: this.selectedYear },
         ];
+    }
+    //Datepicker Tracky: fetches new update in the array
+    public trackByDateValue(index: number, view): string {
+        return view.id;
+    }
+
+    public clearDate(): void {
+        this.isDateSelected = false;
+        this.isClicked = false;
+        this.isCleared = true;
+
+        //Reset Datepicker to current date
+        this.onSelectDate.emit(this.currDate);
+    }
+
+    public selectView(id: string): void {
+        this.isClicked = false;
+        this.selectedElementId = id;
+        this.isClicked = !this.isClicked;
     }
 }

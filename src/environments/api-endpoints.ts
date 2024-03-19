@@ -289,6 +289,7 @@ export const API_ENDPOINTS = {
         new_host_activity_logs: 'hostActivityLog/create',
         new_dealer_activity_logs: 'dealeractivitylog/create',
         new_advertiser_activity_logs: 'advertiseractivitylog/create',
+        filler_clone: 'filler/playlist/clone',
     },
     third_party: {
         api_post_content_info: 'webhooks/processhandler',

@@ -141,7 +141,7 @@ export class FeedService extends BaseService {
         return this.getRequest(`${this.getters.api_get_feeds_total}` + '?dealerid=' + `${id}`);
     }
 
-    get_feed_by_id(feed_id) {
+    getFeedById(feed_id) {
         return this.getRequest(`${this.getters.api_get_feed_by_id}${feed_id}`);
     }
 
