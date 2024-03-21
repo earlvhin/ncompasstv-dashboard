@@ -112,20 +112,10 @@
                         <div class="min-height-30" *ngIf="tabGroup.selectedIndex === 2">
                             <div class="row mb-3 mt-3" *ngIf="!dealer_initial_load; else loader">
                                 <div class="col-lg-4">
-                                    <app-autocomplete-field
-                                        (data_value)="setToDealer($event)"
-                                        (call_next_page)="searchBoxTrigger($event)"
-                                        (searched)="searchDealer($event)"
-                                        [data_reference]="dealers_data"
-                                        [primary_keyword]="'businessName'"
-                                        [key_of_value]="'dealerId'"
-                                        [required]="true"
-                                        [label]="'Type in a Dealer Business Name'"
-                                        [disabled]="is_dealer"
-                                        [paging]="paging"
-                                        [loading_data]="loading_data"
-                                        [loading_search]="loading_search">
-                                    </app-autocomplete-field>
+                                    <app-dealer-autocomplete
+                                        (dealer_selected)="setAssignedTo($event)"
+                                        [active_only]="false">
+                                    </app-dealer-autocomplete>
                                 </div>
                                 <div class="col-lg-12">
                                     <app-filler-main-view

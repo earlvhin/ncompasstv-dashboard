@@ -14,9 +14,18 @@
 .selection-remover {
     border-radius: 4px;
     height: 20px;
-    position: absolute;
+    position: relative;
     right: 0;
     text-align: center;
     top: 0;
     width: 20px;
+}
+
+.mat-option {
+    font-size: 13px;
+    height: unset;
+    white-space: normal;
+    border-bottom: 1px solid #f0f0f0;
+    line-height: normal;
+    padding: 1rem !important;
 }
