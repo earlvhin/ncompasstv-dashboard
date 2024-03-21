@@ -17,14 +17,15 @@
                 {{ option.value }}
             </mat-option>
         </mat-autocomplete>
+        <button
+            matSuffix
+            *ngIf="field_data.unselect && autoCompleteControl.value"
+            class="selection-remover naked-btn mt-3 bg-danger text-white"
+            title="Remove Selection"
+            (click)="removeSelection()">
+            <i class="fas fa-times"></i>
+        </button>
     </mat-form-field>
-    <button
-        *ngIf="field_data.unselect && autoCompleteControl.value"
-        class="selection-remover naked-btn mt-3 bg-danger text-white"
-        title="Remove Selection"
-        (click)="removeSelection()">
-        <i class="fas fa-times"></i>
-    </button>
     <div class="autocomplete-error-msg bg-danger text-white" *ngIf="field_data.noData">
         <span>{{ field_data.noData }}</span>
     </div>

@@ -294,35 +294,8 @@ export class FillersComponent implements OnInit {
             .add(() => (this.dealer_initial_load = false));
     }
 
-    searchBoxTrigger(event: { is_search: boolean; page: number }) {
-        this.is_search = event.is_search;
-        this.getDealers(event.page);
-    }
-
-    searchDealer(keyword: string) {
-        this.loading_search = true;
-
-        this._dealer
-            .get_search_dealer(keyword)
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(
-                (data) => {
-                    if (data.paging.entities && data.paging.entities.length > 0)
-                        this.dealers_data = data.paging.entities;
-                    else this.dealers_data = [];
-                    this.paging = data.paging;
-                },
-                (error) => {
-                    console.error(error);
-                },
-            )
-            .add(() => {
-                this.loading_search = false;
-            });
-    }
-
-    setToDealer(id: string) {
-        this.current_dealer_selected = id;
+    setAssignedTo(dealer): void {
+        this.current_dealer_selected = dealer.id;
         this.getDealerFillersAdminView(1);
     }
 

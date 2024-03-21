@@ -23,6 +23,7 @@ import {
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { SubstringPipe } from '../../pipes/substring.pipe';
 import { UserSortModalComponent } from '../../components_shared/media_components/user-sort-modal/user-sort-modal.component';
+import { BUTTONS_FUNCTIONS, BUTTONS_DISABLED } from '../../constants/buttons';
 
 import {
     API_DEALER,
@@ -58,6 +59,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     apps: any;
     array_to_delete: any = [];
     banner_description = '';
+    buttonsDisabled = BUTTONS_DISABLED;
+    buttonsFunctions = BUTTONS_FUNCTIONS;
     combined_data: API_HOST[];
     created_by: any;
     createdBy: string;
@@ -78,8 +81,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     dealer: API_DEALER;
     dealers_data: Array<any> = [];
     dealers: API_DEALER[];
-    from_change: boolean = false;
-    height_show: boolean = true;
+    from_change = false;
+    height_show = true;
     host_card: any;
     host_data_api: API_HOST[];
     host_data: any = [];
@@ -94,7 +97,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     is_admin = this._auth.current_role === UI_ROLE_DEFINITION_TEXT.administrator;
     is_dealer_admin = this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin;
     is_host_stats_loaded = false;
-    is_search: boolean = false;
+    is_search = false;
     license_card: any;
     license_count: number;
     license_data_api: any;
@@ -109,17 +112,17 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     license$: Observable<API_LICENSE[]>;
     licenses_to_export: any = [];
     licenses: any[];
-    loaded: boolean = false;
-    loading_data: boolean = true;
-    loading_search: boolean = false;
+    loaded = false;
+    loading_data = true;
+    loading_search = false;
     loading_statistics = { activity: true, status: true, connection: true, screen: true };
     no_activity_data = false;
     no_advertisers = false;
-    no_case: boolean = true;
+    no_case = true;
     no_hosts = false;
     no_license_zone = false;
     no_licenses = false;
-    no_record: boolean = false;
+    no_record = false;
     now: any;
     page: any;
     paging_data_activity: any;
@@ -128,12 +131,16 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     paging_data_zone: any;
     paging_data: any;
     paging: any;
-    pi_updating: boolean = false;
-    reload_activity: boolean = false;
-    reload_billing: boolean = false;
-    reload_data: boolean = false;
+    pi_updating = false;
+    reload_activity = false;
+    reload_billing = false;
+    reload_data = false;
     remote_reboot_disabled = false;
     remote_update_disabled = false;
+    saved_adv_page: any;
+    saved_hosts_page: any;
+    saved_license_page: any;
+    saved_tab: any;
     screenshot_disabled = false;
     search_data_advertiser: string = '';
     search_data_license_zone: string = '';
@@ -144,7 +151,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     searching_license = false;
     searching_license_zone = false;
     selected_index: number;
-    show_admin_buttons: boolean = false;
+    show_admin_buttons = false;
+    show_buttons = false;
     single_info: Array<any>;
     sort_column_activity = 'DateCreated';
     sort_column_advertisers: string = '';
@@ -163,13 +171,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     timeout_duration: number;
     timeout_message: string;
     user: API_USER_DATA;
-    workbook_generation: boolean = false;
+    workbook_generation = false;
     worksheet: WORKSHEET[];
 
-    saved_license_page: any;
-    saved_hosts_page: any;
-    saved_adv_page: any;
-    saved_tab: any;
+    disabled = false;
 
     _socket: any;
 
@@ -659,6 +664,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 (error) => console.error(error),
             ),
         );
+    }
+
+    openButtonsMenu() {
+        this.show_buttons = !this.show_buttons;
     }
 
     getActivityColumnsAndOrder(data: { column: string; order: string }): void {
@@ -1455,6 +1464,27 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         if (this.licenses) this.resyncSocketConnection();
     }
 
+    buttonOnClick(btnName: string): void {
+        switch (btnName) {
+            case 'screenshotDealer':
+                this.screenshotDealer();
+                this.screenshot_disabled;
+                break;
+            case 'rebootPlayer':
+                this.rebootPlayer();
+                this.remote_reboot_disabled;
+                break;
+            case 'rebootPi':
+                this.rebootPi();
+                this.remote_reboot_disabled;
+                break;
+
+            default:
+                console.error('Function not implemented for', btnName);
+                break;
+        }
+    }
+
     screenshotDealer(): void {
         this.warningModal(
             'warning',
@@ -1512,10 +1542,13 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                     case 'system_update':
                         this.licenses.forEach((i) => this._socket.emit('D_system_update_by_license', i.licenseId));
                         this.createActivity(updateLicenseActivity);
+                        this.getTimeOut();
                         break;
                     case 'reboot':
                         this.licenses.forEach((i) => this._socket.emit('D_pi_restart', i.licenseId));
                         this.createActivity(rebootPiActivity);
+                        this.getTimeOut();
+
                         break;
                     case 'reboot_player':
                         this.licenses.forEach((i) => {
@@ -1523,6 +1556,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                             this._host.emitActivity();
                         });
                         this.createActivity(rebootPlayerActivity);
+                        this.getTimeOut();
+
                         break;
                     case 'license_delete':
                         this.subscription.add(
@@ -1538,24 +1573,31 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                             }),
                         );
                         this.createActivity(deletedLicenseActivity);
+                        this.getTimeOut();
                         break;
                     case 'upgrade_to_v2':
                         this.licenses.forEach((i) => this._socket.emit('D_upgrade_to_v2_by_license', i.licenseId));
+                        this.getTimeOut();
+
                         break;
                     case 'screenshot':
                         if (this.licenses)
                             this.licenses.forEach((i) => this._socket.emit('D_screenshot_pi', i.licenseId));
+                        this.getTimeOut();
                         break;
                     default:
                 }
-                const now = moment().format('MMMM Do YYYY, h:mm:ss a');
-                localStorage.setItem(`${this.dealer_id}`, now);
-                this.timeout_duration = 0;
-                this.timeout_message = `Will be available after ${10 - this.timeout_duration} minutes`;
-                this.remote_reboot_disabled = true;
-                this.remote_update_disabled = true;
-                this.screenshot_disabled = true;
             });
+    }
+
+    public getTimeOut() {
+        const now = moment().format('MMMM Do YYYY, h:mm:ss a');
+        localStorage.setItem(`${this.dealer_id}`, now);
+        this.timeout_duration = 0;
+        this.timeout_message = `Will be available after ${10 - this.timeout_duration} minutes`;
+        this.remote_reboot_disabled = true;
+        this.remote_update_disabled = true;
+        this.screenshot_disabled = true;
     }
 
     createActivity(activity) {
