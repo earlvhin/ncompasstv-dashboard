@@ -25,6 +25,7 @@
                                 <app-dealer-autocomplete
                                     (dealer_selected)="setToDealer($event)"
                                     [initial_value]="selectedDealer"
+                                    [isDisabled]="searchDisabled"
                                     [active_only]="true"></app-dealer-autocomplete>
                             </div>
                             <div *ngFor="let field of new_advertiser_form_fields" class="{{ field.col }} mb-3">

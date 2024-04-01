@@ -73,6 +73,7 @@ export class CreateAdvertiserComponent implements OnInit {
     place_id: string;
     search_keyword: string = '';
     selectedDealer: UI_AUTOCOMPLETE_INITIAL_DATA[] = [];
+    searchDisabled = false;
     selected_location: any;
     subscription: Subscription = new Subscription();
     title: string = 'Create Advertiser Profile';
@@ -109,6 +110,7 @@ export class CreateAdvertiserComponent implements OnInit {
         this.getCities();
 
         if (this.isDealer || this.isSubDealer) {
+            this.searchDisabled = true;
             const dealerId = this._auth.current_user_value.roleInfo.dealerId;
             const businessName = this._auth.current_user_value.roleInfo.businessName;
             const dealer = { id: dealerId, value: businessName };
