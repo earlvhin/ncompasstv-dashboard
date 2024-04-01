@@ -61,22 +61,11 @@
                             </form>
                         </div>
                         <div class="col-lg-4">
-                            <app-autocomplete-field
-                                [data_reference]="dealers_data"
-                                [primary_keyword]="'businessName'"
-                                [key_of_value]="'dealerId'"
-                                (data_value)="setToDealer($event)"
-                                [required]="true"
-                                [label]="'Type in a Dealer Business Name'"
-                                [new_value]="dealer_name"
-                                [initial_value]="dealer_name"
-                                [disabled]="is_dealer"
-                                [paging]="paging"
-                                (call_next_page)="searchBoxTrigger($event)"
-                                (searched)="searchData($event)"
-                                [loading_data]="loading_data"
-                                [loading_search]="loading_search">
-                            </app-autocomplete-field>
+                            <app-dealer-autocomplete
+                                (dealer_selected)="setToDealer($event)"
+                                [initial_value]="dealerData"
+                                [isDisabled]="searchDisabled"
+                                [active_only]="false"></app-dealer-autocomplete>
                         </div>
                     </div>
                 </mat-card>

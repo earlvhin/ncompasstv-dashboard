@@ -10,6 +10,10 @@ import { AuthService } from '../../../services/auth-service/auth.service';
 import { UI_ROLE_DEFINITION } from '../../../models/ui_role-definition.model';
 import { Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
+import { HelperService } from 'src/app/global/services/helper-service/helper.service';
+import { UI_AUTOCOMPLETE, UI_AUTOCOMPLETE_DATA } from 'src/app/global/models';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
     selector: 'app-user-sort-modal',
@@ -17,15 +21,14 @@ import { MAT_DIALOG_DATA } from '@angular/material';
     styleUrls: ['./user-sort-modal.component.scss'],
 })
 export class UserSortModalComponent implements OnInit {
-    advertiser_id: string;
-    advertisers: API_ADVERTISER[] = [];
-    advertisers_data: Array<any> = [];
+    advertiser_id = '';
+    advertisers: any = [];
+    advertisers_data: UI_AUTOCOMPLETE;
     dealers: API_DEALER[];
-    dealerid: string;
-    dealer_id: string;
-    dealer_name: string;
+    dealerId = '';
+    dealerName = '';
     dealers_data: Array<any> = [];
-    filter_data: any = {
+    filterData: any = {
         dealer: {
             id: null,
             name: null,
@@ -39,16 +42,18 @@ export class UserSortModalComponent implements OnInit {
             name: null,
         },
     };
-    host_id: string;
+    hostId = '';
     hosts: API_HOST[] = [];
     hosts_data: Array<any> = [];
+    hostDataAvailable = false;
+    hostDataSearch = '';
     initial_load: boolean = false;
     initial_load_advertiser: boolean = false;
-    is_dealer: boolean = false;
+    isDealer: boolean = false;
     is_search: boolean = false;
     is_license: boolean = false;
     loading_data: boolean = true;
-    loading_data_advertiser: boolean = true;
+    // loading_data_advertiser: boolean = true;
     loading_data_host: boolean = true;
     loading_search: boolean = false;
     loading_search_advertiser: boolean = false;
@@ -57,17 +62,19 @@ export class UserSortModalComponent implements OnInit {
     paging: any;
     paging_advertiser: any;
     paging_host: any;
-    search_advertiser_data: string = '';
-    search_host_data: string = '';
+    advertiserDataSearch = '';
     selected_dealer: any;
     subscription: Subscription = new Subscription();
     temp_array: any = [];
+
+    protected _unsubscribe: Subject<void> = new Subject<void>();
 
     constructor(
         private _dealer: DealerService,
         private _host: HostService,
         private _advertiser: AdvertiserService,
         private _auth: AuthService,
+        private _helper: HelperService,
         @Inject(MAT_DIALOG_DATA) public data: any,
     ) {}
 
@@ -75,11 +82,11 @@ export class UserSortModalComponent implements OnInit {
         if (this.data && (this.data == 'license' || this.data.view == 'license')) {
             this.is_license = true;
 
-            if (this.data.is_dealer) {
-                this.is_dealer = true;
-                this.dealer_id = this.data.dealer_id;
-                this.dealer_name = this.data.dealer_name;
-                this.dealerSelected(this.data.dealer_id);
+            if (this.data.isDealer) {
+                this.isDealer = true;
+                this.dealerId = this.data.dealer_id;
+                this.dealerName = this.data.dealer_name;
+                this.dealerSelected({ id: this.dealerId, value: this.dealerName });
             }
         }
 
@@ -88,252 +95,73 @@ export class UserSortModalComponent implements OnInit {
         const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
 
         if (roleId === dealerRole || roleId === subDealerRole) {
-            this.is_dealer = true;
-            this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
-            this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
-            this.dealerSelected(this.dealer_id);
+            this.isDealer = true;
+            this.dealerId = this._auth.current_user_value.roleInfo.dealerId;
+            this.dealerName = this._auth.current_user_value.roleInfo.businessName;
+            this.dealerSelected({ id: this.dealerId, value: this.dealerName });
         }
-
-        this.getDealers(1);
     }
 
-    advertiserSelected(e) {
-        this.advertiser_id = e;
-        this.filter_data.advertiser.id = e;
-        this.subscription.add(
-            this._advertiser.get_advertiser_by_id(e).subscribe((data) => {
-                this.filter_data.advertiser.name = data.advertiser.name;
-            }),
-        );
+    advertiserSelected(selectedadvertiser: { id: string; value: string }) {
+        this.advertiser_id = selectedadvertiser.id;
+        this.filterData.advertiser.id = selectedadvertiser.id;
+        this.filterData.advertiser.name = selectedadvertiser.value;
     }
 
-    dealerSelected(e) {
-        if (!this.is_dealer) {
-            var dealer_selected = this.dealers.filter((i) => {
-                return i.dealerId == e;
-            });
-            this.dealer_id = e;
-            this.selected_dealer = dealer_selected[0];
-            this.filter_data.dealer.id = this.selected_dealer.dealerId;
-            this.filter_data.dealer.name = this.selected_dealer.businessName;
-        } else {
-            this.subscription.add(
-                this._dealer.get_dealer_by_id(e).subscribe((data) => {
-                    this.dealer_id = data.dealerId;
-                    this.filter_data.dealer.id = data.dealerId;
-                    this.filter_data.dealer.name = data.businessName;
-                }),
-            );
-        }
+    dealerSelected(selectedDealer: { id: string; value: string }) {
+        this.dealerId = selectedDealer.id;
+        this.selected_dealer = {
+            dealerId: selectedDealer.id,
+            businessName: selectedDealer.value,
+        };
+        this.filterData.dealer.id = this.selected_dealer.dealerId;
+        this.filterData.dealer.name = this.selected_dealer.businessName;
+
         this.initial_load = true;
         this.initial_load_advertiser = true;
-        this.getHostByDealer(1);
         this.getAdvertiserByDealer(1);
+
+        this._helper.onDealerSelected$.next(selectedDealer);
     }
 
-    hostSelected(e) {
-        this.host_id = e;
-        this.filter_data.host.id = e;
-        this.subscription.add(
-            this._host.get_host_by_id(e).subscribe((data: any) => {
-                this.filter_data.host.name = data.host.name;
-            }),
-        );
-    }
-
-    searchData(e) {
-        this.loading_search = true;
-        this.subscription.add(
-            this._dealer.get_search_dealer(e).subscribe((data) => {
-                if (data.paging.entities.length > 0) {
-                    this.dealers = data.paging.entities;
-                    this.dealers_data = data.paging.entities;
-                    this.loading_search = false;
-                } else {
-                    this.dealers_data = [];
-                    this.loading_search = false;
-                }
-                this.paging = data.paging;
-            }),
-        );
-    }
-
-    getDealers(e) {
-        this.loading_data = true;
-        if (e > 1) {
-            this.subscription.add(
-                this._dealer.get_dealers_with_page(e, '').subscribe((data) => {
-                    data.dealers.map((i) => {
-                        this.dealers.push(i);
-                    });
-                    this.paging = data.paging;
-                    this.loading_data = false;
-                }),
-            );
-        } else {
-            if (this.is_search) {
-                this.loading_search = true;
-            }
-            this.subscription.add(
-                this._dealer.get_dealers_with_page(e, '').subscribe((data) => {
-                    this.dealers = data.dealers;
-                    this.dealers_data = data.dealers;
-                    this.paging = data.paging;
-                    this.loading_data = false;
-                    this.loading_search = false;
-                }),
-            );
-        }
-    }
-
-    searchBoxTrigger(event) {
-        this.is_search = event.is_search;
-        if (this.paging.hasNextPage || this.is_search) {
-            this.getDealers(event.page);
-        }
-    }
-
-    hostSearchBoxTrigger(event) {
-        this.is_search = event.is_search;
-        if (this.is_search) {
-            this.search_host_data = '';
-        }
-        if (this.paging_host.hasNextPage || this.is_search) {
-            this.getHostByDealer(event.page);
-        }
-    }
-
-    advertiserSearchBoxTrigger(event) {
-        this.is_search = event.is_search;
-        if (this.is_search) {
-            this.search_advertiser_data = '';
-        }
-        if (this.paging_advertiser.hasNextPage || this.is_search) {
-            this.getAdvertiserByDealer(event.page);
-        }
-    }
-
-    searchHostData(e) {
-        this.search_host_data = e;
-        this.getHostByDealer(1);
-    }
-
-    searchAdvertiserData(e) {
-        this.search_advertiser_data = e;
-        this.getAdvertiserByDealer(1);
-    }
-
-    getHostByDealer(e) {
-        this.loading_data_host = true;
-        if (e > 1) {
-            this.subscription.add(
-                this._host.get_host_by_dealer_id(this.dealer_id, e, this.search_host_data).subscribe((data) => {
-                    data.paging.entities.map((i) => {
-                        this.hosts.push(i);
-                        this.hosts_data.push(i);
-                    });
-                    this.paging_host = data.paging;
-                    this.loading_data_host = false;
-                }),
-            );
-        } else {
-            this.hosts_data = [];
-            this.initial_load = false;
-            if (this.is_search || this.search_host_data != '') {
-                this.loading_search_host = true;
-            }
-            if (this.search_host_data.length == 0) {
-                this.hosts = [];
-            }
-            this.subscription.add(
-                this._host.get_host_by_dealer_id(this.dealer_id, e, this.search_host_data).subscribe((data) => {
-                    if (!data.message) {
-                        if (this.search_host_data == '') {
-                            data.paging.entities.map((i) => {
-                                this.hosts.push(i);
-                                this.hosts_data.push(i);
-                            });
-                        } else {
-                            if (data.paging.entities.length > 0) {
-                                this.hosts_data = data.paging.entities;
-                                this.loading_search = false;
-                            }
-                        }
-                        this.paging_host = data.paging;
-                    } else {
-                        this.filter_data.host.name = '';
-                        if (this.search_host_data != '') {
-                            this.hosts_data = [];
-                            this.loading_search = false;
-                        }
-                    }
-                    this.loading_data_host = false;
-                    this.loading_search_host = false;
-                }),
-            );
-        }
+    hostSelected(selectedHost: { id: string; value: string }) {
+        this.hostId = selectedHost.id;
+        this.filterData.host.id = selectedHost.id;
+        this.filterData.host.name = selectedHost.value;
     }
 
     getAdvertiserByDealer(page: number) {
-        this.loading_data_advertiser = true;
-
         const filters = {
-            dealer_id: this.dealer_id,
+            dealer_id: this.dealerId,
             page,
-            search: this.search_advertiser_data,
+            search: this.advertiserDataSearch,
             sortColumn: '',
             sortOrder: '',
-            pageSize: 15,
+            pageSize: 0,
         };
 
-        if (page > 1) {
-            this.subscription.add(
-                this._advertiser.get_advertisers_by_dealer_id(filters).subscribe((data) => {
-                    data.advertisers.map((i) => {
-                        this.advertisers.push(i);
-                        this.advertisers_data.push(i);
-                    });
-                    this.paging_advertiser = data.paging;
-                    this.loading_data_advertiser = false;
-                }),
-            );
-        } else {
-            this.advertisers_data = [];
-            this.initial_load_advertiser = false;
-            if (this.is_search || this.search_advertiser_data != '') {
-                this.loading_search_advertiser = true;
-            } else {
-                this.advertisers = [];
-            }
-            if (this.search_advertiser_data.length == 0) {
-                this.advertisers = [];
-            }
-            this.subscription.add(
-                this._advertiser.get_advertisers_by_dealer_id(filters).subscribe((data) => {
-                    if (!data.message) {
-                        if (this.search_advertiser_data == '') {
-                            data.advertisers.map((i) => {
-                                this.advertisers.push(i);
-                                this.advertisers_data.push(i);
-                            });
-                        } else {
-                            if (data.paging.entities.length > 0) {
-                                this.advertisers_data = data.paging.entities;
-                                this.loading_search_advertiser = false;
-                            }
-                        }
-                        this.paging_advertiser = data.paging;
-                    } else {
-                        this.filter_data.advertiser.name = '';
-                        if (this.search_advertiser_data != '') {
-                            this.advertisers_data = [];
-                            this.loading_search_advertiser = false;
-                        }
+        this._advertiser
+            .get_advertisers_by_dealer_id(filters)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe(
+                (response) => {
+                    this.advertisers = [];
+                    if (!response.message) {
+                        response.advertisers.map((advertiser) =>
+                            this.advertisers.push({ id: advertiser.id, value: advertiser.name }),
+                        );
                     }
-                    this.loading_data_advertiser = false;
-                    this.loading_search_advertiser = false;
-                }),
+                    this.setAdvertiserAutocomplete();
+                },
+                (error) => console.error(error),
             );
-        }
+    }
+
+    setAdvertiserAutocomplete(): void {
+        this.advertisers_data = {
+            label: 'Select Advertiser Name',
+            placeholder: 'Ex. NCompassTV Advertiser',
+            data: this.advertisers,
+        };
     }
 }

@@ -19,7 +19,7 @@
                                 <div class="create-screen-height">
                                     <form [formGroup]="new_screen_form" *ngIf="dealers.length > 0">
                                         <div class="row">
-                                            <div *ngFor="let f of new_screen_form_view" class="{{ f.width }}">
+                                            <div *ngFor="let f of newScreenFormView" class="{{ f.width }}">
                                                 <mat-form-field class="full-width">
                                                     <mat-label>{{ f.label }}</mat-label>
                                                     <input matInput formControlName="{{ f.control }}" />
@@ -29,25 +29,13 @@
                                     </form>
 
                                     <div class="row">
-                                        <div [ngClass]="screen_selected == null ? 'col-lg-12' : 'col-lg-11'">
-                                            <app-autocomplete-field
-                                                [data_reference]="screen_types"
-                                                [primary_keyword]="'description'"
-                                                [key_of_value]="'screenTypeId'"
-                                                (data_value)="setScreenType($event)"
-                                                [required]="true"
-                                                [label]="'Click to select a Screen Type'"
-                                                [reset_value]="reset_screen">
-                                            </app-autocomplete-field>
+                                        <div class="col-lg-12">
+                                            <app-autocomplete
+                                                [field_data]="screenTypeData"
+                                                (value_selected)="setScreenType($event)">
+                                            </app-autocomplete>
                                         </div>
-                                        <div class="col-lg-1 cursor-pointer" *ngIf="screen_selected != null">
-                                            <span
-                                                class="pt-3 fa fa-times text-danger"
-                                                data-toggle="tooltip"
-                                                title="Clear Screen Type"
-                                                (click)="clearScreenType()"></span>
-                                        </div>
-                                        <div class="row"></div>
+
                                         <div class="col-lg-12 mb-4">
                                             <ng-container *ngIf="dealerId && is_dealer_present; else no_dealer">
                                                 <mat-form-field class="full-width mt-3">
@@ -62,22 +50,11 @@
                                                 </mat-form-field>
                                             </ng-container>
                                             <ng-template #no_dealer>
-                                                <app-autocomplete-field
-                                                    [data_reference]="dealers_data"
-                                                    [primary_keyword]="'businessName'"
-                                                    [key_of_value]="'dealerId'"
-                                                    (data_value)="setToDealer($event)"
-                                                    [required]="true"
-                                                    [label]="'Type in a Dealer Business Name'"
-                                                    [new_value]="dealer_name"
-                                                    [initial_value]="dealer_name"
-                                                    [disabled]="is_dealer"
-                                                    [paging]="paging"
-                                                    (call_next_page)="searchBoxTrigger($event)"
-                                                    (searched)="searchData($event)"
-                                                    [loading_data]="loading_data"
-                                                    [loading_search]="loading_search">
-                                                </app-autocomplete-field>
+                                                <app-dealer-autocomplete
+                                                    (dealer_selected)="setAssignedTo($event)"
+                                                    [initial_value]="selectedDealer"
+                                                    [isDisabled]="searchDisabled"
+                                                    [active_only]="true"></app-dealer-autocomplete>
                                             </ng-template>
                                         </div>
                                         <div class="col-lg-12">
@@ -170,9 +147,9 @@
                                                     <div>
                                                         <mat-option
                                                             *ngFor="let p of playlist"
-                                                            [value]="p.playlist.playlistId"
+                                                            [value]="p.playlistId"
                                                             [attr.data-zone-id]="z.templateZoneId">
-                                                            {{ p.playlist.playlistName }}
+                                                            {{ p.playlistName }}
                                                         </mat-option>
                                                     </div>
                                                 </mat-select>
@@ -246,21 +223,11 @@
                                         </mat-form-field>
                                     </ng-container>
                                     <ng-template #no_host>
-                                        <app-autocomplete-field
-                                            [data_reference]="hosts_data"
-                                            [primary_keyword]="'name'"
-                                            [key_of_value]="'hostId'"
-                                            (data_value)="setToHost($event)"
-                                            [required]="true"
-                                            [label]="'Type in a Host'"
-                                            [paging]="paging_host"
-                                            (call_next_page)="hostSearchBoxTrigger($event)"
-                                            (searched)="searchHostData($event)"
-                                            [loading_data]="loading_data_host"
-                                            [loading_search]="loading_search_host"
-                                            [initial_load]="initial_load"
+                                        <app-host-autocomplete
+                                            [dealer_id]="dealerId"
+                                            (host_selected)="setToHost($event)"
                                             *ngIf="hosts.length > 0; else add_host">
-                                        </app-autocomplete-field>
+                                        </app-host-autocomplete>
                                     </ng-template>
                                     <ng-template #add_host>
                                         <div class="text-left">
@@ -280,7 +247,8 @@
                                     </ng-template>
                                 </div>
 
-                                <ng-container *ngIf="licenses && licenses.length > 0; else no_license">
+                                <ng-container
+                                    *ngIf="licenses && licenses.length > 0 && !disabledPublish; else no_license">
                                     <div class="text-left" *ngIf="!has_no_licenses; else no_license">
                                         <div class="licenses-heading">
                                             <h4 class="font-weight-bold mb-3">Assign to Licenses</h4>
@@ -349,13 +317,13 @@
                                 </ng-template>
 
                                 <button
-                                    *ngIf="hostId"
+                                    *ngIf="hostId && dealerId"
                                     mat-button
                                     mat-raised-button
                                     matStepperNext
                                     class="theme-btn mt-4"
                                     (click)="publishScreen()"
-                                    [disabled]="creating_screen">
+                                    [disabled]="creating_screen || disabledPublish">
                                     Publish Screen
                                 </button>
                             </div>

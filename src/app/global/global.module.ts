@@ -103,6 +103,7 @@ import { FillerMainViewComponent } from './pages_shared/fillers/components/fille
 import { FooterComponent } from './components_shared/page_components/footer/footer.component';
 import { GenerateFeedComponent } from './pages_shared/generate-feed/generate-feed.component';
 import { GridViewLicenseComponent } from './components_shared/license_components/grid-view-license/grid-view-license.component';
+import { HostAutocompleteComponent } from './components_shared/data_components/host-autocomplete/host-autocomplete.component';
 import { HostCustomFieldsComponent } from './pages_shared/host-custom-fields/host-custom-fields.component';
 import { HostViewComponent } from './components_shared/locator_components/host-view/host-view.component';
 import { HostsTabComponent } from './components_shared/reports_components/hosts-tab/hosts-tab.component';
@@ -338,6 +339,7 @@ const ngComponents = [
     FooterComponent,
     GenerateFeedComponent,
     GridViewLicenseComponent,
+    HostAutocompleteComponent,
     HostCustomFieldsComponent,
     HostViewComponent,
     HostsTabComponent,

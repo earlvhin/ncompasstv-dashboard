@@ -1,75 +1,53 @@
 <div class="p-4">
     <div *ngIf="!no_dealers; else no_data">
-        <div class="sort-by-dealer" *ngIf="dealers; else loader_sm">
+        <div class="sort-by-dealer">
             <h3 class="mb-1" *ngIf="!is_license; else licenseLabel">Filter Media Files by User</h3>
             <ng-template #licenseLabel>
                 <h3 class="mb-1">Filter Licenses by User</h3>
             </ng-template>
-            <p class="sm-text mb-4">Select Dealer, Host <span *ngIf="!is_license">, and Advertiser</span></p>
 
-            <div class="dealer-field">
-                <app-autocomplete-field
-                    (data_value)="dealerSelected($event)"
-                    [key_of_value]="'dealerId'"
-                    [placeholder]="'Select Dealer'"
-                    [label]="'Select A Dealer'"
-                    [data_reference]="dealers_data"
-                    [search_keyword]="'businessName'"
-                    [primary_keyword]="'businessName'"
-                    [paging]="paging"
-                    (call_next_page)="searchBoxTrigger($event)"
-                    (searched)="searchData($event)"
-                    [new_value]="dealer_name"
-                    [initial_value]="dealer_name"
-                    [disabled]="is_dealer"
-                    [loading_data]="loading_data"
-                    [loading_search]="loading_search">
-                </app-autocomplete-field>
-            </div>
+            <div *ngIf="!isDealer; else userDealer">
+                <p class="sm-text mb-4">Select Dealer, Host <span *ngIf="!is_license">, and Advertiser</span></p>
+                <!-- Dealer Autocomplete -->
+                <app-dealer-autocomplete (dealer_selected)="dealerSelected($event)" [active_only]="false">
+                </app-dealer-autocomplete>
+                <!-- Dealer Autocomplete -->
 
-            <div class="host-field">
-                <app-autocomplete-field
-                    *ngIf="hosts.length > 0; else no_dealer_host"
-                    (data_value)="hostSelected($event)"
-                    [data_reference]="hosts_data"
-                    [key_of_value]="'hostId'"
-                    [label]="'Select Host'"
-                    [placeholder]="'Select Host'"
-                    [new_value]="filter_data.host.name"
-                    [search_keyword]="'name'"
-                    [primary_keyword]="'name'"
-                    [paging]="paging_host"
-                    (call_next_page)="hostSearchBoxTrigger($event)"
-                    (searched)="searchHostData($event)"
-                    [loading_data]="loading_data_host"
-                    [loading_search]="loading_search_host"
-                    [initial_load]="initial_load">
-                </app-autocomplete-field>
+                <!-- Host Autocomplete -->
+                <app-host-autocomplete
+                    *ngIf="dealerId; else no_dealer_host"
+                    [dealer_id]="dealerId"
+                    (host_selected)="hostSelected($event)">
+                </app-host-autocomplete>
 
                 <ng-template #no_dealer_host>
                     <p class="bg-info text-white p-2 mb-3 sm-text">
                         Host field will appear if Dealer has available hosts
                     </p>
                 </ng-template>
+                <!-- Host Autocomplete -->
             </div>
 
+            <ng-template #userDealer>
+                <p class="sm-text mb-4">Select Host</p>
+                <app-host-autocomplete (host_selected)="hostSelected($event)"> </app-host-autocomplete>
+
+                <ng-template #no_dealer_host>
+                    <p class="bg-info text-white p-2 mb-3 sm-text">
+                        Host field will appear if Dealer has available hosts
+                    </p>
+                </ng-template>
+                <!-- Host Autocomplete -->
+            </ng-template>
+
             <div class="advertiser-field" *ngIf="!is_license">
-                <app-autocomplete-field
-                    *ngIf="advertisers.length > 0; else no_dealer_adv"
-                    (data_value)="advertiserSelected($event)"
-                    [key_of_value]="'id'"
-                    [placeholder]="'Select Advertiser'"
-                    [label]="'Select Advertiser'"
-                    [data_reference]="advertisers_data"
-                    [search_keyword]="'name'"
-                    [primary_keyword]="'name'"
-                    [paging]="paging_advertiser"
-                    (call_next_page)="advertiserSearchBoxTrigger($event)"
-                    (searched)="searchAdvertiserData($event)"
-                    [loading_data]="loading_data_advertiser"
-                    [loading_search]="loading_search_advertiser"
-                    [initial_load]="initial_load_advertiser">
-                </app-autocomplete-field>
+                <div class="advertiser-dropdown-holder" *ngIf="dealerId && advertisers.length; else no_dealer_adv">
+                    <app-autocomplete
+                        *ngIf="advertisers"
+                        [field_data]="advertisers_data"
+                        (value_selected)="advertiserSelected($event)">
+                    </app-autocomplete>
+                </div>
 
                 <ng-template #no_dealer_adv>
                     <p class="bg-info text-white p-2 mb-0 sm-text">
@@ -81,9 +59,9 @@
             <button
                 mat-button
                 mat-raised-button
-                [mat-dialog-close]="filter_data"
+                [mat-dialog-close]="filterData"
                 class="theme-btn mt-4 mr-2"
-                [disabled]="dealer_id === undefined">
+                [disabled]="!dealerId">
                 Filter
             </button>
             <button mat-button mat-raised-button mat-dialog-close class="theme-btn mt-4">Close</button>
