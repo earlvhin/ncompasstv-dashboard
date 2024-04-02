@@ -1,0 +1,14 @@
+<div class="host-autocomplete">
+    <app-autocomplete
+        [field_data]="hostsData"
+        *ngIf="hostsData && hostsData.data.length; else loading"
+        (value_selected)="setHost($event)">
+    </app-autocomplete>
+
+    <ng-template #loading>
+        <app-spinner *ngIf="!hostDataFetched" [diameter]="30"></app-spinner>
+        <p class="bg-danger text-white p-2 mb-3 sm-text" *ngIf="hostDataFetched && !hosts.length">
+            No hosts found for this dealer
+        </p>
+    </ng-template>
+</div>

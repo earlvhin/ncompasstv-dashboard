@@ -1,12 +1,13 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { ConfirmationModalComponent } from '../../../page_components/confirmation-modal/confirmation-modal.component';
 import { AuthService, HostService, UserService } from 'src/app/global/services';
-import { API_HOST, UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
+import { API_HOST, UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT, UI_AUTOCOMPLETE } from 'src/app/global/models';
 
 @Component({
     selector: 'app-new-host-user',
@@ -14,33 +15,35 @@ import { API_HOST, UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from 'src/app/g
     styleUrls: ['./new-host-user.component.scss'],
 })
 export class NewHostUserComponent implements OnInit {
+    @Input() initial_value: any;
     @Output() host_created = new EventEmitter();
+    @Output() host_selected = new EventEmitter<{ hostId: string; hostName: string }>();
 
+    back_btn: string;
     create_host_link = '';
+    dealerId = this._auth.current_user_value.roleInfo.dealerId || '';
+    form_fields_view: {};
     form_title: string = 'New Host User';
     form_invalid: boolean = true;
-    is_submitted: boolean;
-    server_error: string;
-    host_loading: boolean = true;
-    hosts: API_HOST[] = [];
+    hosts = [];
     is_password_field_type = true;
     is_retype_password_field_type = true;
+    is_search: boolean = false;
+    is_submitted: boolean;
     keywords = { search: 'hostName', primary: 'hostName' };
     new_host_form: FormGroup;
     no_host_place: boolean = false;
+    paging: any;
     password_is_match: boolean;
-    password_match_msg: string;
     password_is_valid: boolean;
     password_is_valid_msg: string;
-    subscription: Subscription = new Subscription();
-    form_fields_view: any;
-    back_btn: string;
-    is_search: boolean = false;
-    paging: any;
-    loading_search: boolean = false;
+    password_match_msg: string;
     search_key: string = '';
-    loading_data: boolean = true;
-    hosts_data: any = [];
+    selectedHost = [];
+    server_error: string;
+    subscription: Subscription = new Subscription();
+
+    protected ngUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(
         private _auth: AuthService,
@@ -62,7 +65,7 @@ export class NewHostUserComponent implements OnInit {
             firstname: ['', Validators.required],
             lastname: ['', Validators.required],
             address: '',
-            host_place: [{ value: '', disabled: true }, Validators.required],
+            host_place: [{ value: '' }, Validators.required],
             contactNumber: ['', Validators.required],
             dealerId: ['', Validators.required],
             hostid: ['', Validators.required],
@@ -136,7 +139,11 @@ export class NewHostUserComponent implements OnInit {
 
         this.subscription.add(
             this.new_host_form.valueChanges.subscribe((data) => {
-                if (this.new_host_form.valid && this.f.password.value === this.f.re_password.value) {
+                if (
+                    this.new_host_form.valid &&
+                    this.f.password.value === this.f.re_password.value &&
+                    this.f.host_place.value
+                ) {
                     this.form_invalid = false;
                 } else {
                     this.form_invalid = true;
@@ -174,143 +181,20 @@ export class NewHostUserComponent implements OnInit {
                 }
             }),
         );
-
-        this.getHostPlaces(1);
-        this.setAutocompleteParams();
     }
 
     ngOnDestroy() {
         this.subscription.unsubscribe();
+        this._auth.current_user_value.roleInfo.dealerId;
     }
 
     get f() {
         return this.new_host_form.controls;
     }
 
-    getHostPlaces(page) {
-        if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
-            if (this.search_key != '') {
-                this.loading_search = true;
-                this.hosts_data = [];
-            }
-            if (page > 1) {
-                this.loading_data = true;
-                this.subscription.add(
-                    this._host
-                        .get_host_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.search_key)
-                        .subscribe((data) => {
-                            data.paging.entities.map((i) => {
-                                if (this.search_key != '') {
-                                    this.hosts.push(i);
-                                } else {
-                                    this.hosts.push(i);
-                                }
-                                this.hosts_data.push(i);
-                            });
-                            this.paging = data.paging;
-                            this.loading_data = false;
-                        }),
-                );
-            } else {
-                this.subscription.add(
-                    this._host
-                        .get_host_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.search_key)
-                        .subscribe((data) => {
-                            if (!data.message) {
-                                data.paging.entities.map((i) => {
-                                    if (this.search_key != '') {
-                                        this.hosts.push(i);
-                                    } else {
-                                        this.hosts.push(i);
-                                    }
-                                    this.hosts_data.push(i);
-                                });
-                                this.paging = data.paging;
-                            } else {
-                                this.no_host_place = true;
-                            }
-                            this.host_loading = false;
-                            this.loading_data = false;
-                            this.loading_search = false;
-                        }),
-                );
-            }
-        } else {
-            if (page > 1) {
-                this.loading_data = true;
-                this.subscription.add(
-                    this._host
-                        .get_host_by_page({
-                            page,
-                            search: this.search_key,
-                            sortColumn: '',
-                            sortOrder: '',
-                            pageSize: 15,
-                        })
-                        .subscribe((data) => {
-                            data.paging.entities.map((i) => {
-                                if (this.search_key != '') {
-                                    this.hosts.push(i);
-                                } else {
-                                    this.hosts.push(i);
-                                }
-                                this.hosts_data.push(i);
-                            });
-                            this.paging = data.paging;
-                            this.loading_data = false;
-                            this.loading_search = false;
-                        }),
-                );
-            } else {
-                if (this.search_key != '') {
-                    this.loading_search = true;
-                    this.hosts_data = [];
-                }
-                this.subscription.add(
-                    this._host
-                        .get_host_by_page({
-                            page,
-                            search: this.search_key,
-                            sortColumn: '',
-                            sortOrder: '',
-                            pageSize: 15,
-                        })
-                        .subscribe((data) => {
-                            if (!data.message) {
-                                data.paging.entities.map((i) => {
-                                    if (this.search_key != '') {
-                                        this.hosts.push(i);
-                                    } else {
-                                        this.hosts.push(i);
-                                    }
-                                    this.hosts_data.push(i);
-                                });
-                                this.paging = data.paging;
-                            }
-                            this.host_loading = false;
-                            this.loading_data = false;
-                            this.loading_search = false;
-                        }),
-                );
-            }
-        }
-    }
-
-    searchData(e) {
-        this.search_key = e;
-        this.getHostPlaces(1);
-    }
-
-    searchBoxTrigger(event) {
-        this.is_search = event.is_search;
-        if (this.is_search) {
-            this.search_key = '';
-            this.hosts_data = [];
-            this.loading_search = true;
-        }
-        if (this.paging.hasNextPage || this.is_search) {
-            this.getHostPlaces(event.page);
-        }
+    public setHost(data: { id: string; value: string; dealerId: string }) {
+        this.f.dealerId.setValue(data.dealerId);
+        this.f.hostid.setValue(data.id);
     }
 
     togglePasswordFieldType(): void {
@@ -359,41 +243,21 @@ export class NewHostUserComponent implements OnInit {
         );
     }
 
-    hostSelected(e) {
-        const hostData = this.hosts.filter((h) => {
-            return h.hostId === e;
-        });
-
-        this.f.dealerId.setValue(hostData[0].dealerId);
-        this.f.hostid.setValue(e);
-    }
-
     openConfirmationModal(status, message, data, redirect): void {
-        var dialog = this._dialog.open(ConfirmationModalComponent, {
-            width: '500px',
-            height: '350px',
-            data: {
-                status: status,
-                message: message,
-                data: data,
-            },
-        });
-
-        dialog.afterClosed().subscribe(() => {
-            if (redirect) {
-                this._router.navigate([`/${this.roleRoute}/users/`]);
-            }
-        });
-    }
-
-    private setAutocompleteParams() {
-        let params = { search: 'hostName', primary: 'hostName' };
-
-        if (this.currentRole === 'dealer') {
-            params = { search: 'name', primary: 'name' };
-        }
-
-        this.keywords = params;
+        this._dialog
+            .open(ConfirmationModalComponent, {
+                width: '500px',
+                height: '350px',
+                data: {
+                    status: status,
+                    message: message,
+                    data: data,
+                },
+            })
+            .afterClosed()
+            .subscribe(() => {
+                if (redirect) this._router.navigate([`/${this.roleRoute}/users/`]);
+            });
     }
 
     protected get currentRole() {

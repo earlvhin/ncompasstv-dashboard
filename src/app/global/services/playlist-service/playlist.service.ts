@@ -67,6 +67,10 @@ export class PlaylistService extends BaseService {
         return this.getRequest(`${this.getters.api_get_playlist_by_dealer_id}${id}`);
     }
 
+    getPlaylistByDealerIdMinified(id: string) {
+        return this.getRequest(`${this.getters.api_get_playlist_by_dealer_id_minify}${id}`);
+    }
+
     get_playlist_by_dealer_id_table(page, id, key) {
         const base = `${this.getters.api_get_playlist_by_dealer_id_table}`;
         const params = this.setUrlParams({ page, dealerid: id, search: key }, false, true);

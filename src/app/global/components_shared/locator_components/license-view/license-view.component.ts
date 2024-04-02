@@ -425,7 +425,7 @@ export class LicenseViewComponent implements OnInit {
         this.loading_license_count = true;
 
         this._license
-            .get_licenses_by_host_id(id)
+            .getLicensesByHostId(id)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (response) => {

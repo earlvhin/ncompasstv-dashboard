@@ -14,6 +14,7 @@ import {
     API_CREATE_PLAYLIST,
     API_CREATE_PLAYLIST_CONTENT,
     API_DEALER,
+    UI_AUTOCOMPLETE_INITIAL_DATA,
     UI_CONTENT,
     UI_PLAYLIST_CONTENT,
     UI_ROLE_DEFINITION,
@@ -33,7 +34,7 @@ export class CreatePlaylistComponent implements OnInit {
     dealer_name: string;
     disable_user_filter = true;
     floating_content = false;
-    is_dealer = false;
+    isDealer = false;
     is_admin: boolean;
     invalid_form = true;
     media_library_api: any = [];
@@ -59,6 +60,8 @@ export class CreatePlaylistComponent implements OnInit {
     media_key = '';
     current_page = '1';
     sort_key = 'desc';
+    dealerData: UI_AUTOCOMPLETE_INITIAL_DATA[] = [];
+    searchDisabled = false;
 
     filters: any = {
         filetype: undefined,
@@ -94,7 +97,7 @@ export class CreatePlaylistComponent implements OnInit {
         if (this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.administrator) {
             this.is_admin = true;
         } else if (roleId === dealerRole || roleId === subDealerRole) {
-            this.is_dealer = true;
+            this.isDealer = true;
             this.dealerid = this._auth.current_user_value.roleInfo.dealerId;
             this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
         }
@@ -119,8 +122,14 @@ export class CreatePlaylistComponent implements OnInit {
         );
 
         //Autofill for dealer
-        if (this.is_dealer) {
+        if (this.isDealer) {
+            this.searchDisabled = true;
             this.setToDealer(this.dealerid);
+
+            this.dealerData.push({
+                id: this._auth.current_user_value.roleInfo.dealerId,
+                value: this._auth.current_user_value.roleInfo.businessName,
+            });
         }
     }
 
@@ -129,7 +138,7 @@ export class CreatePlaylistComponent implements OnInit {
     }
 
     // Convenience getter for easy access to form fields
-    get f() {
+    get formControl() {
         return this.playlist_info.controls;
     }
 
@@ -156,10 +165,10 @@ export class CreatePlaylistComponent implements OnInit {
         });
 
         this.playlist = new API_CREATE_PLAYLIST(
-            this.f.dealer.value,
-            this.f.playlistName.value,
+            this.formControl.dealer.value,
+            this.formControl.playlistName.value,
             'unset',
-            this.f.playlistDescription.value,
+            this.formControl.playlistDescription.value,
             this.playlist_assets,
         );
 
@@ -406,8 +415,15 @@ export class CreatePlaylistComponent implements OnInit {
     }
 
     setToDealer(dealer) {
-        this.f.dealer.setValue(dealer);
-        this.dealerid = dealer;
+        if (this.isDealer) {
+            this.formControl.dealer.setValue(dealer);
+            this.dealerid = dealer;
+            this.getAllContents();
+            this.getDealers(1);
+        }
+
+        this.formControl.dealer.setValue(dealer.id);
+        this.dealerid = dealer.id;
         this.getAllContents();
     }
 

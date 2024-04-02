@@ -110,6 +110,16 @@
             </div>
         </div>
 
+        <div class="warning-container mt-3 mb-3 flex alert-warning px-3 py-2" *ngIf="uploadInProgress">
+            <div class="flex-even sm-text b-0" role="alert">
+                <i class="fa fa-info-circle mr-2" aria-hidden="true"></i>
+                <span> Extracting data... Please wait.</span>
+            </div>
+            <div class="align-items-center justify-content-center mr-3">
+                <app-spinner [diameter]="20"></app-spinner>
+            </div>
+        </div>
+
         <ng-container *ngIf="filter.assignee_label || filter.date_to_label">
             <div class="d-flex p-2 mb-3 bg-gray-2">
                 <div class="d-flex flex-even align-items-center">

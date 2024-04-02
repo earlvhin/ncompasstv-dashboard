@@ -18,6 +18,7 @@ export class HelperService {
     renderedChartIds = [];
 
     onClickCardByStatus = new Subject<{ page: string; value: string }>();
+    onDealerSelected$ = new Subject<{ id: string; value: string }>();
     onHoverContent = new Subject<{ playlistContentId: string }>();
     onRefreshUsersPage = new Subject<void>();
     onResetAutocompleteField = new Subject<string>();

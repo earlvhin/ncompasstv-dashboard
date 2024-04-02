@@ -97,7 +97,7 @@ export class SingleHostComponent implements OnInit {
 
     getHostLicenses() {
         this._license
-            .get_licenses_by_host_id(this.singleHostData.host_id)
+            .getLicensesByHostId(this.singleHostData.host_id)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((res) => {
                 if ('message' in res) return;
@@ -248,7 +248,7 @@ export class SingleHostComponent implements OnInit {
             if (!response) return;
 
             this._license
-                .get_licenses_by_host_id(this.hostId)
+                .getLicensesByHostId(this.hostId)
                 .pipe(takeUntil(this._unsubscribe))
                 .subscribe((response) => {
                     if (!Array.isArray(response)) return;
