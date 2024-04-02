@@ -49,3 +49,9 @@ export class API_USER_ADVERTISER {
     category: string;
     logo: string;
 }
+
+export class API_ADVERTISER_MINIFY {
+    id: string;
+    dealerId: string;
+    name: string;
+}

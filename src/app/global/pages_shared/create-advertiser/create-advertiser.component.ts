@@ -28,6 +28,8 @@ import {
     PAGING,
     UI_ROLE_DEFINITION,
     UI_TABLE_DEALERS,
+    UI_AUTOCOMPLETE_DATA,
+    UI_AUTOCOMPLETE_INITIAL_DATA,
 } from 'src/app/global/models';
 
 @Component({
@@ -38,9 +40,6 @@ import {
 })
 export class CreateAdvertiserComponent implements OnInit {
     categories_data: any;
-    // cat_data: any = [];
-    // category_selected: string;
-    // creating_advertiser: boolean = false;
     city_loaded = false;
     city_state: City[] = [];
     canada_selected: boolean = false;
@@ -49,8 +48,6 @@ export class CreateAdvertiserComponent implements OnInit {
     category_selected: string;
     child_category: string;
     current_host_image: string;
-    dealer_id: string;
-    dealer_name: string;
     dealers_data: Array<any> = [];
     filtered_data: UI_TABLE_DEALERS[] = [];
     form_invalid: boolean = true;
@@ -75,6 +72,8 @@ export class CreateAdvertiserComponent implements OnInit {
     paging: any;
     place_id: string;
     search_keyword: string = '';
+    selectedDealer: UI_AUTOCOMPLETE_INITIAL_DATA[] = [];
+    searchDisabled = false;
     selected_location: any;
     subscription: Subscription = new Subscription();
     title: string = 'Create Advertiser Profile';
@@ -104,7 +103,6 @@ export class CreateAdvertiserComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.getDealers(1);
         this.current_host_image = this.default_host_image;
         this.initializeCreateAdvertiserForm();
         this.initializeGooglePlaceForm();
@@ -112,9 +110,13 @@ export class CreateAdvertiserComponent implements OnInit {
         this.getCities();
 
         if (this.isDealer || this.isSubDealer) {
-            this.dealer_id = this.roleInfo.dealerId;
-            this.dealer_name = this.roleInfo.businessName;
-            this.setToDealer(this.dealer_id);
+            this.searchDisabled = true;
+            const dealerId = this._auth.current_user_value.roleInfo.dealerId;
+            const businessName = this._auth.current_user_value.roleInfo.businessName;
+            const dealer = { id: dealerId, value: businessName };
+
+            this.selectedDealer.push(dealer);
+            this.setToDealer(dealer);
         }
 
         this.watchCategoryField();
@@ -246,18 +248,6 @@ export class CreateAdvertiserComponent implements OnInit {
             }),
         );
 
-        // for dealer_users auto fill
-        const roleId = this._auth.current_user_value.role_id;
-        const dealerRole = UI_ROLE_DEFINITION.dealer;
-        const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
-
-        if (roleId === dealerRole || roleId === subDealerRole) {
-            this.is_dealer = true;
-            this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
-            this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
-            this.setToDealer(this.dealer_id);
-        }
-
         this.watchCategoryField();
     }
 
@@ -284,10 +274,9 @@ export class CreateAdvertiserComponent implements OnInit {
         forkJoin(requests)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
-                ([generalCategories, getCategories, getDealers, getTimeZones]) => {
+                ([generalCategories, getCategories]) => {
                     const categories = generalCategories;
                     const genCategories = getCategories;
-                    const dealersData = getDealers as { dealers: API_DEALER[]; paging: PAGING };
 
                     this.categories_data = categories.map((category) => {
                         category.categoryName = this._titlecase.transform(category.categoryName);
@@ -300,8 +289,6 @@ export class CreateAdvertiserComponent implements OnInit {
                     });
 
                     this.city_loaded = true;
-                    this.dealers_data = dealersData.dealers;
-                    this.paging = dealersData.paging;
                     this.loading_data = false;
                     this.is_page_ready = true;
                 },
@@ -368,57 +355,8 @@ export class CreateAdvertiserComponent implements OnInit {
             });
     }
 
-    searchData(e) {
-        this.loading_search = true;
-        this.subscription.add(
-            this._dealer.get_search_dealer(e).subscribe((data) => {
-                if (data.paging.entities.length > 0) {
-                    this.dealers_data = data.paging.entities;
-                    this.loading_search = false;
-                } else {
-                    this.dealers_data = [];
-                    // this.getDealers(1);
-                    this.loading_search = false;
-                }
-                this.paging = data.paging;
-            }),
-        );
-    }
-
-    getDealers(e) {
-        if (e > 1) {
-            this.loading_data = true;
-            this.subscription.add(
-                this._dealer.get_dealers_with_page(e, '').subscribe((data) => {
-                    data.dealers.map((i) => {
-                        this.dealers_data.push(i);
-                    });
-                    this.paging = data.paging;
-                    this.loading_data = false;
-                }),
-            );
-        } else {
-            if (this.is_search) {
-                this.loading_search = true;
-            }
-            this.subscription.add(
-                this._dealer.get_dealers_with_page(e, '').subscribe((data) => {
-                    this.dealers_data = data.dealers;
-                    this.paging = data.paging;
-                    this.loading_data = false;
-                    this.loading_search = false;
-                }),
-            );
-        }
-    }
-
-    searchBoxTrigger(event) {
-        this.is_search = event.is_search;
-        this.getDealers(event.page);
-    }
-
     // Convenience getter for easy access to form fields
-    get f() {
+    get formControls() {
         return this.new_advertiser_form.controls;
     }
 
@@ -510,9 +448,7 @@ export class CreateAdvertiserComponent implements OnInit {
                         let city = city_add + ', ' + data[0].state;
                         this.setCity(city);
                     },
-                    (error) => {
-                        console.error(error);
-                    },
+                    (error) => console.error(error),
                 );
         } else {
             let city = this.city_state.filter((canada_city) => canada_city.city === city_add);
@@ -570,18 +506,15 @@ export class CreateAdvertiserComponent implements OnInit {
         }
     }
 
-    setToDealer(e) {
-        this.f.dealerId.setValue(e);
+    public setToDealer(dealersInfo: { id: string; value: string }): void {
+        this.formControls.dealerId.setValue(dealersInfo[0].id);
     }
 
     getCanadaAddress(value) {
         this.canada_selected = value.checked;
         this.clearAddressValue();
-        if (value.checked) {
-            this.getCanadaCities();
-        } else {
-            this.getCities();
-        }
+        if (value.checked) this.getCanadaCities();
+        else this.getCities();
     }
 
     clearAddressValue() {
@@ -594,20 +527,21 @@ export class CreateAdvertiserComponent implements OnInit {
     }
 
     private openConfirmationModal(status: string, message: string, data: any, id: string): void {
-        let dialogRef = this._dialog.open(ConfirmationModalComponent, {
-            width: '500px',
-            height: '350px',
-            data: {
-                status: status,
-                message: message,
-                data: data,
-            },
-        });
-
-        dialogRef.afterClosed().subscribe(() => {
-            if (!id) return;
-            this._router.navigate([`/${this.roleRoute}/advertisers/`, id]);
-        });
+        this._dialog
+            .open(ConfirmationModalComponent, {
+                width: '500px',
+                height: '350px',
+                data: {
+                    status: status,
+                    message: message,
+                    data: data,
+                },
+            })
+            .afterClosed()
+            .subscribe(() => {
+                if (!id) return;
+                this._router.navigate([`/${this.roleRoute}/advertisers/`, id]);
+            });
     }
 
     setToGeneralCategory(event: string) {
@@ -626,11 +560,8 @@ export class CreateAdvertiserComponent implements OnInit {
             .get_category_general(category)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data) => {
-                if (!data.message) {
-                    this.setToGeneralCategory(data.category.generalCategory);
-                } else {
-                    this.setToGeneralCategory('Others');
-                }
+                if (!data.message) this.setToGeneralCategory(data.category.generalCategory);
+                else this.setToGeneralCategory('Others');
             });
     }
 

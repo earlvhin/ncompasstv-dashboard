@@ -146,6 +146,15 @@ export class HostService extends BaseService {
         return this.getRequest(url).map((data) => data.paging.entities);
     }
 
+    getHostAllMinified(
+        dealerId: string,
+        assigned?: boolean,
+    ): Observable<{ hostId: string; name: string; dealerId: string }[]> {
+        const baseUrl = `${this.getters.api_get_hosts_all_minified}?dealerId=${dealerId}`;
+        const url = assigned !== undefined ? `${baseUrl}&assigned=${assigned}` : baseUrl;
+        return this.getRequest(url).map((data) => data.hosts);
+    }
+
     get_host_activity(
         ownerId: string,
         sortColumn: string,

@@ -25,3 +25,8 @@ export interface UI_CITY_AUTOCOMPLETE extends UI_AUTOCOMPLETE {
 export interface UI_CITY_AUTOCOMPLETE_DATA extends UI_AUTOCOMPLETE_DATA {
     country: string;
 }
+
+export interface UI_AUTOCOMPLETE_INITIAL_DATA {
+    id: string;
+    value: string;
+}

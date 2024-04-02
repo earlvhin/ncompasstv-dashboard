@@ -1,10 +1,11 @@
-import { Component, OnInit, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, HostListener } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialog } from '@angular/material/dialog';
 
 import * as moment from 'moment';
 import { Moment } from 'moment';
@@ -17,6 +18,8 @@ import { environment } from 'src/environments/environment';
 import { UI_PLACER_DATA, WORKSHEET } from 'src/app/global/models';
 import { PlacerService, HostService, ExportService } from 'src/app/global/services';
 import { API_PLACER } from '../../models/api_placer.model';
+
+import { Router, NavigationStart } from '@angular/router';
 
 @Component({
     selector: 'app-placer',
@@ -32,6 +35,7 @@ export class PlacerComponent implements OnInit {
         { name: 'Placer Name', key: 'placerName', sortable: true, column: 'PlacerName' },
         { name: 'Host Name', key: 'hostName', sortable: true, column: 'HostName', unassigned: false },
         { name: 'Host ID', key: 'hostId', no_show: true, hidden: true, unassigned: false },
+        { name: 'Unassigned Host', key: 'unassignedHost', no_show: true, hidden: true, color: 'red' },
         { name: 'Dealer', key: 'dealerName', no_show: true, hidden: true, unassigned: false },
         { name: 'Category', key: 'category', no_show: true, hidden: true, unassigned: false },
         { name: 'General Category', key: 'generalCategory', no_show: true, hidden: true, unassigned: false },
@@ -125,6 +129,8 @@ export class PlacerComponent implements OnInit {
     sort_order: string = '';
     total_placer: number = 0;
     unassignedHosts = [];
+    uploadInProgress = false;
+    uploadToFileStackDone = false;
 
     //Export
     tableColumnToExport = [];
@@ -143,8 +149,10 @@ export class PlacerComponent implements OnInit {
     constructor(
         private _placer: PlacerService,
         private _date: DatePipe,
+        private _dialog: MatDialog,
         private _host: HostService,
         private _export: ExportService,
+        private router: Router,
     ) {}
 
     ngOnInit() {
@@ -157,6 +165,31 @@ export class PlacerComponent implements OnInit {
         }
         this.checkForApiToCall();
         this.getHosts();
+        this.subscribeToRouterEvents();
+    }
+
+    subscribeToRouterEvents(): void {
+        this.router.events.subscribe((event) => {
+            if (event instanceof NavigationStart && this.uploadInProgress) {
+                if (!window.confirm('Extracting Data still in progress. Are you sure you want to leave this page?'))
+                    this.router.navigate([], { skipLocationChange: true });
+            }
+        });
+    }
+
+    ngOnDestroy() {
+        window.removeEventListener('beforeunload', this.beforeUnloadHander);
+        window.removeEventListener('click', this.documentClick);
+    }
+
+    @HostListener('window:beforeunload', ['$event'])
+    beforeUnloadHander(event: BeforeUnloadEvent) {
+        if (this.uploadInProgress) event.preventDefault();
+    }
+
+    @HostListener('document:click', ['$event'])
+    documentClick(event: Event) {
+        if (this.uploadInProgress && this.uploadToFileStackDone) return event.preventDefault();
     }
 
     public checkForApiToCall(page?, for_export?) {
@@ -511,14 +544,21 @@ export class PlacerComponent implements OnInit {
             },
             accept: ['.csv'],
             maxFiles: 1,
+            onFileUploadStarted: (response) => {
+                this.uploadInProgress = true;
+            },
             onUploadDone: (response) => {
+                this.uploadToFileStackDone = true;
                 let filename = response.filesUploaded[0].key;
                 let new_filename = filename.split('csv/' + folder + '/');
                 this._placer
                     .upload_placer(new_filename[1])
                     .pipe(takeUntil(this._unsubscribe))
                     .subscribe(
-                        () => this.ngOnInit(),
+                        () => {
+                            this.uploadInProgress = false;
+                            this.ngOnInit();
+                        },
                         (error) => {
                             console.error(error);
                         },
