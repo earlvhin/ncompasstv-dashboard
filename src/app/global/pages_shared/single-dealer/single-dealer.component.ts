@@ -670,6 +670,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         this.show_buttons = !this.show_buttons;
     }
 
+    clickedOutside(): void {
+        this.show_buttons = false;
+    }
+
     getActivityColumnsAndOrder(data: { column: string; order: string }): void {
         this.sort_column_activity = data.column;
         this.sort_order_activity = data.order;

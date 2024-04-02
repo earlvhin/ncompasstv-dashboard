@@ -24,6 +24,7 @@ import { BulkPlaywhereComponent } from './components_shared/playlist_components/
 import { CategoryModalComponent } from './components_shared/category_components/category-modal/category-modal.component';
 import { ChangeTemplateComponent } from './components_shared/screen_components/change-template/change-template.component';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import { ClickOutsideDirective } from './directives/custom-event/clickOutside.directive';
 import { CloneFeedDialogComponent } from './components_shared/data_components/data-table/dialogs/clone-feed-dialog/clone-feed-dialog.component';
 import { CloneFillerDialogComponent } from './components_shared/data_components/data-table/dialogs/clone-filler-dialog/clone-filler-dialog.component';
 import { ClonePlaylistComponent } from './components_shared/playlist_components/clone-playlist/clone-playlist.component';
@@ -483,7 +484,7 @@ const MaterialModules = [
     MatTooltipModule,
 ];
 
-const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
+const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective, ClickOutsideDirective];
 
 @NgModule({
     declarations: [ngComponents, DIRECTIVES],
