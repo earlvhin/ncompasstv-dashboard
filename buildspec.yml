@@ -30,4 +30,5 @@ phases:
             - echo $ENV_NAME
             - echo $DASHBOARD_S3_BUCKET
             - aws s3 sync ./dist/dashboard-material/ s3://$DASHBOARD_S3_BUCKET.n-compass.online --delete
+            - aws cloudfront create-invalidation --distribution-id $CF_DISTRIBUTION_ID --path '/*'
             - echo "DONE!!!"
