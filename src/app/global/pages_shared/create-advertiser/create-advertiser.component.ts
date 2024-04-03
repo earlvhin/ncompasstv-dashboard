@@ -507,7 +507,7 @@ export class CreateAdvertiserComponent implements OnInit {
     }
 
     public setToDealer(dealersInfo: { id: string; value: string }): void {
-        this.formControls.dealerId.setValue(dealersInfo[0].id);
+        this.formControls.dealerId.setValue(dealersInfo.id);
     }
 
     getCanadaAddress(value) {
