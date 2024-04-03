@@ -22,6 +22,7 @@ export class AutocompleteComponent implements OnInit, OnDestroy {
         unselect: false,
     };
     @Input() trigger_input_update = new Observable<UI_AUTOCOMPLETE_DATA | string>();
+
     @Output() value_selected: EventEmitter<{ id: string; value: string }> = new EventEmitter();
     @Output() input_changed = new EventEmitter<string>();
     @Output() no_data_found: EventEmitter<string> = new EventEmitter();
