@@ -70,8 +70,8 @@ export class PlaylistService extends BaseService {
 
     getPlaylistByDealerIdMinified(id: string) {
         const isDealerAdmin = this.currentUser.role_id == UI_ROLE_DEFINITION.dealeradmin;
-
-        console.log(isDealerAdmin);
+        // Temporary fix, passing the exact url for API Host minified call.
+        // @TODO create a playlist minified endpoint for dealeradmin
         return this.getRequest(
             isDealerAdmin
                 ? `${environment.base_uri}${this.getters.api_get_playlist_by_dealer_id_minify}${id}`
