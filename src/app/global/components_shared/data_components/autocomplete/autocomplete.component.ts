@@ -35,7 +35,7 @@ export class AutocompleteComponent implements OnInit, OnDestroy {
     staticVal: boolean = false;
 
     protected ngUnsubscribe = new Subject<void>();
-
+    
     constructor(private _auth: AuthService) {}
 
     ngOnInit() {

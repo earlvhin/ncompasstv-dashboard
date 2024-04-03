@@ -13,8 +13,10 @@ import {
     HOST_S3_FILE,
     PAGING,
     TAG,
+    UI_ROLE_DEFINITION,
 } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
     providedIn: 'root',
@@ -150,9 +152,14 @@ export class HostService extends BaseService {
         dealerId: string,
         assigned?: boolean,
     ): Observable<{ hostId: string; name: string; dealerId: string }[]> {
-        const baseUrl = `${this.getters.api_get_hosts_all_minified}?dealerId=${dealerId}`;
+        // Temporary fix, passing the exact url for API Host minified call.
+        // @TODO create a host minified endpoint for dealeradmin
+        const isDealerAdmin = this.currentUser.role_id == UI_ROLE_DEFINITION.dealeradmin;
+        const baseUrl = isDealerAdmin
+            ? `${environment.base_uri}${this.getters.api_get_hosts_all_minified}?dealerId=${dealerId}`
+            : `${this.getters.api_get_hosts_all_minified}?dealerId=${dealerId}`;
         const url = assigned !== undefined ? `${baseUrl}&assigned=${assigned}` : baseUrl;
-        return this.getRequest(url).map((data) => data.hosts);
+        return this.getRequest(url, null, null, null, null, isDealerAdmin).map((data) => data.hosts);
     }
 
     get_host_activity(
