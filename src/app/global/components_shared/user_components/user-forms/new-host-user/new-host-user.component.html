@@ -18,8 +18,7 @@
         [formGroup]="new_host_form"
         #formDirective="ngForm"
         (ngSubmit)="createNewHost(formDirective)"
-        class="text-left"
-        *ngIf="!host_loading; else loader">
+        class="text-left">
         <div class="row mb-4" *ngIf="!no_host_place; else no_host">
             <ng-container *ngFor="let f of form_fields_view">
                 <div class="{{ f.width }}">
@@ -81,20 +80,12 @@
                     </div>
 
                     <ng-template #autocomplete>
-                        <app-autocomplete-field
-                            (data_value)="hostSelected($event)"
-                            [key_of_value]="'hostId'"
-                            [placeholder]="f.placeholder"
-                            [label]="f.label"
-                            [data_reference]="hosts_data"
-                            [search_keyword]="keywords.search"
-                            [primary_keyword]="keywords.primary"
-                            [paging]="paging"
-                            (call_next_page)="searchBoxTrigger($event)"
-                            [loading_data]="loading_data"
-                            (searched)="searchData($event)"
-                            [loading_search]="loading_search">
-                        </app-autocomplete-field>
+                        <app-host-autocomplete
+                            (host_selected)="setHost($event)"
+                            [initial_value]="selectedHost"
+                            [hosts]="hosts"
+                            [assigned]="false">
+                        </app-host-autocomplete>
                     </ng-template>
                 </div>
             </ng-container>

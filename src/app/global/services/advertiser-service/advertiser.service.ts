@@ -67,6 +67,11 @@ export class AdvertiserService extends BaseService {
         return this.getRequest(url);
     }
 
+    getAdvertisersUnassignedToUserMinified(id: string) {
+        const url = `${this.getters.api_get_advertisers_unassigned_minified}${id}`;
+        return this.getRequest(url);
+    }
+
     export_advertisers(
         dealerId: string,
         filter: string,

@@ -123,7 +123,7 @@ export class LocatorComponentComponent implements OnInit {
     }
 
     private getHostLicenses(id: string) {
-        return this._license.get_licenses_by_host_id(id).pipe(takeUntil(this._unsubscribe));
+        return this._license.getLicensesByHostId(id).pipe(takeUntil(this._unsubscribe));
     }
 
     private initializeForm(): void {

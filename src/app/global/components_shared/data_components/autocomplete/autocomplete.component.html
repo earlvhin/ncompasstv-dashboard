@@ -19,10 +19,10 @@
         </mat-autocomplete>
         <button
             matSuffix
-            *ngIf="field_data.unselect && autoCompleteControl.value"
+            *ngIf="field_data.unselect && autoCompleteControl.value && !field_data.disabled"
             class="selection-remover naked-btn mt-3 bg-danger text-white"
             title="Remove Selection"
-            (click)="removeSelection()">
+            (click)="autoCompleteFocusTrigger($event)">
             <i class="fas fa-times"></i>
         </button>
     </mat-form-field>

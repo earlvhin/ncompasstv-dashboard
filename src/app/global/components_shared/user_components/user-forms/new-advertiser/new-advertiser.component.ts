@@ -5,7 +5,15 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { API_ADVERTISER, API_DEALER, UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
+import {
+    API_ADVERTISER,
+    API_ADVERTISER_MINIFY,
+    API_DEALER,
+    UI_AUTOCOMPLETE,
+    UI_CITY_AUTOCOMPLETE,
+    UI_ROLE_DEFINITION,
+    UI_ROLE_DEFINITION_TEXT,
+} from 'src/app/global/models';
 import { AdvertiserService, AuthService, DealerService, UserService } from 'src/app/global/services';
 import { ConfirmationModalComponent } from '../../../page_components/confirmation-modal/confirmation-modal.component';
 
@@ -15,9 +23,10 @@ import { ConfirmationModalComponent } from '../../../page_components/confirmatio
     styleUrls: ['./new-advertiser.component.scss'],
 })
 export class NewAdvertiserComponent implements OnInit, OnDestroy {
-    advertisers: API_ADVERTISER[] = [];
-    advertisers_data: API_ADVERTISER[] = [];
+    advertisers: { dealerId: string; id: string; value: string }[] = [];
+    advertisersData: API_ADVERTISER_MINIFY[] = [];
     advertiser_name: string;
+    advertiserField = false;
     back_btn: string;
     dealers: API_DEALER[] = [];
     dealers_data: any[] = [];
@@ -35,23 +44,30 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
     is_search_adv = false;
     is_submitted: boolean;
     loading_data = true;
-    loading_data_adv = true;
+    loadingAdvertiserData = true;
     loading_search = false;
     loading_search_adv = false;
     new_advertiser_form: FormGroup;
-    no_advertiser = true;
+    noAdvertiser = false;
     paging: any;
     paging_adv: any;
     password_is_match;
     password_match_msg: string;
     password_is_valid;
     password_is_valid_msg: string;
+    selectedAdvertisers: any;
     search_data = '';
     search_data_adv = '';
-    selected_dealer: any;
+    selectedDealer: any;
     server_error: string;
 
-    protected _unsubscribe = new Subject<void>();
+    advertiserDataField: UI_AUTOCOMPLETE = {
+        label: 'Advertiser',
+        placeholder: 'Ex: Blue Iguana',
+        data: [],
+    };
+
+    protected ngUnsubscribe = new Subject<void>();
 
     constructor(
         private _auth: AuthService,
@@ -69,7 +85,7 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
             this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
             this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
         }
-
+        this.advertiserField = true;
         const roleId = this._auth.current_user_value.role_id;
         const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
 
@@ -92,8 +108,6 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
             re_password: [{ value: '', disabled: true }, Validators.required],
             createdby: [this._auth.current_user_value.user_id],
         });
-
-        if (this.is_dealer) this.dealerSelected(this.dealer_id);
 
         this.getDealers(1);
 
@@ -121,6 +135,7 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
                 placeholder: 'Ex: Blue Iguana',
                 width: 'col-lg-6',
                 is_autocomplete: true,
+                dealer_field: true,
                 is_dealer: this.is_dealer,
             },
             {
@@ -130,8 +145,8 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
                 placeholder: 'Ex: Blue Iguana',
                 width: 'col-lg-6',
                 is_autocomplete: true,
-                advertiser_field: true,
-                disabled: this.no_advertiser,
+                advertiserField: true,
+                disabled: this.noAdvertiser,
             },
             {
                 label: 'Contact Number',
@@ -167,32 +182,40 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
-    get form_controls() {
+    get formControls() {
         return this.new_advertiser_form.controls;
     }
 
-    advertiserSelected(advertiserId: string): void {
-        this.form_controls.advertiserId.setValue(advertiserId);
+    advertiserSelected(advertiserId: { id: string }): void {
+        this.formControls.advertiserId.setValue(advertiserId.id);
     }
 
-    dealerSelected(dealerId: string): void {
-        this.form_controls.dealerId.setValue(dealerId);
-        this.selected_dealer = dealerId;
-        this.no_advertiser = false;
-        this.initial_load_advertiser = true;
-        this.form_controls.advertiserId.setValue(null);
-        this.getAdvertisers(1);
+    dealerSelected(dealer: { id: string; value: string }) {
+        this.advertiserDataField.data = [];
+        this.noAdvertiser = false;
+
+        //Check if dealer is available
+        if (!dealer) {
+            this.selectedDealer = null;
+            return;
+        }
+
+        this.formControls.dealerId.setValue(dealer.id);
+        this.selectedDealer = dealer.id;
+        this.formControls.advertiserId.setValue(null);
+
+        this.getAdvertisersMinified(dealer.id);
     }
 
     createNewAdvertiser(data: FormGroupDirective): void {
         this.is_submitted = true;
         this.form_invalid = true;
 
-        if (!this._user.validate_email(this.form_controls.email.value)) {
+        if (!this._user.validate_email(this.formControls.email.value)) {
             this.openConfirmationModal(
                 'error',
                 'Oops something went wrong, Sorry!',
@@ -205,8 +228,8 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
         }
 
         this._user
-            .create_new_user(this.form_controls.roleid.value, this.new_advertiser_form.value)
-            .pipe(takeUntil(this._unsubscribe))
+            .create_new_user(this.formControls.roleid.value, this.new_advertiser_form.value)
+            .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(
                 () => {
                     this.openConfirmationModal(
@@ -269,20 +292,50 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
     }
 
     private getAdvertisers(page: number): void {
-        this.loading_data_adv = true;
+        this.loadingAdvertiserData = true;
 
         this._advertiser
-            .get_advertisers_unassigned_to_user(this.selected_dealer, page, this.search_data_adv, '', '')
-            .pipe(takeUntil(this._unsubscribe))
+            .get_advertisers_unassigned_to_user(this.selectedDealer, page, this.search_data_adv, '', '')
+            .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe((data) => {
                 this.advertisers = data.advertisers;
-                this.advertisers_data = data.advertisers;
+                this.advertisersData = data.advertisers;
                 this.paging_adv = data.paging;
                 this.is_loading_adv = false;
-                this.loading_data_adv = false;
+                this.loadingAdvertiserData = false;
                 this.loading_search_adv = false;
                 this.initial_load_advertiser = false;
             });
+    }
+
+    private getAdvertisersMinified(dealerId?: string): void {
+        this.advertisers = [];
+        this.loadingAdvertiserData = false;
+
+        this._advertiser
+            .getAdvertisersUnassignedToUserMinified(dealerId)
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(
+                (response: { advertisers: { dealerId: string; id: string; name: string }[]; message: string }) => {
+                    //if no advertiser found
+                    if (!response.advertisers) {
+                        this.noAdvertiser = true;
+                        return;
+                    }
+
+                    this.advertisers = response.advertisers.map(
+                        (a) => {
+                            return {
+                                dealerId: a.dealerId,
+                                id: a.id,
+                                value: a.name,
+                            };
+                        },
+                        (error) => console.error('Error fetching data:', error),
+                    );
+                    this.advertiserDataField.data = this.advertisers;
+                },
+            );
     }
 
     private getDealers(page: number): void {
@@ -292,7 +345,7 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
 
         this._dealer
             .get_dealers_with_advertiser(page, this.search_data)
-            .pipe(takeUntil(this._unsubscribe))
+            .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe((response) => {
                 if ('message' in response) {
                     this.dealers = [];
@@ -312,17 +365,17 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
     }
 
     private initializeSubscriptions(): void {
-        this.new_advertiser_form.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+        this.new_advertiser_form.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
             if (
                 this.new_advertiser_form.valid &&
-                this.form_controls.password.value === this.form_controls.re_password.value
+                this.formControls.password.value === this.formControls.re_password.value
             )
                 this.form_invalid = false;
             else this.form_invalid = true;
         });
 
-        this.form_controls.password.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
-            if (this.form_controls.password.invalid) {
+        this.formControls.password.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
+            if (this.formControls.password.invalid) {
                 this.password_is_valid = false;
                 this.password_is_valid_msg = 'Must be at least 8 characters';
             } else {
@@ -330,18 +383,18 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
                 this.password_is_valid_msg = 'Password is valid';
             }
 
-            if (!this.form_controls.password.value || this.form_controls.password.value.length === 0) {
-                this.form_controls.re_password.setValue(null);
-                this.form_controls.re_password.disable();
+            if (!this.formControls.password.value || this.formControls.password.value.length === 0) {
+                this.formControls.re_password.setValue(null);
+                this.formControls.re_password.disable();
             } else {
-                this.form_controls.re_password.enable();
+                this.formControls.re_password.enable();
             }
         });
 
-        this.form_controls.re_password.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+        this.formControls.re_password.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
             if (
-                this.form_controls.password.value == this.form_controls.re_password.value &&
-                this.form_controls.password.value.length !== 0
+                this.formControls.password.value == this.formControls.re_password.value &&
+                this.formControls.password.value.length !== 0
             ) {
                 this.password_is_match = true;
                 this.password_match_msg = 'Passwords match';

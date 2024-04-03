@@ -4,9 +4,10 @@ import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
 
-import { API_BLOCKLIST_CONTENT, API_SWAP_CONTENT_RESPONSE } from 'src/app/global/models';
+import { API_BLOCKLIST_CONTENT, API_SWAP_CONTENT_RESPONSE, UI_ROLE_DEFINITION } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { BaseService } from '../base.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
     providedIn: 'root',
@@ -65,6 +66,22 @@ export class PlaylistService extends BaseService {
 
     get_playlist_by_dealer_id(id) {
         return this.getRequest(`${this.getters.api_get_playlist_by_dealer_id}${id}`);
+    }
+
+    getPlaylistByDealerIdMinified(id: string) {
+        const isDealerAdmin = this.currentUser.role_id == UI_ROLE_DEFINITION.dealeradmin;
+        // Temporary fix, passing the exact url for API Host minified call.
+        // @TODO create a playlist minified endpoint for dealeradmin
+        return this.getRequest(
+            isDealerAdmin
+                ? `${environment.base_uri}${this.getters.api_get_playlist_by_dealer_id_minify}${id}`
+                : `${this.getters.api_get_playlist_by_dealer_id_minify}${id}`,
+            null,
+            null,
+            null,
+            null,
+            isDealerAdmin,
+        );
     }
 
     get_playlist_by_dealer_id_table(page, id, key) {

@@ -1,5 +1,15 @@
-<app-autocomplete
-    [field_data]="dealers_data"
-    *ngIf="dealers_data && dealers_data.data.length"
-    (value_selected)="setDealer($event)">
-</app-autocomplete>
+<div class="dealer-autocomplete">
+    <div *ngIf="dealers_data; else loader">
+        <app-autocomplete
+            [field_data]="dealers_data"
+            *ngIf="dealers_data && dealers_data.data.length"
+            (value_selected)="setDealer($event)">
+        </app-autocomplete>
+    </div>
+
+    <ng-template #loader>
+        <div class="py-1 white-bg">
+            <app-spinner [diameter]="30"></app-spinner>
+        </div>
+    </ng-template>
+</div>

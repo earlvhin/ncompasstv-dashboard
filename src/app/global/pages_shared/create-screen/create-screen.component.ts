@@ -12,7 +12,7 @@ import {
     API_TEMPLATE,
     API_ZONE,
     PAGING,
-    UI_ROLE_DEFINITION,
+    UI_AUTOCOMPLETE,
 } from 'src/app/global/models';
 import {
     AuthService,
@@ -38,12 +38,14 @@ export class CreateScreenComponent implements OnInit {
     creating_screen = false;
     dealer_name: string;
     dealerId: string;
-    dealers: API_DEALER[];
     dealers_data: API_DEALER[] = [];
+    dealers: API_DEALER[];
+    disabledPublish = false;
     has_no_licenses = false;
     hosts: API_HOST[] = [];
-    hosts_data = [];
     hostId: string;
+    hostsData = [];
+    hostDataByDealerId = [];
     initial_load = false;
     is_dealer = false;
     is_dealer_present: any;
@@ -54,23 +56,27 @@ export class CreateScreenComponent implements OnInit {
     loading_playlist = true;
     loading_search = false;
     loading_search_host = false;
+    newScreenFormView = this._createScreenFields;
     new_screen_form: FormGroup;
-    new_screen_form_view = this._createScreenFields;
     no_chosen_template = true;
     no_playlist_data = false;
-    paging: PAGING;
     paging_host: PAGING;
+    paging: PAGING;
     playlist: any;
     reset_screen = false;
     screen_info_error = true;
     screen_selected: string = null;
     screen_types = [];
+    screenType = [];
+    screenTypeData: UI_AUTOCOMPLETE;
+    searchDisabled = false;
+    selectedDealer: any = [];
     slide_toggle_status = [];
     template$: Observable<API_TEMPLATE[]>;
     templates$: Observable<API_TEMPLATE[]>;
     title = 'Create Screen';
-    zone: string;
     zone_playlist_form: FormGroup;
+    zone: string;
 
     private is_search = false;
     private search_dealer_data = '';
@@ -129,16 +135,17 @@ export class CreateScreenComponent implements OnInit {
         this.getDealers(1);
         this.getTemplates();
 
-        // for dealer_users auto fill
-        const roleId = this._auth.current_user_value.role_id;
-        const dealerRole = UI_ROLE_DEFINITION.dealer;
-        const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
-
-        if (roleId === dealerRole || roleId === subDealerRole) {
+        if (this.isDealer) {
+            this.searchDisabled = true;
             this.is_dealer = true;
             this.dealerId = this._auth.current_user_value.roleInfo.dealerId;
             this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
-            this.setToDealer(this.dealerId);
+            this.setAssignedTo({ id: this.dealerId, value: this.dealer_name });
+
+            this.selectedDealer.push({
+                id: this._auth.current_user_value.roleInfo.dealerId,
+                value: this._auth.current_user_value.roleInfo.businessName,
+            });
         }
     }
 
@@ -421,20 +428,36 @@ export class CreateScreenComponent implements OnInit {
         this.getHostsByDealerId(1);
     }
 
-    setScreenType(type): void {
-        this.screen_selected = type;
+    setScreenType(type: { id: string; value: string }): void {
+        this.screen_selected = type.id;
         this.reset_screen = false;
     }
 
-    setToDealer(id: string): void {
-        this.dealerId = id;
-        this.getPlaylistsByDealerId(id);
+    setAssignedTo(data: { id: string; value: string }): void {
+        if (data === null) {
+            this.disabledPublish = true;
+            return;
+        }
+
+        this.dealerId = data.id;
+        this.getPlaylistsByDealerId(this.dealerId);
         this.getHostsByDealerId(1);
+        this.setToHost(data);
     }
 
-    setToHost(id: string): void {
-        this.hostId = id;
-        this.getLicenseByHostId(id);
+    setToHost(data: { id: string; value: string }) {
+        if (data === null) {
+            this.disabledPublish = true;
+            return;
+        }
+
+        this.hostsData.map((h) => {
+            if (h.hostId === data.id) {
+                this.disabledPublish = false;
+                this.hostId = data.id;
+                this.getLicenseByHostId(data.id);
+            }
+        });
     }
 
     private get new_screen_form_controls() {
@@ -507,7 +530,7 @@ export class CreateScreenComponent implements OnInit {
                     (data) => {
                         data.paging.entities.map((i) => {
                             this.hosts.push(i);
-                            this.hosts_data.push(i);
+                            this.hostsData.push(i);
                         });
 
                         this.paging_host = data.paging;
@@ -518,7 +541,7 @@ export class CreateScreenComponent implements OnInit {
                     },
                 );
         } else {
-            this.hosts_data = [];
+            this.hostsData = [];
             this.initial_load = false;
 
             if (this.is_search || this.search_host_data != '') {
@@ -534,11 +557,13 @@ export class CreateScreenComponent implements OnInit {
                             if (this.search_host_data == '') {
                                 data.paging.entities.map((i) => {
                                     this.hosts.push(i);
-                                    this.hosts_data.push(i);
+                                    this.hostsData.push(i);
+
+                                    this.hostDataByDealerId.push({ id: i.dealerId, value: i.name });
                                 });
                             } else {
                                 if (data.paging.entities.length > 0) {
-                                    this.hosts_data = data.paging.entities;
+                                    this.hostsData = data.paging.entities;
                                     this.loading_search = false;
                                 }
                             }
@@ -546,7 +571,7 @@ export class CreateScreenComponent implements OnInit {
                         } else {
                             this.hostId = '';
                             if (this.search_host_data != '') {
-                                this.hosts_data = [];
+                                this.hostsData = [];
                                 this.loading_search = false;
                             }
                         }
@@ -579,17 +604,16 @@ export class CreateScreenComponent implements OnInit {
 
     private getLicenseByHostId(id: string): void {
         this._license
-            .get_licenses_by_host_id(id)
+            .getLicensesByHostId(id)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (response) => {
-                    if (!Array.isArray(response)) {
+                    if ('message' in response) {
                         this.has_no_licenses = true;
                         return;
                     }
 
-                    const licenses = response as API_LICENSE_PROPS[];
-                    this.licenses = [...licenses];
+                    this.licenses = response;
                 },
                 (error) => {
                     console.error(error);
@@ -602,13 +626,13 @@ export class CreateScreenComponent implements OnInit {
         this.no_playlist_data = false;
 
         this._playlist
-            .get_playlist_by_dealer_id(id)
+            .getPlaylistByDealerIdMinified(id)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (data: any) => {
                     this.playlist = data;
                     this.loading_playlist = false;
-                    if (this.playlist.length <= 0) this.no_playlist_data = true;
+                    if (this.playlist.message === 'No records found!') this.no_playlist_data = true;
                 },
                 (error) => {
                     this.loading_playlist = false;
@@ -622,7 +646,15 @@ export class CreateScreenComponent implements OnInit {
             .get_screens_type()
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
-                (data) => (this.screen_types = data),
+                (data) => {
+                    this.screen_types = data;
+
+                    this.screen_types.map((type) => {
+                        this.screenType.push({ id: type.screenTypeId, value: type.description });
+                    });
+
+                    this.setAutocomplete();
+                },
                 (error) => {
                     console.error(error);
                 },
@@ -702,5 +734,19 @@ export class CreateScreenComponent implements OnInit {
 
     protected get roleRoute() {
         return this._auth.roleRoute;
+    }
+
+    protected get isDealer() {
+        const DEALER_ROLES = ['dealer', 'sub-dealer'];
+        return DEALER_ROLES.includes(this._auth.current_role);
+    }
+
+    public setAutocomplete() {
+        this.screenTypeData = {
+            label: 'Click to Select a Screen Type',
+            placeholder: '',
+            data: this.screenType,
+            unselect: true,
+        };
     }
 }

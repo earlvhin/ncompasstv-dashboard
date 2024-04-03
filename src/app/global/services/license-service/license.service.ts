@@ -10,6 +10,7 @@ import {
     API_FILTERS,
     API_INSTALLATION_STATS,
     API_LICENSE,
+    API_LICENSE_PROPS,
     API_SINGLE_LICENSE_PAGE,
     PAGING,
 } from 'src/app/global/models';
@@ -402,7 +403,7 @@ export class LicenseService extends BaseService {
         return this.getRequest(url);
     }
 
-    get_licenses_by_host_id(id: string) {
+    getLicensesByHostId(id: string): Observable<API_LICENSE_PROPS[] | { message: string }> {
         const base = `${this.getters.api_get_licenses_by_host}`;
         const params = this.setUrlParams({ hostid: id }, false, true);
         const url = `${base}${params}`;

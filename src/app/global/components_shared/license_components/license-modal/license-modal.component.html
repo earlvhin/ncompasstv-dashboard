@@ -1,21 +1,10 @@
 <ng-container *ngIf="!license_generated; else success">
     <div id="generate_license_form" class="generate-license-modal p-4 pb-0 h-100" *ngIf="!is_submitted; else loading">
-        <ng-container *ngIf="dealers.length > 0; else loading">
+        <ng-container>
             <h3 class="mb-1">Generate License</h3>
             <p class="sm-text mb-4">Choose a dealer and set number of license to generate.</p>
-            <app-autocomplete-field
-                [data_reference]="dealers_data"
-                [primary_keyword]="'businessName'"
-                [key_of_value]="'dealerId'"
-                (data_value)="setToDealer($event)"
-                [required]="true"
-                [label]="'Type in a Dealer Business Name'"
-                [paging]="paging"
-                (call_next_page)="searchBoxTrigger($event)"
-                [loading_data]="loading_data"
-                (searched)="searchData($event)"
-                [loading_search]="loading_search">
-            </app-autocomplete-field>
+            <app-dealer-autocomplete (dealer_selected)="setAssignedTo($event)" [active_only]="true">
+            </app-dealer-autocomplete>
             <form [formGroup]="generate_license_form">
                 <mat-form-field class="full-width">
                     <mat-label>Number of Licenses</mat-label>
