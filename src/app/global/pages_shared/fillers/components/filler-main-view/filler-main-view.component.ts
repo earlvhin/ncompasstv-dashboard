@@ -11,6 +11,7 @@ import { DeleteFillerGroupComponent } from '../delete-filler-group/delete-filler
 import { EditFillerGroupComponent } from '../edit-filler-group/edit-filler-group.component';
 import { FillerService, AuthService } from 'src/app/global/services';
 import { FillerGridCategoryViewComponent } from '../filler-grid-category-view/filler-grid-category-view.component';
+import { UserSortModalComponent } from 'src/app/global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
 
 @Component({
     selector: 'app-filler-main-view',
@@ -18,7 +19,23 @@ import { FillerGridCategoryViewComponent } from '../filler-grid-category-view/fi
     styleUrls: ['./filler-main-view.component.scss'],
 })
 export class FillerMainViewComponent implements OnInit {
+    @Input() admin_dealer_view: boolean;
+    @Input() current_user_id: [];
+    @Input() filler_data: [];
+    @Input() filler_group: any;
+    @Input() is_loading: boolean;
+    @Input() no_search_result: boolean;
+    @Input() restricted: boolean;
+
+    @Output() get_fillers: EventEmitter<any> = new EventEmitter();
+    @Output() refresh: EventEmitter<any> = new EventEmitter();
+    @Output() dealer_selected: EventEmitter<any> = new EventEmitter();
+
     active_view: string = 'folder';
+    filters: any = {
+        dealer: '',
+        label_dealer: '',
+    };
     grid_data = [];
     original_grid_data = [];
     initial_loading = true;
@@ -29,16 +46,6 @@ export class FillerMainViewComponent implements OnInit {
     selected_preview_index = '';
     sorting_column: string = '';
     sorting_order: string = '';
-
-    @Input() current_user_id: [];
-    @Input() filler_data: [];
-    @Input() filler_group: any;
-    @Input() is_loading: boolean;
-    @Input() no_search_result: boolean;
-    @Input() restricted: boolean;
-
-    @Output() get_fillers: EventEmitter<any> = new EventEmitter();
-    @Output() refresh: EventEmitter<any> = new EventEmitter();
 
     protected _unsubscribe: Subject<void> = new Subject<void>();
 
@@ -100,6 +107,7 @@ export class FillerMainViewComponent implements OnInit {
         this.sorting_column = '';
         this.sorting_order = '';
         this.get_fillers.emit(1);
+        this.clearLabelDealerFilter();
     }
 
     showAlbumPreview(id, index, filler_name?, index_arr?) {
@@ -292,5 +300,34 @@ export class FillerMainViewComponent implements OnInit {
                     this.removeFromGrid(id);
                 });
             });
+    }
+
+    sortByUser(): void {
+        this._dialog
+            .open(UserSortModalComponent, {
+                width: '500px',
+                data: {
+                    dealerOnly: true,
+                },
+            })
+            .afterClosed()
+            .subscribe((data) => {
+                if (!data) return;
+
+                if (data.dealer.id) {
+                    this.dealer_selected.emit(data.dealer.id);
+                    this.filters.dealer = data.dealer.id;
+                    this.filters.label_dealer = data.dealer.name;
+                }
+            });
+    }
+
+    clearLabelDealerFilter(): void {
+        this.filters = {
+            dealer: '',
+            label_dealer: '',
+        };
+        this.dealer_selected.emit('');
+        if (this.sorting_column != '') this.sortFillerGroup(this.sorting_column, this.sorting_order);
     }
 }

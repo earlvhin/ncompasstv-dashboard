@@ -110,13 +110,7 @@
                     <!-- For Admin's Dealer View -->
                     <mat-tab label="Dealers" *ngIf="is_admin">
                         <div class="min-height-30" *ngIf="tabGroup.selectedIndex === 2">
-                            <div class="row mb-3 mt-3" *ngIf="!dealer_initial_load; else loader">
-                                <div class="col-lg-4">
-                                    <app-dealer-autocomplete
-                                        (dealer_selected)="setAssignedTo($event)"
-                                        [active_only]="false">
-                                    </app-dealer-autocomplete>
-                                </div>
+                            <div class="row mb-3 mt-3">
                                 <div class="col-lg-12">
                                     <app-filler-main-view
                                         [filler_data]="filler_group_cache"
@@ -126,7 +120,9 @@
                                         [current_user_id]="current_user_id"
                                         (get_fillers)="setFilters($event)"
                                         [restricted]="true"
-                                        (refresh)="ngOnInit()"></app-filler-main-view>
+                                        (refresh)="ngOnInit()"
+                                        [admin_dealer_view]="true"
+                                        (dealer_selected)="setDealerSelected($event)"></app-filler-main-view>
                                 </div>
                             </div>
                         </div>

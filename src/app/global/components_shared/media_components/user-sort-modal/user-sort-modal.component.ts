@@ -21,9 +21,9 @@ import { Subject } from 'rxjs';
     styleUrls: ['./user-sort-modal.component.scss'],
 })
 export class UserSortModalComponent implements OnInit {
-    advertiser_id = '';
+    advertiserId = '';
     advertisers: any = [];
-    advertisers_data: UI_AUTOCOMPLETE;
+    advertisersData: UI_AUTOCOMPLETE;
     dealers: API_DEALER[];
     dealerId = '';
     dealerName = '';
@@ -47,17 +47,16 @@ export class UserSortModalComponent implements OnInit {
     hosts_data: Array<any> = [];
     hostDataAvailable = false;
     hostDataSearch = '';
-    initial_load: boolean = false;
-    initial_load_advertiser: boolean = false;
-    isDealer: boolean = false;
+    isDealer = false;
     is_search: boolean = false;
     is_license: boolean = false;
     loading_data: boolean = true;
-    // loading_data_advertiser: boolean = true;
     loading_data_host: boolean = true;
     loading_search: boolean = false;
     loading_search_advertiser: boolean = false;
     loading_search_host: boolean = false;
+    modalTitle: string;
+    modalSubTitle: string;
     no_dealers: boolean;
     paging: any;
     paging_advertiser: any;
@@ -81,13 +80,22 @@ export class UserSortModalComponent implements OnInit {
     ngOnInit() {
         if (this.data && (this.data == 'license' || this.data.view == 'license')) {
             this.is_license = true;
+            this.modalTitle = 'Filter Licenses by User';
+            this.modalSubTitle = 'Select Dealer, Host';
 
             if (this.data.isDealer) {
                 this.isDealer = true;
                 this.dealerId = this.data.dealer_id;
                 this.dealerName = this.data.dealer_name;
                 this.dealerSelected({ id: this.dealerId, value: this.dealerName });
+                this.modalSubTitle = 'Select Host';
             }
+        } else if (this.data.dealerOnly) {
+            this.modalTitle = 'Filter by Dealer';
+            this.modalSubTitle = 'Select Dealer';
+        } else {
+            this.modalTitle = 'Filter Media Files by User';
+            this.modalSubTitle = 'Select Dealer, Host and Advertiser';
         }
 
         const roleId = this._auth.current_user_value.role_id;
@@ -103,7 +111,7 @@ export class UserSortModalComponent implements OnInit {
     }
 
     advertiserSelected(selectedadvertiser: { id: string; value: string }) {
-        this.advertiser_id = selectedadvertiser.id;
+        this.advertiserId = selectedadvertiser.id;
         this.filterData.advertiser.id = selectedadvertiser.id;
         this.filterData.advertiser.name = selectedadvertiser.value;
     }
@@ -116,11 +124,7 @@ export class UserSortModalComponent implements OnInit {
         };
         this.filterData.dealer.id = this.selected_dealer.dealerId;
         this.filterData.dealer.name = this.selected_dealer.businessName;
-
-        this.initial_load = true;
-        this.initial_load_advertiser = true;
         this.getAdvertiserByDealer(1);
-
         this._helper.onDealerSelected$.next(selectedDealer);
     }
 
@@ -158,7 +162,7 @@ export class UserSortModalComponent implements OnInit {
     }
 
     setAdvertiserAutocomplete(): void {
-        this.advertisers_data = {
+        this.advertisersData = {
             label: 'Select Advertiser Name',
             placeholder: 'Ex. NCompassTV Advertiser',
             data: this.advertisers,

@@ -4,7 +4,7 @@
             mat-button
             mat-raised-button
             [matMenuTriggerFor]="orderBy"
-            class="theme-btn mt-2"
+            class="theme-btn mt-2 mr-3"
             [disabled]="filler_data.length == 0">
             <span class="button-label">Sort by :</span>
             <span class="fas fa-sort ml-2"></span>
@@ -33,6 +33,16 @@
                 <i class="fa fa-sort-numeric-desc mr-3" aria-hidden="true"></i>Newest
             </button>
         </mat-menu>
+        <button
+            id="filter-by-user-btn"
+            mat-button
+            mat-raised-button
+            class="theme-btn"
+            *ngIf="admin_dealer_view"
+            (click)="sortByUser()">
+            <span class="button-label">Filter by Dealer</span>
+            <span class="fas fa-user xsm-text"></span>
+        </button>
     </div>
     <ng-template #gridMenu>
         <div class="col-lg-7 pt-2">
@@ -85,10 +95,10 @@
         </app-search-field>
     </div>
 </div>
-<div class="row mb-3 no-gutters p-2 bg-gray" *ngIf="sorting_order != ''">
+<div class="row mb-3 no-gutters p-2 bg-gray" *ngIf="sorting_order != '' || filters.label_dealer">
     <div class="col-lg-11">
         <div class="filter-pills pt-1">
-            <div class="filetype-pill pill">
+            <div class="filetype-pill pill" *ngIf="sorting_order != ''">
                 Sorted by {{ sorting_column }} :
                 <strong *ngIf="sorting_column == 'DateCreated'; else nameFilter">{{
                     sorting_order == 'asc' ? 'Oldest' : 'Newest'
@@ -97,6 +107,11 @@
             <ng-template #nameFilter>
                 <strong>{{ sorting_order == 'asc' ? 'Ascending' : 'Descending' }}</strong>
             </ng-template>
+            <div class="dealer-pill pill" *ngIf="filters.label_dealer">
+                Dealer:
+                <strong>{{ filters.label_dealer }}</strong>
+                <span class="fas fa-times x-btn ml-2" (click)="clearLabelDealerFilter()"></span>
+            </div>
         </div>
     </div>
     <div class="control col-lg-1 text-right">
