@@ -2,6 +2,8 @@ export class UI_DEALER_LICENSE_ZONE {
     licenseId: object;
     index: object;
     licenseKey: object;
+    hostId: object;
+    hostName: object;
     licenseAlias: object;
     mainDuration: object;
     verticalDuration: object;
@@ -22,6 +24,8 @@ export class UI_DEALER_LICENSE_ZONE {
         licenseId: object,
         index: object,
         licenseKey: object,
+        hostId: object,
+        hostName: object,
         licenseAlias: object,
         mainDuration: object,
         verticalDuration: object,
@@ -42,6 +46,8 @@ export class UI_DEALER_LICENSE_ZONE {
         this.licenseId = licenseId;
         this.index = index;
         this.licenseKey = licenseKey;
+        this.hostId = hostId;
+        this.hostName = hostName;
         this.licenseAlias = licenseAlias;
         this.mainDuration = mainDuration;
         this.verticalDuration = verticalDuration;

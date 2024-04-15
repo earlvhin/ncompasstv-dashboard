@@ -1,6 +1,6 @@
 <div id="news-form" class="news-form">
     <form [formGroup]="news_form">
-        <div class="row mb-3">
+        <div class="row mb-2">
             <div *ngFor="let n of news_form_fields" class="{{ n.width }}">
                 <mat-form-field class="full-width mb-2" appearance="fill" *ngIf="!n.viewType">
                     <mat-label>{{ n.label }}</mat-label>
@@ -76,26 +76,26 @@
             <app-spinner [diameter]="35"></app-spinner>
         </div>
 
-        <div class="alert alert-success" *ngIf="is_invalid_url === false && isUrlValidType === true">
-            <p class="sm-text font-weight-bold">Entered RSS URL is a supported format.</p>
-        </div>
+        <ng-container *ngIf="feedUrlHasValue && !is_validating_url">
+            <div class="alert alert-success" *ngIf="!isInvalidUrl && !isDirectTechUrl">
+                <p class="sm-text font-weight-bold">Entered Feed URL is a supported format.</p>
+            </div>
 
-        <ng-container *ngIf="is_invalid_url && !is_validating_url">
-            <ng-container *ngIf="is_invalid_url && isUrlValidType; else isInvalidType">
+            <ng-container *ngIf="!isInvalidUrl && isDirectTechUrl">
                 <div class="alert alert-warning">
                     <p class="sm-text font-weight-bold">Entered Feed URL may be invalid.</p>
                 </div>
             </ng-container>
 
-            <ng-template #isInvalidType>
+            <ng-container *ngIf="isInvalidUrl">
                 <div class="alert alert-danger">
                     <p class="sm-text font-weight-bold">Feed URL Error! Possible reasons may be;</p>
                     <ul class="sm-text font-weight-bold pl-4">
+                        <li>Incorrect Link</li>
                         <li>The feed URL does not start with "http" or "https"</li>
-                        <li>Multiple HTTP protocols. Input one URL only.</li>
                     </ul>
                 </div>
-            </ng-template>
+            </ng-container>
         </ng-container>
 
         <button mat-button mat-raised-button matStepperNext class="theme-btn" (click)="generateNewsFeed()">

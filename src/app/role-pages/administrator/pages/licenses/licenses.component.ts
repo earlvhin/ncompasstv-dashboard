@@ -1245,6 +1245,8 @@ export class LicensesComponent implements OnInit {
         item.dateCreated = this._date.transform(item.dateCreated, 'MMM dd, yyyy');
         item.internetType = this.getInternetType(item.internetType);
         item.internetSpeed = item.internetSpeed == 'Fast' ? 'Good' : item.internetSpeed;
+        item.uploadSpeed = item.uploadSpeed ? this.roundOffNetworkData(parseInt(item.uploadSpeed)) : '';
+        item.downloadSpeed = item.downloadSpeed ? this.roundOffNetworkData(parseInt(item.uploadSpeed)) : '';
         item.isActivated = item.isActivated == 0 ? 'No' : 'Yes';
         const parse_version = item.appVersion ? JSON.parse(item.appVersion) : '';
         item.ui = parse_version && parse_version.ui ? parse_version.ui : '1.0.0';
@@ -1379,6 +1381,18 @@ export class LicensesComponent implements OnInit {
                 },
                 {
                     value: l.timeIn ? this._date.transform(l.timeIn, 'MMM dd y \n h:mm a') : '--',
+                    hidden: false,
+                },
+                {
+                    value: l.uploadSpeed ? this.roundOffNetworkData(l.uploadSpeed) : '--',
+                    label: 'Speed',
+                    customclass: this.getSpeedColorIndicator(l.uploadSpeed),
+                    hidden: false,
+                },
+                {
+                    value: l.downloadSpeed ? this.roundOffNetworkData(l.downloadSpeed) : '--',
+                    label: 'Speed',
+                    customclass: this.getSpeedColorIndicator(l.downloadSpeed),
                     hidden: false,
                 },
                 {
@@ -1539,6 +1553,8 @@ export class LicensesComponent implements OnInit {
                 key: 'contentsUpdated',
             },
             { name: 'Last Disconnect', sortable: true, column: 'TimeIn', key: 'timeIn' },
+            { name: 'Upload Speed', sortable: true, column: 'UploadSpeed', key: 'uploadSpeed' },
+            { name: 'Download Speed', sortable: true, column: 'DownloadSpeed', key: 'downloadSpeed' },
             {
                 name: 'Net Type',
                 sortable: true,
@@ -1552,14 +1568,6 @@ export class LicensesComponent implements OnInit {
                 sortable: true,
                 key: 'internetSpeed',
                 column: 'InternetSpeed',
-                hidden: true,
-                no_show: true,
-            },
-            { name: 'Upload Speed', sortable: true, key: 'upload', hidden: true, no_show: true },
-            {
-                name: 'Download Speed',
-                sortable: true,
-                key: 'download',
                 hidden: true,
                 no_show: true,
             },
@@ -1608,6 +1616,16 @@ export class LicensesComponent implements OnInit {
             { name: 'Zone & Duration', sortable: false, hidden: true, key: 'zone', no_show: true },
             { name: 'Tags', key: 'tagsToString', no_show: true },
         ];
+    }
+
+    private roundOffNetworkData(data: number) {
+        return (Math.round(data * 100) / 100).toFixed(2) + ' MBPS';
+    }
+
+    private getSpeedColorIndicator(speed) {
+        if (speed > 25) return 'text-primary';
+        else if (speed <= 25 && speed > 6) return 'text-orange';
+        else return 'text-danger';
     }
 
     protected get _roleRoute() {

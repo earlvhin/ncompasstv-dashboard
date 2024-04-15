@@ -17,7 +17,7 @@
                             #pickerfrom
                             startView="multi-year"
                             [startAt]="pickerDateFrom"
-                            (monthSelected)="closeDatePickerFrom($event)"></mat-datepicker>
+                            (monthSelected)="closeDatePickerAndFilter($event, true)"></mat-datepicker>
                     </mat-form-field>
                     <mat-form-field class="mx-2">
                         <mat-label>Filter End date</mat-label>
@@ -34,7 +34,7 @@
                             #pickerto
                             startView="multi-year"
                             [startAt]="pickerDateTo"
-                            (monthSelected)="closeDatePickerTo($event)"></mat-datepicker>
+                            (monthSelected)="closeDatePickerAndFilter($event, false)"></mat-datepicker>
                     </mat-form-field>
                 </div>
 

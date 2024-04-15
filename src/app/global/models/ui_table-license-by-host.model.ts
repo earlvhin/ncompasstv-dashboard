@@ -9,6 +9,8 @@ export class UI_TABLE_LICENSE_BY_HOST {
     alias: object;
     contents_updated: object;
     time_in: object;
+    upload_speed: object;
+    download_speed: object;
     connection_type: object;
     connection_speed: object;
     anydesk_id: object;
@@ -29,6 +31,8 @@ export class UI_TABLE_LICENSE_BY_HOST {
         alias: object,
         contents_updated: object,
         time_in: object,
+        upload_speed: object,
+        download_speed: object,
         connection_type: object,
         connection_speed: object,
         anydesk_id: object,
@@ -48,6 +52,8 @@ export class UI_TABLE_LICENSE_BY_HOST {
         this.alias = alias;
         this.contents_updated = contents_updated;
         this.time_in = time_in;
+        this.upload_speed = upload_speed;
+        this.download_speed = download_speed;
         this.connection_type = connection_type;
         this.connection_speed = connection_speed;
         this.anydesk_id = anydesk_id;

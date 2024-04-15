@@ -25,19 +25,20 @@ export class EditFeedComponent implements OnInit, OnDestroy {
     dealers_data: API_DEALER[] = [];
     edit_feed_form: FormGroup;
     filtered_options: Observable<any[]>;
+    feedUrlHasValue = true;
     has_selected_dealer_id = false;
     is_current_user_dealer = this.current_user_role === 'dealer';
     is_current_user_dealer_admin = this.current_user_role === 'dealeradmin';
+    isDirectTechUrl = false;
     is_form_ready = false;
-    is_invalid_url = true;
+    isInvalidUrl = false;
     is_dealer = false;
     is_search = false;
     is_widget_feed = false;
     is_loading_dealers = true;
     isUrlValidType: boolean;
-    is_validating_url = false;
+    isValidatingUrl = false;
     loading_search = false;
-    onEditUrl = false;
     paging: PAGING;
 
     private is_current_user_admin = this.current_user_role === 'administrator';
@@ -162,8 +163,7 @@ export class EditFeedComponent implements OnInit, OnDestroy {
             const decodedScript = decodeURIComponent(embeddedScriptData.value.replace(/\+/g, ' '));
             const embeddedScriptControl = new FormControl(decodedScript, Validators.required);
             this.edit_feed_form.addControl('embeddedScript', embeddedScriptControl);
-            this.onEditUrl = false;
-            this.is_invalid_url = false;
+            this.isInvalidUrl = false;
             this.isUrlValidType = false;
             return;
         }
@@ -171,7 +171,7 @@ export class EditFeedComponent implements OnInit, OnDestroy {
         const feedUrlData = this._dialog_data.feed_url as { link: string };
         const feedUrlControl = new FormControl(feedUrlData.link, Validators.required);
         this.edit_feed_form.addControl('feedUrl', feedUrlControl);
-        this.is_invalid_url = this.urlCheck(feedUrlControl.value);
+        this.isInvalidUrl = this.urlCheck(feedUrlControl.value);
         this.subscribeToFeedUrlChanges();
     }
 
@@ -198,14 +198,20 @@ export class EditFeedComponent implements OnInit, OnDestroy {
         const form = this.edit_feed_form;
         const control = form.get('feedUrl');
 
-        form.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe(async () => {
+        this.isDirectTechUrl = control.value.includes('directech');
+
+        const url = control.value as string;
+        this.isInvalidUrl = !this._feed.check_url(url);
+
+        form.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(async (res) => {
             if (this.is_widget_feed) return;
-            this.is_validating_url = true;
-            this.onEditUrl = true;
+            this.feedUrlHasValue = res.feedUrl ? true : false;
+            this.isDirectTechUrl = res.feedUrl.includes('directech');
+
+            this.isValidatingUrl = true;
             const url = control.value as string;
-            this.is_invalid_url = !(await this._feed.check_url(url));
-            this.isUrlValidType = this._feed.isUrlValid;
-            this.is_validating_url = false;
+            this.isInvalidUrl = !(await this._feed.check_url(url));
+            this.isValidatingUrl = false;
         });
     }
 

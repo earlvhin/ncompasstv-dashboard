@@ -7,6 +7,8 @@ export class UI_DEALER_LICENSE {
     alias: object;
     last_push: object;
     last_online: object;
+    upload_speed: object;
+    download_speed: object;
     display: object;
     anydesk: object;
     anydesk_password: object;
@@ -26,6 +28,8 @@ export class UI_DEALER_LICENSE {
         alias: object,
         last_push: object,
         last_online: object,
+        upload_speed: object,
+        download_speed: object,
         display: object,
         anydesk: object,
         screen: object,
@@ -43,6 +47,8 @@ export class UI_DEALER_LICENSE {
         this.alias = alias;
         this.last_push = last_push;
         this.last_online = last_online;
+        this.upload_speed = upload_speed;
+        this.download_speed = download_speed;
         this.display = display;
         this.anydesk = anydesk;
         this.screen = screen;
@@ -64,6 +70,8 @@ export class UI_LICENSE {
     alias: object;
     last_push: object;
     last_online: object;
+    upload_speed: object;
+    download_speed: object;
     display: object;
     anydesk: object;
     // password: object;
@@ -83,6 +91,8 @@ export class UI_LICENSE {
         alias: object,
         last_push: object,
         last_online: object,
+        upload_speed: object,
+        download_speed: object,
         display: object,
         anydesk: object,
         // password: object,
@@ -101,6 +111,8 @@ export class UI_LICENSE {
         this.alias = alias;
         this.last_push = last_push;
         this.last_online = last_online;
+        this.upload_speed = upload_speed;
+        this.download_speed = download_speed;
         this.display = display;
         this.anydesk = anydesk;
         // this.password = password;
