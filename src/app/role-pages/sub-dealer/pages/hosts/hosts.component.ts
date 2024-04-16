@@ -90,6 +90,8 @@ export class HostsComponent implements OnInit {
         { name: 'Alias', sortable: true, key: 'alias', column: 'Alias' },
         { name: 'Last Push', sortable: true, key: 'contentsUpdated', column: 'ContentsUpdated' },
         { name: 'Last Startup', sortable: true, key: 'timeIn', column: 'TimeIn' },
+        { name: 'Upload Speed', sortable: true, column: 'UploadSpeed', key: 'uploadSpeed' },
+        { name: 'Download Speed', sortable: true, column: 'DownloadSpeed', key: 'downloadSpeed' },
         { name: 'Net Type', sortable: true, key: 'internetType', column: 'InternetType' },
         { name: 'Net Speed', sortable: true, key: 'internetSpeed', column: 'InternetSpeed' },
         { name: 'Anydesk', sortable: true, key: 'anydeskId', column: 'AnydeskId' },
@@ -607,6 +609,18 @@ export class HostsComponent implements OnInit {
                     hidden: false,
                 },
                 {
+                    value: i.uploadSpeed ? this.roundOffNetworkData(parseInt(i.uploadSpeed)) : '--',
+                    label: 'Speed',
+                    customclass: this.getSpeedColorIndicator(i.uploadSpeed),
+                    hidden: false,
+                },
+                {
+                    value: i.downloadSpeed ? this.roundOffNetworkData(parseInt(i.downloadSpeed)) : '--',
+                    label: 'Speed',
+                    customclass: this.getSpeedColorIndicator(i.downloadSpeed),
+                    hidden: false,
+                },
+                {
                     value: i.internetType ? this.getInternetType(i.internetType) : '--',
                     link: null,
                     editable: false,
@@ -628,14 +642,6 @@ export class HostsComponent implements OnInit {
                     anydesk: true,
                     password: i.anydeskId ? this.splitKey(i.licenseId) : '--',
                 },
-                // {
-                // 	value: i.anydeskId ? this.splitKey(i.licenseId) : '--',
-                // 	link: null,
-                // 	editable: false,
-                // 	hidden: false,
-                // 	copy: true,
-                // 	label: 'Anydesk Password'
-                // },
                 {
                     value: i.displayStatus == 1 ? 'ON' : 'N/A',
                     link: null,
@@ -648,12 +654,21 @@ export class HostsComponent implements OnInit {
                     editable: false,
                     hidden: false,
                 },
-                // { value: i.dateCreated ? this._date.transform(i.dateCreated) : '--', link: null, editable: false, hidden: false },
                 { value: i.piStatus, link: null, editable: false, hidden: true },
                 { value: i.playerStatus, link: null, editable: false, hidden: true },
                 { value: i.isActivated, link: null, editable: false, hidden: true },
             );
         });
+    }
+
+    private roundOffNetworkData(data: number) {
+        return (Math.round(data * 100) / 100).toFixed(2) + ' MBPS';
+    }
+
+    private getSpeedColorIndicator(speed) {
+        if (speed > 25) return 'text-primary';
+        else if (speed <= 25 && speed > 6) return 'text-orange';
+        else return 'text-danger';
     }
 
     protected get currentUser() {

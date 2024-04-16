@@ -19,7 +19,6 @@ import { BaseService } from '../base.service';
     providedIn: 'root',
 })
 export class FeedService extends BaseService {
-    isUrlValid = false;
     public logoutConfirmed = false;
     private unsavedChangesSubject = new BehaviorSubject<boolean>(false);
     hasUnsavedChanges$: Observable<boolean> = this.unsavedChangesSubject.asObservable();
@@ -232,34 +231,29 @@ export class FeedService extends BaseService {
         const hasProtocol = () => PROTOCOLS.some((p) => data.startsWith(p));
 
         const hasValidPattern = () => {
+            // Check for spaces in the URL
+            if (data.includes(' ')) return false;
+
             const pattern = new RegExp(
-                '^(https?:\\/\\/)?' +
-                    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
-                    '((\\d{1,3}\\.){3}\\d{1,3}))' +
-                    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
-                    '(\\?[;&a-z\\d%_.~+=-]*)?' +
-                    '(\\#[-a-z\\d_]*)?$',
+                '^(https?://)?((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|((\\d{1,3}\\.){3}\\d{1,3}))(:\\d+)?(/[-a-z\\d%_.~+]*)*' +
+                    '(\\?(?:([^&=]+)=([^&=]*)&?|([^&=]+)=([^&=]*)\\[\\]&?|([^&=]+))*)?($|#[-a-z\\d_]*)?$',
                 'i',
             );
-
             return pattern.test(data);
         };
 
         //Check number of occurence of protocols
-        const countProtocols = () => {
-            let count = 0;
-            PROTOCOLS.forEach((p) => {
-                const regex = new RegExp(p, 'g');
-                const matches = (data.match(regex) || []).length;
-                count += matches;
-            });
-            return count;
-        };
+        // const countProtocols = () => {
+        //     let count = 0;
+        //     PROTOCOLS.forEach((p) => {
+        //         const regex = new RegExp(p, 'g');
+        //         const matches = (data.match(regex) || []).length;
+        //         count += matches;
+        //     });
+        //     return count;
+        // };
 
-        const isValid = hasValidPattern() && hasProtocol() && countProtocols() <= 1;
-        this.isUrlValid = isValid;
-
-        return isValid;
+        return hasValidPattern() && hasProtocol();
     }
 
     /**

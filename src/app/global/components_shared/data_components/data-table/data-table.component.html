@@ -347,7 +347,9 @@
                                                             {{ data[d].value | substring: 10 }}
                                                         </span>
                                                         <ng-template #notcompressed>
-                                                            {{ data[d].value }}
+                                                            <span [class]="data[d].customclass">
+                                                                {{ data[d].value }}
+                                                            </span>
                                                         </ng-template>
                                                     </ng-container>
                                                 </ng-template>

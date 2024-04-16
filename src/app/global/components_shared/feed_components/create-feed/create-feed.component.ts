@@ -21,24 +21,26 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
     dealer_name: string;
     dealers: API_DEALER[];
     dealers_data: Array<any> = [];
+    disabledSubmit = true;
+    feedUrlHasValue = false;
     filtered_options: Observable<any[]>;
     has_loaded_dealers = false;
-    is_invalid_url = false;
+    isInvalidUrl = false;
+    isDirectTechUrl = false;
     has_selected_dealer_id = false;
     has_selected_widget_feed_type = false;
     is_current_user_dealer = this._isDealer;
     is_current_user_admin = this._isAdmin;
     is_current_user_dealer_admin = this._isDealerAdmin;
-    is_creating_feed = false;
+    isCreatingFeed = false;
     is_search = false;
-    isUrlValidType: boolean;
-    is_validating_url = false;
+    isUrlValidType = false;
+    isValidatingUrl = false;
     feed_types = this._feedTypes;
     loading_data = true;
     loading_search = false;
     new_feed_form: FormGroup;
     paging: PAGING;
-    disabled_submit = true;
 
     private selected_dealer_id: string;
     protected _unsubscribe = new Subject<void>();
@@ -98,7 +100,7 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
     }
 
     saveFeed() {
-        this.is_creating_feed = true;
+        this.isCreatingFeed = true;
 
         const feedType = this.new_feed_form.get('feedType').value;
 
@@ -265,13 +267,15 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
     private subscribeToFeedUrlChanges() {
         const control = this.new_feed_form.get('feedUrl');
 
-        control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe(async (response) => {
-            this.is_validating_url = true;
+        control.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(async (response) => {
+            this.feedUrlHasValue = response ? true : false;
+
+            this.isDirectTechUrl = response.includes('directech');
+
+            this.isValidatingUrl = true;
             const url = response as string;
-            this.is_invalid_url = !(await this._feed.check_url(url));
-            this.isUrlValidType = this._feed.isUrlValid;
-            this.is_validating_url = false;
-            this.disabled_submit = false;
+            this.isInvalidUrl = !(await this._feed.check_url(url));
+            this.isValidatingUrl = false;
         });
     }
 

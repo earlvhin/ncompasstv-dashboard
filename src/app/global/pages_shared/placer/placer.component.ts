@@ -20,6 +20,7 @@ import { PlacerService, HostService, ExportService } from 'src/app/global/servic
 import { API_PLACER } from '../../models/api_placer.model';
 
 import { Router, NavigationStart } from '@angular/router';
+import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
     selector: 'app-placer',
@@ -533,14 +534,14 @@ export class PlacerComponent implements OnInit {
     protected get filestackOptions(): filestack.PickerOptions {
         let folder = 'dev';
         if (environment.production) folder = 'prod';
-        else if (environment.base_uri.includes('stg')) folder = 'staging';
+        else if (environment.base_uri.includes('stg')) folder = 'stg';
         else folder = 'dev';
 
         return {
             storeTo: {
                 location: 's3',
-                container: 'n-compass-filestack/csv/' + folder,
-                region: 'us-east-2',
+                container: `n-compass-placer-${folder}`,
+                region: 'us-east-1',
             },
             accept: ['.csv'],
             maxFiles: 1,
@@ -548,34 +549,31 @@ export class PlacerComponent implements OnInit {
                 this.uploadInProgress = true;
             },
             onUploadDone: (response) => {
-                this.uploadToFileStackDone = true;
-                let filename = response.filesUploaded[0].key;
-                let new_filename = filename.split('csv/' + folder + '/');
-                this._placer
-                    .upload_placer(new_filename[1])
-                    .pipe(takeUntil(this._unsubscribe))
-                    .subscribe(
-                        () => {
-                            this.uploadInProgress = false;
-                            this.ngOnInit();
-                        },
-                        (error) => {
-                            console.error(error);
-                        },
-                    );
+                this.showConfirmationDialog(
+                    'success',
+                    'Placer File Uploaded',
+                    'Extraction of data will be done on the background, new data entries will soon be available. Click OK to continue',
+                );
+                this.uploadInProgress = false;
+                this.ngOnInit();
             },
         };
     }
 
-    closeDatePickerFrom(event) {
-        this.pickerDateFrom = event;
-        this.filterTable(moment(event).format('MMMM YYYY'), moment(event).format('MMMM YYYY'), true, false);
-        this.datePickerFrom.close();
+    closeDatePickerAndFilter(event, isFromDate): void {
+        const pickerDate = isFromDate ? 'pickerDateFrom' : 'pickerDateTo';
+        this[pickerDate] = event;
+
+        const formattedDate = moment(event).format('MMMM YYYY');
+        this.filterTable(formattedDate, formattedDate, isFromDate, !isFromDate);
+
+        const datePicker = isFromDate ? 'datePickerFrom' : 'datePickerTo';
+        this[datePicker].close();
     }
 
-    closeDatePickerTo(event) {
-        this.pickerDateTo = event;
-        this.filterTable(moment(event).format('MMMM YYYY'), moment(event).format('MMMM YYYY'), false, true);
-        this.datePickerTo.close();
+    private showConfirmationDialog(status: string, message: string, data: string) {
+        const dialogData = { status, message, data };
+        const dialogConfig = { width: '500px', height: '380px', data: dialogData };
+        this._dialog.open(ConfirmationModalComponent, dialogConfig);
     }
 }

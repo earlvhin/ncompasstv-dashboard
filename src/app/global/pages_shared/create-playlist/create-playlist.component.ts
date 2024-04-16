@@ -124,12 +124,13 @@ export class CreatePlaylistComponent implements OnInit {
         //Autofill for dealer
         if (this.isDealer) {
             this.searchDisabled = true;
-            this.setToDealer(this.dealerid);
 
             this.dealerData.push({
-                id: this._auth.current_user_value.roleInfo.dealerId,
-                value: this._auth.current_user_value.roleInfo.businessName,
+                id: this.dealerid,
+                value: this.dealer_name,
             });
+
+            this.setToDealer(this.dealerid);
         }
     }
 
@@ -415,15 +416,8 @@ export class CreatePlaylistComponent implements OnInit {
     }
 
     setToDealer(dealer) {
-        if (this.isDealer) {
-            this.formControl.dealer.setValue(dealer);
-            this.dealerid = dealer;
-            this.getAllContents();
-            this.getDealers(1);
-        }
-
-        this.formControl.dealer.setValue(dealer.id);
-        this.dealerid = dealer.id;
+        this.formControl.dealer.setValue(this.isDealer ? dealer : dealer.id);
+        this.dealerid = this.isDealer ? dealer : dealer.id;
         this.getAllContents();
     }
 

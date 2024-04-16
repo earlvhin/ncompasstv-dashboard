@@ -61,6 +61,8 @@ export class LicensesComponent implements OnInit {
         { name: 'Alias', sortable: true, key: 'alias', column: 'Alias' },
         { name: 'Last Push', sortable: true, key: 'contentsUpdated', column: 'ContentsUpdated' },
         { name: 'Last Disconnect', sortable: true, key: 'timeIn', column: 'TimeIn' },
+        { name: 'Upload Speed', sortable: true, column: 'UploadSpeed', key: 'uploadSpeed' },
+        { name: 'Download Speed', sortable: true, column: 'DownloadSpeed', key: 'downloadSpeed' },
         { name: 'Net Type', sortable: true, key: 'internetType', column: 'InternetType' },
         { name: 'Net Speed', sortable: true, key: 'internetSpeed', column: 'InternetSpeed' },
         { name: 'Anydesk', sortable: true, key: 'anydeskId', column: 'AnydeskId' },
@@ -292,6 +294,18 @@ export class LicensesComponent implements OnInit {
                     hidden: false,
                 },
                 {
+                    value: i.uploadSpeed ? (Math.round(i.uploadSpeed * 100) / 100).toFixed(2) + ' MBPS' : '--',
+                    label: 'Speed',
+                    customclass: this.getSpeedColorIndicator(i.uploadSpeed),
+                    hidden: false,
+                },
+                {
+                    value: i.downloadSpeed ? (Math.round(i.downloadSpeed * 100) / 100).toFixed(2) + ' MBPS' : '--',
+                    label: 'Speed',
+                    customclass: this.getSpeedColorIndicator(i.downloadSpeed),
+                    hidden: false,
+                },
+                {
                     value: i.internetType ? this.getInternetType(i.internetType) : '--',
                     link: null,
                     editable: false,
@@ -474,6 +488,8 @@ export class LicensesComponent implements OnInit {
         item.isActivated = item.isActivated == 0 ? 'Inactive' : 'Active';
         item.piStatus = item.piStatus == 0 ? 'Offline' : 'Online';
         item.displayStatus = item.displayStatus == 1 ? 'ON' : '';
+        item.uploadSpeed = item.uploadSpeed ? item.uploadSpeed + ' MBPS' : '';
+        item.downloadSpeed = item.downloadSpeed ? item.downloadSpeed + ' MBPS' : '';
         item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';
     }
 
@@ -540,6 +556,12 @@ export class LicensesComponent implements OnInit {
         });
         this.worksheet.columns = header;
         this.getDataForExport(this.currentUser.roleInfo.dealerId);
+    }
+
+    private getSpeedColorIndicator(speed) {
+        if (speed > 25) return 'text-primary';
+        else if (speed <= 25 && speed > 6) return 'text-orange';
+        else return 'text-danger';
     }
 
     protected get currentUser() {

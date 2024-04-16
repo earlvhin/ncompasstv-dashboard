@@ -303,6 +303,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         },
         { name: 'Last Push', sortable: true, column: 'ContentsUpdated', key: 'contentsUpdated' },
         { name: 'Last Disconnect', sortable: true, column: 'TimeOut', key: 'timeIn' },
+        { name: 'Upload Speed', sortable: true, column: 'UploadSpeed', key: 'uploadSpeed' },
+        { name: 'Download Speed', sortable: true, column: 'DownloadSpeed', key: 'downloadSpeed' },
         {
             name: 'Net Type',
             sortable: true,
@@ -358,6 +360,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     license_zone_table_col = [
         { name: '#', sortable: false },
         { name: 'License ID', sortable: false, column: 'LicenseKey' },
+        { name: 'Host Name', sortable: false, column: 'HostName' },
         { name: 'Alias', sortable: false, column: 'LicenseAlias' },
         { name: 'Main', sortable: false, column: 'MainDuration' },
         { name: 'Vertical', sortable: false, column: 'VerticalDuration' },
@@ -592,6 +595,19 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 {
                     value: i.licenseKey,
                     link: '/administrator/licenses/' + i.licenseId,
+                    new_tab_link: true,
+                    editable: false,
+                    hidden: false,
+                },
+                {
+                    value: i.hostId,
+                    link: null,
+                    editable: false,
+                    hidden: true,
+                },
+                {
+                    value: i.hostName ? i.hostName : '--',
+                    link: '/administrator/hosts/' + i.hostId,
                     new_tab_link: true,
                     editable: false,
                     hidden: false,
@@ -1104,6 +1120,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                     is_favorite: l.isFavorite,
                     show_tags: l.tags != null ? true : false,
                     tags: l.tags != null ? l.tags : [],
+                    compressed: true,
                 },
                 {
                     value: l.hostId ? l.hostName : '--',
@@ -1131,6 +1148,18 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 },
                 {
                     value: l.timeOut ? this._date.transform(l.timeOut, 'MMM dd y \n h:mm a') : '--',
+                    hidden: false,
+                },
+                {
+                    value: l.uploadSpeed ? this.roundOffNetworkData(l.uploadSpeed) : '--',
+                    label: 'Speed',
+                    customclass: this.getSpeedColorIndicator(l.uploadSpeed),
+                    hidden: false,
+                },
+                {
+                    value: l.downloadSpeed ? this.roundOffNetworkData(l.downloadSpeed) : '--',
+                    label: 'Speed',
+                    customclass: this.getSpeedColorIndicator(l.downloadSpeed),
                     hidden: false,
                 },
                 {
@@ -1809,6 +1838,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 item.dateCreated = this._date.transform(item.dateCreated, 'MMM dd, yyyy');
                 item.internetType = this.getInternetType(item.internetType);
                 item.internetSpeed = item.internetSpeed == 'Fast' ? 'Good' : item.internetSpeed;
+                item.uploadSpeed = item.uploadSpeed ? this.roundOffNetworkData(parseInt(item.uploadSpeed)) : '';
+                item.downloadSpeed = item.downloadSpeed ? this.roundOffNetworkData(parseInt(item.downloadSpeed)) : '';
                 item.isActivated = item.isActivated == 0 ? 'No' : 'Yes';
                 let parse_version = JSON.parse(item.appVersion);
                 item.ui = parse_version && parse_version.ui ? parse_version.ui : '1.0.0';
@@ -2164,6 +2195,16 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         };
         this.sortList('desc');
         this.getLicensesofDealer(1);
+    }
+
+    private getSpeedColorIndicator(speed) {
+        if (speed > 25) return 'text-primary';
+        else if (speed <= 25 && speed > 6) return 'text-orange';
+        else return 'text-danger';
+    }
+
+    private roundOffNetworkData(data: number) {
+        return (Math.round(data * 100) / 100).toFixed(2) + ' MBPS';
     }
 
     protected get roleRoute() {
