@@ -128,3 +128,9 @@ export class API_DEALER_LICENSE {
         this.licenseKey = licenseKey;
     }
 }
+
+export interface API_PLAYER_BACKGROUND {
+    backgroundImageUrl: string;
+    licenseId: string;
+    licenseKey: string;
+}

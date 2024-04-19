@@ -1414,7 +1414,7 @@
 
                             <ng-container *ngIf="hasAdminPrivileges">
                                 <div class="col-lg-7">
-                                    <mat-card class="p-4">
+                                    <mat-card class="p-4 mb-3">
                                         <h4 class="mb-4">Additional Settings</h4>
 
                                         <ng-container *ngIf="license_data && additional_license_settings_form">
@@ -1485,6 +1485,19 @@
                                             </form>
                                         </ng-container>
                                     </mat-card>
+
+                                    <ng-container *ngIf="isHidden">
+                                        <mat-card class="p-4 mb-2">
+                                            <h4 class="mb-3">Player Background Settings</h4>
+
+                                            <div class="background-settings">
+                                                <app-update-player-background
+                                                    [license_data]="license_data"
+                                                    [pi_status]="pi_status"
+                                                    (refresh_background)="ngOnInit()"></app-update-player-background>
+                                            </div>
+                                        </mat-card>
+                                    </ng-container>
                                 </div>
                             </ng-container>
                         </div>

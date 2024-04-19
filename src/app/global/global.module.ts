@@ -209,6 +209,7 @@ import { ZoneListComponent } from './components_shared/zone_components/zone-list
 import { ZoneExpansionPanelComponent } from './pages_shared/single-template/components/zone-expansion-panel/zone-expansion-panel.component';
 import { LicenseViewComponent } from './components_shared/locator_components/license-view/license-view.component';
 import { UpcomingInstallModalComponent } from './pages_shared/upcoming-install-modal/upcoming-install-modal.component';
+import { UpdatePlayerBackgroundComponent } from './components_shared/update-player-background/update-player-background.component';
 import { UpdateProfilePhotoComponent } from './components_shared/update-profile-photo/update-profile-photo.component';
 import { UserSettingComponent } from './pages_shared/profile-setting/user-setting/user-setting.component';
 import { ViewCardsComponent } from './pages_shared/profile-setting/payment-setting/view-cards/view-cards.component';
@@ -434,6 +435,7 @@ const ngComponents = [
     UnassignHostLicenseComponent,
     UnassignLicenseComponent,
     UpcomingInstallModalComponent,
+    UpdatePlayerBackgroundComponent,
     UpdateProfilePhotoComponent,
     UserSettingComponent,
     UserSortModalComponent,

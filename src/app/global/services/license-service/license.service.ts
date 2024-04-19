@@ -593,6 +593,10 @@ export class LicenseService extends BaseService {
         return this.postRequest(this.updaters.license_notification_settings, data);
     }
 
+    update_player_background(data: { licenseId: string; backgroundImageUrl: string }) {
+        return this.postRequest(this.updaters.api_update_player_background, data);
+    }
+
     delete_screenshots(id) {
         const base = `${this.deleters.api_remove_screenshots}`;
         const params = this.setUrlParams({ licenseId: id }, false, true);
