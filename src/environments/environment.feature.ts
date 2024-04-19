@@ -8,6 +8,7 @@ export const environment = {
     tinymce_key: 'abs5vx4ocdaeymfu6a4m3vg4jjz3rkqcra1v48azbvttca7l',
     timezone_key: 'VDREUWGAR8QT',
     s3: 'https://n-compass-filestack.s3.amazonaws.com/',
+    s3_ncompass_files: 'https://n-compass-files.s3.amazonaws.com/',
     fastedge: 'https://fastedgeapidev.n-compass.online/nc/googleapi/searchplaces?place=',
     auth: API_ENDPOINTS.auth,
     getters: API_ENDPOINTS.getters,

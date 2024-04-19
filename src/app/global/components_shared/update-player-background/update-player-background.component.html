@@ -1,0 +1,40 @@
+<div class="background">
+    <div *ngIf="changeBackgroundHover" class="background__opacity"></div>
+    <div class="alert alert-primary sm-text" role="alert" *ngIf="popUpMessage">
+        Pi status is offline, Background will reflect on the player once the Pi is online
+    </div>
+
+    <div
+        class="background__buttons m-2"
+        (mouseover)="changeBackgroundHover = true"
+        (mouseleave)="changeBackgroundHover = false">
+        <button
+            mat-button
+            mat-raised-button
+            class="theme-btn pi-control sm-text _primary"
+            (click)="onChangeBackground()"
+            title="Upload Image">
+            <span class="fas fa-pencil"></span>
+            <span class="ml-2 button_text_animation">Upload Image</span>
+        </button>
+    </div>
+
+    <div class="background__image">
+        <ng-container *ngIf="!imageConverting; else loader">
+            <img
+                [src]="
+                    license_data.backgroundImageUrl !== null
+                        ? license_data.backgroundImageUrl
+                        : 'https://www.amnesty.ie/wp-content/uploads/2016/05/placeholder_2.jpg'
+                "
+                alt="Background" />
+        </ng-container>
+    </div>
+
+    <ng-template #loader>
+        <div class="h-100 d-flex align-items-center justify-content-center flex-column">
+            <app-spinner class="pb-3"></app-spinner>
+            <p class="md-text">Converting Background in Progress, Please wait ...</p>
+        </div>
+    </ng-template>
+</div>

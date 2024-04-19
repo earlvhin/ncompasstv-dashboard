@@ -350,6 +350,7 @@ export const API_ENDPOINTS = {
         api_update_filler_feed: 'feed/update/fillers',
         api_update_slide_feed: 'feed/update/slides',
         api_update_content: 'content/unassigndealer',
+        api_update_player_background: 'license/UpdateBackgroundImage',
         api_update_unused_content: 'content/updateunusedcontents',
         api_update_user: 'user/update',
         api_update_weather_feed: 'feed/update/weather',
