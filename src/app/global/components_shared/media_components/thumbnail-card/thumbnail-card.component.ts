@@ -9,6 +9,7 @@ import { environment } from 'src/environments/environment';
 import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 import { AuthService, ContentService } from 'src/app/global/services';
 import { Router } from '@angular/router';
+import { ImageViewerComponent } from '../image-viewer/image-viewer.component';
 
 @Component({
     selector: 'app-thumbnail-card',
@@ -118,7 +119,14 @@ export class ThumbnailCardComponent implements OnInit {
     }
 
     routeToMedia(filename) {
+        let new_url = filename.replace(/ /g, '+');
         if (!this.is_filler) this.router.navigate([`/${this.route}`, filename]);
+
+        this._dialog.open(ImageViewerComponent, {
+            data: { url: new_url, filetype: this.filetype, filename: this.filename },
+            width: '768px',
+            panelClass: 'no-padding',
+        });
     }
 
     getMp4Thumbnail() {
