@@ -94,7 +94,7 @@
                                             mat-raised-button
                                             class="theme-btn sm-text mr-2 h-45"
                                             [matMenuTriggerFor]="licenseStatus"
-                                            [disabled]="hide_all_license">
+                                            [disabled]="hideAllLicense || searchingLicenses">
                                             <span class="button-label">License Status</span>
                                             <span class="fas fa-circle xsm-text"></span>
                                         </button>
@@ -169,7 +169,7 @@
                                             mat-raised-button
                                             class="theme-btn sm-text mr-2 h-45"
                                             [matMenuTriggerFor]="timezone"
-                                            [disabled]="hide_all_license">
+                                            [disabled]="hideAllLicense || searchingLicenses">
                                             <span class="button-label">Timezone</span>
                                             <span class="fas fa-sort xsm-text"></span>
                                         </button>
@@ -205,6 +205,7 @@
                                             mat-button
                                             mat-raised-button
                                             class="theme-btn sm-text mr-2 h-45"
+                                            [disabled]="filtered_data_licenses.length == 0 || searchingLicenses"
                                             (click)="sortByUser()">
                                             <span class="button-label">User</span>
                                             <span class="fas fa-user xsm-text"></span>
@@ -216,7 +217,7 @@
                                             class="theme-btn pi-control _cool sm-text mr-2"
                                             [matMenuTriggerFor]="orderSort"
                                             title="Order by License Status"
-                                            [disabled]="hide_all_license">
+                                            [disabled]="hideAllLicense || searchingLicenses">
                                             <span class="fas fa-sort"></span>
                                             <span class="ml-2 button_text_animation">Order by License Status</span>
                                         </button>
@@ -242,7 +243,7 @@
                                             (click)="exportTable('licenses')"
                                             [disabled]="workbook_generation"
                                             title="Export to CSV"
-                                            [disabled]="hide_all_license">
+                                            [disabled]="hideAllLicense">
                                             <span
                                                 class="{{
                                                     !workbook_generation
@@ -267,7 +268,7 @@
                                             [matMenuTriggerFor]="adminOption"
                                             title="Admin Licenses"
                                             *ngIf="!is_dealer_admin"
-                                            [disabled]="hide_all_license">
+                                            [disabled]="hideAllLicense || searchingLicenses">
                                             <span class="fas fa-user-shield"></span>
                                             <span class="ml-2 button_text_animation">Show/Hide Admin License</span>
                                         </button>
@@ -285,7 +286,7 @@
                                             class="theme-btn pi-control sm-text _caution mr-2"
                                             [matMenuTriggerFor]="favoriteOption"
                                             title="Favorite Licenses"
-                                            *ngIf="!hide_all_license && active_view === 'grid'">
+                                            *ngIf="!hideAllLicense && activeView === 'grid'">
                                             <span class="fas fa-star"></span>
                                             <span class="ml-2 button_text_animation">Show/Hide Favorites</span>
                                         </button>
@@ -303,7 +304,7 @@
                                             mat-button
                                             mat-raised-button
                                             class="theme-btn sm-text h-45 mr-2"
-                                            [ngClass]="active_view === 'list' ? 'active-button' : ''"
+                                            [ngClass]="activeView === 'list' ? 'active-button' : ''"
                                             title="List View"
                                             (click)="changeView('list')">
                                             <span class="button-label mr-0"><i class="fas fa-list"></i></span>
@@ -312,7 +313,7 @@
                                             mat-button
                                             mat-raised-button
                                             class="theme-btn sm-text h-45"
-                                            [ngClass]="active_view === 'grid' ? 'active-button' : ''"
+                                            [ngClass]="activeView === 'grid' ? 'active-button' : ''"
                                             title="Grid View"
                                             (click)="changeView('grid')">
                                             <span class="button-label mr-0"><i class="fas fa-th"></i></span>
@@ -394,7 +395,7 @@
                                                             (click)="clearAdminFilter(filters)"></span>
                                                     </div>
                                                 </div>
-                                                <div class="pl-2" *ngIf="!searching_licenses">
+                                                <div class="pl-2" *ngIf="!searchingLicenses">
                                                     <ng-container *ngIf="no_licenses_result == false; else noLicenses">
                                                         <p class="sm-text py-2 m-0">
                                                             <span class="info-text font-weight-bold">{{
@@ -425,7 +426,7 @@
                                                         </p>
                                                     </ng-template>
                                                 </div>
-                                                <div class="pl-2" *ngIf="searching_licenses">
+                                                <div class="pl-2" *ngIf="searchingLicenses">
                                                     <p class="sm-text py-2 m-0 font-weight-regular">
                                                         Searching for licenses, please wait...
                                                     </p>
@@ -451,11 +452,11 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="p-0" *ngIf="!hide_all_license; else showLicensesButton">
+                                <div class="p-0" *ngIf="!hideAllLicense; else showLicensesButton">
                                     <div class="row no-gutters flex p-0" *ngIf="!no_licenses; else no_data">
-                                        <div class="col-lg-12 mr-2 p-0" *ngIf="active_view === 'list'; else grid">
+                                        <div class="col-lg-12 mr-2 p-0" *ngIf="activeView === 'list'; else grid">
                                             <ng-container>
-                                                <div *ngIf="!searching_licenses; else loader">
+                                                <div *ngIf="!searchingLicenses; else loader">
                                                     <mat-card
                                                         *ngIf="
                                                             filtered_data_licenses.length > 0 ||
@@ -485,7 +486,7 @@
                                                 [license_data_for_grid_view]="license_data_for_grid_view"
                                                 (get_favorite)="getFavoriteLicenses($event)"
                                                 [favorites_list]="favorites_list"
-                                                [searching_licenses]="searching_licenses"
+                                                [searching_licenses]="searchingLicenses"
                                                 [no_licenses_result]="no_licenses_result"
                                                 [paging_data_licenses]="paging_data_licenses"
                                                 (show_more)="showMore($event)"
