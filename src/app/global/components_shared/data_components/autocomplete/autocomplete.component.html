@@ -22,7 +22,8 @@
             *ngIf="field_data.unselect && autoCompleteControl.value && !field_data.disabled"
             class="selection-remover naked-btn mt-3 bg-danger text-white"
             title="Remove Selection"
-            (click)="autoCompleteFocusTrigger($event)">
+            (click)="autoCompleteFocusTrigger($event)"
+            type="button">
             <i class="fas fa-times"></i>
         </button>
     </mat-form-field>

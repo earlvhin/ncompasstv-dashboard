@@ -61,12 +61,15 @@ export class MediaLibraryOptionsComponent implements OnInit {
     }
 
     sortByUser() {
-        this._dialog.open(UserSortModalComponent, {
-            width: '500px',
-            data: []
-        }).afterClosed().subscribe((data) => {
-            if (data) this.sortUser.emit(data);
-        });
+        this._dialog
+            .open(UserSortModalComponent, {
+                width: '500px',
+                data: [],
+            })
+            .afterClosed()
+            .subscribe((data) => {
+                if (data) this.sortUser.emit(data);
+            });
     }
 
     filterByFeedId(data) {

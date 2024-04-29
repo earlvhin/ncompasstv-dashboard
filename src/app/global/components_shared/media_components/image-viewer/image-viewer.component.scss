@@ -1,0 +1,47 @@
+.image-viewer {
+    overflow: hidden;
+    width: 768px;
+    height: 432px;
+    background-color: #1e1e1e;
+    position: relative;
+}
+
+.image-viewer__title {
+    background: #111;
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-inline: 14px;
+    width: 100%;
+    color: #fff;
+    padding-block: 6px;
+    opacity: 1;
+    animation: fadeOutTitle 0.8s forwards;
+    z-index: 5;
+
+    &:hover {
+        opacity: 1;
+        animation: none;
+    }
+}
+
+.image-viewer__image,
+.image-viewer__video {
+    display: flex;
+    justify-content: center;
+    height: 432px;
+}
+
+video {
+    width: 100%;
+}
+
+@keyframes fadeOutTitle {
+    80% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.5;
+    }
+}
