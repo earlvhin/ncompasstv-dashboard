@@ -424,7 +424,6 @@ export class PlacerComponent implements OnInit {
             this.filter.date_to = value;
             this.filter.date_to_label = label;
         } else {
-            if (value == 2) this.getUnassignedHosts();
             this.filter.assignee = value;
             this.filter.assignee_label = label;
         }

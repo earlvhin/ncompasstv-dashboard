@@ -1,0 +1,23 @@
+<div class="image-viewer">
+    <div class="image-viewer__title">
+        <h3>{{ filename }}</h3>
+
+        <div class="image-viewer__close">
+            <button class="naked-btn" [mat-dialog-close]="false">
+                <span class="fas fa-times text-danger cursor-pointer"></span>
+            </button>
+        </div>
+    </div>
+    <ng-container *ngIf="filetype | isimage; else isVideo">
+        <div class="image-viewer__image">
+            <img [src]="imageUri" alt="thumbnail" />
+        </div>
+    </ng-container>
+    <ng-template #isVideo>
+        <div class="image-viewer__video">
+            <video controls>
+                <source [src]="imageUri" type="video/mp4" />
+            </video>
+        </div>
+    </ng-template>
+</div>
