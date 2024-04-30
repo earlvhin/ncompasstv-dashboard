@@ -44,7 +44,7 @@ export class LicensesComponent implements OnInit {
     licenses_count: any;
     licenses_status: any;
     search_data_license: string = '';
-    searching_license: boolean = false;
+    searchingLicense = false;
     sort_column: string;
     sort_order: string;
     workbook: any;
@@ -63,7 +63,6 @@ export class LicensesComponent implements OnInit {
     no_favorites: boolean;
     total_favorites: 0;
     total_not_favorites: 0;
-    hide_all_license: boolean = false;
     no_licenses: boolean;
     paging_data_favorites: any;
 
@@ -405,13 +404,9 @@ export class LicensesComponent implements OnInit {
         this.no_licenses_result = false;
         if (this.active_view != 'grid') {
             favorite = '';
-            this.searching_license = true;
+            this.searchingLicense = true;
         } else {
-            if (page > 1) {
-                this.searching_license = false;
-            } else {
-                this.searching_license = true;
-            }
+            this.searchingLicense = page <= 1;
             favorite = false;
         }
 
@@ -467,7 +462,7 @@ export class LicensesComponent implements OnInit {
                     }
 
                     this.initial_load_license = false;
-                    this.searching_license = false;
+                    this.searchingLicense = false;
                 },
                 (error) => {
                     console.error(error);
@@ -475,7 +470,7 @@ export class LicensesComponent implements OnInit {
             )
             .add(() => {
                 this.initial_load_license = false;
-                this.searching_license = false;
+                this.searchingLicense = false;
             });
     }
 
@@ -497,7 +492,6 @@ export class LicensesComponent implements OnInit {
             } else {
                 this.getLicenses(1);
             }
-            this.hide_all_license = false;
         } else {
             this.search_data_license = '';
             if (this.active_view === 'grid') {
@@ -596,7 +590,6 @@ export class LicensesComponent implements OnInit {
                 } else {
                     this.getLicenses(1);
                 }
-                this.hide_all_license = false;
             }
         });
     }

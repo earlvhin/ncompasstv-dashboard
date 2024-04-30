@@ -108,6 +108,7 @@ import { HostAutocompleteComponent } from './components_shared/data_components/h
 import { HostCustomFieldsComponent } from './pages_shared/host-custom-fields/host-custom-fields.component';
 import { HostViewComponent } from './components_shared/locator_components/host-view/host-view.component';
 import { HostsTabComponent } from './components_shared/reports_components/hosts-tab/hosts-tab.component';
+import { ImageViewerComponent } from './components_shared/media_components/image-viewer/image-viewer.component';
 import { ImageSelectionModalComponent } from './components_shared/page_components/image-selection-modal/image-selection-modal.component';
 import { InformationModalComponent } from './components_shared/page_components/information-modal/information-modal.component';
 import { InstallationsTabComponent } from './components_shared/reports_components/installations-tab/installations-tab.component';
@@ -345,6 +346,7 @@ const ngComponents = [
     HostCustomFieldsComponent,
     HostViewComponent,
     HostsTabComponent,
+    ImageViewerComponent,
     ImageSelectionModalComponent,
     InformationModalComponent,
     InstallationsTabComponent,
@@ -522,6 +524,7 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective, ClickOu
         EditTicketComponent,
         FeedMediaComponent,
         FillerGridCategoryViewComponent,
+        ImageViewerComponent,
         ImageSelectionModalComponent,
         InformationModalComponent,
         LicenseModalComponent,

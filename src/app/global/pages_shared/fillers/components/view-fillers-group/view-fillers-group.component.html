@@ -96,7 +96,6 @@
                             <div class="thumbnail-parent-container">
                                 <div class="thumbnail-container" *ngFor="let data of filler_group_contents">
                                     <app-thumbnail-card
-                                        (click)="gotoFileURL(data.url)"
                                         [content_id]="data.fillerContentId"
                                         [disconnect_to_socket]="thumb_no_socket"
                                         [file_url]="data.url"

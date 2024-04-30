@@ -73,7 +73,8 @@
                     mat-button
                     mat-raised-button
                     class="theme-btn sm-text mr-2 h-45"
-                    [matMenuTriggerFor]="licenseStatus">
+                    [matMenuTriggerFor]="licenseStatus"
+                    [disabled]="searchingLicense">
                     <span class="button-label">License Status</span>
                     <span class="fas fa-circle xsm-text"></span>
                 </button>
@@ -127,7 +128,12 @@
                     </button>
                 </mat-menu>
 
-                <button mat-button mat-raised-button class="theme-btn sm-text mr-2 h-45" [matMenuTriggerFor]="timezone">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn sm-text mr-2 h-45"
+                    [matMenuTriggerFor]="timezone"
+                    [disabled]="searchingLicense">
                     <span class="button-label">Timezone</span>
                     <span class="fas fa-sort xsm-text"></span>
                 </button>
@@ -138,7 +144,12 @@
                     <button class="md-text" mat-menu-item (click)="filterTable('zone', 'Pacific')">Pacific</button>
                 </mat-menu>
 
-                <button mat-button mat-raised-button class="theme-btn sm-text mr-2 h-45" (click)="sortByUser()">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn sm-text mr-2 h-45"
+                    (click)="sortByUser()"
+                    [disabled]="searchingLicense">
                     <span class="button-label">User</span>
                     <span class="fas fa-user xsm-text"></span>
                 </button>
@@ -148,7 +159,8 @@
                     mat-raised-button
                     class="theme-btn pi-control _teal sm-text mr-2"
                     (click)="reloadLicense()"
-                    title="Reload">
+                    title="Reload"
+                    [disabled]="searchingLicense">
                     <span class="fas fa-sync-alt"></span>
                     <span class="ml-2 button_text_animation">Reload</span>
                 </button>
@@ -158,7 +170,8 @@
                     mat-raised-button
                     class="theme-btn pi-control _cool sm-text mr-2"
                     [matMenuTriggerFor]="orderSort"
-                    title="Order by License Status">
+                    title="Order by License Status"
+                    [disabled]="searchingLicense">
                     <span class="fas fa-sort"></span>
                     <span class="ml-2 button_text_animation">Order by License Status</span>
                 </button>
@@ -193,7 +206,8 @@
                     class="theme-btn pi-control sm-text _caution mr-2"
                     [matMenuTriggerFor]="favoriteOption"
                     title="Favorite Licenses"
-                    *ngIf="active_view === 'grid'">
+                    *ngIf="active_view === 'grid'"
+                    [disabled]="searchingLicense">
                     <span class="fas fa-star"></span>
                     <span class="ml-2 button_text_animation">Show/Hide Favorites</span>
                 </button>
@@ -261,7 +275,7 @@
                             </div>
                         </div>
 
-                        <div class="pl-2" *ngIf="!searching_license">
+                        <div class="pl-2" *ngIf="!searchingLicense">
                             <div class="sm-text">
                                 Showing
                                 <span class="text-danger">{{ getTotalShownLicenses() }}</span> out of
@@ -281,7 +295,7 @@
 
         <ng-template #showResults>
             <div class="row no-gutters mb-2">
-                <div class="col-lg-12" *ngIf="!searching_license && getTotalLicenses() !== 0">
+                <div class="col-lg-12" *ngIf="!searchingLicense && getTotalLicenses() !== 0">
                     <div class="pl-3 sm-text bg-gray full-width">
                         Showing <span class="text-danger">{{ getTotalShownLicenses() }}</span> out of
                         <span class="text-danger">{{ getTotalLicenses() }}</span> licenses result.
@@ -293,7 +307,7 @@
         <div class="row" *ngIf="!initial_load_license; else loader">
             <div class="col-lg-12" *ngIf="!no_licenses; else no_data">
                 <div *ngIf="active_view === 'list'; else grid">
-                    <div *ngIf="!searching_license; else loader">
+                    <div *ngIf="!searchingLicense; else loader">
                         <mat-card *ngIf="license_filtered_data.length > 0; else nodata">
                             <app-data-table
                                 [table_data]="license_filtered_data"
@@ -317,7 +331,7 @@
                         [license_data_for_grid_view]="license_data_for_grid_view"
                         (get_favorite)="getFavoriteLicenses($event)"
                         [favorites_list]="favorites_list"
-                        [searching_licenses]="searching_license"
+                        [searching_licenses]="searchingLicense"
                         [no_licenses_result]="no_licenses_result"
                         [paging_data_licenses]="paging_data_license"
                         (show_more)="showMore($event)"
