@@ -34,7 +34,6 @@ export class DealerLayoutComponent {
                 { path: 'feeds', label: 'Feeds', icon: 'fas fa-newspaper' },
                 { path: 'fillers', label: 'Fillers Library', icon: 'fas fa-film' },
                 { path: 'playlists', label: 'Playlists', icon: 'fas fa-play' },
-                { path: 'screens', label: 'Screens', icon: 'fas fa-tv' },
                 {
                     path: 'reports',
                     label: 'Reports',
