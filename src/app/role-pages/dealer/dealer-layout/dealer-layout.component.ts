@@ -35,6 +35,12 @@ export class DealerLayoutComponent {
                 { path: 'fillers', label: 'Fillers Library', icon: 'fas fa-film' },
                 { path: 'playlists', label: 'Playlists', icon: 'fas fa-play' },
                 {
+                    path: 'screens',
+                    label: 'Screens',
+                    icon: 'fas fa-tv',
+                    hidden: this._auth.current_user_value.role_id === UI_ROLE_DEFINITION['sub-dealer'],
+                },
+                {
                     path: 'reports',
                     label: 'Reports',
                     icon: 'fas fa-chart-area',

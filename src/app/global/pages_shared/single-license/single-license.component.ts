@@ -53,6 +53,7 @@ import {
     UI_HOST_FILE,
     UI_HOST_SUPPORT,
     API_ACTIVITY,
+    UI_ROLE_DEFINITION,
 } from 'src/app/global/models';
 import { UpdateTvBrandDialogComponent } from './components/update-tv-brand-dialog/update-tv-brand-dialog.component';
 
@@ -130,6 +131,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     isCurrentUserAdmin = this._auth.current_role === 'administrator';
     isCurrentUserDealerAdmin = this._auth.current_role === 'dealeradmin';
     isCurrentUserDealer = this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
+    isCurrentUserSubDealer = this.subDealer;
     is_editing_tv_brand = false;
     is_view_only = this.currentUser.roleInfo.permission === 'V';
     lastStartup = null;
@@ -2671,5 +2673,12 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
     protected get roleRoute() {
         return this._auth.roleRoute;
+    }
+
+    protected get subDealer() {
+        const roleId = this._auth.current_user_value.role_id;
+        const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
+
+        if (roleId === subDealerRole) return true;
     }
 }
