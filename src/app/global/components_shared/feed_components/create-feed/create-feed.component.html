@@ -32,7 +32,6 @@
                     placeholder="Ex: ESPN Latest News Today" />
             </mat-form-field>
 
-            
             <app-dealer-autocomplete
                 *ngIf="hasLoadedDealers; else loadingDealers"
                 (dealer_selected)="dealerSelected($event)"

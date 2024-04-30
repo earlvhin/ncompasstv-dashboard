@@ -67,10 +67,10 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
     
             this.selectedDealer.push({
                 id: this.dealer_id,
-                value: this.dealer_name,
+                value: this.dealer_name
             })
-            return;
 
+            return;
         }
 
         this.getDealers(1);
@@ -81,8 +81,8 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
         this._unsubscribe.complete();
     }
 
-    dealerSelected(data: string) {
-        this.selected_dealer_id = data;
+    dealerSelected(data: { id: string; value: string }) {
+        this.selected_dealer_id = data.id;
         this.has_selected_dealer_id = true;
     }
 
