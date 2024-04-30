@@ -64,13 +64,12 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
             this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
             this.selected_dealer_id = this.dealer_id;
             this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
-    
+
             this.selectedDealer.push({
                 id: this.dealer_id,
                 value: this.dealer_name,
-            })
+            });
             return;
-
         }
 
         this.getDealers(1);
@@ -81,8 +80,8 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
         this._unsubscribe.complete();
     }
 
-    dealerSelected(data: string) {
-        this.selected_dealer_id = data;
+    dealerSelected(data: { id: string; value: string }) {
+        this.selected_dealer_id = data.id;
         this.has_selected_dealer_id = true;
     }
 
