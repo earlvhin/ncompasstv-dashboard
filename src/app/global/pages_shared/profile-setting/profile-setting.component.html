@@ -1,6 +1,6 @@
 <div class="theme-container">
     <div class="row">
-        <div class="offset-lg-8 col-lg-4 pt-5 mb-4 text-right" *ngIf="is_dealer">
+        <div class="offset-lg-8 col-lg-4 pt-5 mb-4 text-right" *ngIf="isDealer">
             <button
                 class="full-width p-0 f-500 md-text bg-primary text-white d-flex hidden-button"
                 (click)="goToUrl()"
@@ -11,7 +11,7 @@
                 </div>
             </button>
         </div>
-        <ng-container *ngIf="is_dealer">
+        <ng-container *ngIf="isDealer">
             <div class="col-lg-2">
                 <mat-card class="h-100 text-center pt-3" *ngIf="!loading_license; else spinner">
                     <a [routerLink]="['/dealer/licenses/']" target="_blank" class="text-primary">
@@ -74,7 +74,7 @@
         <!-- TABS -->
         <div class="col-lg-12 min-height-500 custom-mat-tab mt-5">
             <mat-tab-group dynamicHeight (selectedTabChange)="tabSelected($event)">
-                <mat-tab label="Profile" *ngIf="is_dealer">
+                <mat-tab label="Profile" *ngIf="isDealer">
                     <div class="col-lg-12 p-0">
                         <div class="row">
                             <div class="col-lg-12">
@@ -83,7 +83,7 @@
                         </div>
                     </div>
                 </mat-tab>
-                <mat-tab label="User" *ngIf="!is_dealer">
+                <mat-tab label="User" *ngIf="!isDealer">
                     <div class="col-lg-12 p-0">
                         <div class="row">
                             <div class="col-lg-12">
@@ -92,7 +92,7 @@
                         </div>
                     </div>
                 </mat-tab>
-                <mat-tab label="Billing" *ngIf="is_dealer">
+                <mat-tab label="Billing" *ngIf="isDealer">
                     <div class="col-lg-12 p-0">
                         <div class="row">
                             <div class="col-lg-12">
@@ -110,7 +110,7 @@
                         </div>
                     </div>
                 </mat-tab>
-                <mat-tab label="Payment" *ngIf="is_dealer">
+                <mat-tab label="Payment" *ngIf="isDealer">
                     <div class="col-lg-12 p-0">
                         <div class="row">
                             <div class="col-lg-12">
@@ -122,7 +122,7 @@
                         </div>
                     </div>
                 </mat-tab>
-                <mat-tab label="Transactions" *ngIf="is_dealer">
+                <mat-tab label="Transactions" *ngIf="isDealer">
                     <div class="col-lg-12 p-0">
                         <div class="row">
                             <div class="col-lg-12">
@@ -131,7 +131,7 @@
                         </div>
                     </div>
                 </mat-tab>
-                <mat-tab label="Orders" *ngIf="is_dealer">
+                <mat-tab label="Orders" *ngIf="isDealer">
                     <div class="col-lg-12 p-0">
                         <div class="row">
                             <div class="col-lg-12 mt-4">
@@ -140,7 +140,7 @@
                         </div>
                     </div>
                 </mat-tab>
-                <mat-tab label="Activity" *ngIf="is_dealer">
+                <mat-tab label="Activity">
                     <div class="pt-4">
                         <div class="row">
                             <div class="col-lg-12 ml-2">
@@ -150,21 +150,39 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-lg-12 pt-4" *ngIf="!initial_load_activity; else loadingContents">
-                                <app-single-activity-tab
-                                    *ngIf="activity_data.length; else loadingContents"
-                                    [activity_data]="activity_data"
-                                    [activity_table]="activity_table"
-                                    [paging_data]="paging_data_activity"
-                                    [sort_column]="sort_column_activity"
-                                    [sort_order]="sort_order_activity"
-                                    [currentUser]="current_user"
-                                    [currentRole]="current_role"
-                                    [reload_data]="reload_data"
-                                    (pageChanged)="getDealerActivity($event)"
-                                    (sortColumnEvent)="getActivityColumnsAndOrder($event)">
-                                </app-single-activity-tab>
-                            </div>
+                            <!-- FOR DEALER ACTIVITIES. OLD ACTIVITY LOG -->
+                            <ng-container *ngIf="isDealer; else adminActivity">
+                                <div class="col-lg-12" *ngIf="!initial_load_activity; else loadingContents">
+                                    <app-single-activity-tab
+                                        *ngIf="activity_data.length; else loadingContents"
+                                        [activity_data]="activity_data"
+                                        [activity_table]="activity_table"
+                                        [paging_data]="pagingActivityData"
+                                        [sort_column]="sortActivityColumn"
+                                        [sort_order]="sortActivityOrder"
+                                        [currentUser]="current_user"
+                                        [currentRole]="currentRole"
+                                        [reload_data]="reload_data"
+                                        (pageChanged)="getDealerActivity($event)"
+                                        (sortColumnEvent)="getActivityColumnsAndOrder($event)">
+                                    </app-single-activity-tab>
+                                </div>
+                            </ng-container>
+
+                            <!-- FOR ADMIN. THIS IS THE NEW ACTIVITY LOG -->
+                            <ng-template #adminActivity>
+                                <div class="col-lg-12" *ngIf="activityData && activityData.length; else noDataActivity">
+                                    <app-single-activity-tab
+                                        [activity_data]="activityData"
+                                        [paging_data]="pagingActivityData"
+                                        [sort_column]="sortActivityColumn"
+                                        [sort_order]="sortActivityOrder"
+                                        [activity_table]="userActivityTable"
+                                        (pageChanged)="getUserActivityData($event)"
+                                        (sortColumnEvent)="getActivityColumnsAndOrder($event)">
+                                    </app-single-activity-tab>
+                                </div>
+                            </ng-template>
                         </div>
                     </div>
                 </mat-tab>
@@ -182,12 +200,11 @@
 </ng-template>
 
 <ng-template #noDataActivity>
-    <mat-card>
-        <div class="no-contents d-flex flex-column align-items-center">
-            <div class="mb-4">
-                <i class="text-gray fa-5x far fa-file-alt"></i>
-            </div>
-            <h3 class="text-gray">No Activities Found</h3>
+    <div class="no-screen w-100 vh-50 row align-items-center justify-content-center">
+        <div class="col-lg-12 text-center">
+            <span class="fa fa-tv"></span>
+            <br />
+            <div class="captions mt-3">No Activity to Display</div>
         </div>
-    </mat-card>
+    </div>
 </ng-template>

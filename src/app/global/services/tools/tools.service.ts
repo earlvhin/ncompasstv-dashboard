@@ -37,6 +37,14 @@ export class ToolsService {
         return this._http.post(`${environment.base_uri}${environment.create.api_new_activity}`, data, this.httpOptions);
     }
 
+    updateActivity(activityCode: string, data: any) {
+        return this._http.put(`${environment.base_uri}activity/${activityCode}`, data, this.httpOptions);
+    }
+
+    deleteActivity(activityCode: string) {
+        return this._http.delete(`${environment.base_uri}activity/${activityCode}`, this.httpOptions);
+    }
+
     saveGlobalSettings(data) {
         return this._http.post(
             `${environment.base_uri}${environment.create.api_create_global_settings}`,

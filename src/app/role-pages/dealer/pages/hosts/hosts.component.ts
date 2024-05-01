@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { TitleCasePipe, DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver';
 import * as moment from 'moment';
@@ -15,8 +15,9 @@ import {
     UI_ADVERTISER,
     UI_DEALER_HOSTS,
     UI_TABLE_LICENSE_BY_HOST,
+    UI_DEALER_LICENSE_ZONE,
 } from 'src/app/global/models';
-import { AuthService, AdvertiserService, HostService } from 'src/app/global/services';
+import { AuthService, AdvertiserService, HostService, DealerService } from 'src/app/global/services';
 
 @Component({
     selector: 'app-hosts',
@@ -31,12 +32,18 @@ export class HostsComponent implements OnInit {
     host_filtered_data: any = [];
     hosts_to_export: API_HOST[] = [];
     initial_load: boolean = true;
+    initial_load_zone = true;
     host_count: any;
+    license_zone_data: any = [];
+    license_filtered_data: any = [];
     no_hosts: boolean = false;
     pageSize: number;
     paging_data: any;
+    paging_data_zone: any;
     search_data: string = '';
     searching: boolean = false;
+    search_data_license_zone: string = '';
+    searching_license_zone = false;
     temp_array: any = [];
     workbook: any;
     workbook_generation: boolean = false;
@@ -44,6 +51,7 @@ export class HostsComponent implements OnInit {
     is_searching = false;
     table = { columns: [], data: [] as UI_ADVERTISER[] };
     no_advertisers = false;
+    no_license_zone = false;
     initial_load_advertiser = true;
     hostsPaging: PAGING;
     licensesPaging: PAGING;
@@ -52,6 +60,7 @@ export class HostsComponent implements OnInit {
     search_data_license: string = '';
     sort_column: string = '';
     sort_order: string = '';
+    subscription: Subscription = new Subscription();
     host_sort_column: string = '';
     host_sort_order: string = '';
     adv_sort_column: string = '';
@@ -59,7 +68,7 @@ export class HostsComponent implements OnInit {
     initial_load_license: boolean = true;
     license_data_api: any;
     license_data: UI_TABLE_LICENSE_BY_HOST[] = [];
-    license_filtered_data: any = [];
+    license_zone_filtered_data: any = [];
     no_licenses: boolean = false;
     now: any;
     splitted_text: any;
@@ -89,10 +98,33 @@ export class HostsComponent implements OnInit {
         { name: 'Tags', key: 'tagsToString', no_show: true, hidden: true },
     ];
 
+    license_zone_table_col = [
+        { name: '#', sortable: false },
+        { name: 'License ID', sortable: false, column: 'LicenseKey' },
+        { name: 'Host Name', sortable: false, column: 'HostName' },
+        { name: 'Alias', sortable: false, column: 'LicenseAlias' },
+        { name: 'Main', sortable: false, column: 'MainDuration' },
+        { name: 'Vertical', sortable: false, column: 'VerticalDuration' },
+        { name: 'Banner', sortable: false, column: 'HorizontalDuration' },
+        { name: 'Background', sortable: false, column: 'BackgroundDuration' },
+        { name: 'Assets', sortable: false, column: 'MainTotalAsset' },
+        { name: 'Hosts', sortable: false, column: 'MainTotalHost' },
+        { name: 'Hosts (%)', sortable: false, column: 'MainTotalHostPercentage' },
+        { name: 'Advertisers', sortable: false, column: 'MainTotalAdvertiser' },
+        { name: 'Advertisers (%)', sortable: false, column: 'MainTotalAdvertiserPercentage' },
+        { name: 'Fillers', sortable: false, column: 'MainTotalFiller' },
+        { name: 'Fillers (%)', sortable: false, column: 'MainTotalFillerPercentage' },
+        { name: 'Feeds', sortable: false, column: 'MainTotalFeed' },
+        { name: 'Feeds (%)', sortable: false, column: 'MainTotalFeedPercentage' },
+        { name: 'Other', sortable: false, column: 'MainTotalOther' },
+        { name: 'Other (%)', sortable: false, column: 'MainTotalOtherPercentage' },
+    ];
+
     constructor(
         private _advertiser: AdvertiserService,
         private _auth: AuthService,
         private _change_detector: ChangeDetectorRef,
+        private _dealer: DealerService,
         private _date: DatePipe,
         private _dialog: MatDialog,
         private _host: HostService,
@@ -207,14 +239,17 @@ export class HostsComponent implements OnInit {
 
     onTabChanged(e: { index: number }) {
         switch (e.index) {
-            case 1:
-                // this.pageRequested(1);
-                break;
             case 0:
+                this.getHosts(1);
+                break;
+            case 1:
                 // this.getLicenses(1);
                 break;
+            case 2:
+                // this.getAdvertisers(1);
+                break;   
             case 3:
-                this.getHosts(1);
+                this.getDealerLicenseZone(1);
                 break;
             default:
         }
@@ -346,6 +381,137 @@ export class HostsComponent implements OnInit {
         });
     }
 
+    public getDealerLicenseZone(page) {
+            this.searching_license_zone = true;
+            this.subscription.add(
+                this._dealer.get_dealer_license_zone(this.search_data_license_zone, this.currentUser.roleInfo.dealerId, page).subscribe(
+                    (data) => this.setZoneData(data),
+                    (error) => {
+                        this.initial_load_zone = false;
+                        this.searching_license_zone = false;
+                        this.license_zone_data = [];
+                        this.license_zone_filtered_data = [];
+                    },
+                ),
+            );
+        }
+
+
+    public setZoneData(data) {
+            if (data) {
+                this.initial_load_zone = false;
+                this.searching_license_zone = false;
+                this.paging_data_zone = data;
+                if (data.entities.length > 0) {
+                    const licenseContents = this.license_zone_mapToUI(data.entities);
+                    this.license_zone_data = [...licenseContents];
+                    this.license_zone_filtered_data = [...licenseContents];
+                    this.no_license_zone = false;
+                } else {
+                    if (this.search_data_license_zone == '') this.no_license_zone = true;
+                    this.license_zone_data = [];
+                    this.license_zone_filtered_data = [];
+                }
+            }
+        }
+
+    public license_zone_mapToUI(data: any[]): UI_DEALER_LICENSE_ZONE[] {
+            let count = this.paging_data_zone.pageStart;
+            return data.map((i) => {
+                return new UI_DEALER_LICENSE_ZONE(
+                    { value: i.licenseId, link: null, editable: false, hidden: true },
+                    { value: count++, link: null, editable: false, hidden: false },
+                    {
+                        value: i.licenseKey,
+                        link: `/${this.currentRole}/licenses/` + i.licenseId,
+                        new_tab_link: true,
+                        editable: false,
+                        hidden: false,
+                    },
+                    {
+                        value: i.hostId,
+                        link: null,
+                        editable: false,
+                        hidden: true,
+                    },
+                    {
+                        value: i.hostName ? i.hostName : '--',
+                        link: `/${this.currentRole}/hosts/` + i.hostId,
+                        new_tab_link: true,
+                        editable: false,
+                        hidden: false,
+                    },
+                    {
+                        value: i.licenseAlias ? i.licenseAlias : '--',
+                        link: `/${this.currentRole}/licenses/` + i.licenseId,
+                        new_tab_link: true,
+                        editable: false,
+                        hidden: false,
+                    },
+                    {
+                        value: this.calculateTime(i.mainDuration),
+                        link: null,
+                        editable: false,
+                        hidden: false,
+                    },
+                    {
+                        value: this.calculateTime(i.verticalDuration),
+                        link: null,
+                        editable: false,
+                        hidden: false,
+                    },
+                    {
+                        value: this.calculateTime(i.horizontalDuration),
+                        link: null,
+                        editable: false,
+                        hidden: false,
+                    },
+                    {
+                        value: this.calculateTime(i.backgroundDuration),
+                        link: null,
+                        editable: false,
+                        hidden: false,
+                    },
+                    { value: i.mainTotalAsset, link: null, editable: false, hidden: false },
+                    { value: i.mainTotalHost, link: null, editable: false, hidden: false },
+                    { value: i.mainTotalHostPercentage, link: null, editable: false, hidden: false },
+                    { value: i.mainTotalAdvertiser, link: null, editable: false, hidden: false },
+                    {
+                        value: i.mainTotalAdvertiserPercentage,
+                        link: null,
+                        editable: false,
+                        hidden: false,
+                    },
+                    { value: i.mainTotalFiller, link: null, editable: false, hidden: false },
+                    { value: i.mainTotalFillerPercentage, link: null, editable: false, hidden: false },
+                    { value: i.mainTotalFeed, link: null, editable: false, hidden: false },
+                    { value: i.mainTotalFeedPercentage, link: null, editable: false, hidden: false },
+                    { value: i.mainTotalOther, link: null, editable: false, hidden: false },
+                    { value: i.mainTotalOtherPercentage, link: null, editable: false, hidden: false },
+                );
+            });
+        }
+
+    public licenseZoneFilterData(e): void {
+            if (e) {
+                this.search_data_license_zone = e;
+                this.getDealerLicenseZone(1);
+            } else {
+                this.search_data_license_zone = '';
+                this.getDealerLicenseZone(1);
+            }
+        }
+
+    private calculateTime(duration: number): string {
+            if (duration < 60) return `${Math.round(duration)}s`;
+            if (duration === 60) return '1m';
+    
+            const minutes = Math.floor(duration / 60);
+            const seconds = Math.round(duration - minutes * 60);
+    
+            return `${minutes}m ${seconds}s`;
+        }
+
     protected get currentUser() {
         return this._auth.current_user_value;
     }
@@ -353,4 +519,6 @@ export class HostsComponent implements OnInit {
     protected get currentRole() {
         return this._auth.current_role;
     }
+
+
 }

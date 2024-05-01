@@ -7,6 +7,7 @@ import * as moment from 'moment';
 import { ToolsService } from '../../services/tools/tools.service';
 import { GLOBAL_SETTINGS } from '../../models/api_global_settings.model';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-tools',
@@ -31,6 +32,7 @@ export class ToolsComponent implements OnInit {
         private _dialog: MatDialog,
         private _form: FormBuilder,
         private _tool: ToolsService,
+        private _snackBar: MatSnackBar,
     ) {
         this._socket = io(environment.socket_server, {
             transports: ['websocket'],
@@ -180,12 +182,86 @@ export class ToolsComponent implements OnInit {
         });
     }
 
-    setGlobalSettings() {}
-
     saveActivity() {
-        this._tool.createActivity(this.activity_code_form.value).subscribe((data) => {
-            this.activity_code_form.reset();
-            this.getActivityCode();
-        });
+        this._tool.createActivity(this.activity_code_form.value).subscribe(
+            (data) => {
+                this.activity_code_form.reset();
+                this.activity_code_form.clearValidators();
+                this.activity_code_form.updateValueAndValidity();
+
+                this.getActivityCode(); // Refresh the activity list
+                this._snackBar.open('Activity created successfully', 'Close', {
+                    duration: 8000,
+                    panelClass: ['snackbar-success', 'custom-close-button'],
+                });
+            },
+            (error) => {
+                console.error('Error creating activity:', error);
+                this._snackBar.open('Error creating activity', 'Close', {
+                    duration: 8000,
+                    panelClass: ['snackbar-error', 'custom-close-button'],
+                });
+            },
+        );
+    }
+
+    startEditing(activity: any) {
+        activity.editing = true;
+        activity.newDescription = activity.activityDescription;
+    }
+
+    saveDescription(activity: any) {
+        activity.activityDescription = activity.newDescription;
+        activity.editing = false;
+
+        this._tool
+            .updateActivity(activity.activityCode, { activityDescription: activity.activityDescription })
+            .subscribe(
+                () => {
+                    this._snackBar.open('Activity description updated successfully', 'Close', {
+                        duration: 8000,
+                        panelClass: ['snackbar-success', 'custom-close-button'],
+                    });
+                },
+                (error) => {
+                    console.error('Error updating activity description:', error);
+                    this._snackBar.open('Error updating activity description', 'Close', {
+                        duration: 8000,
+                        panelClass: ['snackbar-error', 'custom-close-button'],
+                    });
+                },
+            );
+    }
+
+    cancelEditing(activity: any) {
+        activity.editing = false;
+    }
+
+    confirmDelete(activity: any) {
+        const activityCode = activity.activityCode;
+        const confirmDelete = confirm(`Are you sure you want to delete ${activityCode}?`);
+        if (confirmDelete) {
+            this.deleteActivity(activity);
+        }
+    }
+
+    deleteActivity(activity: any) {
+        const activityCode = activity.activityCode;
+        this._tool.deleteActivity(activityCode).subscribe(
+            () => {
+                this.getActivityCode(); // Refresh activity list after deletion
+                this._snackBar.open(`${activityCode} activity deleted successfully`, 'Close', {
+                    duration: 8000,
+                    panelClass: ['snackbar-error', 'custom-close-button'], // Change to success panel class
+                });
+            },
+            (error) => {
+                console.error('Error deleting activity:', error);
+                this._snackBar.open('Error deleting activity', 'Close', {
+                    duration: 8000,
+                    panelClass: ['snackbar-error', 'custom-close-button'],
+                });
+            },
+        );
     }
 }
