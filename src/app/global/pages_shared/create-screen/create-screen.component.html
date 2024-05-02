@@ -211,7 +211,7 @@
                                     </ng-container>
                                 </div>
 
-                                <div class="mb-3">
+                                <div class="mb-2">
                                     <ng-container *ngIf="hostId && is_host_present; else no_host">
                                         <mat-form-field class="full-width mt-3">
                                             <mat-label class="text-dark">You are creating a screen for:</mat-label>
@@ -225,7 +225,7 @@
                                     <ng-template #no_host>
                                         <app-host-autocomplete
                                             [dealer_id]="dealerId"
-                                            (host_selected)="setToHost($event)"
+                                            (host_selected)="setToDealerOrHost($event)"
                                             *ngIf="hosts.length > 0; else add_host">
                                         </app-host-autocomplete>
                                     </ng-template>
@@ -247,69 +247,88 @@
                                     </ng-template>
                                 </div>
 
-                                <ng-container
-                                    *ngIf="licenses && licenses.length > 0 && !disabledPublish; else no_license">
-                                    <div class="text-left" *ngIf="!has_no_licenses; else no_license">
-                                        <div class="licenses-heading">
-                                            <h4 class="font-weight-bold mb-3">Assign to Licenses</h4>
-                                            <button
-                                                mat-button
-                                                mat-raised-button
-                                                class="col-lg-6 theme-btn flex-even mx-1"
-                                                (click)="onBulkSetInstallDate()"
-                                                [disabled]="!assigned_licenses || assigned_licenses.length <= 0">
-                                                Bulk Set Installation Date
-                                                <span class="fas fa-calendar ml-2 sm-text"></span>
-                                            </button>
-                                        </div>
-                                        <div *ngFor="let l of licenses; let i = index">
-                                            <ng-container *ngIf="l.screenId != null; else unused_license">
-                                                <mat-slide-toggle
-                                                    class="mb-3"
-                                                    (change)="licenseSelected(slide_toggle_status[i], l.licenseId, i)"
-                                                    [checked]="true"
-                                                    [disabled]="true">
-                                                    <span class="md-text">{{ l.licenseKey }}</span>
-                                                </mat-slide-toggle>
-                                            </ng-container>
+                                <ng-container *ngIf="!gettingHostLicenses; else spinner">
+                                    <ng-container
+                                        *ngIf="licenses && licenses.length > 0 && !disabledPublish; else no_license">
+                                        <div class="text-left" *ngIf="!has_no_licenses; else no_license">
+                                            <div class="licenses-heading">
+                                                <h4 class="font-weight-bold mb-3">Assign to Licenses</h4>
+                                                <button
+                                                    mat-button
+                                                    mat-raised-button
+                                                    class="col-lg-6 theme-btn flex-even mx-1"
+                                                    (click)="onBulkSetInstallDate()"
+                                                    [disabled]="!assigned_licenses || assigned_licenses.length <= 0">
+                                                    Bulk Set Installation Date
+                                                    <span class="fas fa-calendar ml-2 sm-text"></span>
+                                                </button>
+                                            </div>
+                                            <div *ngFor="let l of licenses; let i = index">
+                                                <ng-container *ngIf="l.screenId != null; else unused_license">
+                                                    <mat-slide-toggle
+                                                        class="mb-3"
+                                                        (change)="
+                                                            licenseSelected(slide_toggle_status[i], l.licenseId, i)
+                                                        "
+                                                        [checked]="true"
+                                                        [disabled]="true">
+                                                        <span class="md-text">{{ l.licenseKey }}</span>
+                                                    </mat-slide-toggle>
+                                                </ng-container>
 
-                                            <ng-template #unused_license>
-                                                <div class="row">
-                                                    <div class="col-lg-7">
-                                                        <mat-slide-toggle
-                                                            class="mb-3"
-                                                            (change)="
-                                                                licenseSelected(slide_toggle_status[i], l.licenseId, i)
-                                                            "
-                                                            [(ngModel)]="slide_toggle_status[i]">
-                                                            <span class="md-text">{{ l.licenseKey }}</span>
-                                                        </mat-slide-toggle>
+                                                <ng-template #unused_license>
+                                                    <div class="row">
+                                                        <div class="col-lg-7">
+                                                            <mat-slide-toggle
+                                                                class="mb-3"
+                                                                (change)="
+                                                                    licenseSelected(
+                                                                        slide_toggle_status[i],
+                                                                        l.licenseId,
+                                                                        i
+                                                                    )
+                                                                "
+                                                                [(ngModel)]="slide_toggle_status[i]">
+                                                                <span class="md-text">{{ l.licenseKey }}</span>
+                                                            </mat-slide-toggle>
+                                                        </div>
+                                                        <div
+                                                            class="col-lg-5 install-date"
+                                                            [ngClass]="{
+                                                                disabled:
+                                                                    !assigned_licenses ||
+                                                                    !assigned_licenses.includes(l.licenseId)
+                                                            }">
+                                                            <span
+                                                                >Installed:
+                                                                {{
+                                                                    l.installDate
+                                                                        ? (l.installDate | date: 'MMM dd, y')
+                                                                        : '--'
+                                                                }}</span
+                                                            >
+                                                            <mat-icon
+                                                                (click)="
+                                                                    onSetInstallDate(l.licenseId, l.installDate, i)
+                                                                "
+                                                                >calendar_today</mat-icon
+                                                            >
+                                                        </div>
                                                     </div>
-                                                    <div
-                                                        class="col-lg-5 install-date"
-                                                        [ngClass]="{
-                                                            disabled:
-                                                                !assigned_licenses ||
-                                                                !assigned_licenses.includes(l.licenseId)
-                                                        }">
-                                                        <span
-                                                            >Installed:
-                                                            {{
-                                                                l.installDate
-                                                                    ? (l.installDate | date: 'MMM dd, y')
-                                                                    : '--'
-                                                            }}</span
-                                                        >
-                                                        <mat-icon
-                                                            (click)="onSetInstallDate(l.licenseId, l.installDate, i)"
-                                                            >calendar_today</mat-icon
-                                                        >
-                                                    </div>
-                                                </div>
-                                            </ng-template>
+                                                </ng-template>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </ng-container>
+
+                                <ng-template #spinner>
+                                    <div class="py-3 d-flex align-items-center justify-content-center">
+                                        <div>
+                                            <app-spinner [diameter]="60"></app-spinner>
+                                            <h4 class="mt-2">Getting Host Licenses</h4>
                                         </div>
                                     </div>
-                                </ng-container>
+                                </ng-template>
 
                                 <ng-template #no_license>
                                     <h4 class="font-weight-bold">No License Available</h4>

@@ -25,6 +25,7 @@ export interface API_FILTERS {
     installDate?: string;
     isActivated?: any;
     online?: any;
+    ownerId?: string;
     pageSize?: any;
     pending?: any;
     piStatus?: string;

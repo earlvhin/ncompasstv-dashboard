@@ -11,6 +11,7 @@ import {
     API_USER_ADVERTISER,
     API_USER_DATA,
     API_USER_HOST,
+    PAGING,
     UI_ROLE_DEFINITION,
 } from 'src/app/global/models';
 import { environment } from 'src/environments/environment';
@@ -101,6 +102,42 @@ export class UserService extends BaseService {
     get_user_alldata_by_id(userId: string, isAdmin: boolean) {
         const url = `${this.getters.api_get_user_by_id}?user_id=${userId}&isAdmin=${isAdmin}`;
         return this.getRequest(url).map((data) => data);
+    }
+
+    getActivitiesByOwnerId(
+        ownerId: string,
+        sortColumn: string,
+        sortOrder: string,
+        page: number,
+    ): Observable<{ paging: PAGING; message?: string }> {
+        const base = `${this.getters.api_get_activities_by_owner_id}`;
+        const params = this.setUrlParams({ ownerId, sortColumn, sortOrder, page }, false, true);
+        const url = `${base}${params}`;
+        return this.getRequest(url);
+    }
+
+    getActivitiesByOwnerIdDealerAdmin(
+        ownerId: string,
+        sortColumn: string,
+        sortOrder: string,
+        page: number,
+    ): Observable<{ paging: PAGING; message?: string }> {
+        const base = `${this.getters.api_get_activities_by_owner_id_dealeradmin}`;
+        const params = this.setUrlParams({ ownerId, sortColumn, sortOrder, page }, false, true);
+        const url = `${base}${params}`;
+        return this.getRequest(url);
+    }
+
+    getActivitiesByCurrentUser(
+        sortColumn: string,
+        sortOrder: string,
+        page: number,
+        pageSize: number,
+    ): Observable<{ paging: PAGING; message?: string }> {
+        const base = `${this.getters.api_get_activities_by_current_user}`;
+        const params = this.setUrlParams({ sortColumn, sortOrder, page, pageSize }, false, true);
+        const url = `${base}${params}`;
+        return this.getRequest(url);
     }
 
     create_new_user(role: string, data: any) {

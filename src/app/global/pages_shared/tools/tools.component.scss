@@ -33,3 +33,53 @@
         cursor: not-allowed;
     }
 }
+
+.mat-table-container {
+    overflow-x: auto;
+}
+
+.mat-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.mat-header-cell,
+.mat-cell {
+    padding: 8px 16px;
+    text-align: left;
+}
+
+.mat-header-row {
+    background-color: #f0f0f0;
+}
+
+.mat-row:nth-child(even) {
+    background-color: #fafafa;
+}
+
+.mat-row:hover {
+    background-color: #f5f5f5;
+
+    .description-input {
+        background-color: #f5f5f5;
+    }
+}
+
+.mat-cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.btn-action {
+    border: none;
+    background: none;
+    font-size: 12px;
+}
+
+.description-input,
+.description-input:focus,
+.description-input:active {
+    border: none !important;
+    outline: none;
+}

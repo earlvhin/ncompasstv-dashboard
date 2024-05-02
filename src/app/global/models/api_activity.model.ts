@@ -31,3 +31,43 @@ export class API_ACTIVITY {
         this.licenseId = licenseId;
     }
 }
+
+export class USER_ACTIVITY {
+    index: any;
+    activityCode: any;
+    activityLogId: any;
+    activityDescription: any;
+    dateCreated: any;
+    initiatedBy: any;
+    initiatedById: any;
+    owner: any;
+    ownerId: any;
+    targetId: any;
+    targetName: any;
+
+    constructor(
+        index: any,
+        activityCode: any,
+        activityLogId: any,
+        activityDescription: any,
+        dateCreated: any,
+        initiatedBy: any,
+        initiatedById: any,
+        owner: any,
+        ownerId: any,
+        targetId: any,
+        targetName: any,
+    ) {
+        this.index = index;
+        this.activityCode = activityCode;
+        this.activityLogId = activityLogId;
+        this.activityDescription = activityDescription;
+        this.dateCreated = dateCreated;
+        this.initiatedBy = initiatedBy;
+        this.initiatedById = initiatedById;
+        this.owner = owner;
+        this.ownerId = ownerId;
+        this.targetId = targetId;
+        this.targetName = targetName;
+    }
+}

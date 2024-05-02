@@ -180,7 +180,7 @@
                                 <p class="sm-text mb-4">
                                     Global settings are configuration fetched and applied by all players.
                                 </p>
-                                <form [formGroup]="global_settings_form" (ngSubmit)="setGlobalSettings()">
+                                <form [formGroup]="global_settings_form">
                                     <mat-form-field class="mb-3 full-width" appearance="fill">
                                         <mat-label>Vistar Network ID</mat-label>
                                         <input
@@ -252,27 +252,68 @@
                         </div>
                         <div class="col-lg-7">
                             <mat-card class="mt-5 p-4">
-                                <div class="row border-bottom">
-                                    <div class="col-lg-1 border-right py-2">
-                                        <span class="sm-text">#</span>
-                                    </div>
-                                    <div class="col-lg-3 border-right py-2">
-                                        <span class="sm-text">Activity Code</span>
-                                    </div>
-                                    <div class="col-lg-8 py-2">
-                                        <span class="sm-text">Activity Description</span>
-                                    </div>
-                                </div>
-                                <div class="row border-bottom" *ngFor="let a of activities; let i = index">
-                                    <div class="col-lg-1 border-right py-3">
-                                        {{ i + 1 }}
-                                    </div>
-                                    <div class="col-lg-3 border-right py-3">
-                                        {{ a.activityCode }}
-                                    </div>
-                                    <div class="col-lg-8 py-3">
-                                        {{ a.activityDescription }}
-                                    </div>
+                                <div class="mat-table-container">
+                                    <table mat-table [dataSource]="activities" class="mat-table">
+                                        <!-- Number Column -->
+                                        <ng-container matColumnDef="index">
+                                            <th mat-header-cell *matHeaderCellDef>#</th>
+                                            <td mat-cell *matCellDef="let i = index">{{ i + 1 }}</td>
+                                        </ng-container>
+
+                                        <!-- Activity Code Column -->
+                                        <ng-container matColumnDef="activityCode">
+                                            <th mat-header-cell *matHeaderCellDef>Activity Code</th>
+                                            <td mat-cell *matCellDef="let a">{{ a.activityCode }}</td>
+                                        </ng-container>
+
+                                        <!-- Activity Description Column -->
+                                        <ng-container matColumnDef="activityDescription">
+                                            <th mat-header-cell *matHeaderCellDef>Activity Description</th>
+                                            <td mat-cell *matCellDef="let a">
+                                                <ng-container *ngIf="!a.editing">
+                                                    {{ a.activityDescription }}
+                                                    <button class="ml-3 btn-action" (click)="startEditing(a)">
+                                                        <i
+                                                            class="fas fa-edit cursor-pointer text-primary"
+                                                            title="Edit"></i>
+                                                    </button>
+                                                    <button class="ml-3 btn-action" (click)="confirmDelete(a)">
+                                                        <i
+                                                            class="fas fa-trash cursor-pointer text-danger"
+                                                            title="Delete"></i>
+                                                    </button>
+                                                </ng-container>
+                                                <ng-container *ngIf="a.editing">
+                                                    <input
+                                                        type="text"
+                                                        class="description-input"
+                                                        [(ngModel)]="a.newDescription"
+                                                        (keyup.enter)="saveDescription(a)"
+                                                        (keyup.escape)="cancelEditing(a)" />
+                                                    <button class="ml-3 btn-action" (click)="saveDescription(a)">
+                                                        <i
+                                                            class="fas fa-check cursor-pointer text-primary"
+                                                            title="submit"></i>
+                                                    </button>
+                                                    <button class="ml-3 btn-action" (click)="cancelEditing(a)">
+                                                        <i
+                                                            class="fas fa-times cursor-pointer text-danger"
+                                                            title="cancel"></i>
+                                                    </button>
+                                                </ng-container>
+                                            </td>
+                                        </ng-container>
+
+                                        <tr
+                                            mat-header-row
+                                            *matHeaderRowDef="['index', 'activityCode', 'activityDescription']"></tr>
+                                        <tr
+                                            mat-row
+                                            *matRowDef="
+                                                let row;
+                                                columns: ['index', 'activityCode', 'activityDescription']
+                                            "></tr>
+                                    </table>
                                 </div>
                             </mat-card>
                         </div>
