@@ -32,7 +32,12 @@ export class DealerLayoutComponent {
                 { path: 'tags', label: 'Tags', icon: 'fas fa-tags' },
                 { path: 'media-library', label: 'Media Library', icon: 'fas fa-photo-video' },
                 { path: 'feeds', label: 'Feeds', icon: 'fas fa-newspaper' },
-                { path: 'fillers', label: 'Fillers Library', icon: 'fas fa-film' },
+                {
+                    path: 'fillers',
+                    label: 'Fillers Library',
+                    icon: 'fas fa-film',
+                    hidden: this._auth.current_user_value.role_id === UI_ROLE_DEFINITION['sub-dealer'],
+                },
                 { path: 'playlists', label: 'Playlists', icon: 'fas fa-play' },
                 {
                     path: 'screens',
