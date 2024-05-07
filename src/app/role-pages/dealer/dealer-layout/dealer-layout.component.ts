@@ -29,7 +29,12 @@ export class DealerLayoutComponent {
                 { path: 'licenses', label: 'Licenses', icon: 'fas fa-barcode' },
                 { path: 'advertisers', label: 'Advertisers', icon: 'fas fa-ad' },
                 { path: 'locator', label: 'Locator', icon: 'fas fa-map-marker' },
-                { path: 'tags', label: 'Tags', icon: 'fas fa-tags' },
+                {
+                    path: 'tags',
+                    label: 'Tags',
+                    icon: 'fas fa-tags',
+                    hidden: this._auth.current_user_value.role_id === UI_ROLE_DEFINITION['sub-dealer'],
+                },
                 { path: 'media-library', label: 'Media Library', icon: 'fas fa-photo-video' },
                 { path: 'feeds', label: 'Feeds', icon: 'fas fa-newspaper' },
                 {
