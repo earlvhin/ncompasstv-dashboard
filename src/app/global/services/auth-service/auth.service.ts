@@ -45,6 +45,7 @@ export class AuthService {
         const role = Object.keys(UI_ROLE_DEFINITION).find(
             (key) => UI_ROLE_DEFINITION[key] === this.current_user_value.role_id,
         );
+
         return this.returnRoleTextDefinition(role);
     }
 
@@ -149,16 +150,19 @@ export class AuthService {
     }
 
     private returnRoleTextDefinition(currentRole) {
-        // For Admin and Dealer Admin
-        if (
-            currentRole === UI_ROLE_DEFINITION_TEXT.dealeradmin ||
-            currentRole === UI_ROLE_DEFINITION_TEXT.administrator
-        ) {
+        // Administrator
+        if (currentRole === UI_ROLE_DEFINITION_TEXT.administrator) {
             return UI_ROLE_DEFINITION_TEXT.administrator;
         }
 
-        // For Dealer and Sub Dealer
+        // Dealer Admin
+        if (currentRole === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+            return UI_ROLE_DEFINITION_TEXT.dealeradmin;
+        }
+
+        // Dealer and Sub-Dealer
         if (currentRole === UI_ROLE_DEFINITION_TEXT.dealer || currentRole === UI_ROLE_DEFINITION_TEXT['sub-dealer']) {
+            // For Dealer and Sub Dealer
             return UI_ROLE_DEFINITION_TEXT.dealer;
         }
 
