@@ -582,7 +582,7 @@ export class HostsComponent implements OnInit {
                 },
                 {
                     value: i.hostId ? i.hostName : '--',
-                    link: i.hostId ? `$/{this.currentRole}/hosts/` + i.hostId : null,
+                    link: i.hostId ? `/${this.currentRole}/hosts/` + i.hostId : null,
                     editable: false,
                     hidden: false,
                     business_hours: i.hostId ? true : false,

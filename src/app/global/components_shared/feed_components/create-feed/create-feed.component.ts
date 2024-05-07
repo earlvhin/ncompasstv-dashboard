@@ -21,15 +21,16 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
     dealer_name: string;
     dealers: API_DEALER[];
     dealers_data: Array<any> = [];
+    selectedDealer: any = [];
     disabledSubmit = true;
     feedUrlHasValue = false;
     filtered_options: Observable<any[]>;
-    has_loaded_dealers = false;
+    hasLoadedDealers = false;
     isInvalidUrl = false;
     isDirectTechUrl = false;
     has_selected_dealer_id = false;
     has_selected_widget_feed_type = false;
-    is_current_user_dealer = this._isDealer;
+    isCurrentUserDealer = this._isDealer;
     is_current_user_admin = this._isAdmin;
     is_current_user_dealer_admin = this._isDealerAdmin;
     isCreatingFeed = false;
@@ -57,12 +58,18 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.initializeForm();
 
-        if (this.is_current_user_dealer) {
-            this.is_current_user_dealer = true;
-            this.has_loaded_dealers = true;
+        if (this.isCurrentUserDealer) {
+            this.isCurrentUserDealer = true;
+            this.hasLoadedDealers = true;
             this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
             this.selected_dealer_id = this.dealer_id;
             this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
+    
+            this.selectedDealer.push({
+                id: this.dealer_id,
+                value: this.dealer_name
+            })
+
             return;
         }
 
@@ -74,8 +81,8 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
         this._unsubscribe.complete();
     }
 
-    dealerSelected(data: string) {
-        this.selected_dealer_id = data;
+    dealerSelected(data: { id: string; value: string }) {
+        this.selected_dealer_id = data.id;
         this.has_selected_dealer_id = true;
     }
 
@@ -201,7 +208,7 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
                 this.dealers = data.dealers;
                 this.dealers_data = data.dealers;
                 this.subscribeToAutoCompleteChanges();
-                this.has_loaded_dealers = true;
+                this.hasLoadedDealers = true;
                 this.loading_search = false;
                 this.loading_data = false;
             });

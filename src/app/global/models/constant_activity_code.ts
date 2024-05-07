@@ -12,3 +12,18 @@ export enum ACTIVITY_CODES {
     monitor_toggled_on = 'monitor_toggled_on',
     terminal_run = 'terminal_run',
 }
+
+export const ACTIVITY_URLS = [
+    {
+        activityCodePrefix: 'playlist',
+        activityURL: 'playlists',
+    },
+    {
+        activityCodePrefix: 'screen',
+        activityURL: 'screens',
+    },
+    {
+        activityCodePrefix: 'dealer',
+        activityURL: 'dealers',
+    },
+];

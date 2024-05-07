@@ -86,8 +86,8 @@ export class HostAutocompleteComponent implements OnInit, OnChanges {
         };
     }
 
-    setHost(id: string) {
-        this.host_selected.emit(id || null);
+    setHost(data: { id: string; value: string; dealerId?: string }) {
+        this.host_selected.emit(data || null);
     }
 
     onDealerSelected() {

@@ -58,6 +58,12 @@
         background: $primary !important;
     }
 
+    .single-user {
+        .mat-tab-body-wrapper {
+            padding-block: 15px;
+        }
+    }
+
     .app-media-viewer-dialog .mat-dialog-container {
         padding: 0;
     }

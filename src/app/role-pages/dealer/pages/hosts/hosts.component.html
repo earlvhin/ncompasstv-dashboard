@@ -143,6 +143,45 @@
                         <app-advertisers [no_header]="true"> </app-advertisers>
                     </div>
                 </mat-tab>
+
+                <!-- Zone TAB -->
+                <mat-tab label="Zone">
+                    <div *ngIf="tabGroup.selectedIndex === 3">
+                        <div *ngIf="!initial_load_zone; else loader">
+                            <div *ngIf="!no_license_zone; else no_data">
+                                <div class="row mt-3">
+                                    <div class="offset-lg-8 col-lg-4">
+                                        <app-search-field
+                                            *ngIf="!initial_load_zone"
+                                            [form_title]="'Search License ID or Alias'"
+                                            [placeholder]="'Example: License # 9'"
+                                            [data_reference]="license_zone_data"
+                                            [primary_keyword]="'licenseKey'"
+                                            [secondary_keyword]="'licenseAlias'"
+                                            (searched)="licenseZoneFilterData($event)"
+                                            [api_search]="true">
+                                        </app-search-field>
+                                    </div>
+                                </div>
+                                <div class="row" *ngIf="!initial_load_zone">
+                                    <div class="col-lg-12">
+                                        <ng-container *ngIf="!searching_license_zone; else loader">
+                                            <mat-card *ngIf="license_zone_filtered_data.length > 0; else no_data">
+                                                <app-data-table
+                                                    [table_data]="license_zone_filtered_data"
+                                                    [table_columns]="license_zone_table_col"
+                                                    [new_table]="true"
+                                                    [paging_details]="paging_data_zone"
+                                                    (page_triggered)="getDealerLicenseZone($event)">
+                                                </app-data-table>
+                                            </mat-card>
+                                        </ng-container>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
             </mat-tab-group>
         </div>
     </div>
@@ -161,6 +200,13 @@
         <div class="py-4 white-bg h-500">
             <app-spinner [diameter]="60"></app-spinner>
         </div>
+    </ng-template>
+
+    <ng-template #no_data>
+        <mat-card class="p-5">
+            <h3>What the!?</h3>
+            <p class="sm-text mb-3">There are no available licenses at the moment.</p>
+        </mat-card>
     </ng-template>
 
     <ng-template #no_data_initially>

@@ -5,9 +5,17 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { forkJoin, Subject, Subscription } from 'rxjs';
 
-import { API_USER_DATA, UI_ROLE_DEFINITION, API_DEALER } from 'src/app/global/models';
+import {
+    API_USER_DATA,
+    UI_ROLE_DEFINITION,
+    API_DEALER,
+    USER_ACTIVITY,
+    PAGING,
+    ACTIVITY_URLS,
+} from 'src/app/global/models';
 import { AuthService, HelperService, UserService, DealerService } from 'src/app/global/services';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { DatePipe } from '@angular/common';
 
 @Component({
     selector: 'app-single-user',
@@ -16,6 +24,7 @@ import { ConfirmationModalComponent } from '../../components_shared/page_compone
 })
 export class SingleUserComponent implements OnInit, OnDestroy {
     @ViewChild('dealerMultiSelect', { static: false }) dealerMultiSelect: MatSelect;
+    activityData: USER_ACTIVITY[] = [];
     advertiser_id: string;
     bg_role: any;
     dealers_form = this._form.group({ dealers: [[], Validators.required] });
@@ -29,7 +38,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
     info_form: FormGroup;
     info_form_disabled = false;
     info_form_fields = this._formFields;
-    is_admin = this._auth.current_role === 'administrator';
+    isAdmin = this._auth.current_role === 'administrator';
     is_dealer_admin = false;
     is_initial_load = true;
     is_loading = true;
@@ -39,6 +48,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
     is_searching_dealer = false;
     initial_assigned_dealer_ids: string[] = [];
     original_dealers: API_DEALER[] = [];
+    pagingActivityData: PAGING;
     password_form: FormGroup;
     password_form_disabled = false;
     password_is_match: string;
@@ -47,8 +57,18 @@ export class SingleUserComponent implements OnInit, OnDestroy {
     password_validation_message: string;
     user: API_USER_DATA;
     selected_dealers_control = this.dealers_form.get('dealers');
+    sortActivityColumn = 'DateCreated';
+    sortActivityOrder = 'desc';
     // selected_dealer: any;
     subscription = new Subscription();
+    userId: string;
+
+    activityTable = [
+        { name: '#', sortable: false },
+        { name: 'Activity Target', column: 'targetName', sortable: false },
+        { name: 'Activity Description', column: 'activityDescription', sortable: false },
+        { name: 'Date Created', column: 'dateCreated', sortable: false },
+    ];
 
     permissions = [
         { label: 'View', value: 'V' },
@@ -62,6 +82,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
     constructor(
         private _auth: AuthService,
         private _dealer: DealerService,
+        private _date: DatePipe,
         private _dialog: MatDialog,
         private _form: FormBuilder,
         private _helper: HelperService,
@@ -345,10 +366,12 @@ export class SingleUserComponent implements OnInit, OnDestroy {
                     this.user = userData;
                     this.is_dealer_admin = userData.userRoles[0].roleId === UI_ROLE_DEFINITION.dealeradmin;
                     this.dealer_admin_user_id = userData.userId;
+                    this.userId = response.userId;
 
                     this.setPageData(userData);
                     this.getUserSelectedRole(userData);
                     this.initializeForms();
+                    this.getUserActivityData(1);
                 },
                 (error) => {
                     console.error(error);
@@ -537,6 +560,70 @@ export class SingleUserComponent implements OnInit, OnDestroy {
             width: '500px',
             height: '350px',
             data: { status, message, data },
+        });
+    }
+
+    public getActivityColumnsAndOrder(data: { column: string; order: string }): void {
+        this.sortActivityColumn = data.column;
+        this.sortActivityOrder = data.order;
+        this.getUserActivityData(1);
+    }
+
+    public async getUserActivityData(page: number) {
+        let response;
+        if (this.is_dealer_admin) {
+            response = await this._user
+                .getActivitiesByOwnerIdDealerAdmin(this.userId, this.sortActivityColumn, this.sortActivityOrder, page)
+                .toPromise();
+        } else {
+            response = await this._user
+                .getActivitiesByOwnerId(this.userId, this.sortActivityColumn, this.sortActivityOrder, page)
+                .toPromise();
+        }
+
+        const mappedData = this.activity_mapToUI(response.paging.entities);
+        this.pagingActivityData = response.paging;
+        this.activityData = [...mappedData];
+    }
+
+    public activity_mapToUI(activity: USER_ACTIVITY[]): any {
+        let count = 1;
+
+        return activity.map((a) => {
+            const activityCodePrefix = a.activityCode.split('_')[0];
+            const activitytUrl = ACTIVITY_URLS.find((ac) => ac.activityCodePrefix === activityCodePrefix);
+            const targetName = a.targetName ? a.targetName : '--';
+            const targetLink = a.activityCode.includes('delete')
+                ? ''
+                : `/${this.currentRole}/${activitytUrl.activityURL}/${a.targetId}`;
+            const activityDoneBy =
+                this.currentUser.user_id === a.initiatedById ? `${a.initiatedBy}(You)` : ` ${a.initiatedBy}`;
+            const userActivityDescription =
+                a.ownerId === a.initiatedById
+                    ? `${activityDoneBy} ${a.activityDescription}`
+                    : `${activityDoneBy} ${a.activityDescription} for ${a.owner}`;
+
+            return new USER_ACTIVITY(
+                { value: count++, editable: false },
+                { value: a.activityCode, hidden: true },
+                { value: a.activityLogId, hidden: true },
+                { value: a.initiatedBy, hidden: true },
+                {
+                    value: targetName,
+                    link: targetLink,
+                    new_tab_link: true,
+                    hidden: false,
+                },
+                {
+                    value: userActivityDescription,
+                    hidden: false,
+                },
+                { value: this._date.transform(a.dateCreated, "MMMM d, y, 'at' h:mm a"), hidden: false },
+                { value: a.initiatedById, hidden: true },
+                { value: a.owner, hidden: true },
+                { value: a.ownerId, hidden: true },
+                { value: a.targetId, hidden: true },
+            );
         });
     }
 

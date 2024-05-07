@@ -12,11 +12,15 @@ import {
     UserService,
 } from 'src/app/global/services';
 import {
+    ACTIVITY_URLS,
+    API_ACTIVITY,
     API_DEALER,
     API_USER_DATA,
+    PAGING,
     UI_ACTIVITY_LOGS,
     UI_CURRENT_USER,
     UI_ROLE_DEFINITION,
+    USER_ACTIVITY,
 } from 'src/app/global/models';
 import { environment } from 'src/environments/environment';
 import { DatePipe } from '@angular/common';
@@ -29,11 +33,12 @@ import { DatePipe } from '@angular/common';
 export class ProfileSettingComponent implements OnInit {
     activity_created_by: any;
     activity_data: UI_ACTIVITY_LOGS[] = [];
+    activityData: API_ACTIVITY[] = [];
     advertiser_data: any;
     advertiser_details: any = {};
     content_details: any = {};
     created_by: string;
-    current_role = this._auth.current_role;
+    currentRole = this._auth.current_role;
     current_user: UI_CURRENT_USER;
     date_created: any;
     dealer_email: string;
@@ -41,7 +46,7 @@ export class ProfileSettingComponent implements OnInit {
     dealer: API_DEALER;
     host_details: any = {};
     initial_load_activity = true;
-    is_dealer: boolean = false;
+    isDealer: boolean = false;
     is_prod: boolean = false;
     license_details: any = {};
     loading_advertiser: boolean = true;
@@ -51,14 +56,21 @@ export class ProfileSettingComponent implements OnInit {
     no_activity_data = false;
     no_credit_card: boolean = false;
     no_dealer_values: boolean = false;
-    paging_data_activity: any;
+    pagingActivityData: PAGING;
     reload_data: boolean = false;
     show_cart_button: boolean = false;
-    sort_column_activity = 'DateCreated';
-    sort_order_activity = 'desc';
+    sortActivityColumn = 'DateCreated';
+    sortActivityOrder = 'desc';
     subscription: Subscription = new Subscription();
     tab_selected: string = 'Dealer';
     user: API_USER_DATA;
+
+    userActivityTable = [
+        { name: '#', sortable: false },
+        { name: 'Activity Target', column: 'targetName', sortable: false },
+        { name: 'Activity Description', column: 'activityDescription', sortable: false },
+        { name: 'Date Created', column: 'dateCreated', sortable: false },
+    ];
 
     protected _unsubscribe: Subject<void> = new Subject<void>();
 
@@ -86,7 +98,7 @@ export class ProfileSettingComponent implements OnInit {
             this.is_prod = true;
         }
         if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
-            this.is_dealer = true;
+            this.isDealer = true;
             this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
             this.current_user = this._auth.current_user_value;
             this.getTotalLicenses(this._auth.current_user_value.roleInfo.dealerId);
@@ -99,7 +111,8 @@ export class ProfileSettingComponent implements OnInit {
             this.getDealerActivity(1);
             this.getDealer();
         } else {
-            this.is_dealer = false;
+            this.isDealer = false;
+            this.getUserActivityData(1);
         }
     }
 
@@ -112,16 +125,17 @@ export class ProfileSettingComponent implements OnInit {
     }
 
     getActivityColumnsAndOrder(data: { column: string; order: string }): void {
-        this.sort_column_activity = data.column;
-        this.sort_order_activity = data.order;
+        this.sortActivityColumn = data.column;
+        this.sortActivityOrder = data.order;
         this.getDealerActivity(1);
+        this.getUserActivityData(1);
     }
 
     getDealerActivity(page: number) {
         this.activity_data = [];
 
         this._dealer
-            .get_dealer_activity(this.dealer_id, this.sort_column_activity, this.sort_order_activity, page)
+            .get_dealer_activity(this.dealer_id, this.sortActivityColumn, this.sortActivityOrder, page)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (res) => {
@@ -135,7 +149,7 @@ export class ProfileSettingComponent implements OnInit {
                         this.activity_created_by = responses;
 
                         const mappedData = this.activity_mapToUI(res.paging.entities);
-                        this.paging_data_activity = res.paging;
+                        this.pagingActivityData = res.paging;
                         this.activity_data = [...mappedData];
                         this.reload_data = true;
                     });
@@ -223,6 +237,48 @@ export class ProfileSettingComponent implements OnInit {
                 { value: activityMessage, hidden: false },
                 { value: a.initiatedBy, hidden: true },
                 { value: a.dateUpdated, hidden: true },
+            );
+        });
+    }
+
+    public getUserActivityData(page: number): void {
+        this._user
+            .getActivitiesByCurrentUser(this.sortActivityColumn, this.sortActivityOrder, page, 15)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((response) => {
+                const mappedData = this.new_activity_mapToUI(response.paging.entities);
+                this.pagingActivityData = response.paging;
+                this.activityData = [...mappedData];
+            });
+    }
+
+    public new_activity_mapToUI(activity: USER_ACTIVITY[]): any {
+        let count = 1;
+
+        return activity.map((a) => {
+            const activityCodePrefix = a.activityCode.split('_')[0];
+            const activitytUrl = ACTIVITY_URLS.find((ac) => ac.activityCodePrefix === activityCodePrefix);
+
+            const targetName = a.targetName ? a.targetName : '--';
+            const targetLink = a.activityCode.includes('delete')
+                ? ''
+                : `/${this.currentRole}/${activitytUrl.activityURL}/${a.targetId}`;
+
+            return new USER_ACTIVITY(
+                { value: count++, editable: false },
+                { value: a.activityCode, hidden: true },
+                { value: a.activityLogId, hidden: true },
+                { value: a.initiatedBy, hidden: true },
+                { value: targetName, link: targetLink, new_tab_link: true, hidden: false },
+                {
+                    value: `You ${a.activityDescription} for ${a.owner}`,
+                    hidden: false,
+                },
+                { value: this._date.transform(a.dateCreated, "MMMM d, y, 'at' h:mm a"), hidden: false },
+                { value: a.initiatedById, hidden: true },
+                { value: a.owner, hidden: true },
+                { value: a.ownerId, hidden: true },
+                { value: a.targetId, hidden: true },
             );
         });
     }
@@ -337,6 +393,7 @@ export class ProfileSettingComponent implements OnInit {
 
     tabSelected(event: { index: number }) {
         this.getDealerActivity(1);
+        this.getUserActivityData(1);
 
         return event;
     }

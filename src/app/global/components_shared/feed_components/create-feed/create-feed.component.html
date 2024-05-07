@@ -32,29 +32,13 @@
                     placeholder="Ex: ESPN Latest News Today" />
             </mat-form-field>
 
-            <ng-container *ngIf="has_loaded_dealers; else loadingDealers">
-                <div class="autocomplete-container full-width">
-                    <app-autocomplete-field
-                        (data_value)="dealerSelected($event)"
-                        [data_reference]="dealers_data"
-                        [key_of_value]="'dealerId'"
-                        [label]="'Choose A Dealer'"
-                        [placeholder]="'Choose A Dealer'"
-                        [primary_keyword]="'businessName'"
-                        [search_keyword]="'dealer'"
-                        [paging]="paging"
-                        (call_next_page)="searchBoxTrigger($event)"
-                        (searched)="searchData($event)"
-                        [loading_data]="loading_data"
-                        [initial_value]="dealer_name"
-                        [new_value]="dealer_name"
-                        [disabled]="is_current_user_dealer"
-                        [loading_search]="loading_search"
-                        [disable_minimum_search_length]="true"
-                        [disabled]="true">
-                    </app-autocomplete-field>
-                </div>
-            </ng-container>
+            <app-dealer-autocomplete
+                *ngIf="hasLoadedDealers; else loadingDealers"
+                (dealer_selected)="dealerSelected($event)"
+                [initial_value]="selectedDealer"
+                [active_only]="true"
+                [isDisabled]="isCurrentUserDealer">
+            </app-dealer-autocomplete>
 
             <ng-container *ngIf="!has_selected_widget_feed_type; else textAreaScript">
                 <div class="position-relative">
