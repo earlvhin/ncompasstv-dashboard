@@ -17,21 +17,23 @@
         </div>
 
         <ul class="menu list-unstyled m-0 p-0">
-            <li class="menu-item full-width mb-1" *ngFor="let route of routes">
-                <a
-                    [routerLink]="route.path"
-                    routerLinkActive="is-active"
-                    class="full-width"
-                    title="{{ icons_only ? route.label : '' }}">
-                    <span class="{{ route.icon }} inline-block"></span>
-                    <span>
-                        <span class="url-text">{{ route.label }}</span>
-                        <span class="url-text ml-2 badge pl-2 pr-2 br-100" *ngIf="route.label == 'Installations'">{{
-                            installations_count
-                        }}</span>
-                    </span>
-                </a>
-            </li>
+            <ng-container *ngFor="let route of routes">
+                <li class="menu-item full-width mb-1" *ngIf="!route.hidden">
+                    <a
+                        [routerLink]="route.path"
+                        routerLinkActive="is-active"
+                        class="full-width"
+                        title="{{ icons_only ? route.label : '' }}">
+                        <span class="{{ route.icon }} inline-block"></span>
+                        <span>
+                            <span class="url-text">{{ route.label }}</span>
+                            <span class="url-text ml-2 badge pl-2 pr-2 br-100" *ngIf="route.label == 'Installations'">{{
+                                installations_count
+                            }}</span>
+                        </span>
+                    </a>
+                </li>
+            </ng-container>
         </ul>
     </aside>
 </div>

@@ -29,6 +29,7 @@ import {
     UI_ROLE_DEFINITION_TEXT,
     UI_CITY_AUTOCOMPLETE_DATA,
     UI_CITY_AUTOCOMPLETE,
+    UI_AUTOCOMPLETE_INITIAL_DATA,
 } from 'src/app/global/models';
 
 import {
@@ -91,6 +92,8 @@ export class CreateHostComponent implements OnInit {
     paging: PAGING;
     place_id: string;
     search_keyword: string;
+    searchDisabled: boolean;
+    selectedDealer: UI_AUTOCOMPLETE_INITIAL_DATA[] = [];
     selected_location: any;
     state_provinces: { state: string; abbreviation: string; region: string }[] = STATES_PROVINCES;
     timezones: API_TIMEZONE[];
@@ -143,9 +146,13 @@ export class CreateHostComponent implements OnInit {
         this.setOperationDays();
 
         if (this.isDealer || this.isSubDealer) {
-            this.dealer_id = this.roleInfo.dealerId;
-            this.dealer_name = this.roleInfo.businessName;
-            this.setToDealer(this.dealer_id);
+            this.searchDisabled = true;
+            const dealerId = this._auth.current_user_value.roleInfo.dealerId;
+            const businessName = this._auth.current_user_value.roleInfo.businessName;
+            const dealer = { id: dealerId, value: businessName };
+
+            this.selectedDealer.push(dealer);
+            this.setToDealer(dealer);
         }
 
         this.getCitiesAndStates();
@@ -704,8 +711,8 @@ export class CreateHostComponent implements OnInit {
         this.getGeneralCategory(event);
     }
 
-    setToDealer(id: string) {
-        this.newHostFormControls.dealerId.setValue(id);
+    setToDealer(dealersInfo: { id: string; value: string }): void {
+        this.newHostFormControls.dealerId.setValue(dealersInfo.id);
     }
 
     setToGeneralCategory(event: string) {

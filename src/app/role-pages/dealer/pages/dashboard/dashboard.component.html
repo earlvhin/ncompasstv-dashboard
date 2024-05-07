@@ -29,7 +29,7 @@
     </div>
 
     <div class="row mb-4 mt-4">
-        <div class="col-lg-3">
+        <div class="col-lg-3" *ngIf="isDealerRole">
             <mat-card class="h-100" *ngIf="licenses_details; else spinner">
                 <div class="p-2">
                     <div class="d-flex align-items-center mb-4">
@@ -113,10 +113,20 @@
                 </mat-card>
             </ng-template>
         </div>
+        <div class="col-lg-3" *ngIf="!isDealerRole">
+            <mat-card class="h-100" *ngIf="hosts_details; else spinner">
+                <app-data-graph-compare
+                    [id]="'host-status'"
+                    [title]="'Hosts'"
+                    [label_array]="host_label"
+                    [value_array]="host_array">
+                </app-data-graph-compare>
+            </mat-card>
+        </div>
     </div>
 
     <div class="row">
-        <div class="col-lg-3">
+        <div class="col-lg-3" *ngIf="isDealerRole">
             <mat-card class="h-100" *ngIf="hosts_details; else spinner">
                 <app-data-graph-compare
                     [id]="'host-status'"
