@@ -247,7 +247,7 @@ export class HostsComponent implements OnInit {
                 break;
             case 2:
                 // this.getAdvertisers(1);
-                break;   
+                break;
             case 3:
                 this.getDealerLicenseZone(1);
                 break;
@@ -382,9 +382,11 @@ export class HostsComponent implements OnInit {
     }
 
     public getDealerLicenseZone(page) {
-            this.searching_license_zone = true;
-            this.subscription.add(
-                this._dealer.get_dealer_license_zone(this.search_data_license_zone, this.currentUser.roleInfo.dealerId, page).subscribe(
+        this.searching_license_zone = true;
+        this.subscription.add(
+            this._dealer
+                .get_dealer_license_zone(this.search_data_license_zone, this.currentUser.roleInfo.dealerId, page)
+                .subscribe(
                     (data) => this.setZoneData(data),
                     (error) => {
                         this.initial_load_zone = false;
@@ -393,124 +395,123 @@ export class HostsComponent implements OnInit {
                         this.license_zone_filtered_data = [];
                     },
                 ),
-            );
-        }
-
+        );
+    }
 
     public setZoneData(data) {
-            if (data) {
-                this.initial_load_zone = false;
-                this.searching_license_zone = false;
-                this.paging_data_zone = data;
-                if (data.entities.length > 0) {
-                    const licenseContents = this.license_zone_mapToUI(data.entities);
-                    this.license_zone_data = [...licenseContents];
-                    this.license_zone_filtered_data = [...licenseContents];
-                    this.no_license_zone = false;
-                } else {
-                    if (this.search_data_license_zone == '') this.no_license_zone = true;
-                    this.license_zone_data = [];
-                    this.license_zone_filtered_data = [];
-                }
+        if (data) {
+            this.initial_load_zone = false;
+            this.searching_license_zone = false;
+            this.paging_data_zone = data;
+            if (data.entities.length > 0) {
+                const licenseContents = this.license_zone_mapToUI(data.entities);
+                this.license_zone_data = [...licenseContents];
+                this.license_zone_filtered_data = [...licenseContents];
+                this.no_license_zone = false;
+            } else {
+                if (this.search_data_license_zone == '') this.no_license_zone = true;
+                this.license_zone_data = [];
+                this.license_zone_filtered_data = [];
             }
         }
+    }
 
     public license_zone_mapToUI(data: any[]): UI_DEALER_LICENSE_ZONE[] {
-            let count = this.paging_data_zone.pageStart;
-            return data.map((i) => {
-                return new UI_DEALER_LICENSE_ZONE(
-                    { value: i.licenseId, link: null, editable: false, hidden: true },
-                    { value: count++, link: null, editable: false, hidden: false },
-                    {
-                        value: i.licenseKey,
-                        link: `/${this.currentRole}/licenses/` + i.licenseId,
-                        new_tab_link: true,
-                        editable: false,
-                        hidden: false,
-                    },
-                    {
-                        value: i.hostId,
-                        link: null,
-                        editable: false,
-                        hidden: true,
-                    },
-                    {
-                        value: i.hostName ? i.hostName : '--',
-                        link: `/${this.currentRole}/hosts/` + i.hostId,
-                        new_tab_link: true,
-                        editable: false,
-                        hidden: false,
-                    },
-                    {
-                        value: i.licenseAlias ? i.licenseAlias : '--',
-                        link: `/${this.currentRole}/licenses/` + i.licenseId,
-                        new_tab_link: true,
-                        editable: false,
-                        hidden: false,
-                    },
-                    {
-                        value: this.calculateTime(i.mainDuration),
-                        link: null,
-                        editable: false,
-                        hidden: false,
-                    },
-                    {
-                        value: this.calculateTime(i.verticalDuration),
-                        link: null,
-                        editable: false,
-                        hidden: false,
-                    },
-                    {
-                        value: this.calculateTime(i.horizontalDuration),
-                        link: null,
-                        editable: false,
-                        hidden: false,
-                    },
-                    {
-                        value: this.calculateTime(i.backgroundDuration),
-                        link: null,
-                        editable: false,
-                        hidden: false,
-                    },
-                    { value: i.mainTotalAsset, link: null, editable: false, hidden: false },
-                    { value: i.mainTotalHost, link: null, editable: false, hidden: false },
-                    { value: i.mainTotalHostPercentage, link: null, editable: false, hidden: false },
-                    { value: i.mainTotalAdvertiser, link: null, editable: false, hidden: false },
-                    {
-                        value: i.mainTotalAdvertiserPercentage,
-                        link: null,
-                        editable: false,
-                        hidden: false,
-                    },
-                    { value: i.mainTotalFiller, link: null, editable: false, hidden: false },
-                    { value: i.mainTotalFillerPercentage, link: null, editable: false, hidden: false },
-                    { value: i.mainTotalFeed, link: null, editable: false, hidden: false },
-                    { value: i.mainTotalFeedPercentage, link: null, editable: false, hidden: false },
-                    { value: i.mainTotalOther, link: null, editable: false, hidden: false },
-                    { value: i.mainTotalOtherPercentage, link: null, editable: false, hidden: false },
-                );
-            });
-        }
+        let count = this.paging_data_zone.pageStart;
+        return data.map((i) => {
+            return new UI_DEALER_LICENSE_ZONE(
+                { value: i.licenseId, link: null, editable: false, hidden: true },
+                { value: count++, link: null, editable: false, hidden: false },
+                {
+                    value: i.licenseKey,
+                    link: `/${this.currentRole}/licenses/` + i.licenseId,
+                    new_tab_link: true,
+                    editable: false,
+                    hidden: false,
+                },
+                {
+                    value: i.hostId,
+                    link: null,
+                    editable: false,
+                    hidden: true,
+                },
+                {
+                    value: i.hostName ? i.hostName : '--',
+                    link: `/${this.currentRole}/hosts/` + i.hostId,
+                    new_tab_link: true,
+                    editable: false,
+                    hidden: false,
+                },
+                {
+                    value: i.licenseAlias ? i.licenseAlias : '--',
+                    link: `/${this.currentRole}/licenses/` + i.licenseId,
+                    new_tab_link: true,
+                    editable: false,
+                    hidden: false,
+                },
+                {
+                    value: this.calculateTime(i.mainDuration),
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                },
+                {
+                    value: this.calculateTime(i.verticalDuration),
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                },
+                {
+                    value: this.calculateTime(i.horizontalDuration),
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                },
+                {
+                    value: this.calculateTime(i.backgroundDuration),
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                },
+                { value: i.mainTotalAsset, link: null, editable: false, hidden: false },
+                { value: i.mainTotalHost, link: null, editable: false, hidden: false },
+                { value: i.mainTotalHostPercentage, link: null, editable: false, hidden: false },
+                { value: i.mainTotalAdvertiser, link: null, editable: false, hidden: false },
+                {
+                    value: i.mainTotalAdvertiserPercentage,
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                },
+                { value: i.mainTotalFiller, link: null, editable: false, hidden: false },
+                { value: i.mainTotalFillerPercentage, link: null, editable: false, hidden: false },
+                { value: i.mainTotalFeed, link: null, editable: false, hidden: false },
+                { value: i.mainTotalFeedPercentage, link: null, editable: false, hidden: false },
+                { value: i.mainTotalOther, link: null, editable: false, hidden: false },
+                { value: i.mainTotalOtherPercentage, link: null, editable: false, hidden: false },
+            );
+        });
+    }
 
     public licenseZoneFilterData(e): void {
-            if (e) {
-                this.search_data_license_zone = e;
-                this.getDealerLicenseZone(1);
-            } else {
-                this.search_data_license_zone = '';
-                this.getDealerLicenseZone(1);
-            }
+        if (e) {
+            this.search_data_license_zone = e;
+            this.getDealerLicenseZone(1);
+        } else {
+            this.search_data_license_zone = '';
+            this.getDealerLicenseZone(1);
         }
+    }
 
     private calculateTime(duration: number): string {
-            if (duration < 60) return `${Math.round(duration)}s`;
-            if (duration === 60) return '1m';
-    
-            const minutes = Math.floor(duration / 60);
-            const seconds = Math.round(duration - minutes * 60);
-    
-            return `${minutes}m ${seconds}s`;
-        }
+        if (duration < 60) return `${Math.round(duration)}s`;
+        if (duration === 60) return '1m';
+
+        const minutes = Math.floor(duration / 60);
+        const seconds = Math.round(duration - minutes * 60);
+
+        return `${minutes}m ${seconds}s`;
+    }
 
     protected get currentUser() {
         return this._auth.current_user_value;
@@ -519,6 +520,4 @@ export class HostsComponent implements OnInit {
     protected get currentRole() {
         return this._auth.current_role;
     }
-
-
 }

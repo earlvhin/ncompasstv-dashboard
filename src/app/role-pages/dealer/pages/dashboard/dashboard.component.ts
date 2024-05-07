@@ -3,6 +3,7 @@ import { DatePipe } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { AdvertiserService, AuthService, HostService, LicenseService, ContentService } from 'src/app/global/services';
 import * as moment from 'moment';
+import { UI_ROLE_DEFINITION } from 'src/app/global/models';
 
 @Component({
     selector: 'app-dashboard',
@@ -16,6 +17,7 @@ export class DashboardComponent implements OnInit {
     date: any;
     dealer_report_chart: any;
     host_report_chart: any;
+    isDealerRole = this.isDealerInRole;
     license_report_chart: any;
     loading_advertiser_report_chart: boolean = true;
     loading_dealer_report_chart: boolean = true;
@@ -262,5 +264,12 @@ export class DashboardComponent implements OnInit {
                 };
             }),
         );
+    }
+
+    protected get isDealerInRole() {
+        const roleId = this._auth.current_user_value.role_id;
+        const dealerRole = UI_ROLE_DEFINITION.dealer;
+
+        if (roleId === dealerRole) return true;
     }
 }

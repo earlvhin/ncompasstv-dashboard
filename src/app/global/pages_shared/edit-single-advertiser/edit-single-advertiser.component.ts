@@ -123,8 +123,11 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
                 .pipe(takeUntil(this._unsubscribe))
                 .subscribe(
                     (data) => {
-                        this._formControls.state.setValue(data[0].abbreviation);
-                        this._formControls.region.setValue(data[0].region);
+                        if (data.length) {
+                            this._formControls.state.setValue(data[0].abbreviation);
+                            this._formControls.region.setValue(data[0].region);
+                        }
+
                         if (fromSelect) {
                             this._formControls.zip.setValue('');
                         }

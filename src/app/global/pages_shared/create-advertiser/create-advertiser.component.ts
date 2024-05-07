@@ -19,18 +19,7 @@ import {
     MapService,
 } from 'src/app/global/services';
 
-import {
-    API_DEALER,
-    API_CREATE_ADVERTISER,
-    API_GOOGLE_MAP,
-    API_PARENT_CATEGORY,
-    City,
-    PAGING,
-    UI_ROLE_DEFINITION,
-    UI_TABLE_DEALERS,
-    UI_AUTOCOMPLETE_DATA,
-    UI_AUTOCOMPLETE_INITIAL_DATA,
-} from 'src/app/global/models';
+import { API_CREATE_ADVERTISER, City, UI_TABLE_DEALERS, UI_AUTOCOMPLETE_INITIAL_DATA } from 'src/app/global/models';
 
 @Component({
     selector: 'app-create-advertiser',
