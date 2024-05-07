@@ -64,11 +64,11 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
             this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
             this.selected_dealer_id = this.dealer_id;
             this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
-    
+
             this.selectedDealer.push({
                 id: this.dealer_id,
-                value: this.dealer_name
-            })
+                value: this.dealer_name,
+            });
 
             return;
         }
