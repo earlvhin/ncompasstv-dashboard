@@ -43,7 +43,7 @@ export const DEALER_ROUTES: Routes = [
         component: DealerLayoutComponent,
         canActivate: [AuthGuard],
         data: {
-            role: [UI_ROLE_DEFINITION.dealer],
+            role: [UI_ROLE_DEFINITION.dealer, UI_ROLE_DEFINITION['sub-dealer']],
             breadcrumb: 'Dashboard',
         },
         children: [

@@ -59,7 +59,7 @@ export class NavbarComponent implements OnInit {
                 this.route = '/administrator';
             }
 
-            if (role_id === UI_ROLE_DEFINITION.dealer) {
+            if (role_id === UI_ROLE_DEFINITION.dealer || role_id === UI_ROLE_DEFINITION['sub-dealer']) {
                 this.is_dealer = true;
                 this.route = '/dealer';
             }
