@@ -246,13 +246,13 @@ export class ProfileSettingComponent implements OnInit {
             .getActivitiesByCurrentUser(this.sortActivityColumn, this.sortActivityOrder, page, 15)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((response) => {
-                const mappedData = this.new_activity_mapToUI(response.paging.entities);
+                const mappedData = this.new_activity_mapToUI(response.paging.entities, response.nonExistentTargetIds);
                 this.pagingActivityData = response.paging;
                 this.activityData = [...mappedData];
             });
     }
 
-    public new_activity_mapToUI(activity: USER_ACTIVITY[]): any {
+    public new_activity_mapToUI(activity: USER_ACTIVITY[], nonExistentTargetIds: string[]): any {
         let count = 1;
 
         return activity.map((a) => {
@@ -260,7 +260,7 @@ export class ProfileSettingComponent implements OnInit {
             const activitytUrl = ACTIVITY_URLS.find((ac) => ac.activityCodePrefix === activityCodePrefix);
 
             const targetName = a.targetName ? a.targetName : '--';
-            const targetLink = a.activityCode.includes('delete')
+            const targetLink = nonExistentTargetIds.includes(a.targetId)
                 ? ''
                 : `/${this.currentRole}/${activitytUrl.activityURL}/${a.targetId}`;
 

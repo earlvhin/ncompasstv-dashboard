@@ -581,19 +581,18 @@ export class SingleUserComponent implements OnInit, OnDestroy {
                 .toPromise();
         }
 
-        const mappedData = this.activity_mapToUI(response.paging.entities);
+        const mappedData = this.activity_mapToUI(response.paging.entities, response.nonExistentTargetIds);
         this.pagingActivityData = response.paging;
         this.activityData = [...mappedData];
     }
 
-    public activity_mapToUI(activity: USER_ACTIVITY[]): any {
+    public activity_mapToUI(activity: USER_ACTIVITY[], nonExistentTargetIds: string[]): any {
         let count = 1;
-
         return activity.map((a) => {
             const activityCodePrefix = a.activityCode.split('_')[0];
             const activitytUrl = ACTIVITY_URLS.find((ac) => ac.activityCodePrefix === activityCodePrefix);
             const targetName = a.targetName ? a.targetName : '--';
-            const targetLink = a.activityCode.includes('delete')
+            const targetLink = nonExistentTargetIds.includes(a.targetId)
                 ? ''
                 : `/${this.currentRole}/${activitytUrl.activityURL}/${a.targetId}`;
             const activityDoneBy =
