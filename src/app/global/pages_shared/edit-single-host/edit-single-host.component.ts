@@ -361,7 +361,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
         this.is_active_host = event.checked;
     }
 
-    removeHours(data: { periods: any[] }, index: number): void {
+    removeHours(data: UI_STORE_HOUR, index: number): void {
         data.periods.splice(index, 1);
         this.checkBusinessHoursFields();
     }
@@ -571,6 +571,18 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
         this.business_hours[businessHourIndex].periods[periodIndex].open = '12:00 AM';
         this.business_hours[businessHourIndex].periods[periodIndex].close = '11:59 PM';
         this.has_invalid_schedule = false;
+        this.removeOtherHoursIfSetToTwentyFourHours(this.business_hours[businessHourIndex], periodIndex);
+    }
+
+    private removeOtherHoursIfSetToTwentyFourHours(data: UI_STORE_HOUR, index: number) {
+        let indexesToRemove = [];
+        data.periods.forEach((hours, hoursIndex) => {
+            if (hoursIndex !== index) indexesToRemove.push(hoursIndex);
+        });
+        indexesToRemove.reverse();
+        indexesToRemove.forEach((indexToRemove) => {
+            this.removeHours(data, indexToRemove);
+        });
     }
 
     private get hasUpdatedBusinessHours(): boolean {

@@ -46,6 +46,7 @@ import { CITIES_STATE } from '../../models/api_cities_state.model';
 import { AUTOCOMPLETE_ACTIONS } from '../../constants/autocomplete';
 import { STATES_PROVINCES } from '../../constants/states';
 import { TimezoneService } from '../../services/timezone-service/timezone.service';
+import { CityData } from '../../models/api_cities_state.model';
 
 @Component({
     selector: 'app-create-host',
@@ -58,7 +59,7 @@ export class CreateHostComponent implements OnInit {
     categories_data: API_PARENT_CATEGORY[];
     city_loaded = false;
     city_state: City[] = [];
-    canada_selected: boolean = false;
+    canadaSelected: boolean = false;
     city_selected: string;
     gen_categories_data: any[];
     category_selected: string;
@@ -91,9 +92,9 @@ export class CreateHostComponent implements OnInit {
     operation_days: UI_STORE_HOUR[];
     paging: PAGING;
     place_id: string;
-    search_keyword: string;
-    searchDisabled: boolean;
-    selectedDealer: UI_AUTOCOMPLETE_INITIAL_DATA[] = [];
+    searchDisabled = false;
+    selectedDealer: UI_AUTOCOMPLETE_DATA[];
+    selectedCity: string;
     selected_location: any;
     state_provinces: { state: string; abbreviation: string; region: string }[] = STATES_PROVINCES;
     timezones: API_TIMEZONE[];
@@ -150,7 +151,6 @@ export class CreateHostComponent implements OnInit {
             const dealerId = this._auth.current_user_value.roleInfo.dealerId;
             const businessName = this._auth.current_user_value.roleInfo.businessName;
             const dealer = { id: dealerId, value: businessName };
-
             this.selectedDealer.push(dealer);
             this.setToDealer(dealer);
         }
@@ -404,9 +404,7 @@ export class CreateHostComponent implements OnInit {
         this.location_selected = false;
         let country = 'United States';
 
-        if (this.canada_selected) {
-            country = 'Canada';
-        }
+        if (this.canadaSelected) country = 'Canada';
 
         this._fastedge
             .get_google_business_profile(this.googlePlaceFormControls.location.value + ', ' + country)
@@ -519,7 +517,7 @@ export class CreateHostComponent implements OnInit {
             address = sliced_address[0];
         }
 
-        this.canada_selected = country && country.includes('Canada');
+        this.canadaSelected = country && country.includes('Canada');
 
         // Set Zip validation
         this.setZipCodeValidation();
@@ -532,6 +530,7 @@ export class CreateHostComponent implements OnInit {
         // Set City Value
         this.trigger_data.next({ data: sliced_address[1], action: AUTOCOMPLETE_ACTIONS.static });
         this.newHostFormControls.city.setValue(city);
+        this.selectedCity = city;
 
         // Set State Value
         this.newHostFormControls.state.setValue(state_region.abbreviation);
@@ -587,46 +586,6 @@ export class CreateHostComponent implements OnInit {
         data.periods.splice(index, 1);
     }
 
-    resetCityList(keyword: string) {
-        this.search_keyword = keyword;
-        this.city_field_data.data = [];
-
-        this.searchCity(keyword).subscribe(
-            (response) => {
-                this.cities_state_data.data = response.data;
-                this.city_field_data.initialValue = [{ id: '', value: keyword }];
-                this.city_field_data.data = [
-                    ...this.cities_state_data.data
-                        .map((data) => {
-                            return {
-                                id: data.id,
-                                value: `${data.city}, ${data.state}`,
-                                display: data.city,
-                                country: data.country,
-                            };
-                        })
-                        .filter((data) => data),
-                ];
-            },
-            (err) => {
-                this.city_field_data.noData = `${keyword} not found`;
-                this.city_field_data.data = [
-                    ...this.cities_state_data.data
-                        .map((data) => {
-                            return {
-                                id: data.id,
-                                value: `${data.city}, ${data.state}`,
-                                display: data.city,
-                                country: data.country,
-                            };
-                        })
-                        .filter((data) => data),
-                ];
-                console.error('City not found', err);
-            },
-        );
-    }
-
     searchStateAndRegion(state: string) {
         return this.state_provinces.filter(
             (s) => state.toLowerCase() == s.state.toLowerCase() || state.toLowerCase() == s.abbreviation.toLowerCase(),
@@ -636,22 +595,6 @@ export class CreateHostComponent implements OnInit {
     searchBoxTrigger(event: { is_search: boolean; page: number }) {
         this.is_search = event.is_search;
         this.getDealers(event.page);
-    }
-
-    searchCityById(data: UI_CITY_AUTOCOMPLETE_DATA) {
-        const city = this.cities_state_data.data.find((item) => item.id === data.id);
-
-        this.canada_selected = city.country === 'CA';
-
-        if (typeof city === 'undefined' || !city) {
-            console.error('Could not set city data!');
-            return;
-        }
-
-        this.newHostFormControls.city.setValue(city.city);
-        this.newHostFormControls.state.setValue(city.abbreviation);
-        this.newHostFormControls.region.setValue(city.region);
-        this.setZipCodeValidation();
     }
 
     searchDealer(keyword: string) {
@@ -676,35 +619,6 @@ export class CreateHostComponent implements OnInit {
             });
     }
 
-    setCity(data: string): void {
-        let cityState = data.split(',')[0].trim();
-        if (!this.canada_selected) {
-            this.newHostFormControls.city.setValue(cityState);
-            this.city_selected = cityState;
-            this._location
-                .get_cities_data(data)
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    (data) => {
-                        this.newHostFormControls.state.setValue(data.data[0].abbreviation);
-                        this.newHostFormControls.region.setValue(data.data[0].region);
-                    },
-                    (error) => {
-                        console.error(error);
-                    },
-                );
-        } else {
-            let sliced_address = data.split(', ');
-            let filtered_data = this.city_state.filter((city) => {
-                return city.city === sliced_address[0];
-            });
-
-            this.newHostFormControls.city.setValue(cityState);
-            this.newHostFormControls.state.setValue(filtered_data[0].state);
-            this.newHostFormControls.region.setValue(filtered_data[0].region);
-        }
-    }
-
     setToCategory(event: string) {
         this.no_category = true;
         this.newHostFormControls.category.setValue(this._titlecase.transform(event).replace(/_/g, ' '));
@@ -723,6 +637,15 @@ export class CreateHostComponent implements OnInit {
     timezoneChanged(timezoneId: string, name: string) {
         this.newHostFormControls.timezone.setValue(timezoneId);
         this.newHostFormControls.zone.setValue(name);
+    }
+
+    getSelectedCity(data: CityData) {
+        if (data) this.canadaSelected = data.country === 'CA';
+
+        const { city, state, region } = data || { city: '', state: '', region: '' };
+        this.newHostFormControls.city.setValue(city + ', ' + state);
+        this.newHostFormControls.state.setValue(state);
+        this.newHostFormControls.region.setValue(region);
     }
 
     private formatTime(data: number): string {
@@ -958,10 +881,6 @@ export class CreateHostComponent implements OnInit {
         });
     }
 
-    private searchCity(keyword: string) {
-        return this._location.get_cities_data(keyword).pipe(takeUntil(this._unsubscribe));
-    }
-
     private setBusinessHoursBeforeSubmitting(data: UI_STORE_HOUR[]) {
         return data.map((operation) => {
             operation.periods = operation.periods.map((period) => {
@@ -989,7 +908,7 @@ export class CreateHostComponent implements OnInit {
     }
 
     private setCanadaZip() {
-        if (!this.canada_selected) return;
+        if (!this.canadaSelected) return;
         const control = this.newHostFormControls.zip;
         const canadaZip = (control.value as string).trim();
 
@@ -1004,7 +923,7 @@ export class CreateHostComponent implements OnInit {
         const control = this.newHostFormControls.zip;
         const numbersOnly = '^[0-9]+$';
         const canadianZipCodePattern = `^[A-Za-z]\\d[A-Za-z] \\d[A-Za-z]\\d$`;
-        const country = this.canada_selected ? 'CA' : 'US';
+        const country = this.canadaSelected ? 'CA' : 'US';
 
         let validators: ValidatorFn[] = [Validators.required];
         const usZipValidators = [Validators.minLength(5), Validators.maxLength(5), Validators.pattern(numbersOnly)];
@@ -1048,7 +967,7 @@ export class CreateHostComponent implements OnInit {
 
     private subscribeToZipChanges() {
         const control = this.newHostFormControls.zip;
-        const country = this.canada_selected ? 'CA' : 'US';
+        const country = this.canadaSelected ? 'CA' : 'US';
 
         const formatCanadaZip = (data: string) => {
             const zip = data.replace(/\s/g, '');

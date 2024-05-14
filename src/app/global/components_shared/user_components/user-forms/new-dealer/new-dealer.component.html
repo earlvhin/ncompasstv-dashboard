@@ -83,15 +83,7 @@
                         </div>
 
                         <ng-template #autocomplete>
-                            <app-autocomplete-field
-                                (data_value)="citySelected($event)"
-                                [key_of_value]="'city_state'"
-                                [placeholder]="field.placeholder"
-                                [label]="field.label"
-                                [data_reference]="field.data"
-                                [search_keyword]="'city_state'"
-                                [primary_keyword]="'city_state'">
-                            </app-autocomplete-field>
+                            <app-city-autocomplete (city_selected)="citySelected($event)"></app-city-autocomplete>
                         </ng-template>
                     </div>
                 </ng-container>

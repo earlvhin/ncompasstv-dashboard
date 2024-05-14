@@ -83,25 +83,9 @@
                                     </app-autocomplete-field>
 
                                     <ng-container *ngIf="field.control === 'city'">
-                                        <app-autocomplete
-                                            #autoCompleteFieldCity
-                                            *ngIf="city_field_data.data.length; else searching"
-                                            [field_data]="city_field_data"
-                                            (no_data_found)="resetCityList($event)"
-                                            (value_selected)="searchCityById($event)"></app-autocomplete>
-
-                                        <ng-template #searching>
-                                            <div class="form-placeholder">
-                                                <mat-form-field appearance="standard" class="w-100 custom-autocomplete">
-                                                    <mat-label>Loading ...</mat-label>
-                                                    <input
-                                                        type="text"
-                                                        [value]="search_keyword || 'Please wait'"
-                                                        matInput
-                                                        [disabled]="true" />
-                                                </mat-form-field>
-                                            </div>
-                                        </ng-template>
+                                        <app-city-autocomplete
+                                            (city_selected)="getSelectedCity($event)"
+                                            [selected_city_from_google]="selectedCity"></app-city-autocomplete>
                                     </ng-container>
 
                                     <!-- New Autocomplete Implementation-->

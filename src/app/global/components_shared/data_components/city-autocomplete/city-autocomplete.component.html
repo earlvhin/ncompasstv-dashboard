@@ -1,0 +1,21 @@
+<div class="city-autocomplete">
+    <app-autocomplete
+        #autoCompleteFieldCity
+        *ngIf="cityFieldData.data.length; else searching"
+        [field_data]="cityFieldData"
+        (autocomplete_cleared)="filterCities($event)"
+        (no_data_found)="filterCities($event)"
+        (value_selected)="selectedCity($event)"
+        (input_value_changed)="filterCities($event)"
+        [trigger_input_update]="cityFromGoogleScrape">
+    </app-autocomplete>
+
+    <ng-template #searching>
+        <div class="form-placeholder">
+            <mat-form-field appearance="standard" class="w-100 custom-autocomplete">
+                <mat-label>Loading ...</mat-label>
+                <input type="text" [value]="'Please wait'" matInput [disabled]="true" />
+            </mat-form-field>
+        </div>
+    </ng-template>
+</div>

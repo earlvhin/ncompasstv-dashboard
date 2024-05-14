@@ -23,6 +23,7 @@ import { BulkOptionsComponent } from './components_shared/playlist_components/bu
 import { BulkPlaywhereComponent } from './components_shared/playlist_components/bulk-playwhere/bulk-playwhere.component';
 import { CategoryModalComponent } from './components_shared/category_components/category-modal/category-modal.component';
 import { ChangeTemplateComponent } from './components_shared/screen_components/change-template/change-template.component';
+import { CityAutocompleteComponent } from './components_shared/data_components/city-autocomplete/city-autocomplete.component';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { ClickOutsideDirective } from './directives/custom-event/clickOutside.directive';
 import { CloneFeedDialogComponent } from './components_shared/data_components/data-table/dialogs/clone-feed-dialog/clone-feed-dialog.component';
@@ -264,6 +265,7 @@ const ngComponents = [
     BulkPlaywhereComponent,
     CategoryModalComponent,
     ChangeTemplateComponent,
+    CityAutocompleteComponent,
     CloneFeedDialogComponent,
     CloneFillerDialogComponent,
     ClonePlaylistComponent,

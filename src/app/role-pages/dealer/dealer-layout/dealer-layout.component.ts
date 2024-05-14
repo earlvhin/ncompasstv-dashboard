@@ -54,7 +54,7 @@ export class DealerLayoutComponent {
                     path: 'reports',
                     label: 'Reports',
                     icon: 'fas fa-chart-area',
-                    hidden: this.current_role !== UI_ROLE_DEFINITION.dealer,
+                    hidden: this._auth.current_user_value.role_id === UI_ROLE_DEFINITION['sub-dealer'],
                 },
                 {
                     path: 'users',

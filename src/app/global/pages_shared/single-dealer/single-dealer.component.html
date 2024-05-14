@@ -13,25 +13,11 @@
             </app-banner>
 
             <div class="select-dealer-field text-white position-absolute">
-                <app-autocomplete-field
-                    (data_value)="dealerSelected($event)"
-                    [key_of_value]="'dealerId'"
-                    [placeholder]="'N-Compass TV'"
-                    [label]="'Selected Dealer'"
-                    [white_label]="true"
-                    [data_reference]="dealers_data"
-                    [search_keyword]="'businessName'"
-                    [primary_keyword]="'businessName'"
-                    [paging]="paging"
-                    (call_next_page)="searchBoxTrigger($event)"
-                    (searched)="searchData($event)"
-                    [new_value]="dealer_name"
-                    [initial_value]="dealer_name"
-                    [loading_data]="loading_data"
-                    [loading_search]="loading_search">
-                </app-autocomplete-field>
-
-                <span class="fas fa-search icon text-white"></span>
+                <app-dealer-autocomplete
+                    (dealer_selected)="dealerSelected($event)"
+                    [initial_value]="selectedDealer"
+                    [active_only]="false">
+                </app-dealer-autocomplete>
             </div>
         </div>
 
@@ -108,7 +94,7 @@
                         <!-- LICENSES TAB -->
                         <mat-tab label="Licenses">
                             <div *ngIf="current_tab === 'licenses'">
-                                <div *ngIf="!no_licenses; else no_data">
+                                <div *ngIf="!noLicenses; else no_data">
                                     <div *ngIf="!initial_load_license; else loader" class="position-relative">
                                         <!-- BUTTONS ROW -->
                                         <div class="row mat-top-em">
@@ -468,7 +454,7 @@
                                                             [active_tab]="sort_column"
                                                             [sort_column]="sort_column"
                                                             [sort_order]="sort_order"
-                                                            [dealer_id]="dealer_id">
+                                                            [dealer_id]="dealerId">
                                                         </app-data-table>
                                                     </mat-card>
                                                 </ng-container>
@@ -732,11 +718,11 @@
                                             [activity_data]="activity_data"
                                             [activity_table]="activity_table_column"
                                             [paging_data]="paging_data"
-                                            [sort_column]="sort_column_activity"
-                                            [sort_order]="sort_order_activity"
+                                            [sort_column]="sortColumnActivity"
+                                            [sort_order]="sortOrderActivity"
                                             [currentUser]="currentUser"
                                             [currentRole]="currentRole"
-                                            [ownerId]="dealer_id"
+                                            [ownerId]="dealerId"
                                             [initial_load]="initial_load_activity"
                                             [createdBy]="createdBy"
                                             [dateCreated]="dateCreated"
@@ -768,7 +754,7 @@
                             <div class="col-lg-12 p-0" *ngIf="current_tab === 'billing'">
                                 <div class="row">
                                     <div class="col-lg-12">
-                                        <app-single-billings [dealer]="dealer_id" [reload]="reload_billing">
+                                        <app-single-billings [dealer]="dealerId" [reload]="reloadBilling">
                                         </app-single-billings>
                                     </div>
                                 </div>

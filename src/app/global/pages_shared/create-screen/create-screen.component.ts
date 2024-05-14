@@ -13,6 +13,7 @@ import {
     API_ZONE,
     PAGING,
     UI_AUTOCOMPLETE,
+    UI_ROLE_DEFINITION_TEXT,
 } from 'src/app/global/models';
 import {
     AuthService,
@@ -35,7 +36,7 @@ import { HOST_ACTIVITY_LOGS } from '../../models/api_host_activity_logs.model';
 })
 export class CreateScreenComponent implements OnInit {
     assigned_licenses = [];
-    creating_screen = false;
+    creatingScreen = false;
     dealer_name: string;
     dealerId: string;
     dealers_data: API_DEALER[] = [];
@@ -198,7 +199,6 @@ export class CreateScreenComponent implements OnInit {
         this.zone_playlist_form = this._form.group({ screenZonePlaylist: this._form.array([]) });
         this.selected_template_zones = [];
         this.template$ = this._template.get_template_by_id(id);
-
         this.template$.pipe(takeUntil(this._unsubscribe)).subscribe(
             (data: API_TEMPLATE[]) => {
                 data.forEach((t) => {
@@ -295,6 +295,8 @@ export class CreateScreenComponent implements OnInit {
     }
 
     publishScreen(): void {
+        this.creatingScreen = true;
+
         if (this.hasUnusedLicenseWithoutInstallDate) {
             this.openErrorDialog();
             return;
@@ -303,7 +305,7 @@ export class CreateScreenComponent implements OnInit {
         let screen_licenses = [];
         let zone_playlist_data_trim = [];
         const zone_playlist_data = this.zone_playlist_form.get('screenZonePlaylist').value;
-        this.creating_screen = true;
+        this.creatingScreen = true;
 
         zone_playlist_data.forEach((data) => {
             const zone_playlist = {
@@ -341,7 +343,7 @@ export class CreateScreenComponent implements OnInit {
             this._auth.current_user_value.user_id,
         );
 
-        if (this.creating_screen) {
+        if (this.creatingScreen) {
             // if installation dates are set
             if (this.queued_install_dates.length > 0) {
                 const publish = {
@@ -355,7 +357,7 @@ export class CreateScreenComponent implements OnInit {
                         (response) => {
                             this.screenId = response[0].screenId;
                             this.openCreateScreenDialog();
-                            this.creating_screen = false;
+                            this.creatingScreen = false;
                         },
                         (error) => {
                             console.error(error);
@@ -372,7 +374,6 @@ export class CreateScreenComponent implements OnInit {
                     (response) => {
                         this.screenId = response.screenId;
                         this.openCreateScreenDialog();
-                        this.creating_screen = false;
                     },
                     (error) => {
                         console.error(error);
@@ -450,7 +451,6 @@ export class CreateScreenComponent implements OnInit {
         if (!data.dealerId) this.dealerId = data.id;
         this.getPlaylistsByDealerId(this.dealerId);
         this.getHostsByDealerId(1);
-        this.setToDealerOrHost(data);
     }
 
     setToDealerOrHost(data: { id: string; value: string; dealerId?: string }) {
@@ -703,9 +703,11 @@ export class CreateScreenComponent implements OnInit {
         });
 
         dialog.afterClosed().subscribe(() => {
-            const url = [
-                `/${this.roleRoute}/screens/${this.screenId}/${this.new_screen_form_controls.screen_name.value}`,
-            ];
+            const customRoute =
+                this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin
+                    ? UI_ROLE_DEFINITION_TEXT.administrator
+                    : this.roleRoute;
+            const url = [`/${customRoute}/screens/${this.screenId}/${this.new_screen_form_controls.screen_name.value}`];
             this._router.navigate(url);
         });
     }
@@ -721,7 +723,12 @@ export class CreateScreenComponent implements OnInit {
             data: { status, message, data },
         };
 
-        this._dialog.open(ConfirmationModalComponent, config);
+        this._dialog
+            .open(ConfirmationModalComponent, config)
+            .afterClosed()
+            .subscribe({
+                next: () => (this.creatingScreen = false),
+            });
     }
 
     private get hasUnusedLicenseWithoutInstallDate() {
