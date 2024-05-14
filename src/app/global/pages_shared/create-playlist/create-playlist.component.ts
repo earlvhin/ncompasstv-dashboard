@@ -18,6 +18,7 @@ import {
     UI_CONTENT,
     UI_PLAYLIST_CONTENT,
     UI_ROLE_DEFINITION,
+    UI_ROLE_DEFINITION_TEXT,
 } from 'src/app/global/models';
 
 @Component({
@@ -379,13 +380,12 @@ export class CreatePlaylistComponent implements OnInit {
     }
 
     openConfirmationModal(id?) {
-        let dialog = this._dialog.open(PlaylistCreatedModalComponent, {
+        this._dialog.open(PlaylistCreatedModalComponent, {
             disableClose: true,
             width: '600px',
-        });
-
-        dialog.afterClosed().subscribe(() => {
-            this._router.navigate([`/${this.roleRoute}/playlists/${id}`]);
+        }).afterClosed().subscribe(() => {
+            const customRoute = this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.roleRoute;
+            this._router.navigate([`/${customRoute}/playlists/${id}`]);
         });
     }
 

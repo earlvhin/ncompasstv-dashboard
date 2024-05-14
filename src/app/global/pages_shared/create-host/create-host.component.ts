@@ -175,8 +175,9 @@ export class CreateHostComponent implements OnInit {
     }
 
     addNewHostPlace() {
+        const customRoute = this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.roleRoute;
         const url = this._router.serializeUrl(
-            this._router.createUrlTree([`/${this.roleRoute}/users/create-user/host`], {}),
+            this._router.createUrlTree([`/${customRoute}/users/create-user/host`], {}),
         );
         window.open(url, '_blank');
     }
@@ -877,7 +878,8 @@ export class CreateHostComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(() => {
             if (!hostId) return;
-            this._router.navigate([`/${this.roleRoute}/hosts`, hostId]);
+            const customRoute = this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.roleRoute;
+            this._router.navigate([`/${customRoute}/hosts`, hostId]);
         });
     }
 

@@ -406,15 +406,14 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
     }
 
     private openConfirmationModal(status: string, message: string, data: any, redirect: boolean): void {
-        const dialog = this._dialog.open(ConfirmationModalComponent, {
+        this._dialog.open(ConfirmationModalComponent, {
             width: '500px',
             height: '350px',
             data: { status, message, data },
-        });
-
-        dialog.afterClosed().subscribe(() => {
+        }).afterClosed().subscribe(() => {
             if (redirect) {
-                this._router.navigate([`/${this.roleRoute}/users/`]);
+                const customRoute = this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.roleRoute;
+                this._router.navigate([`/${customRoute}/users/`]);
             }
         });
     }

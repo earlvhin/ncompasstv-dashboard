@@ -8,7 +8,7 @@ import * as moment from 'moment';
 
 import { UnassignHostLicenseComponent } from 'src/app/global/components_shared/license_components/unassign-host-license/unassign-host-license.component';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { API_LICENSE, PAGING, UI_CURRENT_USER, UI_HOST_LICENSE } from 'src/app/global/models';
+import { API_LICENSE, PAGING, UI_CURRENT_USER, UI_HOST_LICENSE, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 import { HelperService, LicenseService } from 'src/app/global/services';
 
 @Component({
@@ -44,6 +44,7 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
     ) {}
 
     ngOnInit() {
+        this.currentRole = this.currentRole == UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.currentRole;
         this.tableColumns = this.columns;
         this.isViewOnly = this.currentUser.roleInfo.permission === 'V';
         this.searchLicenses();

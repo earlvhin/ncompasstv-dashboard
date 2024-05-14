@@ -20,7 +20,7 @@
                     <a
                         [routerLink]="['/administrator/users/create-user/host']"
                         target="_blank"
-                        *ngIf="!is_dealer_admin">
+                        *ngIf="!isDealerAdmin">
                         <button
                             mat-button
                             mat-raised-button
@@ -199,7 +199,7 @@
                 </mat-tab>
 
                 <!-- Placer AI Tab -->
-                <mat-tab label="Placer Data">
+                <mat-tab label="Placer Data" *ngIf="!isDealerAdmin">
                     <div class="flex pb-4" *ngIf="tabGroup.selectedIndex === 3">
                         <div class="full-width">
                             <app-placer></app-placer>

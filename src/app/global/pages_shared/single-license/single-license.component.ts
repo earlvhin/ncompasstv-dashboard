@@ -54,6 +54,7 @@ import {
     UI_HOST_SUPPORT,
     API_ACTIVITY,
     UI_ROLE_DEFINITION,
+    UI_ROLE_DEFINITION_TEXT
 } from 'src/app/global/models';
 import { UpdateTvBrandDialogComponent } from './components/update-tv-brand-dialog/update-tv-brand-dialog.component';
 
@@ -94,6 +95,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     content_types = this._contentTypes;
     current_operation: { day: string; period: string };
     current_zone_name_selected: string;
+    customRoute = this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.roleRoute;
     dealerData: API_DEALER;
     dealer_route: string;
     duration_breakdown = { advertisers: 0, feeds: 0, fillers: 0, hosts: 0, others: 0, total: 0 };
@@ -523,7 +525,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 .pipe(takeUntil(this._unsubscribe))
                 .subscribe(
                     () => {
-                        this._router.navigate([`/${this.roleRoute}/licenses`]);
+
+                        this._router.navigate([`/${this.customRoute}/licenses`]);
                     },
                     (error) => {
                         console.error(error);
@@ -1597,7 +1600,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 this.breakdownContents();
                 this.breakdownDuration();
                 this.number_of_contents = this.content_per_zone[this.selected_zone_index].contents.length;
-                this.playlist_route = `/${this.roleRoute}/playlists/${this.screen_zone.playlistId}`;
+                this.playlist_route = `/${this.customRoute}/playlists/${this.screen_zone.playlistId}`;
 
                 // filter inactive contents without altering the original
                 this.filterInactiveContents();
@@ -1682,7 +1685,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
                     this.setDealerData(response);
                     this.screen = this.mapScreenToUI(response);
-                    this.screen_route = `/${this.roleRoute}/screens/${id}`;
+                    this.screen_route = `/${this.customRoute}/screens/${id}`;
                     this.getTemplateData(response.template.templateId);
                     this.setPlaylists(response.screenZonePlaylistsContents);
                     this.screen_loading = false;
@@ -1970,7 +1973,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         if (parsedStoreHours) this.business_hours = this.setBusinessHours(parsedStoreHours);
         this.host = data;
         this.host_notes = this.setNotes(data.notes);
-        this.host_route = `/${this.roleRoute}/hosts/${data.hostId}`;
+        this.host_route = `/${this.customRoute}/hosts/${data.hostId}`;
         this.has_host = true;
     }
 
@@ -2037,7 +2040,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     private setDealerData(data) {
         const dealerId = data.dealer ? data.dealer.dealerId : data.host.dealerId;
         this.businessName = data.dealer ? data.dealer.businessName : data.host.businessName;
-        this.dealer_route = `/${this.roleRoute}/dealers/${dealerId}/`;
+        this.dealer_route = `/${this.customRoute}/dealers/${dealerId}/`;
     }
 
     private setPlaylists(data: API_SCREEN_ZONE_PLAYLISTS_CONTENTS[]): void {
@@ -2073,7 +2076,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 order,
             );
 
-            playlist.link = `/${this.roleRoute}/playlists/${playlistId}`;
+            playlist.link = `/${this.customRoute}/playlists/${playlistId}`;
             return playlist;
         });
 
@@ -2591,7 +2594,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             playlistId: playlist_id,
             zone: zone_name,
         };
-        this.playlist_route = `/${this.roleRoute}/playlists/${playlist_id}`;
+        this.playlist_route = `/${this.customRoute}/playlists/${playlist_id}`;
         this.content_filters = [];
         this.content_search_control.disable({ emitEvent: false });
         this.content_search_control.setValue(null, { emitEvent: false });
