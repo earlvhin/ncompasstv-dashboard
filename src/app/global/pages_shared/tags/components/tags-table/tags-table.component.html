@@ -66,14 +66,14 @@
                                 <div class="name">{{ tag.name }}</div>
                                 <div
                                     class="remove-btn cursor-pointer"
-                                    (click)="onDeleteTagFromOwner(tag.tagId, data.ownerId)">
+                                    (click)="onDeleteTagFromOwner(tag.tagId, tag.name, data.ownerId, data.displayName)">
                                     <mat-icon class="no-select">close</mat-icon>
                                 </div>
                             </div>
                         </div>
                     </td>
                     <td class="p-3 action-buttons">
-                        <mat-icon class="no-select text-danger" (click)="onDeleteAllTagsFromOwner(data.ownerId)"
+                        <mat-icon class="no-select text-danger" (click)="onDeleteAllTagsFromOwner(data.ownerId, data.displayName)"
                             >delete</mat-icon
                         >
                     </td>

@@ -16,6 +16,7 @@ import { ConfirmationModalComponent } from 'src/app/global/components_shared/pag
 export class AddTagModalComponent implements OnInit, OnDestroy {
     @Input() currentTags: TAG[] = [];
     @Input() ownerId: string = null;
+    @Input() ownerName: string = null;
     @ViewChild('tagMultiSelect', { static: true }) tagMultiSelect: MatSelect;
     checkNewTagsQueue: TAG[] = [];
     description = 'You may assign an existing tag or create one for this license';
@@ -122,7 +123,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
                 break;
             default:
                 data = this.currentTags;
-                await this.onDeleteTagFromOwner(tag.tagId, this.ownerId);
+                await this.onDeleteTagFromOwner(tag.tagId, tag.name, this.ownerId, this.ownerName);
                 return;
         }
 
@@ -152,7 +153,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
         const data: CREATE_AND_ASSIGN_TAG = {
             tagtypeid: '2',
             createdBy: this._currentUser.user_id,
-            owners: [this.ownerId],
+            owners: [{ id: this.ownerId, name: this.ownerName}],
             new: tagsToAdd,
             existing: tagsToAssign,
         };
@@ -224,13 +225,13 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
             });
     }
 
-    private async onDeleteTagFromOwner(tagId: string, ownerId: string): Promise<void> {
+    private async onDeleteTagFromOwner(tagId: string, tagName: string, ownerId: string, ownerName: string): Promise<void> {
         const response = await this.openConfirmAPIRequestDialog('delete_tag_from_owner').toPromise();
 
         if (!response) return;
 
         this._tag
-            .deleteTagByIdAndOwner(tagId, ownerId)
+            .deleteTagByIdAndOwner(tagId, tagName, ownerId, ownerName)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 async () => {

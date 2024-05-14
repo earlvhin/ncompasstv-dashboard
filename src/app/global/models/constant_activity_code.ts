@@ -55,7 +55,7 @@ export const ACTIVITY_URLS = [
         activityURL: 'tags',
     },
     {
-        activityCodePrefix: 'license',
+        activityCodePrefix: 'lßicense',
         activityURL: 'dealers',
     },
     {

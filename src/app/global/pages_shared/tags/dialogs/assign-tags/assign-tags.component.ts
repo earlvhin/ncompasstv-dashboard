@@ -56,13 +56,13 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
         const tags = this.selectedTagsControl.value as TAG[];
 
         const ownersToSubmit = owners.map((owner) => {
-            const { ownerId, tagTypeId } = owner;
-            return { ownerId, tagTypeId };
+            const { ownerId, tagTypeId, displayName } = owner;
+            return { ownerId, tagTypeId, displayName };
         });
 
         const tagsToSubmit = tags.map((tag) => {
-            const { tagId } = tag;
-            return tagId;
+            const { tagId, name } = tag;
+            return { tagId, name };
         });
 
         this._tag

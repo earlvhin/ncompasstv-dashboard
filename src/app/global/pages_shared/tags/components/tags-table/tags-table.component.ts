@@ -66,13 +66,13 @@ export class TagsTableComponent implements OnInit, OnDestroy {
             );
     }
 
-    async onDeleteAllTagsFromOwner(ownerId: string): Promise<void> {
+    async onDeleteAllTagsFromOwner(ownerId: string, ownerDisplayName: string): Promise<void> {
         const response = await this.openConfirmAPIRequestDialog('delete_all_tags_from_owner').toPromise();
 
         if (!response) return;
 
         this._tag
-            .deleteAllTagsFromOwner(ownerId)
+            .deleteAllTagsFromOwner(ownerId, ownerDisplayName)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 () => {
@@ -86,13 +86,13 @@ export class TagsTableComponent implements OnInit, OnDestroy {
             );
     }
 
-    async onDeleteTagFromOwner(tagId: string, ownerId: string): Promise<void> {
+    async onDeleteTagFromOwner(tagId: string, tagName: string, ownerId: string, ownerDisplayName: string): Promise<void> {
         const response = await this.openConfirmAPIRequestDialog('delete_tag_from_owner').toPromise();
 
         if (!response) return;
 
         this._tag
-            .deleteTagByIdAndOwner(tagId, ownerId)
+            .deleteTagByIdAndOwner(tagId, tagName, ownerId, ownerDisplayName)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 () => {
