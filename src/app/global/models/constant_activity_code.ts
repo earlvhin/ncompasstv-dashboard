@@ -38,4 +38,8 @@ export const ACTIVITY_URLS = [
         activityCodePrefix: 'media',
         activityURL: 'media-library',
     },
+    {
+        activityCodePrefix: 'feed',
+        activityURL: 'media-library',
+    },
 ];
