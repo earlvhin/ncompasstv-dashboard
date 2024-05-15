@@ -34,4 +34,8 @@ export const ACTIVITY_URLS = [
         activityCodePrefix: 'filler',
         activityURL: 'fillers/view-fillers-group',
     },
+    {
+        activityCodePrefix: 'media',
+        activityURL: 'media-library',
+    },
 ];
