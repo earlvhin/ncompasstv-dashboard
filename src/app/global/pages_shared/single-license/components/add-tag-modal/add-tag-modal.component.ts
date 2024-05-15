@@ -153,7 +153,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
         const data: CREATE_AND_ASSIGN_TAG = {
             tagtypeid: '2',
             createdBy: this._currentUser.user_id,
-            owners: [{ id: this.ownerId, name: this.ownerName}],
+            owners: [{ id: this.ownerId, name: this.ownerName }],
             new: tagsToAdd,
             existing: tagsToAssign,
         };
@@ -225,7 +225,12 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
             });
     }
 
-    private async onDeleteTagFromOwner(tagId: string, tagName: string, ownerId: string, ownerName: string): Promise<void> {
+    private async onDeleteTagFromOwner(
+        tagId: string,
+        tagName: string,
+        ownerId: string,
+        ownerName: string,
+    ): Promise<void> {
         const response = await this.openConfirmAPIRequestDialog('delete_tag_from_owner').toPromise();
 
         if (!response) return;

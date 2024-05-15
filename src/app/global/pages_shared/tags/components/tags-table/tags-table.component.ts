@@ -66,7 +66,7 @@ export class TagsTableComponent implements OnInit, OnDestroy {
             );
     }
 
-    async onDeleteAllTagsFromOwner(ownerId: string, ownerDisplayName: string): Promise<void> {
+    public async onDeleteAllTagsFromOwner(ownerId: string, ownerDisplayName: string): Promise<void> {
         const response = await this.openConfirmAPIRequestDialog('delete_all_tags_from_owner').toPromise();
 
         if (!response) return;
@@ -86,7 +86,12 @@ export class TagsTableComponent implements OnInit, OnDestroy {
             );
     }
 
-    async onDeleteTagFromOwner(tagId: string, tagName: string, ownerId: string, ownerDisplayName: string): Promise<void> {
+    public async onDeleteTagFromOwner(
+        tagId: string,
+        tagName: string,
+        ownerId: string,
+        ownerDisplayName: string,
+    ): Promise<void> {
         const response = await this.openConfirmAPIRequestDialog('delete_tag_from_owner').toPromise();
 
         if (!response) return;

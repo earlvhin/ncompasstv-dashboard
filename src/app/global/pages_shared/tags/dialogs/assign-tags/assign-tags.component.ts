@@ -66,7 +66,7 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
         });
 
         this._tag
-            .assignTags(ownersToSubmit, tagsToSubmit, this._isDealer())
+            .assignTags(ownersToSubmit, tagsToSubmit)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 () => this.showSuccessModal(),
