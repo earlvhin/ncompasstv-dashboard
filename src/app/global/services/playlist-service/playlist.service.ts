@@ -4,7 +4,17 @@ import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
 
-import { API_BLOCKLIST_CONTENT, API_SWAP_CONTENT_RESPONSE, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import {
+    API_BLOCKLIST_CONTENT,
+    API_CONTENT,
+    API_HOST,
+    API_LICENSE_PROPS,
+    API_SCREEN,
+    API_SINGLE_PLAYLIST,
+    API_PLAYLIST_MINIFIED,
+    API_SWAP_CONTENT_RESPONSE,
+    UI_ROLE_DEFINITION,
+} from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { BaseService } from '../base.service';
 import { environment } from 'src/environments/environment';
@@ -50,10 +60,15 @@ export class PlaylistService extends BaseService {
         return this.getRequest(url);
     }
 
-    get_playlist_by_content_id(content_id: string) {
-        return this.getRequest(`${this.getters.api_get_playlist_by_content}${content_id}`).pipe(
-            map((i) => i.playlists),
-        );
+    /**
+     * GET: playlists/GetPlaylistsByContentId?contentid=
+     * @param contentId
+     * @returns
+     */
+    getPlaylistByContentId(
+        contentId: string,
+    ): Observable<{ playlists: API_PLAYLIST_MINIFIED[] } | { message: string }> {
+        return this.getRequest(`${this.getters.api_get_playlist_by_content}${contentId}`);
     }
 
     get_playlists_total() {
@@ -95,11 +110,17 @@ export class PlaylistService extends BaseService {
         return this.getRequest(`${this.getters.api_get_playlist_by_dealer_id_table}?dealerId=${id}&pageSize=0`);
     }
 
-    get_playlist_by_id(id) {
+    get_playlist_by_id(id: string): Observable<{
+        hostLicenses: { host: API_HOST; licenses: API_LICENSE_PROPS[] }[];
+        licenses: API_LICENSE_PROPS[];
+        playlist: API_SINGLE_PLAYLIST;
+        playlistContents: API_CONTENT[];
+        screens: API_SCREEN[];
+    }> {
         return this.getRequest(`${this.getters.api_get_playlists_by_id}${id}`);
     }
 
-    get_screens_of_playlist(id) {
+    getScreensOfPlaylist(id: string): Observable<{ screens: API_SCREEN[] }> {
         return this.getRequest(`${this.getters.api_get_screens_of_playlist}${id}`);
     }
 

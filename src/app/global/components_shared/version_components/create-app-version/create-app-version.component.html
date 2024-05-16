@@ -1,0 +1,30 @@
+<div class="p-2 user-form position-relative">
+    <h3 class="mb-4">Add Player Version</h3>
+
+    <form class="text-left" [formGroup]="newVersionForm" #formDirective="ngForm" (ngSubmit)="addVersion()">
+        <div class="d-flex flex-column mb-4">
+            <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Version</mat-label>
+                <input formControlName="version" matInput placeholder="Ex. 2.2.0" />
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Release Notes</mat-label>
+                <input formControlName="releaseNotes" matInput placeholder="Ex. Change Configuration" />
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Downloadable URL</mat-label>
+                <input formControlName="zipUrl" matInput placeholder="Ex. https://ncompass.tv.zip" />
+            </mat-form-field>
+        </div>
+
+        <div class="d-flex flex-even">
+            <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="disabledSubmit || isSubmiting">
+                Submit
+            </button>
+
+            <button mat-button mat-raised-button class="theme-btn" mat-dialog-close>Cancel</button>
+        </div>
+    </form>
+</div>

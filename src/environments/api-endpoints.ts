@@ -182,7 +182,7 @@ export const API_ENDPOINTS = {
         api_get_users: 'user/getall',
         api_get_users_total: 'user/gettotal',
         api_get_users_role_by_id: 'user/getuserrole',
-        api_get_usused_contents: 'content/getunusedcontents',
+        api_get_unused_contents: 'content/getunusedcontents',
         api_generate_content_logs_report: 'contentplaysdaily/ExportPlayLogsPerHostsByContent',
         api_google_map: 'googleapi/searchplaces?place=',
         api_google_store_hours: 'googleapi/getstorehours?placeid=',

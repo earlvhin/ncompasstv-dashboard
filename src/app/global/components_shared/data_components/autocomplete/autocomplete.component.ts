@@ -45,6 +45,7 @@ export class AutocompleteComponent implements OnInit, OnDestroy, OnChanges {
     filteredOptions!: Observable<any[]>;
     keyword = '';
     staticVal: boolean = false;
+    isEmpty: boolean;
 
     protected ngUnsubscribe = new Subject<void>();
 
@@ -90,6 +91,8 @@ export class AutocompleteComponent implements OnInit, OnDestroy, OnChanges {
         this.autoCompleteControl.valueChanges
             .pipe(takeUntil(this.ngUnsubscribe), debounceTime(1000))
             .subscribe((response) => {
+                this.isEmpty = response === '';
+
                 this.input_changed.emit(response);
             });
 

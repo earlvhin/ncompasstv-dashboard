@@ -221,7 +221,7 @@
                             mat-button
                             mat-raised-button
                             class="theme-btn mr-2"
-                            [disabled]="new_host_form.invalid || is_creating_host">
+                            [disabled]="new_host_form.invalid || is_creating_host || !dealerHasValue">
                             {{ is_creating_host ? 'Saving Host Place...' : 'Submit' }}
                         </button>
                     </form>

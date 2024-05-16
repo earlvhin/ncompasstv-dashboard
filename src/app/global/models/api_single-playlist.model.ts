@@ -10,8 +10,11 @@ export class API_SINGLE_PLAYLIST {
     hostLicenses: any;
     playlistContents: API_CONTENT[];
     screens: API_SCREEN_OF_PLAYLIST[];
-    playlistId?: any;
-    contents?: any;
+    playlistId?: string;
+    contents?: API_CONTENT[];
+    playlistName: string;
+    playlistDescription?: string;
+    dealerId?: string;
 }
 
 export class API_SINGLE_PLAYLIST_INFO {

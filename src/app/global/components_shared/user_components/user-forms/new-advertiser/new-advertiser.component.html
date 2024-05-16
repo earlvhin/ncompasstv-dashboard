@@ -114,7 +114,7 @@
                 </div>
             </ng-container>
         </div>
-        <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="form_invalid">Create Advertiser</button>
+        <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="form_invalid || !dealerHasValue">Create Advertiser</button>
     </form>
 
     <div class="submit-on-load d-flex align-items-center justify-content-center w-100" *ngIf="is_submitted">

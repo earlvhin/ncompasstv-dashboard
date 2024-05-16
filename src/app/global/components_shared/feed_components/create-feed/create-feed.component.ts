@@ -27,6 +27,7 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
     filtered_options: Observable<any[]>;
     hasLoadedDealers = false;
     isInvalidUrl = false;
+    dealerHasValue = false;
     isDirectTechUrl = false;
     has_selected_dealer_id = false;
     has_selected_widget_feed_type = false;
@@ -43,7 +44,8 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
     new_feed_form: FormGroup;
     paging: PAGING;
 
-    private selected_dealer_id: string;
+    private dealerName: string;
+    private selectedDealerId: string;
     protected _unsubscribe = new Subject<void>();
 
     constructor(
@@ -61,13 +63,14 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
         if (this.isCurrentUserDealer) {
             this.isCurrentUserDealer = true;
             this.hasLoadedDealers = true;
+            this.dealerHasValue = true;
             this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
-            this.selected_dealer_id = this.dealer_id;
-            this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
+            this.selectedDealerId = this.dealer_id;
+            this.dealerName = this._auth.current_user_value.roleInfo.businessName;
 
             this.selectedDealer.push({
                 id: this.dealer_id,
-                value: this.dealer_name,
+                value: this.dealerName,
             });
 
             return;
@@ -82,8 +85,15 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
     }
 
     dealerSelected(data: { id: string; value: string }) {
-        this.selected_dealer_id = data.id;
+        this.selectedDealerId = data.id;
         this.has_selected_dealer_id = true;
+
+        this.dealerHasValue = false;
+        if (data !== null) {
+            this.selectedDealerId = data.id;
+            this.has_selected_dealer_id = true;
+            this.dealerHasValue = true;
+        }
     }
 
     searchData(keyword: string) {
@@ -117,7 +127,7 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
             this.form_controls.feedTitle.value,
             this.form_controls.feedDescription.value,
             this.form_controls.feedUrl.value,
-            this.selected_dealer_id || null,
+            this.selectedDealerId || null,
             this._auth.current_user_value.user_id,
             this.form_controls.feedType.value,
         );
@@ -150,7 +160,7 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 
     private createWidgetFeed() {
         const { feedTitle, feedDescription, embeddedscript } = this.new_feed_form.value;
-        const dealerId = this.selected_dealer_id || null;
+        const dealerId = this.selectedDealerId || null;
         const createdBy = this._auth.current_user_value.user_id;
         const classification = 'widget';
 
@@ -181,7 +191,7 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
     private filterAutoCompleteChanges(value): any {
         const filterValue = value.toLowerCase();
         const returnValue = this.dealers.filter((d) => d.businessName.toLowerCase().indexOf(filterValue) === 0);
-        if (returnValue.length == 0) this.selected_dealer_id = undefined;
+        if (returnValue.length == 0) this.selectedDealerId = undefined;
         return returnValue;
     }
 

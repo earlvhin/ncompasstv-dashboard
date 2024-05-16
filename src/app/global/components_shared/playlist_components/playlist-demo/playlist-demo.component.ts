@@ -113,7 +113,7 @@ export class PlaylistDemoComponent implements OnInit {
 
     getPlaylistById() {
         this.subscription.add(
-            this._playlist.get_playlist_by_id(this.playlist_id).subscribe((data: API_SINGLE_PLAYLIST) => {
+            this._playlist.get_playlist_by_id(this.playlist_id).subscribe((data) => {
                 this.playlist_content = this.playlist_mapToUI(data.playlistContents);
                 this.checkFileType(this.count);
             }),

@@ -11,3 +11,10 @@ export class API_PLAYLIST {
     dateUpdated: string;
     businessName: string;
 }
+
+export interface API_PLAYLIST_MINIFIED {
+    businessName: string;
+    dealerId: string;
+    playlistId: string;
+    playlistName: string;
+}

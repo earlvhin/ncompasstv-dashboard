@@ -13,7 +13,7 @@ import { UI_ROLE_DEFINITION } from 'src/app/global/models';
 })
 export class DashboardComponent implements OnInit {
     advertiser_report_chart: any;
-    contents_total: number = 0;
+    totalContents = 0;
     date: any;
     dealer_report_chart: any;
     host_report_chart: any;
@@ -75,8 +75,9 @@ export class DashboardComponent implements OnInit {
     }
 
     getAllContents() {
-        this._content.get_unused_contents(this.dealerId, '', '').subscribe((data) => {
-            this.contents_total = data.paging.totalEntities;
+        this._content.get_unused_contents(this.dealerId, '', '').subscribe((response) => {
+            if ('message' in response) return;
+            this.totalContents = response.paging.totalEntities;
         });
     }
 

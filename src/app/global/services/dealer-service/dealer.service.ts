@@ -233,7 +233,7 @@ export class DealerService extends BaseService {
         return this.getRequest(url);
     }
 
-    get_dealer_license_zone(key: string, dealerId: string, page: number) {
+    get_dealer_license_zone(key: string, dealerId: string, page: number): Observable<PAGING> {
         const params = this.setUrlParams({ page, search: key, dealerId });
         return this.getRequest(`${this.getters.api_get_dealer_license_zone}${params}`);
     }

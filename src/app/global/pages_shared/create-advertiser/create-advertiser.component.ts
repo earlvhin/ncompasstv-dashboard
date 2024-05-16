@@ -33,6 +33,7 @@ export class CreateAdvertiserComponent implements OnInit {
     city_state: City[] = [];
     canada_selected: boolean = false;
     city_selected: string;
+    dealerHasValue: boolean;
     gen_categories_data: any[];
     category_selected: string;
     child_category: string;
@@ -496,8 +497,14 @@ export class CreateAdvertiserComponent implements OnInit {
     }
 
     public setToDealer(dealersInfo: { id: string; value: string }): void {
-        this.formControls.dealerId.setValue(dealersInfo.id);
-    }
+        this.dealerHasValue = false;
+
+        if(dealersInfo != null){
+            this.formControls.dealerId.setValue(dealersInfo.id);
+            this.dealerHasValue = true;
+        }
+        }
+        
 
     getCanadaAddress(value) {
         this.canada_selected = value.checked;

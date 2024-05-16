@@ -32,6 +32,7 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
     dealers_data: any[] = [];
     dealer_id: string;
     dealer_name: string;
+    dealerHasValue: boolean;
     form_fields_view: any;
     form_invalid = true;
     initial_load_advertiser = false;
@@ -197,10 +198,12 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
     dealerSelected(dealer: { id: string; value: string }) {
         this.advertiserDataField.data = [];
         this.noAdvertiser = false;
+        this.dealerHasValue = true;
 
         //Check if dealer is available
         if (!dealer) {
             this.selectedDealer = null;
+            this.dealerHasValue = false;
             return;
         }
 

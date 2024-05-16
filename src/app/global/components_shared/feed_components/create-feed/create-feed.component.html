@@ -101,7 +101,7 @@
                     mat-button
                     mat-raised-button
                     class="theme-btn mr-2"
-                    [disabled]="isInvalidUrl || !feedUrlHasValue || isValidatingUrl"
+                    [disabled]="isInvalidUrl || !feedUrlHasValue || isValidatingUrl || !dealerHasValue"
                     *ngIf="!isCreatingFeed">
                     <ng-container> Submit </ng-container>
                 </button>

@@ -1,14 +1,14 @@
+import { Router } from '@angular/router';
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import * as io from 'socket.io-client';
 
-import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { environment } from 'src/environments/environment';
 import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 import { AuthService, ContentService } from 'src/app/global/services';
-import { Router } from '@angular/router';
+import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { ImageViewerComponent } from '../image-viewer/image-viewer.component';
 
 @Component({
@@ -42,54 +42,44 @@ export class ThumbnailCardComponent implements OnInit {
     @Output() content_to_delete = new EventEmitter();
     @Output() filler_delete = new EventEmitter();
 
-    fs_screenshot: string = `${environment.third_party.filestack_screenshot}`;
-    is_admin = this._isAdmin;
-    is_dealer = this._isDealer;
+    isAdmin = this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.administrator;
+    isDealer = this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer;
     route: string;
-    mp4_thumb: string;
+    mp4Thumbnail: string;
 
-    private return_mes: string;
+    private returnMessage: string;
     private role = this._auth.current_role;
-
     protected _socket: any;
-    protected _unsubscribe: Subject<void> = new Subject<void>();
+    protected _unsubscribe = new Subject<void>();
 
     constructor(
         private _auth: AuthService,
-        private _dialog: MatDialog,
         private _content: ContentService,
-        private router: Router,
+        private _dialog: MatDialog,
+        private _router: Router,
     ) {}
 
     ngOnInit() {
         if (this.role === UI_ROLE_DEFINITION_TEXT.dealeradmin) this.role = UI_ROLE_DEFINITION_TEXT.administrator;
         this.route = `/${this.role}/media-library/${this.content_id}`;
-        if (
-            !this.disconnect_to_socket &&
-            (this.filetype == 'webm' || this.filetype === 'mp4') &&
-            this.is_converted == 0
-        ) {
+
+        if (this.isConvertingVideos) {
             this._socket = io(environment.socket_server, {
                 transports: ['websocket'],
                 query: 'client=Dashboard__ThumbnailCardComponent',
             });
 
-            this._socket.on('connect', () => {});
-
-            this._socket.on('disconnect', () => {});
-
-            this._socket.on('video_converted', (data) => {
+            this._socket.on('video_converted', (data: string) => {
                 if (data == this.uuid) {
                     this.is_converted = 1;
                     this.converted.emit(true);
                 }
+
                 this.ngOnInit();
             });
         }
 
-        if (this.filetype === 'mp4') {
-            this.getMp4Thumbnail();
-        }
+        this.getMp4Thumbnail();
     }
 
     ngOnDestroy() {
@@ -98,59 +88,65 @@ export class ThumbnailCardComponent implements OnInit {
         this._unsubscribe.complete();
     }
 
-    deleteContentArray(event: { checked: boolean }, content_id: string): void {
+    public deleteContentArray(event: { checked: boolean }, content_id: string): void {
         if (event.checked) this.is_checked = true;
         this.content_to_delete.emit({ toadd: event.checked, id: content_id });
     }
 
-    deleteMedia(event): void {
+    public deleteMedia(e: Event): void {
         this.warningModal(
             'warning',
             'Delete Content',
             'Are you sure you want to delete this content?',
-            this.return_mes,
+            this.returnMessage,
             'delete',
         );
-        event.stopPropagation();
+        e.stopPropagation();
     }
 
-    deleteFiller() {
+    public deleteFiller(): void {
         this.filler_delete.emit(true);
     }
 
-    routeToMedia(filename) {
-        let new_url = filename.replace(/ /g, '+');
-        if (!this.is_filler) this.router.navigate([`/${this.route}`, filename]);
+    public routeToMedia(filename: string): void {
+        // Disable this function if multiple selection is enabled
+        if (this.multiple_delete) return;
 
-        this._dialog.open(ImageViewerComponent, {
-            data: { url: new_url, filetype: this.filetype, filename: this.filename },
-            width: '768px',
-            panelClass: 'no-padding',
-        });
-    }
+        // Open the media dialog if the content is a filler
+        if (this.is_filler) {
+            const url = filename.replace(/ /g, '+');
 
-    getMp4Thumbnail() {
-        try {
-            fetch(
-                `https://cdn.filestackcontent.com/video_convert=preset:thumbnail,thumbnail_offset:5/${this.handle}`,
-            ).then(async (res) => {
-                const { data } = await res.json();
-                this.mp4_thumb = data.url;
-            });
+            const data: MatDialogConfig = {
+                data: { url, filetype: this.filetype, filename: this.filename },
+                width: '768px',
+                panelClass: 'no-padding',
+            };
+
+            this._dialog.open(ImageViewerComponent, data);
 
             return;
+        }
+
+        // Otherwise redirect to the single-content page
+        this._router.navigate([`/${this.route}`, filename]);
+    }
+
+    private async getMp4Thumbnail(): Promise<void> {
+        if (this.filetype !== 'mp4') return;
+
+        try {
+            const url = `https://cdn.filestackcontent.com/video_convert=preset:thumbnail,thumbnail_offset:5/${this.handle}`;
+            const thumbnail = await fetch(url);
+            const { data } = await thumbnail.json();
+            this.mp4Thumbnail = data.url;
         } catch (err) {
-            throw new Error(err);
+            console.error('Failed to retrieve thumbnail for MP4 content', err);
         }
     }
 
-    private deleteContentLogs() {
-        this.warningModal(
-            'warning',
-            'Delete Content Logs',
-            'Do you want to delete all the logs of this content',
-            '',
-            'delete-logs',
+    private isConvertingVideos(): boolean {
+        return (
+            !this.disconnect_to_socket && (this.filetype == 'webm' || this.filetype === 'mp4') && this.is_converted == 0
         );
     }
 
@@ -172,7 +168,7 @@ export class ThumbnailCardComponent implements OnInit {
                     .pipe(takeUntil(this._unsubscribe))
                     .subscribe(
                         (data) => {
-                            this.return_mes = data.message;
+                            this.returnMessage = data.message;
                             this.deleted.emit(true);
                         },
                         (error) => {
@@ -181,17 +177,5 @@ export class ThumbnailCardComponent implements OnInit {
                     );
             }
         });
-    }
-
-    protected get _isAdmin() {
-        return this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.administrator;
-    }
-
-    protected get _isDealer() {
-        return this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer;
-    }
-
-    protected get _isSubDealer() {
-        return this._auth.current_user_value.role_id === UI_ROLE_DEFINITION['sub-dealer'];
     }
 }

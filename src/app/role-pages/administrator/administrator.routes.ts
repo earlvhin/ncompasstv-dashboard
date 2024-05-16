@@ -49,6 +49,7 @@ import { UnsavedChangesGuard } from 'src/app/global/guards';
 import { UpdateComponent } from './pages/update/update.component';
 import { UsersComponent } from './pages/users/users.component';
 import { ViewFillersGroupComponent } from '../../global/pages_shared/fillers/components/view-fillers-group/view-fillers-group.component';
+import { SingleVersionControlComponent } from 'src/app/global/pages_shared/single-version-control/single-version-control.component';
 
 export const ADMINISTRATOR_ROUTES: Routes = [
     {
@@ -451,10 +452,27 @@ export const ADMINISTRATOR_ROUTES: Routes = [
             },
             {
                 path: 'version-control',
-                component: UpdateComponent,
+
                 data: {
                     breadcrumb: 'Version Control',
                 },
+                children: [
+                    {
+                        path: '',
+                        component: UpdateComponent,
+                    },
+                    {
+                        path: ':data',
+                        component: SingleVersionControlComponent,
+                        data: {
+                            breadcrumb: 'Single Version Control',
+                        },
+                    },
+                    {
+                        path: ':data/:breadcrumb',
+                        component: SingleVersionControlComponent,
+                    },
+                ],
             },
             {
                 path: 'release-notes',

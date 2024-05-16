@@ -67,6 +67,7 @@ export class CreateHostComponent implements OnInit {
     current_host_image: string;
     dealers_data: API_DEALER[] = [];
     dealer_name: string;
+    dealerHasValue: boolean;
     google_operation_days = this._googleOperationDays;
     google_place_form: FormGroup;
     google_result: any;
@@ -627,7 +628,12 @@ export class CreateHostComponent implements OnInit {
     }
 
     setToDealer(dealersInfo: { id: string; value: string }): void {
-        this.newHostFormControls.dealerId.setValue(dealersInfo.id);
+        this.dealerHasValue = false;
+        if(dealersInfo != null){
+            this.newHostFormControls.dealerId.setValue(dealersInfo.id);
+            this.dealerHasValue = true;
+        }
+        
     }
 
     setToGeneralCategory(event: string) {
