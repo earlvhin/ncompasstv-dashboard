@@ -15,7 +15,7 @@ export class ExpiredContentsComponent implements OnInit {
     dealer_id: string;
     file_name: string;
     has_content_selected: boolean = false;
-    is_loading: boolean = false;
+    isLoading: boolean = false;
     search_data = '';
     selected_content: any;
     selected_count: number = 0;
@@ -46,11 +46,17 @@ export class ExpiredContentsComponent implements OnInit {
             this.selection_for_delete = [];
             this.has_content_selected = false;
         }
-        this.is_loading = true;
+        this.isLoading = true;
         this._content
             .get_unused_contents(this.dealer_id, this.current_type, this.search_data)
             .subscribe((data) => {
+                if ('message' in data) {
+                    this.isLoading = false;
+                    return;
+                }
+
                 this.contents = data.contents;
+
                 if (initial) {
                     this.total_contents = data.paging.totalEntities;
                     this.contents.map((content) => {
@@ -58,7 +64,7 @@ export class ExpiredContentsComponent implements OnInit {
                     });
                 }
             })
-            .add(() => (this.is_loading = false));
+            .add(() => (this.isLoading = false));
     }
 
     selectedContent(content) {

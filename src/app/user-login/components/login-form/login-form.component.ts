@@ -169,7 +169,7 @@ export class LoginFormComponent implements OnInit {
                 role = UI_ROLE_DEFINITION_TEXT.dealer;
                 break;
             case UI_ROLE_DEFINITION['sub-dealer']:
-                role = UI_ROLE_DEFINITION_TEXT['sub-dealer'];
+                role = UI_ROLE_DEFINITION_TEXT.dealer; // Make sub-dealer role use dealer route
                 break;
             case UI_ROLE_DEFINITION.host:
                 role = UI_ROLE_DEFINITION_TEXT.host;

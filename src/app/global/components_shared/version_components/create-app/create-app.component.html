@@ -1,0 +1,30 @@
+<div class="p-2 user-form position-relative">
+    <h3 class="mb-4">Add App</h3>
+
+    <form class="text-left" [formGroup]="newAppForm" #formDirective="ngForm" (ngSubmit)="addApp()">
+        <div class="d-flex flex-column mb-4">
+            <mat-form-field appearance="fill" class="w-100">
+                <mat-label>App Name</mat-label>
+                <input formControlName="appName" matInput placeholder="Ex. Player Server" />
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="w-100">
+                <mat-label>App Description</mat-label>
+                <input formControlName="appDescription" matInput placeholder="Ex. 2.2.0" />
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Github URL</mat-label>
+                <input formControlName="githubUrl" matInput placeholder="Ex. github.com/NCompass-TV/pi-server/2.2.0" />
+            </mat-form-field>
+        </div>
+
+        <div class="d-flex flex-even">
+            <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="disabledSubmit || isSubmiting">
+                Submit
+            </button>
+
+            <button mat-button mat-raised-button class="theme-btn" mat-dialog-close>Cancel</button>
+        </div>
+    </form>
+</div>

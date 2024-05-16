@@ -3,6 +3,7 @@ import { DatePipe } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { AdvertiserService, AuthService, HostService, LicenseService, ContentService } from 'src/app/global/services';
 import * as moment from 'moment';
+import { UI_ROLE_DEFINITION } from 'src/app/global/models';
 
 @Component({
     selector: 'app-dashboard',
@@ -12,10 +13,11 @@ import * as moment from 'moment';
 })
 export class DashboardComponent implements OnInit {
     advertiser_report_chart: any;
-    contents_total: number = 0;
+    totalContents = 0;
     date: any;
     dealer_report_chart: any;
     host_report_chart: any;
+    isDealerRole = this.isDealerInRole;
     license_report_chart: any;
     loading_advertiser_report_chart: boolean = true;
     loading_dealer_report_chart: boolean = true;
@@ -73,8 +75,9 @@ export class DashboardComponent implements OnInit {
     }
 
     getAllContents() {
-        this._content.get_unused_contents(this.dealerId, '', '').subscribe((data) => {
-            this.contents_total = data.paging.totalEntities;
+        this._content.get_unused_contents(this.dealerId, '', '').subscribe((response) => {
+            if ('message' in response) return;
+            this.totalContents = response.paging.totalEntities;
         });
     }
 
@@ -262,5 +265,12 @@ export class DashboardComponent implements OnInit {
                 };
             }),
         );
+    }
+
+    protected get isDealerInRole() {
+        const roleId = this._auth.current_user_value.role_id;
+        const dealerRole = UI_ROLE_DEFINITION.dealer;
+
+        if (roleId === dealerRole) return true;
     }
 }

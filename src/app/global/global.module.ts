@@ -23,6 +23,7 @@ import { BulkOptionsComponent } from './components_shared/playlist_components/bu
 import { BulkPlaywhereComponent } from './components_shared/playlist_components/bulk-playwhere/bulk-playwhere.component';
 import { CategoryModalComponent } from './components_shared/category_components/category-modal/category-modal.component';
 import { ChangeTemplateComponent } from './components_shared/screen_components/change-template/change-template.component';
+import { CityAutocompleteComponent } from './components_shared/data_components/city-autocomplete/city-autocomplete.component';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { ClickOutsideDirective } from './directives/custom-event/clickOutside.directive';
 import { CloneFeedDialogComponent } from './components_shared/data_components/data-table/dialogs/clone-feed-dialog/clone-feed-dialog.component';
@@ -35,6 +36,8 @@ import { ConfirmationModalComponent } from './components_shared/page_components/
 import { ContentScheduleCardComponent } from './components_shared/playlist_components/content-schedule-cards/content-schedule-card.component';
 import { ContentsTabComponent } from './components_shared/reports_components/contents-tab/contents-tab.component';
 import { CreateAdvertiserComponent } from './pages_shared/create-advertiser/create-advertiser.component';
+import { CreateAppComponent } from './components_shared/version_components/create-app/create-app.component';
+import { CreateAppVersionComponent } from './components_shared/version_components/create-app-version/create-app-version.component';
 import { CreateCustomHostFieldsComponent } from './pages_shared/create-custom-host-fields/create-custom-host-fields.component';
 import { CreateEntryComponent } from './components_shared/host_components/create-entry/create-entry.component';
 import { CreateFeedComponent } from './components_shared/feed_components/create-feed/create-feed.component';
@@ -137,6 +140,7 @@ import { NewDealerAdminComponent } from './components_shared/user_components/use
 import { NewDealerComponent } from './components_shared/user_components/user-forms/new-dealer/new-dealer.component';
 import { NewHostUserComponent } from './components_shared/user_components/user-forms/new-host-user/new-host-user.component';
 import { NewSubDealerComponent } from './components_shared/user_components/user-forms/new-sub-dealer/new-sub-dealer.component';
+import { VersionTableComponent } from './components_shared/data_components/version-table/version-table.component';
 import { NewTechrepComponent } from './components_shared/user_components/user-forms/new-techrep/new-techrep.component';
 import { NewZoneComponent } from './components_shared/zone_components/new-zone/new-zone.component';
 import { NewZoneModalComponent } from './components_shared/zone_components/new-zone-modal/new-zone-modal.component';
@@ -187,6 +191,7 @@ import { SinglePlaylistComponent } from './pages_shared/single-playlist/single-p
 import { SingleScreenComponent } from './pages_shared/single-screen/single-screen.component';
 import { SingleTemplateComponent } from './pages_shared/single-template/single-template.component';
 import { SingleUserComponent } from './pages_shared/single-user/single-user.component';
+import { SingleVersionControlComponent } from './pages_shared/single-version-control/single-version-control.component';
 import { SliderFormComponent } from './components_shared/feed_components/slider-form/slider-form.component';
 import { SpinnerComponent } from './components_shared/page_components/spinner/spinner.component';
 import { SubstringPipe } from './pipes/substring.pipe';
@@ -264,6 +269,7 @@ const ngComponents = [
     BulkPlaywhereComponent,
     CategoryModalComponent,
     ChangeTemplateComponent,
+    CityAutocompleteComponent,
     CloneFeedDialogComponent,
     CloneFillerDialogComponent,
     ClonePlaylistComponent,
@@ -273,6 +279,8 @@ const ngComponents = [
     ContentScheduleCardComponent,
     ContentsTabComponent,
     CreateAdvertiserComponent,
+    CreateAppComponent,
+    CreateAppVersionComponent,
     CreateCustomHostFieldsComponent,
     CreateEntryComponent,
     CreateFeedComponent,
@@ -375,6 +383,7 @@ const ngComponents = [
     NewDealerComponent,
     NewHostUserComponent,
     NewSubDealerComponent,
+    VersionTableComponent,
     NewTechrepComponent,
     NewZoneComponent,
     NewZoneModalComponent,
@@ -425,6 +434,7 @@ const ngComponents = [
     SingleScreenComponent,
     SingleTemplateComponent,
     SingleUserComponent,
+    SingleVersionControlComponent,
     SliderFormComponent,
     SpinnerComponent,
     SubstringPipe,
@@ -509,6 +519,8 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective, ClickOu
         CreateFillerFeedComponent,
         ConfirmTemplateModalComponent,
         ConfirmationModalComponent,
+        CreateAppComponent,
+        CreateAppVersionComponent,
         CreateEntryComponent,
         CreateFeedComponent,
         DeleteDealerDialogComponent,

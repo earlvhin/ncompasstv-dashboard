@@ -1,35 +1,31 @@
-import { Component, OnInit, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { FormControl } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { Workbook } from 'exceljs';
+import { Workbook, Worksheet } from 'exceljs';
 import { saveAs } from 'file-saver';
 import * as moment from 'moment';
-import { environment as env } from '../../../../environments/environment';
-import { AuthService, ContentService, PlaylistService } from '../../../global/services';
+
 import {
     API_CONTENT,
-    API_CONTENT_PLAY_COUNT,
+    API_PLAYLIST_MINIFIED,
+    CONTENT_HISTORY,
+    CONTENT_LOGS_REPORT,
+    LICENSE_PLAYING_WHERE,
+    PAGING,
+    TABLE_ROW_FORMAT,
     UI_CONTENT_HISTORY,
-    UI_PLAYINGWHERE_CONTENT,
+    UI_PLAYING_WHERE_CONTENT,
     UI_ROLE_DEFINITION,
     UI_ROLE_DEFINITION_TEXT,
-} from '../../../global/models';
-import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
+} from 'src/app/global/models';
 
-interface CONTENT_LOGS_REPORT {
-    durationTime: string;
-    endDate: string;
-    hostId: string;
-    hostName: string;
-    playlistName: string;
-    startDate: string;
-    totalDuration: number;
-    totalPlay: number;
-}
+import { environment as env } from 'src/environments/environment';
+import { AuthService, ContentService, PlaylistService } from 'src/app/global/services';
+import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
     selector: 'app-single-content',
@@ -39,73 +35,35 @@ interface CONTENT_LOGS_REPORT {
 })
 export class SingleContentComponent implements OnInit, OnDestroy {
     content$: Observable<{ content: API_CONTENT }>;
-    content_monthly_count: API_CONTENT_PLAY_COUNT[] = [];
-    content_daily_count: API_CONTENT_PLAY_COUNT[] = [];
-    content_yearly_count: API_CONTENT_PLAY_COUNT[] = [];
-    daily_chart_updating = true;
-    date_selected = this._date.transform(new Date(), 'longDate');
-    monthly_chart_updating = true;
-    playing_where: any[] = [];
-    content_history: any[] = [];
-    in_playlist: any[] = [];
-    queried_date = moment();
-    realtime_data: EventEmitter<any> = new EventEmitter();
-    update_chart: EventEmitter<any> = new EventEmitter();
-    yearly_chart_updating = true;
-    paging_data_history: any;
-    role: any;
-    host_count: number = 0;
-    license_count: number = 0;
-    screen_count: number = 0;
-    generating_report: boolean = false;
-    report_generated: boolean = false;
-    start_date: any;
-    end_date: any;
-    content_logs_report: any[] = [];
-    content_logs_report_filtered: any[] = [];
-    fs_screenshot: string = `${env.third_party.filestack_screenshot}`;
-    total_duration: any;
-    total_playcount: any;
-    workbook: any;
-    workbook_generation: boolean = false;
-    worksheet: any;
-    content_to_export: any = [];
-    content_logs: any[] = [];
-    file_title: any;
-    table_columns = ['#', 'License Alias', 'Host', 'Screen Name'];
-    in_playlist_table_columns = ['#', 'Playlist Name', 'Business Name'];
-    search_field = new FormControl(null);
+    contentHistory: UI_CONTENT_HISTORY[] = [];
+    contentHistoryTableColumns = this._contentHistoryTableColumns;
+    contentLogsReport: TABLE_ROW_FORMAT[][] = [];
+    contentLogsReportTableColumns = this._contentLogsReportTableColumns;
+    endDate: string;
+    hasGeneratedReport = false;
+    hostCount = 0;
+    isExporting = false;
+    isGeneratingReport = false;
+    inPlaylist: TABLE_ROW_FORMAT[][] = [];
+    inPlaylistTableColumns = ['#', 'Playlist Name', 'Business Name'];
+    licenseCount = 0;
+    pagingDataHistory: PAGING;
+    playingWhere: UI_PLAYING_WHERE_CONTENT[] = [];
+    playingWhereTableColumns = ['#', 'License Alias', 'Host', 'Screen Name'];
+    role: string;
+    screenCount = 0;
+    screenshotUrl = `${env.third_party.filestack_screenshot}`;
+    searchField = new FormControl(null);
+    startDate: string;
+    totalDuration: string;
+    totalPlayCount: number;
 
-    content_logs_report_table_columns = [
-        { name: '#', no_export: true },
-        { name: 'Host Name', key: 'hostName' },
-        { name: 'Playlist', key: 'playlistName' },
-        { name: 'Total Play', key: 'totalPlay' },
-        { name: 'Total Duration', key: 'totalDuration' },
-        { name: 'Start Date', key: 'startDate' },
-        { name: 'End Date', key: 'endDate' },
-    ];
-
-    content_history_table_columns = [
-        { name: '#', no_export: true },
-        { name: 'Playlist Name', key: 'playlistName' },
-        { name: 'Log Action', key: 'logAction' },
-        { name: 'Log User', key: 'logUser' },
-        { name: 'Log Date', key: 'logDate' },
-    ];
-
-    content_metrics_table_column = [
-        { name: 'Host', key: 'hostName' },
-        { name: 'Playlist', key: 'hostPlaysTotal' },
-        { name: 'Total Play', key: 'hostDurationsTotal' },
-        { name: 'Total Duration', key: 'hostName' },
-        { name: 'Date Started', key: 'hostPlaysTotal' },
-        { name: 'End Date', key: 'hostDurationsTotal' },
-    ];
-
-    private content_id: string;
-    private current_date: string = this._date.transform(new Date(), 'y-MMM-dd');
-    protected _unsubscribe: Subject<void> = new Subject<void>();
+    private contentId: string;
+    private contentToExport: CONTENT_LOGS_REPORT[] = [];
+    private filename: string;
+    private worksheet: Worksheet;
+    private workbook: Workbook;
+    protected ngUnsubscribe = new Subject<void>();
 
     constructor(
         private _auth: AuthService,
@@ -123,109 +81,97 @@ export class SingleContentComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
-    }
-
-    getFileSize(bytes: number, decimals = 2) {
-        if (bytes === 0 || bytes === null) return '0 Bytes';
-
-        const k = 1024;
-        const dm = decimals < 0 ? 0 : decimals;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-    }
-
-    onSelectDate(value: moment.Moment): void {
-        this.daily_chart_updating = true;
-        this.yearly_chart_updating = true;
-        this.monthly_chart_updating = true;
-        this.date_selected = value.format('MMMM DD, YYYY');
-        this.getMonthlyStats(this.content_id, this._date.transform(value, 'y-MMM-dd'));
-        // this.getDailyStats(this.content_id, this._date.transform(value, 'y-MMM-dd'));
-        // this.getYearlyStats(this.content_id, this._date.transform(value, 'y-MMM-dd'));
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     /**
      * Content Logs Report: Generates Content Logs Report
      * requires startDate, endDate, contentId
      */
-    generateReport() {
-        this.report_generated = false;
-        this.generating_report = true;
-        if (this.start_date && this.end_date) {
-            this._content
-                .generate_content_logs_report({
-                    contentId: this.content_id,
-                    start: this.start_date.toString(),
-                    end: this.end_date.toString(),
-                })
-                .subscribe((data: { total: number; contentLogsByHosts: CONTENT_LOGS_REPORT[] }) => {
-                    this.generating_report = false;
-                    this.report_generated = true;
-                    this.content_to_export = [...data.contentLogsByHosts];
-                    if (data.total > 0) {
-                        let count = 1;
+    public generateReport(): void {
+        if (!this.startDate || !this.endDate) return;
+        this.hasGeneratedReport = false;
+        this.isGeneratingReport = true;
+        const errorMessage = 'Error Generating Report. Try changing the dates selected.';
 
-                        this.content_logs_report = data.contentLogsByHosts.map((i) => {
-                            return [
-                                { value: count++, link: null, editable: false, hidden: false },
-                                {
-                                    value: i.hostName,
-                                    link: i.hostId ? `/${this.role}/hosts/${i.hostId}` : null,
-                                    new_tab_link: true,
-                                    editable: false,
-                                    hidden: false,
-                                },
-                                { value: i.playlistName, link: null, hidden: false },
-                                { value: i.totalPlay, link: null, hidden: false },
-                                {
-                                    value: i.totalDuration != 0 ? this.msToTime(i.totalDuration) : '0',
-                                    link: null,
-                                    hidden: false,
-                                },
-                                {
-                                    value: i.startDate ? moment(new Date(i.startDate)).format('ll') : '--',
-                                    link: null,
-                                    hidden: false,
-                                },
-                                {
-                                    value: i.endDate ? moment(new Date(i.endDate)).format('ll') : '--',
-                                    link: null,
-                                    hidden: false,
-                                },
-                            ];
-                        });
+        const request = this._content.generate_content_logs_report({
+            contentId: this.contentId,
+            start: this.startDate.toString(),
+            end: this.endDate.toString(),
+        });
 
-                        this.content_logs_report_filtered = [...this.content_logs_report];
+        request.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+            next: (data: { total: number; contentLogsByHosts: CONTENT_LOGS_REPORT[] }) => {
+                this.isGeneratingReport = false;
+                this.hasGeneratedReport = true;
+                this.contentToExport = [...data.contentLogsByHosts];
+                this.getTotalDurationAndPlayCount(data.contentLogsByHosts);
 
-                        this.searchHostReport();
-                    } else {
-                        this.content_logs_report = [];
-                        this.showConfirmationDialog(
-                            'error',
-                            'Error Generating Report, Try changing the dates selected',
-                        );
-                    }
-                    this.getTotalDurationAndPlayCount(data.contentLogsByHosts);
-                });
-        }
+                if (data.total <= 0) {
+                    this.contentLogsReport = [];
+                    this.showConfirmationDialog('error', errorMessage);
+                    return;
+                }
+
+                this.contentLogsReport = this.mapForContentLogReport(data.contentLogsByHosts);
+            },
+            error: () => {
+                this.contentLogsReport = [];
+                this.hasGeneratedReport = false;
+                this.isGeneratingReport = false;
+                this.showConfirmationDialog('error', errorMessage);
+            },
+        });
     }
 
-    searchHostReport() {
-        this.search_field.valueChanges.subscribe({
+    private mapForContentLogReport(data: CONTENT_LOGS_REPORT[]): TABLE_ROW_FORMAT[][] {
+        let count = 1;
+
+        return data.map((i) => {
+            return [
+                { value: count++, link: null, editable: false, hidden: false },
+                {
+                    value: i.hostName,
+                    link: i.hostId ? `/${this.role}/hosts/${i.hostId}` : null,
+                    new_tab_link: true,
+                    editable: false,
+                    hidden: false,
+                },
+                { value: i.playlistName, link: null, hidden: false },
+                { value: i.totalPlay, link: null, hidden: false },
+                {
+                    value: i.totalDuration != 0 ? this.msToTime(i.totalDuration) : '0',
+                    link: null,
+                    hidden: false,
+                },
+                {
+                    value: i.startDate ? moment(new Date(i.startDate)).format('ll') : '--',
+                    link: null,
+                    hidden: false,
+                },
+                {
+                    value: i.endDate ? moment(new Date(i.endDate)).format('ll') : '--',
+                    link: null,
+                    hidden: false,
+                },
+            ];
+        });
+    }
+
+    public searchHostReport(): void {
+        this.searchField.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
             next: (e) => {
                 let count = 1;
-                let filtered;
+                let filtered: CONTENT_LOGS_REPORT[];
 
-                if (e === '') filtered = [...this.content_to_export];
+                if (e === '') filtered = [...this.contentToExport];
                 else
                     filtered = [
-                        ...this.content_to_export.filter((i) => i.hostName.toLowerCase().includes(e.toLowerCase())),
+                        ...this.contentToExport.filter((i) => i.hostName.toLowerCase().includes(e.toLowerCase())),
                     ];
 
-                this.content_logs_report_filtered = filtered.map((i) => {
+                this.contentLogsReport = filtered.map((i) => {
                     return [
                         { value: count++, link: null, editable: false, hidden: false },
                         {
@@ -238,12 +184,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
                         { value: i.playlistName, link: null, hidden: false },
                         { value: i.totalPlay, link: null, hidden: false },
                         {
-                            value:
-                                i.totalDuration != 0 && typeof i.totalDuration === 'number'
-                                    ? this.msToTime(i.totalDuration)
-                                    : i.totalDuration.length
-                                      ? i.totalDuration
-                                      : '0',
+                            value: this.getTotalDuration(i.totalDuration),
                             link: null,
                             hidden: false,
                         },
@@ -271,50 +212,58 @@ export class SingleContentComponent implements OnInit, OnDestroy {
         });
 
         dialog.afterClosed().subscribe(() => {
-            this.report_generated = false;
-            this.generating_report = false;
-            this.start_date = '';
-            this.end_date = '';
+            this.hasGeneratedReport = false;
+            this.isGeneratingReport = false;
+            this.startDate = '';
+            this.endDate = '';
         });
     }
 
-    getTotalDurationAndPlayCount(data) {
-        var count = 0;
-        var play_count = 0;
+    private getTotalDurationAndPlayCount(data: CONTENT_LOGS_REPORT[]): void {
+        let count = 0;
+        let playCount = 0;
+
         data.map((i) => {
             count = count + i.totalDuration;
-            play_count = play_count + i.totalPlay;
+            playCount = playCount + i.totalPlay;
         });
-        this.total_duration = this.msToTime(count);
-        this.total_playcount = play_count;
+
+        this.totalDuration = this.msToTime(count);
+        this.totalPlayCount = playCount;
     }
 
-    msToTime(input) {
+    private msToTime(input: number): string {
         let totalSeconds = input;
         let hours = Math.floor(totalSeconds / 3600);
         totalSeconds %= 3600;
         let minutes = Math.floor(totalSeconds / 60);
         let seconds = totalSeconds % 60;
-
-        return hours + 'h ' + minutes + 'm ' + seconds + 's ';
+        return `${hours}h ${minutes}m ${seconds}s`;
     }
 
-    /** Content Logs Report: StarDate Picker */
-    onSelectStartDate(e) {
-        this.start_date = moment(e).format('YYYY-MM-DD');
-    }
-
-    /** Content Logs Report: EndDate Picker */
-    onSelectEndDate(e) {
-        this.end_date = moment(e).format('YYYY-MM-DD');
+    /**
+     * Updates the start/end date datepickers with the provided data.
+     * Datepicker for Content Logs Report.
+     *
+     * @param {string} data The new start/end date in string format.
+     * @returns {void}
+     */
+    public selectStartOrEndDate(data: string, type = 'start'): void {
+        const DEFAULT_FORMAT = 'YYYY-MM-DD';
+        const result = moment(data).format(DEFAULT_FORMAT);
+        type === 'start' ? (this.startDate = result) : (this.endDate = result);
     }
 
     private getPlaylistsOfContent(id: string) {
-        this._playlist.get_playlist_by_content_id(id).subscribe((data: any) => {
-            if (data) {
+        this._playlist.getPlaylistByContentId(id).subscribe({
+            next: (response) => {
+                if ('message' in response) return;
+
+                const playlists = response.playlists as API_PLAYLIST_MINIFIED[];
+
                 let count = 1;
 
-                this.in_playlist = data.map((i) => {
+                this.inPlaylist = playlists.map((i) => {
                     return [
                         { value: i.playlistId, link: null, editable: false, hidden: true },
                         { value: count++, link: null, editable: false, hidden: false },
@@ -332,42 +281,42 @@ export class SingleContentComponent implements OnInit, OnDestroy {
                         },
                     ];
                 });
-            }
+            },
+            error: (e) => {
+                console.error('Failed to retrieve playlists of content', e);
+            },
         });
     }
 
-    exportTable() {
+    public exportTable(): void {
         const header = [];
         this.workbook = new Workbook();
         this.workbook.creator = 'NCompass TV';
         this.workbook.created = new Date();
-        this.worksheet = this.workbook.addWorksheet(this.start_date + ' - ' + this.end_date);
-        this.workbook_generation = true;
-        Object.keys(this.content_logs_report_table_columns).forEach((key) => {
-            if (
-                this.content_logs_report_table_columns[key].name &&
-                !this.content_logs_report_table_columns[key].no_export
-            ) {
+        this.worksheet = this.workbook.addWorksheet(this.startDate + ' - ' + this.endDate);
+        this.isExporting = true;
+
+        Object.keys(this.contentLogsReportTableColumns).forEach((key) => {
+            if (this.contentLogsReportTableColumns[key].name && !this.contentLogsReportTableColumns[key].no_export) {
                 header.push({
-                    header: this.content_logs_report_table_columns[key].name,
-                    key: this.content_logs_report_table_columns[key].key,
+                    header: this.contentLogsReportTableColumns[key].name,
+                    key: this.contentLogsReportTableColumns[key].key,
                     width: 30,
                     style: { font: { name: 'Arial', bold: true } },
                 });
             }
         });
 
-        const first_column = ['Filename', this.file_title];
+        const firstColumn = ['Filename', this.filename];
+        const secondColumn = ['', '', 'Total Count', 'Total Duration'];
+        const thirdColumn = ['', '', this.totalPlayCount, this.totalDuration];
         this.worksheet.columns = header;
         this.worksheet.getRow(1).values = [];
-        this.worksheet.getRow(1).values = first_column;
+        this.worksheet.getRow(1).values = firstColumn;
         this.worksheet.getRow(2).values = [];
-        const second_column = ['', '', 'Total Count', 'Total Duration'];
-        this.worksheet.getRow(2).values = second_column;
+        this.worksheet.getRow(2).values = secondColumn;
         this.worksheet.getRow(2).height = 20;
-        const third_column = ['', '', this.total_playcount, this.total_duration];
-        // const third_column = ['',this.selected_content_count,this.selected_content_duration];
-        this.worksheet.getRow(3).values = third_column;
+        this.worksheet.getRow(3).values = thirdColumn;
         this.worksheet.getRow(3).height = 20;
         this.worksheet.getRow(4).values = [];
         this.worksheet.getRow(4).height = 20;
@@ -384,26 +333,26 @@ export class SingleContentComponent implements OnInit, OnDestroy {
         this.getDataForExport();
     }
 
-    getDataForExport() {
-        this.content_to_export.forEach((item, i) => {
+    private getDataForExport(): void {
+        this.contentToExport.forEach((item) => {
             this.modifyItem(item);
-            this.worksheet.addRow(item).font = {
-                bold: false,
-            };
+            this.worksheet.addRow(item).font = { bold: false };
         });
+
         this.generateExcel();
     }
 
-    modifyItem(item) {
-        item.totalDuration = this.msToTime(item.totalDuration);
+    private modifyItem(item: { totalDuration: number | string; startDate: string; endDate: string }): void {
+        item.totalDuration = this.msToTime(item.totalDuration as number);
         item.startDate = item.startDate ? moment(new Date(item.startDate)).format('MM/DD/YYYY') : '';
         item.endDate = item.endDate ? moment(new Date(item.endDate)).format('MM/DD/YYYY') : '';
     }
 
-    generateExcel() {
+    public generateExcel(): void {
         const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-        var filename = '';
+        let filename = '';
         let rowIndex = 1;
+
         for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
             this.worksheet.getRow(rowIndex).alignment = {
                 vertical: 'middle',
@@ -413,209 +362,185 @@ export class SingleContentComponent implements OnInit, OnDestroy {
         }
         this.workbook.xlsx.writeBuffer().then((file: any) => {
             const blob = new Blob([file], { type: EXCEL_TYPE });
-            filename = this.file_title + '-_reports' + '.xlsx';
+            filename = `${this.filename}-_reports.xlsx`;
             saveAs(blob, filename);
         });
-        this.workbook_generation = false;
+
+        this.isExporting = false;
     }
 
     private getContentInfo(content_id: string): void {
         this.content$ = this._content.get_content_by_id(content_id);
-        this.content$.subscribe((val) => (this.file_title = val.content.title));
-    }
-
-    private getDailyStats(content_id: string, date: string): void {
-        const daily_stat = { contentId: content_id, from: date };
-
-        this._content
-            .get_content_daily_count(daily_stat)
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(
-                (response: API_CONTENT) => {
-                    if (response) {
-                        this.content_daily_count = response.contentPlaysListCount;
-                        this.daily_chart_updating = false;
-                    }
-                },
-                (error) => {
-                    console.error(error);
-                },
-            );
+        this.content$.subscribe((val) => (this.filename = val.content.title));
     }
 
     private getPageParam(): void {
-        this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
-            this.content_id = this._params.snapshot.params.data;
-            this.getPlaylistsOfContent(this.content_id);
-            this.getMonthlyStats(this.content_id, this.current_date);
-            // this.getDailyStats(this.content_id, this.current_date);
-            // this.getYearlyStats(this.content_id, this.current_date);
-            this.getContentInfo(this.content_id);
-            this.getPlayWhere(this.content_id);
-            this.getContentHistory(this.content_id, 1);
+        this._params.paramMap.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
+            this.contentId = this._params.snapshot.params.data;
+            this.getPlaylistsOfContent(this.contentId);
+            this.getContentInfo(this.contentId);
+            this.getPlayWhere(this.contentId);
+            this.getContentHistory(this.contentId, 1);
 
-            this.start_date = this._params.snapshot.queryParamMap.get('start_date')
-                ? moment(new Date(this._params.snapshot.queryParamMap.get('start_date'))).format('YYYY-MM-DD')
-                : null;
-
-            this.end_date = this._params.snapshot.queryParamMap.get('end_date')
-                ? moment(new Date(this._params.snapshot.queryParamMap.get('end_date'))).format('YYYY-MM-DD')
-                : null;
-
-            if (this.start_date && this.end_date) {
-                this.generateReport();
-            }
+            const startDate = this._params.snapshot.queryParamMap.get('start_date');
+            const endDate = this._params.snapshot.queryParamMap.get('end_date');
+            this.startDate = startDate ? moment(new Date(startDate)).format('YYYY-MM-DD') : null;
+            this.endDate = endDate ? moment(new Date(endDate)).format('YYYY-MM-DD') : null;
+            if (this.startDate && this.endDate) this.generateReport();
         });
     }
 
     private getPlayWhere(id: string): void {
         this._content
             .get_contents_playing_where(id)
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(
-                (response) => (this.playing_where = this.mapToUIFormat(response.licenses)),
-                (error) => {
-                    console.error(error);
-                },
-            );
-    }
-
-    private getContentHistory(id: string, page): void {
-        this._content
-            .get_contents_history(id, page)
-            .pipe(takeUntil(this._unsubscribe))
+            .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(
                 (response) => {
-                    this.paging_data_history = response;
-                    this.content_history = this.mapToUIContentHistoryFormat(response.entities);
+                    this.playingWhere = this.mapToUIFormat(response.licenses);
                 },
                 (error) => {
-                    this.paging_data_history = [];
+                    console.error('Error retrieving data where contents are playing', error);
                 },
             );
     }
 
-    public onClickPageNumber(page: number) {
-        this.getContentHistory(this.content_id, page);
-    }
-
-    private getMonthlyStats(content_id: string, date: string): void {
-        const monthly_stat = { contentId: content_id, from: date };
-
+    private getContentHistory(id: string, page: number): void {
         this._content
-            .get_content_monthly_count(monthly_stat)
-            .pipe(takeUntil(this._unsubscribe))
+            .get_contents_history(id, page)
+            .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(
-                (response: API_CONTENT) => {
-                    this.content_monthly_count = response && response.contentPlaysListCount;
-                    this.monthly_chart_updating = false;
+                (response) => {
+                    if ('message' in response) {
+                        this.pagingDataHistory = null;
+                        return;
+                    }
+
+                    const data = response as PAGING;
+                    this.pagingDataHistory = data;
+                    this.contentHistory = this.mapToUIContentHistoryFormat([...data.entities]);
                 },
                 (error) => {
-                    console.error(error);
+                    console.error('Error retrieving content history', error);
+                    this.pagingDataHistory = null;
                 },
             );
     }
 
-    private getYearlyStats(content_id: string, date: string): void {
-        const yearly_stat = { contentId: content_id, from: date };
+    /**
+     * Returns the total duration formatted as a human-readable string.
+     *
+     * @param {number} data The total duration in milliseconds.
+     * @returns {string} The formatted total duration.
+     * @needsRefactoring This method needs refactoring for clarity and readability.
+     */
+    private getTotalDuration(data: number): string {
+        return data != 0 && typeof data === 'number' ? this.msToTime(data) : data ? data : '0';
+    }
 
-        this._content
-            .get_content_yearly_count(yearly_stat)
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(
-                (response: API_CONTENT) => {
-                    this.content_yearly_count = response.contentPlaysListCount;
-                    this.yearly_chart_updating = false;
+    public onClickPageNumber(page: number): void {
+        this.getContentHistory(this.contentId, page);
+    }
+
+    private mapToUIFormat(data: LICENSE_PLAYING_WHERE[]): UI_PLAYING_WHERE_CONTENT[] {
+        if (typeof data === 'undefined' || data.length <= 0) return [];
+
+        this.licenseCount = data.length;
+        this.screenCount = [...new Set(data.map((i) => i.screenId))].length;
+        this.hostCount = [...new Set(data.map((i) => i.hostId))].length;
+
+        let count = 1;
+        return data.map((i) => {
+            return new UI_PLAYING_WHERE_CONTENT(
+                { value: i.licenseId, link: null, editable: false, hidden: true },
+                { value: count++, link: null, editable: false, hidden: false },
+                {
+                    value: i.licenseAlias ? i.licenseAlias : i.licenseId,
+                    link: i.licenseId ? `/${this.role}/licenses/${i.licenseId}` : null,
+                    new_tab_link: true,
+                    hidden: false,
                 },
-                (error) => {
-                    console.error(error);
+                {
+                    value: i.hostName,
+                    link: i.hostId ? `/${this.role}/hosts/${i.hostId}` : null,
+                    new_tab_link: true,
+                    hidden: false,
+                },
+                {
+                    value: i.screenName,
+                    link: i.screenId ? `/${this.role}/screens/${i.screenId}` : null,
+                    new_tab_link: true,
+                    hidden: false,
                 },
             );
+        });
     }
 
-    private mapToUIFormat(data: any[]): any[] {
-        if (data && data.length > 0) {
-            this.license_count = data.length;
+    private mapToUIContentHistoryFormat(data: CONTENT_HISTORY[]): UI_CONTENT_HISTORY[] {
+        if (!data || data.length <= 0) return [];
 
-            this.screen_count = [...new Set(data.map((i) => i.screenId))].length;
+        let count = this.pagingDataHistory.pageStart;
 
-            this.host_count = [...new Set(data.map((i) => i.hostId))].length;
-
-            let count = 1;
-            return data.map((i) => {
-                return new UI_PLAYINGWHERE_CONTENT(
-                    { value: i.licenseId, link: null, editable: false, hidden: true },
-                    { value: count++, link: null, editable: false, hidden: false },
-                    {
-                        value: i.licenseAlias ? i.licenseAlias : i.licenseId,
-                        link: i.licenseId ? `/${this.role}/licenses/${i.licenseId}` : null,
-                        new_tab_link: true,
-                        hidden: false,
-                    },
-                    {
-                        value: i.hostName,
-                        link: i.hostId ? `/${this.role}/hosts/${i.hostId}` : null,
-                        new_tab_link: true,
-                        hidden: false,
-                    },
-                    {
-                        value: i.screenName,
-                        link: i.screenId ? `/${this.role}/screens/${i.screenId}` : null,
-                        new_tab_link: true,
-                        hidden: false,
-                    },
-                );
-            });
-        }
-
-        return [];
-    }
-
-    private mapToUIContentHistoryFormat(data: any[]): any[] {
-        if (data && data.length > 0) {
-            let count = this.paging_data_history.pageStart;
-            return data.map((i) => {
-                return new UI_CONTENT_HISTORY(
-                    { value: count++, link: null, editable: false, hidden: false },
-                    {
-                        value: i.playlistContentId,
-                        link: i.playlistId ? `/${this.role}/playlists/${i.playlistId}` : null,
-                        new_tab_link: true,
-                        hidden: true,
-                    },
-                    {
-                        value: i.playlistId,
-                        link: i.playlistId ? `/${this.role}/playlists/${i.playlistId}` : null,
-                        new_tab_link: true,
-                        hidden: true,
-                    },
-                    {
-                        value: i.playlistName,
-                        link: i.playlistName ? `/${this.role}/playlists/${i.playlistId}` : null,
-                        new_tab_link: true,
-                        hidden: false,
-                    },
-                    { value: i.logAction, link: null, editable: false, hidden: false },
-                    {
-                        value: i.userId != '0' && i.userId != null ? `${i.firstName} ${i.lastName}` : 'System',
-                        link: null,
-                        editable: false,
-                        hidden: false,
-                    },
-                    {
-                        value: this._date.transform(i.logDate, 'MMM dd, y h:mm a'),
-                        link: null,
-                        editable: false,
-                        hidden: false,
-                    },
-                );
-            });
-        }
-
-        return [];
+        return data.map((i) => {
+            return new UI_CONTENT_HISTORY(
+                { value: count++, link: null, editable: false, hidden: false },
+                {
+                    value: i.playlistContentId,
+                    link: i.playlistId ? `/${this.role}/playlists/${i.playlistId}` : null,
+                    new_tab_link: true,
+                    hidden: true,
+                },
+                {
+                    value: i.playlistId,
+                    link: i.playlistId ? `/${this.role}/playlists/${i.playlistId}` : null,
+                    new_tab_link: true,
+                    hidden: true,
+                },
+                {
+                    value: i.playlistName,
+                    link: i.playlistName ? `/${this.role}/playlists/${i.playlistId}` : null,
+                    new_tab_link: true,
+                    hidden: false,
+                },
+                { value: i.logAction, link: null, editable: false, hidden: false },
+                {
+                    value: i.userId != '0' && i.userId != null ? `${i.firstName} ${i.lastName}` : 'System',
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                },
+                {
+                    value: this._date.transform(i.logDate, 'MMM dd, y h:mm a'),
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                },
+            );
+        });
     }
 
     protected get currentUser() {
         return this._auth.current_user_value;
+    }
+
+    protected get _contentHistoryTableColumns() {
+        return [
+            { name: '#', no_export: true },
+            { name: 'Playlist Name', key: 'playlistName' },
+            { name: 'Log Action', key: 'logAction' },
+            { name: 'Log User', key: 'logUser' },
+            { name: 'Log Date', key: 'logDate' },
+        ];
+    }
+
+    protected get _contentLogsReportTableColumns() {
+        return [
+            { name: '#', no_export: true },
+            { name: 'Host Name', key: 'hostName' },
+            { name: 'Playlist', key: 'playlistName' },
+            { name: 'Total Play', key: 'totalPlay' },
+            { name: 'Total Duration', key: 'totalDuration' },
+            { name: 'Start Date', key: 'startDate' },
+            { name: 'End Date', key: 'endDate' },
+        ];
     }
 }

@@ -10,7 +10,7 @@
                     mat-raised-button
                     class="theme-btn mr-2"
                     (click)="createPlaylist()"
-                    [disabled]="invalid_form"
+                    [disabled]="invalid_form || !dealerHasValue"
                     *ngIf="!creating_playlist; else publishing">
                     Publish Playlist
                 </button>

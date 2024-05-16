@@ -20,7 +20,7 @@
                     mat-raised-button
                     class="theme-btn mt-4"
                     (click)="generateLicense()"
-                    [disabled]="invalid_form">
+                    [disabled]="invalid_form || !dealerHasValue">
                     <span class="button-label"> Generate License </span>
                     <span class="fas fa-plus ml-2 sm-text"></span>
                 </button>

@@ -132,7 +132,7 @@ export class UI_PLAYLIST_BLOCKLIST_HOST_LICENSE {
     ];
 }
 
-export class UI_PLAYINGWHERE_CONTENT {
+export class UI_PLAYING_WHERE_CONTENT {
     license_id: object;
     index: object;
     license_alias: object;

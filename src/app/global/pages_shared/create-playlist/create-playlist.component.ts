@@ -18,6 +18,7 @@ import {
     UI_CONTENT,
     UI_PLAYLIST_CONTENT,
     UI_ROLE_DEFINITION,
+    UI_ROLE_DEFINITION_TEXT,
 } from 'src/app/global/models';
 
 @Component({
@@ -33,6 +34,7 @@ export class CreatePlaylistComponent implements OnInit {
     dealerid = '';
     dealer_name: string;
     disable_user_filter = true;
+    dealerHasValue: boolean;
     floating_content = false;
     isDealer = false;
     is_admin: boolean;
@@ -379,13 +381,12 @@ export class CreatePlaylistComponent implements OnInit {
     }
 
     openConfirmationModal(id?) {
-        let dialog = this._dialog.open(PlaylistCreatedModalComponent, {
+        this._dialog.open(PlaylistCreatedModalComponent, {
             disableClose: true,
             width: '600px',
-        });
-
-        dialog.afterClosed().subscribe(() => {
-            this._router.navigate([`/${this.roleRoute}/playlists/${id}`]);
+        }).afterClosed().subscribe(() => {
+            const customRoute = this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.roleRoute;
+            this._router.navigate([`/${customRoute}/playlists/${id}`]);
         });
     }
 
@@ -416,6 +417,13 @@ export class CreatePlaylistComponent implements OnInit {
     }
 
     setToDealer(dealer) {
+        this.dealerHasValue = true;
+
+        if(dealer == null){
+            this.dealerHasValue = false;
+            return;
+        }
+        
         this.formControl.dealer.setValue(this.isDealer ? dealer : dealer.id);
         this.dealerid = this.isDealer ? dealer : dealer.id;
         this.getAllContents();

@@ -32,7 +32,7 @@ export class HostsComponent implements OnInit {
     hour_diff: any;
     hour_diff_temp: any;
     initial_load_hosts = true;
-    is_dealer_admin = false;
+    isDealerAdmin = false;
     no_dealer = false;
     no_host: boolean;
     now: any;
@@ -114,7 +114,7 @@ export class HostsComponent implements OnInit {
 
     ngOnInit() {
         if (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-            this.is_dealer_admin = true;
+            this.isDealerAdmin = true;
         }
         this.formTitle();
         this.getHosts(1);
@@ -464,7 +464,7 @@ export class HostsComponent implements OnInit {
         switch (tab) {
             case 'hosts':
                 this.worksheet = this.workbook.addWorksheet('Host View');
-                if (this.is_dealer_admin) {
+                if (this.isDealerAdmin) {
                     this.hosts_table_column = this.hosts_table_column.filter(function (column) {
                         return column.no_show_to_da != true;
                     });

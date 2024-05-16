@@ -1,6 +1,5 @@
-<div class="p-2">
+<div class="edit-single-dealer p-2">
     <div class="dialog-heading d-flex align-items-start">
-        <!-- HEADING -->
         <div class="dealer-heading flex-even">
             <div class="dealer-name-and-status d-flex align-items-center">
                 <h3 class="p-0">Dealer Details:</h3>
@@ -10,20 +9,20 @@
             </div>
             <p class="p-0 sm-text mb-4">You can update dealer details here:</p>
         </div>
-        <!-- DEALER STATUS TOGGLE -->
         <mat-slide-toggle (change)="onToggleStatus($event)" labelPosition="before" [(ngModel)]="is_active_dealer"
             ><span class="sm-text font-weight-bold">{{ is_active_dealer ? 'Active' : 'Inactive' }}:</span>
         </mat-slide-toggle>
-        <!-- CLOSE BUTTON -->
         <button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
             <span class="fas fa-times"></span>
         </button>
     </div>
     <ng-container *ngIf="is_form_loaded; else loaderSmall">
         <form [formGroup]="edit_dealer_form" (ngSubmit)="saveDealerData()" class="text-left" id="edit-dealer-form">
-            <div class="row mb-4">
+            <div class="row">
                 <div *ngFor="let field of edit_dealer_form_fields" class="{{ field.col }} mb-3">
-                    <mat-form-field class="full-width" *ngIf="field.type !== 'toggle'">
+                    <mat-form-field
+                        class="full-width"
+                        *ngIf="field.type !== 'toggle' && !field.isAutocomplete; else autocomplete">
                         <mat-label>{{ field.label }}</mat-label>
                         <span
                             class="validation-message warning sm-text py-1 text-danger"
@@ -54,8 +53,14 @@
                             {{ is_password_field_type ? 'visibility_off' : 'visibility' }}
                         </mat-icon>
                     </mat-form-field>
+                    <ng-template #autocomplete>
+                        <app-city-autocomplete
+                            (city_selected)="citySelected($event)"
+                            [selected_city_from_google]="selectedCity"
+                            (city_autocomplete_ready)="setInitialCity($event)"></app-city-autocomplete>
+                    </ng-template>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-6 mt-neg5">
                     <mat-form-field class="full-width" appearance="fill" appDefaultDateFormat>
                         <mat-label class="md-text">Start Date</mat-label>
                         <input

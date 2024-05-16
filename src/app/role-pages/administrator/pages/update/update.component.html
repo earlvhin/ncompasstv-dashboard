@@ -1,154 +1,30 @@
-<div class="theme-container">
-    <div class="title-section">
-        <div class="d-flex align-items-center">
-            <div class="flex-even">
-                <h1 class="page-title">Player Apps Version Control</h1>
+<div class="app-version">
+    <ng-container *ngIf="!loading; else loader">
+        <div class="app-version--content mb-5">
+            <div class="app-version--title">
+                <h1>Player Apps Version Control</h1>
+            </div>
+
+            <div class="app-version--button">
+                <button mat-button mat-raised-button class="theme-btn pi-control sm-text" (click)="onAddApp()">
+                    <span class="fas fa-plus"></span>
+                    <span class="ml-2 button_text_animation">Add App</span>
+                </button>
             </div>
         </div>
-        <hr class="mat-bl-em" />
-    </div>
-
-    <div class="content-section">
-        <div class="row">
-            <div class="col-lg-4">
-                <mat-card class="p-4">
-                    <h3 class="mb-0">Add New Version</h3>
-                    <p class="sm-text mb-4">Add new versions of player apps for update.</p>
-
-                    <form [formGroup]="app_form" (ngSubmit)="addVersion()">
-                        <mat-form-field appearance="fill" class="w-100">
-                            <mat-label>Select App</mat-label>
-                            <mat-select formControlName="appId" required>
-                                <mat-option *ngFor="let a of apps" [value]="a.appId">
-                                    {{ a.appName }}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-
-                        <mat-form-field appearance="fill" class="w-100">
-                            <mat-label>Version</mat-label>
-                            <input formControlName="version" matInput placeholder="Ex. 2.2.0" />
-                        </mat-form-field>
-
-                        <mat-form-field appearance="fill" class="w-100">
-                            <mat-label>Release Notes</mat-label>
-                            <input formControlName="releaseNotes" matInput placeholder="Ex. Change Configuration" />
-                        </mat-form-field>
-
-                        <mat-form-field appearance="fill" class="w-100">
-                            <mat-label>Downloadable URL</mat-label>
-                            <input
-                                formControlName="zipUrl"
-                                matInput
-                                placeholder="Ex. github.com/NCompass-TV/pi-server/2.2.0" />
-                        </mat-form-field>
-
-                        <button mat-button mat-raised-button class="theme-btn mt-4" [disabled]="app_form_disabled">
-                            Add Version
-                        </button>
-                    </form>
-                </mat-card>
-            </div>
-            <div class="col-lg-8">
-                <div class="row">
-                    <div class="col-lg-6 mb-3" *ngFor="let app of app_versions">
-                        <mat-card *ngIf="app.appVersionInfo">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-even">
-                                    <a [href]="app.appVersionInfo.zipUrl" download>
-                                        <h4 class="mb-1">{{ app.appName }}</h4>
-                                    </a>
-                                    <p class="xsm-text">{{ app.appVersionInfo.releaseNotes }}</p>
-                                </div>
-                                <div class="flex-even text-right">
-                                    <h4>{{ app.appVersionInfo.version }}</h4>
-                                    <p class="xsm-text">Current Version</p>
-                                </div>
-                            </div>
-                        </mat-card>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <hr class="mat-bl-em" />
 
         <div class="row">
-            <div class="col-lg-4">
-                <mat-card class="p-4">
-                    <h3>Add Player App</h3>
-                    <p class="sm-text mb-4">Select a Player App to Delete</p>
-
-                    <form [formGroup]="add_app_form" (ngSubmit)="addApp()">
-                        <mat-form-field appearance="fill" class="w-100">
-                            <mat-label>App Name</mat-label>
-                            <input formControlName="appName" matInput placeholder="Ex. 2.2.0" />
-                        </mat-form-field>
-
-                        <mat-form-field appearance="fill" class="w-100">
-                            <mat-label>App Description</mat-label>
-                            <input formControlName="appDescription" matInput placeholder="Ex. 2.2.0" />
-                        </mat-form-field>
-
-                        <mat-form-field appearance="fill" class="w-100">
-                            <mat-label>Github URL</mat-label>
-                            <input formControlName="githubUrl" matInput placeholder="Ex. 2.2.0" />
-                        </mat-form-field>
-
-                        <button mat-button mat-raised-button class="theme-btn" [disabled]="add_app_form_disabled">
-                            Add App
-                        </button>
-                    </form>
-                </mat-card>
-            </div>
-
-            <div class="col-lg-4">
-                <mat-card class="p-4">
-                    <h3>Delete Player App</h3>
-                    <p class="sm-text mb-4">Select a Player App to Delete</p>
-
-                    <form [formGroup]="delete_app_form" (ngSubmit)="deleteApp()">
-                        <mat-form-field appearance="fill" class="w-100">
-                            <mat-label>Select App</mat-label>
-                            <mat-select formControlName="appId" required>
-                                <mat-option *ngFor="let a of apps" [value]="a.appId">
-                                    {{ a.appName }}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-
-                        <button mat-button mat-raised-button class="theme-btn" [disabled]="delete_app_form_disabled">
-                            Delete App
-                        </button>
-                    </form>
-                </mat-card>
-            </div>
-
-            <div class="col-lg-4">
-                <mat-card class="p-4">
-                    <h3>Delete Player App Version</h3>
-                    <p class="sm-text mb-4">Select a Player App Version to Delete</p>
-
-                    <form [formGroup]="delete_app_version_form" (ngSubmit)="deleteAppVersion()">
-                        <mat-form-field appearance="fill" class="w-100">
-                            <mat-label>Select App</mat-label>
-                            <mat-select formControlName="versionId" required>
-                                <mat-option *ngFor="let a of all_app_versions" [value]="a.versionId">
-                                    {{ a.appName }} - {{ a.version }}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-
-                        <button
-                            mat-button
-                            mat-raised-button
-                            class="theme-btn"
-                            [disabled]="delete_app_version_form_disabled">
-                            Delete Version
-                        </button>
-                    </form>
-                </mat-card>
+            <div class="col-lg-12 app-version--table">
+                <app-version-table
+                    [table_data]="tableDataVersion"
+                    (on_delete)="onDeleteApp($event)"></app-version-table>
             </div>
         </div>
-    </div>
+    </ng-container>
+
+    <ng-template #loader>
+        <div class="w-100 vh-50 d-flex align-items-center justify-content-center">
+            <app-spinner></app-spinner>
+        </div>
+    </ng-template>
 </div>

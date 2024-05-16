@@ -2,7 +2,7 @@
     class="p-0 thumbnail-card rounded-0 position-relative overflow-hidden"
     data-placement="top"
     [attr.title]="filename"
-    [class.is-protected]="is_dealer && is_protected && multiple_delete">
+    [class.is-protected]="isDealer && is_protected && multiple_delete">
     <div class="icon-overlay">
         <div class="sm-text ml-1 mr-1 mt-1">
             <div class="d-flex">
@@ -35,7 +35,7 @@
                 !zone_content &&
                 !multiple_delete &&
                 !is_view_only &&
-                ((is_protected === 0 && is_dealer) || is_admin) &&
+                ((is_protected === 0 && isDealer) || isAdmin) &&
                 !is_filler
             ">
             <i class="fas fa-times text-danger" (click)="deleteMedia($event)" title="Delete Content"></i>
@@ -61,7 +61,7 @@
 
     <!-- mp4 -->
     <img
-        [src]="mp4_thumb || 'assets/media-files/placeholder.png'"
+        [src]="mp4Thumbnail || 'assets/media-files/placeholder.png'"
         *ngIf="filetype === 'mp4' && is_converted == 1"
         alt="thumbnail" />
 

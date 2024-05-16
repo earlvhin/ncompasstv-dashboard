@@ -12,7 +12,7 @@
                         mat-raised-button
                         class="theme-btn mr-2"
                         (click)="clonePlaylist()"
-                        [disabled]="is_view_only">
+                        [disabled]="isViewOnly || isPlaylistEmpty">
                         Clone Playlist
                         <span class="fas fa-copy ml-2 sm-text"></span>
                     </button>
@@ -21,7 +21,7 @@
                         mat-raised-button
                         class="theme-btn mr-2"
                         (click)="pushUpdateToAllLicenses()"
-                        [disabled]="is_view_only">
+                        [disabled]="isViewOnly">
                         Push Updates to All Licenses
                     </button>
                     <button
@@ -29,7 +29,7 @@
                         mat-raised-button
                         class="theme-btn"
                         (click)="openUpdatePlaylistInfoModal()"
-                        [disabled]="is_view_only">
+                        [disabled]="isViewOnly">
                         Edit Playlist Info
                         <span class="fas fa-edit ml-2 sm-text"></span>
                     </button>
@@ -44,36 +44,35 @@
                     <mat-tab label="Contents">
                         <div class="position-relative pt-4">
                             <app-playlist-content-panel
-                                *ngIf="!playlist_updating"
+                                *ngIf="!isPlaylistUpdating"
                                 [dealer_id]="playlist.playlist.dealerId"
                                 [is_admin]="is_admin"
                                 [is_dealer]="is_dealer"
-                                [is_view_only]="is_view_only"
+                                [is_view_only]="isViewOnly"
                                 [page]="'single-playlist'"
                                 [playlist_id]="playlist.playlist.playlistId"
                                 [playlist_contents]="playlist_content_and_blacklist"
                                 [playlist_host_license]="playlist.hostLicenses"
                                 (playlist_changes_saved)="reloadPlaylist()"
                                 (reload_playlist)="reloadPlaylist()"
-                                (reload_demo)="reloadDemo($event)"
-                                (playlist_demo)="openPlaylistDemo($event)">
+                                (reload_demo)="reloadDemo()"
+                                (playlist_demo)="openPlaylistDemo()">
                             </app-playlist-content-panel>
 
                             <div
                                 class="load_overlay d-flex align-items-center justify-content-center"
-                                *ngIf="playlist_updating">
+                                *ngIf="isPlaylistUpdating">
                                 <div class="text-center">
                                     <app-spinner></app-spinner>
                                     <h5 class="text-primary mt-4">Getting Playlist Data, Please Wait . . .</h5>
                                 </div>
                             </div>
-                            <!--temp-->
                         </div>
                     </mat-tab>
                     <mat-tab label="Screens">
-                        <mat-card class="mt-3" *ngIf="playlist_screens && playlist_screens.length > 0">
+                        <mat-card class="mt-3" *ngIf="playlistScreens && playlistScreens.length > 0">
                             <app-data-table
-                                [table_columns]="screen_table_column"
+                                [table_columns]="screenTableColumn"
                                 [table_data]="playlist_screen_table"
                                 [new_table]="true">
                             </app-data-table>
@@ -86,14 +85,14 @@
                             mat-raised-button
                             class="theme-btn mr-2 mt-3"
                             (click)="pushUpdateToSelectedLicenses()"
-                            [disabled]="license_to_update.length == 0 || is_view_only">
+                            [disabled]="license_to_update.length == 0 || isViewOnly">
                             Push Updates to Selected Licenses
                         </button>
 
                         <div class="row no-gutters">
                             <div class="col-lg-6">
-                                <div class="mt-3" [ngClass]="playlist_updating ? 'overlay' : null">
-                                    <ng-container *ngIf="!playlist_updating; else loader_overlay">
+                                <div class="mt-3" [ngClass]="isPlaylistUpdating ? 'overlay' : ''">
+                                    <ng-container *ngIf="!isPlaylistUpdating; else loader_overlay">
                                         <mat-accordion>
                                             <mat-expansion-panel
                                                 hideToggle

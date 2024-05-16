@@ -1,0 +1,79 @@
+<div class="table--main">
+    <ng-container *ngIf="table_data.data && table_data.data.length; else noData">
+        <table class="table">
+            <thead>
+                <tr>
+                    <ng-container *ngFor="let label of table_data.label">
+                        <th>{{ label }}</th>
+                    </ng-container>
+
+                    <th *ngIf="table_data.hasActions">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr class="table--tr" *ngFor="let data of table_data.data; let i = index">
+                    <td>{{ i + 1 }}</td>
+                    <ng-container *ngFor="let d of data">
+                        <ng-container *ngIf="!d.isHidden">
+                            <ng-container *ngIf="d.isLink; else noLink">
+                                <td>
+                                    <ng-container *ngIf="d.insideLink; else isExternalLink">
+                                        <a
+                                            class="table--link"
+                                            target="{{ d.newTab ? '_blank' : '_self' }}"
+                                            [routerLink]="d.insideLink">
+                                            {{ d.value }}
+                                        </a>
+                                    </ng-container>
+
+                                    <ng-template #isExternalLink>
+                                        <a
+                                            class="table--link"
+                                            target="{{ d.newTab ? '_blank' : '_self' }}"
+                                            [attr.href]="
+                                                d.externalLink.startsWith('http')
+                                                    ? d.externalLink
+                                                    : 'http://' + d.externalLink
+                                            ">
+                                            {{ d.value }}
+                                        </a>
+                                    </ng-template>
+                                </td>
+                            </ng-container>
+
+                            <ng-template #noLink>
+                                <td>{{ d.value }}</td>
+                            </ng-template>
+                        </ng-container>
+                    </ng-container>
+
+                    <ng-container *ngIf="table_data.hasActions.actions.length">
+                        <td>
+                            <div class="table--actions">
+                                <ng-container *ngFor="let action of table_data.hasActions.actions">
+                                    <i
+                                        class="{{ action.icon }}  cursor-pointer"
+                                        data-toggle="tooltip"
+                                        title="{{ action.title }}"
+                                        (click)="onClickIcon(data, action)"></i>
+                                </ng-container>
+                            </div>
+                        </td>
+                    </ng-container>
+                </tr>
+            </tbody>
+        </table>
+    </ng-container>
+
+    <ng-template #noData>
+        <div class="w-100">
+            <mat-card class="py-5 text-center">
+                <div class="mb-4">
+                    <i class="text-gray fa-5x far fa-file-alt"></i>
+                </div>
+                <h3 class="text-gray col-lg-12">No Records Found.</h3>
+            </mat-card>
+        </div>
+    </ng-template>
+</div>

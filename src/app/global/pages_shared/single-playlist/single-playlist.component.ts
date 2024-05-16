@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
-import { takeUntil } from 'rxjs/operators';
-import { forkJoin, Observable, Subject } from 'rxjs';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { map, takeUntil } from 'rxjs/operators';
+import { forkJoin, Observable, Subject, Subscription } from 'rxjs';
 import * as io from 'socket.io-client';
 
 import { ClonePlaylistComponent } from '../../components_shared/playlist_components/clone-playlist/clone-playlist.component';
@@ -10,15 +10,16 @@ import { ConfirmationModalComponent } from '../../components_shared/page_compone
 import { PlaylistDemoComponent } from '../../components_shared/playlist_components/playlist-demo/playlist-demo.component';
 import { PlaylistEditModalComponent } from '../../components_shared/playlist_components/playlist-edit-modal/playlist-edit-modal.component';
 import {
+    API_CONTENT,
+    API_HOST,
     API_LICENSE_PROPS,
+    API_SCREEN,
     API_SCREEN_OF_PLAYLIST,
     API_SINGLE_PLAYLIST,
-    UI_ROLE_DEFINITION,
     UI_PLAYLIST_SCREENS_NEW,
-    UI_CONFIRMATION_MODAL,
     UI_ROLE_DEFINITION_TEXT,
 } from 'src/app/global/models';
-import { AuthService, HelperService, PlaylistService, RoleService } from 'src/app/global/services';
+import { AuthService, HelperService, PlaylistService } from 'src/app/global/services';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -34,23 +35,28 @@ export class SinglePlaylistComponent implements OnInit {
     is_admin = this.isAdmin;
     is_dealer = this.isDealer;
     is_initial_load = true;
-    is_view_only = false;
+    isViewOnly = false;
+    isPlaylistEmpty = true;
     license_to_update = [];
     license_url: string;
-    playlist: API_SINGLE_PLAYLIST;
+    playlist: {
+        licenses: API_LICENSE_PROPS[];
+        playlist: API_SINGLE_PLAYLIST;
+        playlistContents: API_CONTENT[];
+        hostLicenses: { host: API_HOST; licenses: API_LICENSE_PROPS[] }[];
+    };
     playlist_content_and_blacklist: any[];
     playlist_host_and_license: any;
     playlist_licenses: API_LICENSE_PROPS[] = [];
-    playlist_screens: API_SCREEN_OF_PLAYLIST[] = [];
+    playlistScreens: API_SCREEN_OF_PLAYLIST[] = [];
     playlist_screen_table: any;
-    playlist_updating: boolean = true;
+    isPlaylistUpdating: boolean = true;
     title: string;
+    screenTableColumn = ['#', 'Screen Title', 'Dealer', 'Host', 'Type', 'Template', 'Created By'];
 
-    _socket: any;
-
-    screen_table_column = ['#', 'Screen Title', 'Dealer', 'Host', 'Type', 'Template', 'Created By'];
-
-    protected _unsubscribe: Subject<void> = new Subject<void>();
+    // Cannot set type as it needs the @types/socket-io.client package
+    private socket: any;
+    protected ngUnsubscribe = new Subject<void>();
 
     constructor(
         private _auth: AuthService,
@@ -58,51 +64,47 @@ export class SinglePlaylistComponent implements OnInit {
         private _helper: HelperService,
         private _params: ActivatedRoute,
         private _playlist: PlaylistService,
-        private _role: RoleService,
     ) {}
 
     ngOnInit() {
-        this.is_view_only = this.currentUser.roleInfo.permission === 'V';
+        this.isViewOnly = this.currentUser.roleInfo.permission === 'V';
         localStorage.removeItem('playlist_data');
         this.playlistRouteInit();
 
         // If changes made
-        if (this.reload) this.reload.subscribe(() => this.playlistRouteInit());
+        if (this.reload) this.reload.subscribe({ next: () => this.playlistRouteInit() });
 
         let role = this.currentRole;
         if (role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
             role = UI_ROLE_DEFINITION_TEXT.administrator;
         }
 
-        this.host_url = `/` + role + `/hosts/`;
-        this.license_url = `/` + role + `/licenses/`;
+        this.host_url = `/${role}/hosts/`;
+        this.license_url = `/${role}/licenses/`;
 
-        this._socket = io(environment.socket_server, {
+        this.socket = io(environment.socket_server, {
             transports: ['websocket'],
             query: 'client=Dashboard__SinglePlaylistComponent',
         });
-
-        this._socket.on('connect', () => {});
-
-        this._socket.on('disconnect', () => {});
 
         this.subscribeToPushPlaylistUpdateToAllLicenses();
     }
 
     ngOnDestroy() {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
-        this._socket.disconnect();
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+        this.socket.disconnect();
     }
 
-    addToLicenseToPush(e, licenseId) {
-        if (e.checked == true && !this.license_to_update.includes(licenseId)) {
+    public addToLicenseToPush(e: { checked: boolean }, licenseId: string): void {
+        if (e.checked && !this.license_to_update.includes(licenseId)) {
             this.license_to_update.push({ licenseId: licenseId });
-        } else {
-            this.license_to_update = this.license_to_update.filter((i) => {
-                return i.licenseId !== licenseId;
-            });
+            return;
         }
+
+        this.license_to_update = this.license_to_update.filter((i) => {
+            return i.licenseId !== licenseId;
+        });
     }
 
     clonePlaylist() {
@@ -113,32 +115,39 @@ export class SinglePlaylistComponent implements OnInit {
     }
 
     getPlaylistData(id: string) {
-        this.playlist_updating = true;
+        this.isPlaylistUpdating = true;
 
         if (this.is_initial_load && (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')) {
             this.setpageData(this._helper.singlePlaylistData);
-            this.getPlaylistScreens(id).add(() => (this.playlist_updating = false));
+            this.getPlaylistScreens(id).add(() => (this.isPlaylistUpdating = false));
             this.is_initial_load = false;
             return;
         }
 
-        this.getPlaylistDataAndScreens(id).add(() => (this.playlist_updating = false));
+        this.getPlaylistDataAndScreens(id).add(() => (this.isPlaylistUpdating = false));
     }
 
     openUpdatePlaylistInfoModal() {
-        let dialog = this._dialog.open(PlaylistEditModalComponent, {
+        const config: MatDialogConfig = {
             width: '600px',
             data: this.playlist,
-        });
+        };
 
-        dialog.afterClosed().subscribe((data: any) => {
-            this.ngOnInit();
-        });
+        this._dialog
+            .open(PlaylistEditModalComponent, config)
+            .afterClosed()
+            .subscribe({
+                next: () => {
+                    this.ngOnInit();
+                },
+            });
     }
 
     playlistRouteInit() {
-        this._params.paramMap.subscribe(() => {
-            this.getPlaylistData(this._params.snapshot.params.data);
+        this._params.paramMap.subscribe({
+            next: () => {
+                this.getPlaylistData(this._params.snapshot.params.data);
+            },
         });
     }
 
@@ -153,15 +162,13 @@ export class SinglePlaylistComponent implements OnInit {
         );
     }
 
-    openPlaylistDemo(e) {
-        if (e) {
-            let dialogRef = this._dialog.open(PlaylistDemoComponent, {
-                data: this.playlist.playlist.playlistId,
-                width: '768px',
-                height: '432px',
-                panelClass: 'no-padding',
-            });
-        }
+    public openPlaylistDemo(): void {
+        this._dialog.open(PlaylistDemoComponent, {
+            data: this.playlist.playlist.playlistId,
+            width: '768px',
+            height: '432px',
+            panelClass: 'no-padding',
+        });
     }
 
     pushUpdateToSelectedLicenses() {
@@ -215,80 +222,110 @@ export class SinglePlaylistComponent implements OnInit {
         this.ngOnInit();
     }
 
-    reloadDemo(e) {
-        if (e) {
-            this.playlist_updating = true;
-            setTimeout(() => {
-                this.playlist_updating = false;
-            }, 2000);
-        }
+    public reloadDemo(): void {
+        this.isPlaylistUpdating = true;
+        setTimeout(() => {
+            this.isPlaylistUpdating = false;
+        }, 2000);
     }
 
-    warningModal(status, message, data, return_msg, action, licenses: API_LICENSE_PROPS[]): void {
+    private warningModal(
+        status: string,
+        message: string,
+        data: string,
+        return_msg: string,
+        action: string,
+        licenses: API_LICENSE_PROPS[],
+    ): void {
         this._dialog.closeAll();
 
-        let dialogRef = this._dialog.open(ConfirmationModalComponent, {
+        const dialogData = {
+            status: status,
+            message: message,
+            data: data,
+            return_msg: return_msg,
+            action: action,
+        };
+
+        const dialogRef = this._dialog.open(ConfirmationModalComponent, {
             width: '500px',
             height: '350px',
             disableClose: true,
-            data: {
-                status: status,
-                message: message,
-                data: data,
-                return_msg: return_msg,
-                action: action,
-            },
+            data: dialogData,
         });
 
-        dialogRef.afterClosed().subscribe((result) => {
-            if (result === 'update') {
-                licenses.forEach((p) => {
-                    this._socket.emit('D_update_player', p.licenseId);
-                });
+        dialogRef.afterClosed().subscribe({
+            next: (result) => {
+                if (result === 'update') {
+                    licenses.forEach((p) => {
+                        this.socket.emit('D_update_player', p.licenseId);
+                    });
 
-                this.ngOnInit();
-            }
+                    this.ngOnInit();
+                }
+            },
         });
     }
 
-    private getPlaylistDataAndScreens(playlistId: string) {
+    private getPlaylistDataAndScreens(playlistId: string): Subscription {
         const requests = [
             this._playlist.get_playlist_by_id(playlistId),
-            this._playlist.get_screens_of_playlist(playlistId),
+            this._playlist.getScreensOfPlaylist(playlistId),
         ];
 
         return forkJoin(requests)
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(
-                ([playlistResponse, screenResponse]) => {
-                    this.setpageData(playlistResponse);
-                    this.playlist_screens = screenResponse.screens;
-                    this.screensMapToTable(this.playlist_screens);
+            .pipe(
+                takeUntil(this.ngUnsubscribe),
+                map(([getPlaylistRes, getScreenRes]) => {
+                    const playlistData = getPlaylistRes as {
+                        licenses: API_LICENSE_PROPS[];
+                        playlist: API_SINGLE_PLAYLIST;
+                        playlistContents: API_CONTENT[];
+                        hostLicenses: { host: API_HOST; licenses: API_LICENSE_PROPS[] }[];
+                        screens: API_SCREEN[];
+                    };
+
+                    const screenData = getScreenRes as { screens: API_SCREEN[] };
+
+                    return { playlistData, screenData };
+                }),
+            )
+            .subscribe({
+                next: ({ playlistData, screenData }) => {
+                    this.setpageData(playlistData);
+                    this.playlistScreens = screenData.screens;
+                    this.screensMapToTable(this.playlistScreens);
                 },
-                (error) => {
-                    console.error(error);
+                error: (e) => {
+                    console.error('Error retrieving playlist data and screen data', e);
                 },
-            );
+            });
     }
 
-    private getPlaylistScreens(playlistId: string) {
+    private getPlaylistScreens(playlistId: string): Subscription {
         return this._playlist
-            .get_screens_of_playlist(playlistId)
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(
-                (response) => {
-                    this.playlist_screens = response.screens;
-                    this.screensMapToTable(this.playlist_screens);
+            .getScreensOfPlaylist(playlistId)
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe({
+                next: (response) => {
+                    this.playlistScreens = response.screens;
+                    this.screensMapToTable(this.playlistScreens);
                 },
-                (error) => {
-                    console.error(error);
+                error: (e) => {
+                    console.error('Error retrieving playlist screen data', e);
                 },
-            );
+            });
     }
 
-    private setpageData(data: API_SINGLE_PLAYLIST) {
+    private setpageData(data: {
+        licenses: API_LICENSE_PROPS[];
+        playlist: API_SINGLE_PLAYLIST;
+        playlistContents: API_CONTENT[];
+        hostLicenses: { host: API_HOST; licenses: API_LICENSE_PROPS[] }[];
+    }): void {
         const { playlist, playlistContents, hostLicenses } = data;
         const { playlistName, playlistDescription } = playlist;
+        this.isPlaylistEmpty = !playlistContents.length;
         this.playlist = data;
         this.title = playlistName;
         this.description = playlistDescription;
@@ -296,12 +333,12 @@ export class SinglePlaylistComponent implements OnInit {
         this.playlist_host_and_license = [...hostLicenses];
     }
 
-    private subscribeToPushPlaylistUpdateToAllLicenses() {
-        return this._playlist.onPushPlaylistUpdateToAllLicenses
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(() =>
-                this.playlist.licenses.forEach((license) => this._socket.emit('D_update_player', license.licenseId)),
-            );
+    private subscribeToPushPlaylistUpdateToAllLicenses(): Subscription {
+        return this._playlist.onPushPlaylistUpdateToAllLicenses.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+            next: () => {
+                this.playlist.licenses.forEach((license) => this.socket.emit('D_update_player', license.licenseId));
+            },
+        });
     }
 
     protected get currentUser() {

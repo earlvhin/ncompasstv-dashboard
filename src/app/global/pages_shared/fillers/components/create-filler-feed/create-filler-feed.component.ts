@@ -19,6 +19,7 @@ export class CreateFillerFeedComponent implements OnInit {
     assignee_loaded: boolean = false;
     enable_add_button: boolean = false;
     existing_data: any;
+    dealerHasValue: boolean;
     form: FormGroup;
     filler_name: string = '';
     filler_groups: any = [];
@@ -292,6 +293,7 @@ export class CreateFillerFeedComponent implements OnInit {
 
     setAssignedTo(data) {
         if (data) {
+            this.dealerHasValue = true;
             this.selected_dealer.push(data.id);
             this.getAllFillers('', data.id);
             //just incase there has been a group selected before assigning to an assignee so remove selected groups
@@ -299,6 +301,7 @@ export class CreateFillerFeedComponent implements OnInit {
             this.countTotalQuantity();
             return;
         }
+        this.dealerHasValue = false;
         this.unselected_dealer.push(this.existing_data.assignedDealers[0].dealerId);
     }
 

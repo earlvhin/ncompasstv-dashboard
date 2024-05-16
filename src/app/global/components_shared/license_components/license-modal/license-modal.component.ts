@@ -14,8 +14,10 @@ export class LicenseModalComponent implements OnInit {
     dealer_id: string;
     is_submitted: boolean;
     license_generated: boolean;
+    dealerHasValue: boolean;
     invalid_form: boolean = true;
     subscription = new Subscription();
+
 
     constructor(
         private _form: FormBuilder,
@@ -64,6 +66,11 @@ export class LicenseModalComponent implements OnInit {
     }
 
     public setAssignedTo(dealer: any): void {
-        this.formControls.dealer.setValue(dealer.id);
+        this.dealerHasValue = false;
+        if(dealer != null){
+            this.formControls.dealer.setValue(dealer.id);
+            this.dealerHasValue = true;
+        }
+        
     }
 }

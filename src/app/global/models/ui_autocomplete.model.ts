@@ -30,3 +30,13 @@ export interface UI_AUTOCOMPLETE_INITIAL_DATA {
     id: string;
     value: string;
 }
+
+export interface MAPPED_CITY {
+    id: number;
+    value: string;
+    city: string;
+    display: string;
+    country: string;
+    state: string;
+    region: string;
+}

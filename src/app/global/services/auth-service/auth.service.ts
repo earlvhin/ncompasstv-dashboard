@@ -37,15 +37,16 @@ export class AuthService {
             JSON.parse(localStorage.getItem('current_user')),
         );
         this.current_user = this.current_user_subject.asObservable();
-        return this.current_user_subject.value;
 
-        // this.routes = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+        return this.current_user_subject.value;
     }
 
     get current_role(): string {
-        return Object.keys(UI_ROLE_DEFINITION).find(
+        const role = Object.keys(UI_ROLE_DEFINITION).find(
             (key) => UI_ROLE_DEFINITION[key] === this.current_user_value.role_id,
         );
+
+        return this.returnRoleTextDefinition(role);
     }
 
     get session_valid(): boolean {
@@ -54,9 +55,7 @@ export class AuthService {
 
     get roleRoute(): string {
         const currentRole = this.current_role;
-        return currentRole === UI_ROLE_DEFINITION_TEXT.dealeradmin
-            ? UI_ROLE_DEFINITION_TEXT.administrator
-            : currentRole;
+        return this.returnRoleTextDefinition(currentRole);
     }
 
     //Login - Authenticate User
@@ -148,5 +147,24 @@ export class AuthService {
 
     private stopRefreshTokenTimer() {
         clearTimeout(this.refreshTokenTimeout);
+    }
+
+    private returnRoleTextDefinition(currentRole) {
+        // Administrator
+        if (currentRole === UI_ROLE_DEFINITION_TEXT.administrator) {
+            return UI_ROLE_DEFINITION_TEXT.administrator;
+        }
+
+        // Dealer Admin
+        if (currentRole === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+            return UI_ROLE_DEFINITION_TEXT.dealeradmin;
+        }
+
+        // Dealer and Sub-Dealer
+        if (currentRole === UI_ROLE_DEFINITION_TEXT.dealer || currentRole === UI_ROLE_DEFINITION_TEXT['sub-dealer']) {
+            return UI_ROLE_DEFINITION_TEXT.dealer;
+        }
+
+        return currentRole;
     }
 }

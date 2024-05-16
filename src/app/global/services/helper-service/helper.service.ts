@@ -8,6 +8,10 @@ import {
     API_SINGLE_SCREEN,
     API_USER_DATA,
     API_SINGLE_LICENSE_PAGE,
+    API_LICENSE_PROPS,
+    API_CONTENT,
+    API_HOST,
+    API_SCREEN,
 } from 'src/app/global/models';
 
 @Injectable({
@@ -38,7 +42,13 @@ export class HelperService {
     singleAdvertiserData: API_ADVERTISER;
     singleHostData: API_SINGLE_HOST;
     singleLicenseData: API_SINGLE_LICENSE_PAGE;
-    singlePlaylistData: API_SINGLE_PLAYLIST;
+    singlePlaylistData: {
+        licenses: API_LICENSE_PROPS[];
+        playlist: API_SINGLE_PLAYLIST;
+        playlistContents: API_CONTENT[];
+        hostLicenses: { host: API_HOST; licenses: API_LICENSE_PROPS[] }[];
+        screens: API_SCREEN[];
+    };
     singleScreenData: API_SINGLE_SCREEN;
     singleUserData: API_USER_DATA;
 }

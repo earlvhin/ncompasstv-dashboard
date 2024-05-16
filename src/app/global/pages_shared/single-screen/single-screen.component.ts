@@ -57,6 +57,7 @@ import { API_ZONE } from '../../models/api_zone.model';
     styleUrls: ['./single-screen.component.scss'],
 })
 export class SingleScreenComponent implements OnInit {
+    customRoute = this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.roleRoute;
     dealer_playlist: API_PLAYLIST[] = [];
     dealer_hosts: API_HOST[] = [];
     edit_screen_info: EDIT_SCREEN_INFO;
@@ -187,8 +188,8 @@ export class SingleScreenComponent implements OnInit {
         this.getScreenIdOnRoute();
         this.getScreenLicenses(1);
         this.getScreenType();
-        this.license_tbl_row_url = `/${this.roleRoute}/licenses/`;
-        this.playlist_route = `/${this.roleRoute}/playlists/`;
+        this.license_tbl_row_url = `/${this.customRoute}/licenses/`;
+        this.playlist_route = `/${this.customRoute}/playlists/`;
     }
 
     ngOnDestroy() {
@@ -215,17 +216,14 @@ export class SingleScreenComponent implements OnInit {
     }
 
     cloneScreen() {
-        const dialog = this._dialog.open(CloneScreenComponent, {
+        this._dialog.open(CloneScreenComponent, {
             minWidth: '500px',
             minHeight: '500px',
             data: this.screen,
             panelClass: 'no-overflow',
-        });
-
-        dialog.afterClosed().subscribe(async (response: boolean) => {
+        }).afterClosed().subscribe(async (response: boolean) => {
             if (!response) return;
-
-            await this._router.navigate([`/${this.roleRoute}/screens/`, this._helper.singleScreenData.screen.screenId]);
+            await this._router.navigate([`/${this.customRoute}/screens/`, this._helper.singleScreenData.screen.screenId]);
             this.setPageData(this._helper.singleScreenData);
             this.getScreenLicenses(1);
             this.getScreenType();
@@ -242,7 +240,7 @@ export class SingleScreenComponent implements OnInit {
     }
 
     deleteScreen() {
-        let delete_dialog = this._dialog.open(ConfirmationModalComponent, {
+        this._dialog.open(ConfirmationModalComponent, {
             width: '500px',
             height: '350px',
             data: {
@@ -252,9 +250,7 @@ export class SingleScreenComponent implements OnInit {
                 return_msg: '',
                 action: 'delete',
             },
-        });
-
-        delete_dialog.afterClosed().subscribe((result) => {
+        }).afterClosed().subscribe((result) => {
             if (result == 'delete') {
                 let array_to_delete = [];
                 array_to_delete.push(this.screen_id);
@@ -264,7 +260,7 @@ export class SingleScreenComponent implements OnInit {
                     .pipe(takeUntil(this._unsubscribe))
                     .subscribe(
                         () => {
-                            this._router.navigate([`/${this.roleRoute}/screens`]);
+                            this._router.navigate([`/${this.customRoute}/screens`]);
                         },
                         (error) => {
                             console.error(error);
@@ -533,7 +529,7 @@ export class SingleScreenComponent implements OnInit {
                     .pipe(takeUntil(this._unsubscribe))
                     .subscribe(
                         async (response) => {
-                            await this._router.navigate([`/${this.roleRoute}/screens/`, response.screenId]);
+                            await this._router.navigate([`/${this.customRoute}/screens/`, response.screenId]);
                             const screenData = (await this._screen
                                 .get_screen_by_id(response.screenId)
                                 .toPromise()) as API_SINGLE_SCREEN;
@@ -770,7 +766,7 @@ export class SingleScreenComponent implements OnInit {
                 { value: counter++, link: null, editable: false, hidden: false },
                 {
                     value: l.licenseKey,
-                    link: `/${this.roleRoute}/licenses/${l.licenseId}`,
+                    link: `/${this.customRoute}/licenses/${l.licenseId}`,
                     editable: false,
                     hidden: false,
                     status: true,
@@ -778,7 +774,7 @@ export class SingleScreenComponent implements OnInit {
                 },
                 {
                     value: l.alias ? l.alias : '--',
-                    link: `/${this.roleRoute}/licenses/${l.licenseId}`,
+                    link: `/${this.customRoute}/licenses/${l.licenseId}`,
                     editable: true,
                     label: 'License Alias',
                     id: l.licenseId,
@@ -867,7 +863,7 @@ export class SingleScreenComponent implements OnInit {
     private setPageData(data: API_SINGLE_SCREEN) {
         this.licenses = data.licenses;
         this.host = data.host;
-        this.hostUrl = `/${this.roleRoute}/hosts/${this.host.hostId}`;
+        this.hostUrl = `/${this.customRoute}/hosts/${this.host.hostId}`;
         this.sortLicenses('desc');
 
         //sort screen zone template by order

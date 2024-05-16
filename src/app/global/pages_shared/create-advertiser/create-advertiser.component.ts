@@ -19,18 +19,7 @@ import {
     MapService,
 } from 'src/app/global/services';
 
-import {
-    API_DEALER,
-    API_CREATE_ADVERTISER,
-    API_GOOGLE_MAP,
-    API_PARENT_CATEGORY,
-    City,
-    PAGING,
-    UI_ROLE_DEFINITION,
-    UI_TABLE_DEALERS,
-    UI_AUTOCOMPLETE_DATA,
-    UI_AUTOCOMPLETE_INITIAL_DATA,
-} from 'src/app/global/models';
+import { API_CREATE_ADVERTISER, City, UI_TABLE_DEALERS, UI_AUTOCOMPLETE_INITIAL_DATA, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 
 @Component({
     selector: 'app-create-advertiser',
@@ -44,6 +33,7 @@ export class CreateAdvertiserComponent implements OnInit {
     city_state: City[] = [];
     canada_selected: boolean = false;
     city_selected: string;
+    dealerHasValue: boolean;
     gen_categories_data: any[];
     category_selected: string;
     child_category: string;
@@ -507,8 +497,14 @@ export class CreateAdvertiserComponent implements OnInit {
     }
 
     public setToDealer(dealersInfo: { id: string; value: string }): void {
-        this.formControls.dealerId.setValue(dealersInfo.id);
-    }
+        this.dealerHasValue = false;
+
+        if(dealersInfo != null){
+            this.formControls.dealerId.setValue(dealersInfo.id);
+            this.dealerHasValue = true;
+        }
+        }
+        
 
     getCanadaAddress(value) {
         this.canada_selected = value.checked;
@@ -540,7 +536,8 @@ export class CreateAdvertiserComponent implements OnInit {
             .afterClosed()
             .subscribe(() => {
                 if (!id) return;
-                this._router.navigate([`/${this.roleRoute}/advertisers/`, id]);
+                const customRoute = this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.roleRoute;
+                this._router.navigate([`/${customRoute}/advertisers/`, id]);
             });
     }
 

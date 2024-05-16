@@ -16,6 +16,7 @@ import {
 } from 'src/app/global/models';
 import { ReassignDealerComponent } from './reassign-dealer/reassign-dealer.component';
 import { DeleteDealerDialogComponent } from './delete-dealer-dialog/delete-dealer-dialog.component';
+import { CityData } from '../../models/api_cities_state.model';
 
 @Component({
     selector: 'app-edit-single-dealer',
@@ -34,6 +35,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
     is_form_loaded = false;
     is_password_field_type = true;
     other_users: any;
+    selectedCity: string;
     start_date: any;
     today: Date;
     user = this.page_data.user;
@@ -78,8 +80,6 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
         this._editFormControls.c_number.setValue(dealer.contactNumber);
         this._editFormControls.c_person.setValue(dealer.contactPerson);
         this._editFormControls.c_count.setValue(dealer.playerCount);
-        this._editFormControls.address.setValue(dealer.address);
-        this._editFormControls.city.setValue(dealer.city);
         this._editFormControls.region.setValue(dealer.region);
         this._editFormControls.state.setValue(dealer.state);
         this._editFormControls.status.setValue(dealer.status);
@@ -87,6 +87,17 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
         if (dealer.startDate != null) this.onSelectStartDate(dealer.startDate, true);
 
         this.enable_update_form = this.edit_dealer_form.valid;
+    }
+
+    setInitialCity(isLoaded: boolean): void {
+        this.selectedCity = this.page_data.dealer.city;
+    }
+
+    citySelected(data: CityData): void {
+        const { city, state, region } = data || { city: '', state: '', region: '' };
+        this._editFormControls.city.setValue(city ? city : '');
+        this._editFormControls.state.setValue(state || '');
+        this._editFormControls.region.setValue(region || '');
     }
 
     onDeleteDealer(): void {
@@ -227,10 +238,9 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
             c_number: ['', Validators.required],
             c_person: ['', Validators.required],
             c_count: [''],
-            address: [''],
             city: ['', Validators.required],
-            region: ['', Validators.required],
-            state: ['', Validators.required],
+            state: [{ value: '', disabled: true }, Validators.required],
+            region: [{ value: '', disabled: true }, Validators.required],
             status: ['', Validators.required],
             start_date: [''],
         });
@@ -246,7 +256,6 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
             this._editFormControls.dealer_alias.value,
             this._editFormControls.email.value,
             this._editFormControls.c_number.value,
-            this._editFormControls.address.value,
             this._editFormControls.region.value,
             this._editFormControls.city.value,
             this._editFormControls.state.value,
@@ -360,40 +369,29 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
                 col: 'col-lg-6',
             },
             {
-                label: 'Address',
-                control: 'address',
-                placeholder: 'Ex. 123 Lot 14, Blk 9',
-                col: 'col-lg-5',
-            },
-            {
                 label: 'City',
                 control: 'city',
                 placeholder: 'Ex. St. Peter',
-                col: 'col-lg-3 p-0',
+                col: 'col-lg-6',
+                isAutocomplete: true,
             },
             {
                 label: 'State',
                 control: 'state',
                 placeholder: 'Ex. MO',
-                col: 'col-lg-2',
+                col: 'col-lg-3',
             },
             {
                 label: 'Region',
                 control: 'region',
                 placeholder: 'Ex. MW',
-                col: 'col-lg-2',
+                col: 'col-lg-3',
             },
             {
                 label: 'Player Count',
                 control: 'c_count',
                 placeholder: 'Ex. 23',
-                col: 'col-lg-2',
-            },
-            {
-                label: 'Status',
-                control: 'status',
-                type: 'toggle',
-                col: 'col-lg-2 p-0 mt-20',
+                col: 'col-lg-6',
             },
         ];
     }

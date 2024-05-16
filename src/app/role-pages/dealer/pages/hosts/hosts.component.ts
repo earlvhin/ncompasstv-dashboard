@@ -1,23 +1,21 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { TitleCasePipe, DatePipe } from '@angular/common';
-import { MatDialog } from '@angular/material';
+import { TitleCasePipe } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, Subscription } from 'rxjs';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver';
-import * as moment from 'moment';
 
 import {
-    API_ADVERTISER,
+    API_DEALER_LICENSE_ZONE,
     API_HOST,
-    API_LICENSE,
     PAGING,
     UI_ADVERTISER,
     UI_DEALER_HOSTS,
     UI_TABLE_LICENSE_BY_HOST,
     UI_DEALER_LICENSE_ZONE,
 } from 'src/app/global/models';
-import { AuthService, AdvertiserService, HostService, DealerService } from 'src/app/global/services';
+
+import { AuthService, HostService, DealerService } from 'src/app/global/services';
 
 @Component({
     selector: 'app-hosts',
@@ -32,18 +30,17 @@ export class HostsComponent implements OnInit {
     host_filtered_data: any = [];
     hosts_to_export: API_HOST[] = [];
     initial_load: boolean = true;
-    initial_load_zone = true;
+    initialLoadZone = true;
     host_count: any;
-    license_zone_data: any = [];
+    licenseZoneData: UI_DEALER_LICENSE_ZONE[] = [];
     license_filtered_data: any = [];
     no_hosts: boolean = false;
     pageSize: number;
     paging_data: any;
-    paging_data_zone: any;
+    pagingDataZone: any;
     search_data: string = '';
     searching: boolean = false;
-    search_data_license_zone: string = '';
-    searching_license_zone = false;
+    searchingLicenseZone = false;
     temp_array: any = [];
     workbook: any;
     workbook_generation: boolean = false;
@@ -51,7 +48,7 @@ export class HostsComponent implements OnInit {
     is_searching = false;
     table = { columns: [], data: [] as UI_ADVERTISER[] };
     no_advertisers = false;
-    no_license_zone = false;
+    noLicenseZone = false;
     initial_load_advertiser = true;
     hostsPaging: PAGING;
     licensesPaging: PAGING;
@@ -68,15 +65,15 @@ export class HostsComponent implements OnInit {
     initial_load_license: boolean = true;
     license_data_api: any;
     license_data: UI_TABLE_LICENSE_BY_HOST[] = [];
-    license_zone_filtered_data: any = [];
+    licenseZoneFilteredData: UI_DEALER_LICENSE_ZONE[] = [];
     no_licenses: boolean = false;
     now: any;
     splitted_text: any;
     dealers_name: string;
     is_view_only = false;
 
-    private keyword = '';
-    protected _unsubscribe = new Subject<void>();
+    private searchKeyword = '';
+    protected ngUnsubscribe = new Subject<void>();
 
     host_table_column = [
         { name: '#', no_export: true },
@@ -121,12 +118,9 @@ export class HostsComponent implements OnInit {
     ];
 
     constructor(
-        private _advertiser: AdvertiserService,
         private _auth: AuthService,
-        private _change_detector: ChangeDetectorRef,
+        private _changeDetector: ChangeDetectorRef,
         private _dealer: DealerService,
-        private _date: DatePipe,
-        private _dialog: MatDialog,
         private _host: HostService,
         private _title: TitleCasePipe,
     ) {}
@@ -147,12 +141,12 @@ export class HostsComponent implements OnInit {
     }
 
     ngOnDestroy() {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     ngAfterContentChecked(): void {
-        this._change_detector.detectChanges();
+        this._changeDetector.detectChanges();
     }
 
     exportTable(): void {
@@ -210,7 +204,7 @@ export class HostsComponent implements OnInit {
 
         this._host
             .get_host_by_dealer_id_with_sort(filters)
-            .pipe(takeUntil(this._unsubscribe))
+            .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe((response) => {
                 this.hostsPaging = response.paging;
 
@@ -247,7 +241,7 @@ export class HostsComponent implements OnInit {
                 break;
             case 2:
                 // this.getAdvertisers(1);
-                break;   
+                break;
             case 3:
                 this.getDealerLicenseZone(1);
                 break;
@@ -266,14 +260,14 @@ export class HostsComponent implements OnInit {
 
         this._host
             .get_host_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, 1, '', this.pageSize)
-            .pipe(takeUntil(this._unsubscribe))
+            .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe((response) => {
                 if (response.message) {
                     this.hosts_to_export = [];
                     return;
                 }
 
-                var hosts = response.paging.entities;
+                const hosts = response.paging.entities as API_HOST[];
                 this.hosts_to_export = this.mapForExport([...hosts]);
 
                 this.hosts_to_export.forEach((item) => {
@@ -303,7 +297,7 @@ export class HostsComponent implements OnInit {
     private getTotalCount(id: string): void {
         this._host
             .get_host_total_per_dealer(id)
-            .pipe(takeUntil(this._unsubscribe))
+            .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe((response: any) => {
                 this.host_count = {
                     basis: response.total,
@@ -325,7 +319,7 @@ export class HostsComponent implements OnInit {
             });
     }
 
-    private mapForExport(hosts: any) {
+    private mapForExport(hosts: API_HOST[]) {
         return hosts.map((host) => {
             host.generalCategory = host.generalCategory ? host.generalCategory : 'Other';
             if (host.tags) {
@@ -381,136 +375,135 @@ export class HostsComponent implements OnInit {
         });
     }
 
-    public getDealerLicenseZone(page) {
-            this.searching_license_zone = true;
-            this.subscription.add(
-                this._dealer.get_dealer_license_zone(this.search_data_license_zone, this.currentUser.roleInfo.dealerId, page).subscribe(
-                    (data) => this.setZoneData(data),
-                    (error) => {
-                        this.initial_load_zone = false;
-                        this.searching_license_zone = false;
-                        this.license_zone_data = [];
-                        this.license_zone_filtered_data = [];
-                    },
-                ),
+    public getDealerLicenseZone(page: number): void {
+        this.searchingLicenseZone = true;
+
+        this._dealer
+            .get_dealer_license_zone(this.searchKeyword, this.currentUser.roleInfo.dealerId, page)
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(
+                (data) => this.setZoneData(data),
+                (err) => {
+                    this.initialLoadZone = false;
+                    this.searchingLicenseZone = false;
+                    this.licenseZoneData = [];
+                    this.licenseZoneFilteredData = [];
+                    console.error('Failed to retrieve dealer data', err);
+                },
             );
+    }
+
+    public setZoneData(data: PAGING): void {
+        if (!data) return;
+
+        this.initialLoadZone = false;
+        this.searchingLicenseZone = false;
+        this.pagingDataZone = data;
+
+        if (data.entities.length) {
+            const licenseContents = this.mapLicenseZoneData(data.entities as API_DEALER_LICENSE_ZONE[]);
+            this.licenseZoneData = [...licenseContents];
+            this.licenseZoneFilteredData = [...licenseContents];
+            this.noLicenseZone = false;
+            return;
         }
 
+        if (this.searchKeyword == '') this.noLicenseZone = true;
+        this.licenseZoneData = [];
+        this.licenseZoneFilteredData = [];
+    }
 
-    public setZoneData(data) {
-            if (data) {
-                this.initial_load_zone = false;
-                this.searching_license_zone = false;
-                this.paging_data_zone = data;
-                if (data.entities.length > 0) {
-                    const licenseContents = this.license_zone_mapToUI(data.entities);
-                    this.license_zone_data = [...licenseContents];
-                    this.license_zone_filtered_data = [...licenseContents];
-                    this.no_license_zone = false;
-                } else {
-                    if (this.search_data_license_zone == '') this.no_license_zone = true;
-                    this.license_zone_data = [];
-                    this.license_zone_filtered_data = [];
-                }
-            }
-        }
+    public mapLicenseZoneData(data: API_DEALER_LICENSE_ZONE[]): UI_DEALER_LICENSE_ZONE[] {
+        let count = this.pagingDataZone.pageStart;
+        return data.map((i) => {
+            return new UI_DEALER_LICENSE_ZONE(
+                { value: i.licenseId, link: null, editable: false, hidden: true },
+                { value: count++, link: null, editable: false, hidden: false },
+                {
+                    value: i.licenseKey,
+                    link: `/${this.currentRole}/licenses/${i.licenseId}`,
+                    new_tab_link: true,
+                    editable: false,
+                    hidden: false,
+                },
+                {
+                    value: i.hostId,
+                    link: null,
+                    editable: false,
+                    hidden: true,
+                },
+                {
+                    value: i.hostName ? i.hostName : '--',
+                    link: `/${this.currentRole}/hosts/${i.hostId}`,
+                    new_tab_link: true,
+                    editable: false,
+                    hidden: false,
+                },
+                {
+                    value: i.licenseAlias ? i.licenseAlias : '--',
+                    link: `/${this.currentRole}/licenses/${i.licenseId}`,
+                    new_tab_link: true,
+                    editable: false,
+                    hidden: false,
+                },
+                {
+                    value: this.calculateTime(i.mainDuration),
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                },
+                {
+                    value: this.calculateTime(i.verticalDuration),
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                },
+                {
+                    value: this.calculateTime(i.horizontalDuration),
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                },
+                {
+                    value: this.calculateTime(i.backgroundDuration),
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                },
+                { value: i.mainTotalAsset, link: null, editable: false, hidden: false },
+                { value: i.mainTotalHost, link: null, editable: false, hidden: false },
+                { value: i.mainTotalHostPercentage, link: null, editable: false, hidden: false },
+                { value: i.mainTotalAdvertiser, link: null, editable: false, hidden: false },
+                {
+                    value: i.mainTotalAdvertiserPercentage,
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                },
+                { value: i.mainTotalFiller, link: null, editable: false, hidden: false },
+                { value: i.mainTotalFillerPercentage, link: null, editable: false, hidden: false },
+                { value: i.mainTotalFeed, link: null, editable: false, hidden: false },
+                { value: i.mainTotalFeedPercentage, link: null, editable: false, hidden: false },
+                { value: i.mainTotalOther, link: null, editable: false, hidden: false },
+                { value: i.mainTotalOtherPercentage, link: null, editable: false, hidden: false },
+            );
+        });
+    }
 
-    public license_zone_mapToUI(data: any[]): UI_DEALER_LICENSE_ZONE[] {
-            let count = this.paging_data_zone.pageStart;
-            return data.map((i) => {
-                return new UI_DEALER_LICENSE_ZONE(
-                    { value: i.licenseId, link: null, editable: false, hidden: true },
-                    { value: count++, link: null, editable: false, hidden: false },
-                    {
-                        value: i.licenseKey,
-                        link: `/${this.currentRole}/licenses/` + i.licenseId,
-                        new_tab_link: true,
-                        editable: false,
-                        hidden: false,
-                    },
-                    {
-                        value: i.hostId,
-                        link: null,
-                        editable: false,
-                        hidden: true,
-                    },
-                    {
-                        value: i.hostName ? i.hostName : '--',
-                        link: `/${this.currentRole}/hosts/` + i.hostId,
-                        new_tab_link: true,
-                        editable: false,
-                        hidden: false,
-                    },
-                    {
-                        value: i.licenseAlias ? i.licenseAlias : '--',
-                        link: `/${this.currentRole}/licenses/` + i.licenseId,
-                        new_tab_link: true,
-                        editable: false,
-                        hidden: false,
-                    },
-                    {
-                        value: this.calculateTime(i.mainDuration),
-                        link: null,
-                        editable: false,
-                        hidden: false,
-                    },
-                    {
-                        value: this.calculateTime(i.verticalDuration),
-                        link: null,
-                        editable: false,
-                        hidden: false,
-                    },
-                    {
-                        value: this.calculateTime(i.horizontalDuration),
-                        link: null,
-                        editable: false,
-                        hidden: false,
-                    },
-                    {
-                        value: this.calculateTime(i.backgroundDuration),
-                        link: null,
-                        editable: false,
-                        hidden: false,
-                    },
-                    { value: i.mainTotalAsset, link: null, editable: false, hidden: false },
-                    { value: i.mainTotalHost, link: null, editable: false, hidden: false },
-                    { value: i.mainTotalHostPercentage, link: null, editable: false, hidden: false },
-                    { value: i.mainTotalAdvertiser, link: null, editable: false, hidden: false },
-                    {
-                        value: i.mainTotalAdvertiserPercentage,
-                        link: null,
-                        editable: false,
-                        hidden: false,
-                    },
-                    { value: i.mainTotalFiller, link: null, editable: false, hidden: false },
-                    { value: i.mainTotalFillerPercentage, link: null, editable: false, hidden: false },
-                    { value: i.mainTotalFeed, link: null, editable: false, hidden: false },
-                    { value: i.mainTotalFeedPercentage, link: null, editable: false, hidden: false },
-                    { value: i.mainTotalOther, link: null, editable: false, hidden: false },
-                    { value: i.mainTotalOtherPercentage, link: null, editable: false, hidden: false },
-                );
-            });
-        }
-
-    public licenseZoneFilterData(e): void {
-            if (e) {
-                this.search_data_license_zone = e;
-                this.getDealerLicenseZone(1);
-            } else {
-                this.search_data_license_zone = '';
-                this.getDealerLicenseZone(1);
-            }
-        }
+    public licenseZoneFilterData(keyword: string): void {
+        this.searchKeyword = keyword;
+        this.getDealerLicenseZone(1);
+    }
 
     private calculateTime(duration: number): string {
-            if (duration < 60) return `${Math.round(duration)}s`;
-            if (duration === 60) return '1m';
-    
-            const minutes = Math.floor(duration / 60);
-            const seconds = Math.round(duration - minutes * 60);
-    
-            return `${minutes}m ${seconds}s`;
-        }
+        if (duration < 60) return `${Math.round(duration)}s`;
+        if (duration === 60) return '1m';
+
+        const minutes = Math.floor(duration / 60);
+        const seconds = Math.round(duration - minutes * 60);
+
+        return `${minutes}m ${seconds}s`;
+    }
 
     protected get currentUser() {
         return this._auth.current_user_value;
@@ -519,6 +512,4 @@ export class HostsComponent implements OnInit {
     protected get currentRole() {
         return this._auth.current_role;
     }
-
-
 }

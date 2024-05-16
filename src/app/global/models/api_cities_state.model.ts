@@ -2,6 +2,7 @@ export interface Paging {
     totalCount: number;
     pageSize: number;
     currentPage: number;
+    pages: number;
 }
 
 export interface CityData {
@@ -11,7 +12,7 @@ export interface CityData {
     state: string;
     region: string;
     country: string;
-    fullSearch: string;
+    fullSearch?: string;
 }
 
 export interface CITIES_STATE {

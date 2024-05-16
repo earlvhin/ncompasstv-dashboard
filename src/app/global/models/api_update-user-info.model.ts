@@ -74,7 +74,6 @@ export class API_UPDATE_DEALER_PROFILE_BY_ADMIN {
     dealerIdAlias: string;
     email: string;
     contactNumber: string;
-    address: string;
     region: string;
     city: string;
     state: string;
@@ -90,7 +89,6 @@ export class API_UPDATE_DEALER_PROFILE_BY_ADMIN {
         dealerIdAlias: string,
         email: string,
         contactNumber: string,
-        address: string,
         region: string,
         city: string,
         state: string,
@@ -105,7 +103,6 @@ export class API_UPDATE_DEALER_PROFILE_BY_ADMIN {
         this.dealerIdAlias = dealerIdAlias;
         this.email = email;
         this.contactNumber = contactNumber;
-        this.address = address;
         this.region = region;
         this.city = city;
         this.state = state;

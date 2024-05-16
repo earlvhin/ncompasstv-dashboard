@@ -29,7 +29,7 @@
                     </ng-container>
                     <ng-container
                         *ngIf="data.content.fileType == 'feed' && data.content.classification !== 'live_stream'">
-                        <img [src]="fs_screenshot + '/' + data.content.url | sanitize" />
+                        <img [src]="screenshotUrl + '/' + data.content.url | sanitize" />
                     </ng-container>
                     <ng-container
                         *ngIf="data.content.fileType == 'feed' && data.content.classification === 'live_stream'">
@@ -90,28 +90,28 @@
                         <div class="flex-even uploaded-by">
                             <span class="sm-text"> License Count </span>
                             <h5>
-                                {{ license_count }}
+                                {{ licenseCount }}
                             </h5>
                         </div>
 
                         <div class="flex-even date-uploaded">
                             <span class="sm-text"> Host Count </span>
                             <h5>
-                                {{ host_count }}
+                                {{ hostCount }}
                             </h5>
                         </div>
 
                         <div class="flex-even duration">
                             <span class="sm-text"> Playlist Count </span>
                             <h5>
-                                {{ in_playlist.length }}
+                                {{ inPlaylist.length }}
                             </h5>
                         </div>
 
                         <div class="flex-even duration">
                             <span class="sm-text"> Screen Count </span>
                             <h5>
-                                {{ screen_count }}
+                                {{ screenCount }}
                             </h5>
                         </div>
                     </div>
@@ -122,69 +122,6 @@
         <div class="row">
             <div class="col-lg-12 custom-mat-tab">
                 <mat-tab-group dynamicHeight>
-                    <!-- <mat-tab label="Content Analytics">
-                        <div class="row align-items-center mt-4">
-                            <div class="col-lg-4">
-                                <h3 class="mb-0">Report for {{ date_selected }}</h3>
-                            </div>
-                            <div class="col-lg-8 text-right">
-                                <mat-form-field appearance="fill">
-                                    <mat-label>Choose a date</mat-label>
-                                    <input matInput (dateInput)="onSelectDate($event.value)" [matDatepicker]="contentDatePicker" [(value)]="queried_date" readonly>
-                                    <mat-datepicker-toggle matSuffix [for]="contentDatePicker"></mat-datepicker-toggle>
-                                    <mat-datepicker #contentDatePicker></mat-datepicker>
-                                </mat-form-field>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-lg-12 mb-4">
-                                <mat-card>
-                                    <ng-container *ngIf="!daily_chart_updating; else loader">
-                                        <app-data-graph
-                                            [data_set]="content_daily_count"
-                                            [graph_title]="'Daily Content Play Analytics'"
-                                            [graph_description]="'Graph shows the play count of this content for this day.'"
-                                            [graph_id]="'daily_graph'"
-                                            [realtime_data_per_content]="realtime_data"
-                                            [update_chart]="update_chart">
-                                        </app-data-graph>
-                                    </ng-container>
-                                </mat-card>
-                            </div>
-    
-                            <div class="col-lg-12 mb-4">
-                                <mat-card>
-                                    <ng-container *ngIf="!monthly_chart_updating; else loader">
-                                        <app-data-graph 
-                                            [date_format]="'monthly'"
-                                            [data_set]="content_monthly_count"
-                                            [graph_title]="'Monthly Content Play Analytics'"
-                                            [graph_description]="'Graph shows the play count of this content for this month.'"
-                                            [graph_id]="'monthly_graph'"
-                                            [realtime_data_per_content]="realtime_data"
-                                            [update_chart]="update_chart">
-                                        </app-data-graph>
-                                    </ng-container>
-                                </mat-card>
-                            </div>
-    
-                            <div class="col-lg-12">
-                                <mat-card>
-                                    <ng-container *ngIf="!yearly_chart_updating; else loader">
-                                        <app-data-graph 
-                                            [date_format]="'yearly'"
-                                            [data_set]="content_yearly_count"
-                                            [graph_title]="'Yearly Content Play Analytics'"
-                                            [graph_description]="'Graph shows the play count of this content for this year.'"
-                                            [graph_id]="'yearly_graph'"
-                                            [realtime_data_per_content]="realtime_data"
-                                            [update_chart]="update_chart">
-                                        </app-data-graph>
-                                    </ng-container>
-                                </mat-card>
-                            </div>
-                        </div>
-                    </mat-tab> -->
                     <mat-tab label="Reports">
                         <div class="row align-items-center mt-4">
                             <div class="col-lg-6">
@@ -199,10 +136,10 @@
                                         <mat-form-field class="w-100" appearance="fill" appDefaultDateFormat>
                                             <mat-label class="md-text">Start Date</mat-label>
                                             <input
-                                                (dateInput)="onSelectStartDate($event.value)"
-                                                [(value)]="start_date"
                                                 matInput
                                                 [matDatepicker]="datePicker"
+                                                (dateInput)="selectStartOrEndDate($event.value)"
+                                                [(value)]="startDate"
                                                 readonly />
                                             <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
                                             <mat-datepicker #datePicker></mat-datepicker>
@@ -213,11 +150,11 @@
                                         <mat-form-field class="w-100" appearance="fill" appDefaultDateFormat>
                                             <mat-label class="md-text">End Date</mat-label>
                                             <input
-                                                (dateInput)="onSelectEndDate($event.value)"
-                                                [(value)]="end_date"
                                                 matInput
                                                 [matDatepicker]="datePicker2"
-                                                [min]="start_date"
+                                                (dateInput)="selectStartOrEndDate($event.value, 'end')"
+                                                [(value)]="endDate"
+                                                [min]="startDate"
                                                 readonly />
                                             <mat-datepicker-toggle
                                                 matSuffix
@@ -231,7 +168,7 @@
                                             mat-button
                                             mat-raised-button
                                             class="theme-btn px-4 height-60"
-                                            [disabled]="!start_date || !end_date || generating_report"
+                                            [disabled]="!startDate || !endDate || isGeneratingReport"
                                             title="Generate Report"
                                             (click)="generateReport()">
                                             <div class="d-flex align-items-center">
@@ -239,7 +176,7 @@
                                                     <span class="fas fa-chart-bar"></span>
                                                     <span class="ml-2">Generate</span>
                                                 </div>
-                                                <div *ngIf="generating_report">
+                                                <div *ngIf="isGeneratingReport">
                                                     <mat-spinner [diameter]="20"></mat-spinner>
                                                 </div>
                                             </div>
@@ -249,16 +186,16 @@
                             </div>
                         </div>
 
-                        <hr *ngIf="report_generated" />
+                        <hr *ngIf="hasGeneratedReport" />
 
-                        <div class="row no-gutters mt-3" *ngIf="report_generated">
+                        <div class="row no-gutters mt-3" *ngIf="hasGeneratedReport">
                             <!-- From -->
                             <div class="col-lg-3">
                                 <div class="bg-dark px-3 d-flex align-items-center rounded height-60 mr-2">
                                     <h5 class="mb-0 text-white pt-1 align-vertical">
                                         Showing records from
-                                        <span class="text-primary">{{ start_date | date }}</span> to
-                                        <span class="text-primary">{{ end_date | date }}</span>
+                                        <span class="text-primary">{{ startDate | date }}</span> to
+                                        <span class="text-primary">{{ endDate | date }}</span>
                                     </h5>
                                 </div>
                             </div>
@@ -267,9 +204,9 @@
                                 <div class="bg-dark px-3 d-flex align-items-center rounded height-60 mr-2">
                                     <h5 class="mb-0 text-white pt-1">
                                         Summary : Total Play Count:
-                                        <span class="text-primary">{{ total_playcount }}</span>
+                                        <span class="text-primary">{{ totalPlayCount }}</span>
                                         Total Play Duration:
-                                        <span class="text-primary">{{ total_duration }}</span>
+                                        <span class="text-primary">{{ totalDuration }}</span>
                                     </h5>
                                 </div>
                             </div>
@@ -280,14 +217,12 @@
                                     mat-raised-button
                                     class="theme-btn sm-text _primary height-60 width-80"
                                     (click)="exportTable()"
-                                    [disabled]="workbook_generation"
+                                    [disabled]="isExporting"
                                     title="Export to CSV">
                                     <span
-                                        class="{{
-                                            !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin'
-                                        }}"
+                                        class="{{ !isExporting ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
                                         [ngStyle]="{
-                                            color: workbook_generation ? '#222' : 'white'
+                                            color: isExporting ? '#222' : 'white'
                                         }"></span>
                                 </button>
                             </div>
@@ -299,42 +234,42 @@
                                         matInput
                                         type="text"
                                         name="search_field"
-                                        [formControl]="search_field"
+                                        [formControl]="searchField"
                                         [placeholder]="'Ex: McDonald\'s'"
                                         (change)="searchHostReport()" />
                                 </mat-form-field>
                             </div>
                         </div>
 
-                        <mat-card *ngIf="content_logs_report_filtered.length > 0; else nodata">
+                        <mat-card *ngIf="contentLogsReport.length > 0; else nodata">
                             <app-data-table
-                                [table_data]="content_logs_report_filtered"
-                                [table_columns]="content_logs_report_table_columns"
+                                [table_data]="contentLogsReport"
+                                [table_columns]="contentLogsReportTableColumns"
                                 [new_table]="true"></app-data-table>
                         </mat-card>
                     </mat-tab>
                     <mat-tab label="In Playlist">
-                        <mat-card *ngIf="in_playlist.length > 0; else nodata">
+                        <mat-card *ngIf="inPlaylist.length > 0; else nodata">
                             <app-data-table
-                                [table_data]="in_playlist"
-                                [table_columns]="in_playlist_table_columns"
+                                [table_data]="inPlaylist"
+                                [table_columns]="inPlaylistTableColumns"
                                 [new_table]="true"></app-data-table>
                         </mat-card>
                     </mat-tab>
                     <mat-tab label="Playing Where">
-                        <mat-card *ngIf="playing_where.length > 0; else nodata">
+                        <mat-card *ngIf="playingWhere.length > 0; else nodata">
                             <app-data-table
-                                [table_data]="playing_where"
-                                [table_columns]="table_columns"
+                                [table_data]="playingWhere"
+                                [table_columns]="playingWhereTableColumns"
                                 [new_table]="true"></app-data-table>
                         </mat-card>
                     </mat-tab>
                     <mat-tab label="History">
-                        <mat-card *ngIf="content_history.length > 0; else nodata">
+                        <mat-card *ngIf="contentHistory.length > 0; else nodata">
                             <app-data-table
-                                [table_data]="content_history"
-                                [table_columns]="content_history_table_columns"
-                                [paging_details]="paging_data_history"
+                                [table_data]="contentHistory"
+                                [table_columns]="contentHistoryTableColumns"
+                                [paging_details]="pagingDataHistory"
                                 (page_triggered)="onClickPageNumber($event)"
                                 [new_table]="true">
                             </app-data-table>
@@ -359,7 +294,7 @@
                         <i class="text-gray fa-5x far fa-file-alt"></i>
                     </div>
                     <h3 class="text-gray col-lg-12">
-                        {{ generating_report ? 'Generating Content Logs Report, Please Wait ...' : 'No Data Found' }}
+                        {{ isGeneratingReport ? 'Generating Content Logs Report, Please Wait ...' : 'No Data Found' }}
                     </h3>
                 </mat-card>
             </div>

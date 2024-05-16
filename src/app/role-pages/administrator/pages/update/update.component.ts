@@ -1,171 +1,136 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { DatePipe } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { CreateAppComponent } from 'src/app/global/components_shared/version_components/create-app/create-app.component';
+import { App, TABLE_VERSION } from 'src/app/global/models';
 import { UpdateService } from 'src/app/global/services/update-service/update.service';
-
-interface App {
-    appDescription: string;
-    appId: string;
-    appName: string;
-    currentVersion: string;
-    dateCreated: string;
-    dateUpdated: string;
-    githubUrl: string;
-}
 
 @Component({
     selector: 'app-update',
     templateUrl: './update.component.html',
     styleUrls: ['./update.component.scss'],
 })
-export class UpdateComponent implements OnInit {
-    app_form: FormGroup;
+export class UpdateComponent implements OnInit, OnDestroy {
+    addedSuccess = false;
     apps: App[] = [];
-    app_versions: any[] = [];
-    all_app_versions: any[] = [];
-    app_form_disabled: boolean = true;
-    add_app_form: FormGroup;
-    add_app_form_disabled: boolean = true;
-    delete_app_form: FormGroup;
-    delete_app_version_form: FormGroup;
-    delete_app_version_form_disabled: boolean = true;
-    delete_app_form_disabled: boolean = true;
+    loading: boolean = false;
+    tableDataVersion: TABLE_VERSION = {
+        label: ['#', 'Title', 'Description', 'Current Version', 'Date Created', 'URL'],
+        data: [],
+        hasActions: {
+            value: true,
+            actions: [
+                {
+                    label: 'Delete',
+                    icon: 'fas fa-trash',
+                    action: 'delete_app',
+                    title: 'Delete App',
+                },
+            ],
+        },
+    };
+
+    protected unSubscribe = new Subject<void>();
 
     constructor(
-        private _form: FormBuilder,
+        private _date: DatePipe,
+        private _dialog: MatDialog,
         private _updates: UpdateService,
     ) {}
 
     ngOnInit() {
         this.getApps();
-
-        this.app_form = this._form.group({
-            appId: ['', Validators.required],
-            version: ['', Validators.required],
-            releaseNotes: ['', Validators.required],
-            zipUrl: ['', Validators.required],
-        });
-
-        this.add_app_form = this._form.group({
-            appName: ['', Validators.required],
-            appDescription: ['', Validators.required],
-            githubUrl: ['', Validators.required],
-        });
-
-        this.delete_app_form = this._form.group({
-            appId: ['', Validators.required],
-        });
-
-        this.delete_app_version_form = this._form.group({
-            versionId: ['', Validators.required],
-        });
-
-        this.delete_app_form.valueChanges.subscribe(() => {
-            if (this.delete_app_form.valid) {
-                this.delete_app_form_disabled = false;
-            } else {
-                this.delete_app_form_disabled = true;
-            }
-        });
-
-        this.delete_app_version_form.valueChanges.subscribe(() => {
-            if (this.delete_app_version_form.valid) {
-                this.delete_app_version_form_disabled = false;
-            } else {
-                this.delete_app_version_form_disabled = true;
-            }
-        });
-
-        this.app_form.valueChanges.subscribe(() => {
-            if (this.app_form.valid) {
-                this.app_form_disabled = false;
-            } else {
-                this.app_form_disabled = true;
-            }
-        });
-
-        this.add_app_form.valueChanges.subscribe(() => {
-            if (this.add_app_form.valid) {
-                this.add_app_form_disabled = false;
-            } else {
-                this.add_app_form_disabled = true;
-            }
-        });
     }
 
-    addVersion() {
-        this._updates.add_app_version(this.app_form.value).subscribe(() => {
-            this.app_form.reset();
-            this.app_form_disabled = true;
-            this.ngOnInit();
-        });
+    ngOnDestroy(): void {
+        this.unSubscribe.next();
+        this.unSubscribe.complete();
     }
 
-    addApp() {
-        this._updates.add_app(this.add_app_form.value).subscribe((data) => {
-            this.add_app_form.reset();
-            this.add_app_form_disabled = true;
-            this.ngOnInit();
-        });
-    }
-
-    deleteApp() {
-        const app = this.delete_app_form.value;
-        this._updates.remove_app([app.appId]).subscribe(() => {
-            this.delete_app_form.reset();
-            this.delete_app_form_disabled = true;
-            this.ngOnInit();
-        });
-    }
-
-    deleteAppVersion() {
-        const app = this.delete_app_version_form.value;
-
-        this._updates.remove_app_version([app.versionId]).subscribe(() => {
-            this.delete_app_form.reset();
-            this.delete_app_form_disabled = true;
-            this.ngOnInit();
-        });
-    }
-
-    getApps() {
-        this._updates.get_apps().subscribe(async (data: App[]) => {
-            if (data.length > 0) {
-                this.apps = data;
-                this.apps.map((i: App) => {
-                    return this.getAppVersion(i);
-                });
-            }
-
-            this.getAppVersions();
-        });
-    }
-
-    getAppVersion(app: App) {
-        this.app_versions = [];
-
-        this._updates.get_app_version(app.appId).subscribe((data) => {
-            this.app_versions.push({
-                appName: app.appName,
-                appVersionInfo: data[0],
+    public onAddApp() {
+        this._dialog
+            .open(CreateAppComponent, {
+                width: '600px',
+                panelClass: 'app-media-modal',
+                autoFocus: false,
+                disableClose: true,
+            })
+            .afterClosed()
+            .subscribe(() => {
+                this.addedSuccess = true;
+                this.ngOnInit();
             });
-        });
     }
 
-    getAppVersions() {
-        this._updates.get_app_versions().subscribe(
-            (data: any[]) => {
-                data.map((i) => {
-                    this.all_app_versions.push({
-                        versionId: i.versionId,
-                        appId: i.appId,
-                        version: i.version,
-                        appName: this.apps.filter((j) => i.appId === j.appId)[0].appName,
-                    });
-                });
-            },
-            (error) => {
-                console.error(error);
-            },
+    public onDeleteApp(id: string) {
+        this._updates
+            .remove_app([id])
+            .pipe(takeUntil(this.unSubscribe))
+            .subscribe(() => {
+                this.ngOnInit();
+            });
+    }
+
+    public getApps() {
+        this.loading = true;
+        this.tableDataVersion.data = [];
+
+        this._updates
+            .get_apps()
+            .pipe(takeUntil(this.unSubscribe))
+            .subscribe(
+                async (data: App[]) => {
+                    if (data.length > 0) {
+                        this.apps = data;
+
+                        this.mapTableData(data);
+                        this.loading = false;
+                    }
+                },
+                (error) => {
+                    console.error(error);
+                    this.loading = false;
+                },
+            );
+    }
+
+    public mapTableData(tableData: App[]) {
+        return this.tableDataVersion.data.push(
+            ...tableData.map((i) => [
+                {
+                    value: i.appName,
+                    isHidden: false,
+                    isLink: true,
+                    insideLink: i.appId,
+                    newTab: true,
+                },
+                {
+                    value: i.appDescription,
+                    isHidden: false,
+                },
+                {
+                    value: i.currentVersion ? i.currentVersion : 'No Version Available',
+                    isHidden: false,
+                },
+                {
+                    value: this._date.transform(i.dateCreated, 'MMM dd, yyyy, hh:mm:ss a'),
+                    isHidden: false,
+                },
+                {
+                    value: i.githubUrl,
+                    isLink: true,
+                    externalLink: i.githubUrl,
+                    newTab: true,
+                    isHidden: false,
+                },
+                {
+                    value: i.appId,
+                    uniqueIdentifier: i.appId,
+                    isHidden: true,
+                },
+            ]),
         );
     }
 }

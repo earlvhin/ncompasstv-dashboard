@@ -12,6 +12,7 @@ import { EditFillerGroupComponent } from '../edit-filler-group/edit-filler-group
 import { FillerService, AuthService } from 'src/app/global/services';
 import { FillerGridCategoryViewComponent } from '../filler-grid-category-view/filler-grid-category-view.component';
 import { UserSortModalComponent } from 'src/app/global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
+import { UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 
 @Component({
     selector: 'app-filler-main-view',
@@ -179,8 +180,9 @@ export class FillerMainViewComponent implements OnInit {
     }
 
     navigateToFillerGroup(id) {
+        const customRoute = this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.roleRoute;
         this._router.navigate([]).then(() => {
-            window.open(`/${this.roleRoute}/fillers/view-fillers-group/` + id, '_blank');
+            window.open(`/${customRoute}/fillers/view-fillers-group/` + id, '_blank');
         });
     }
 

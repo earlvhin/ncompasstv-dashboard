@@ -36,3 +36,20 @@
 .create-screen-height {
     height: 450px;
 }
+
+.create-screen-stepper-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+.save-spinner-overlay {
+    background: rgba($color: #fff, $alpha: 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+}
