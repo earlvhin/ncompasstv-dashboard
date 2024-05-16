@@ -42,4 +42,16 @@ export const ACTIVITY_URLS = [
         activityCodePrefix: 'feed',
         activityURL: 'media-library',
     },
+    {
+        activityCodePrefix: 'user',
+        activityURL: 'users',
+    },
+    {
+        activityCodePrefix: 'advertiser',
+        activityURL: 'advertisers',
+    },
+    {
+        activityCodePrefix: 'tag',
+        activityURL: 'tags',
+    },
 ];
