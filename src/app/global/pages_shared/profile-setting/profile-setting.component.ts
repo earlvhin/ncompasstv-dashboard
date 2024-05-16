@@ -271,7 +271,7 @@ export class ProfileSettingComponent implements OnInit {
                 { value: a.initiatedBy, hidden: true },
                 { value: targetName, link: targetLink, new_tab_link: true, hidden: false },
                 {
-                    value: `You ${a.activityDescription} for ${a.owner}`,
+                    value: `You ${a.activityDescription} ${a.ownerId === a.initiatedById ? '' : `for ${a.owner}`} `,
                     hidden: false,
                 },
                 { value: this._date.transform(a.dateCreated, "MMMM d, y, 'at' h:mm a"), hidden: false },
