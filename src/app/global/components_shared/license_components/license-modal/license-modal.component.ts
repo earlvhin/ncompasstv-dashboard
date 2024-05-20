@@ -18,7 +18,6 @@ export class LicenseModalComponent implements OnInit {
     invalid_form: boolean = true;
     subscription = new Subscription();
 
-
     constructor(
         private _form: FormBuilder,
         private _license: LicenseService,
