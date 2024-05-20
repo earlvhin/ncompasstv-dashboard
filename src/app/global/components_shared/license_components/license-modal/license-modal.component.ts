@@ -18,7 +18,6 @@ export class LicenseModalComponent implements OnInit {
     invalid_form: boolean = true;
     subscription = new Subscription();
 
-
     constructor(
         private _form: FormBuilder,
         private _license: LicenseService,
@@ -67,10 +66,9 @@ export class LicenseModalComponent implements OnInit {
 
     public setAssignedTo(dealer: any): void {
         this.dealerHasValue = false;
-        if(dealer != null){
+        if (dealer != null) {
             this.formControls.dealer.setValue(dealer.id);
             this.dealerHasValue = true;
         }
-        
     }
 }
