@@ -57,7 +57,8 @@ import { API_ZONE } from '../../models/api_zone.model';
     styleUrls: ['./single-screen.component.scss'],
 })
 export class SingleScreenComponent implements OnInit {
-    customRoute = this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.roleRoute;
+    customRoute =
+        this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.roleRoute;
     dealer_playlist: API_PLAYLIST[] = [];
     dealer_hosts: API_HOST[] = [];
     edit_screen_info: EDIT_SCREEN_INFO;
@@ -216,18 +217,24 @@ export class SingleScreenComponent implements OnInit {
     }
 
     cloneScreen() {
-        this._dialog.open(CloneScreenComponent, {
-            minWidth: '500px',
-            minHeight: '500px',
-            data: this.screen,
-            panelClass: 'no-overflow',
-        }).afterClosed().subscribe(async (response: boolean) => {
-            if (!response) return;
-            await this._router.navigate([`/${this.customRoute}/screens/`, this._helper.singleScreenData.screen.screenId]);
-            this.setPageData(this._helper.singleScreenData);
-            this.getScreenLicenses(1);
-            this.getScreenType();
-        });
+        this._dialog
+            .open(CloneScreenComponent, {
+                minWidth: '500px',
+                minHeight: '500px',
+                data: this.screen,
+                panelClass: 'no-overflow',
+            })
+            .afterClosed()
+            .subscribe(async (response: boolean) => {
+                if (!response) return;
+                await this._router.navigate([
+                    `/${this.customRoute}/screens/`,
+                    this._helper.singleScreenData.screen.screenId,
+                ]);
+                this.setPageData(this._helper.singleScreenData);
+                this.getScreenLicenses(1);
+                this.getScreenType();
+            });
     }
 
     deactivateLicense(id: string) {
@@ -240,34 +247,37 @@ export class SingleScreenComponent implements OnInit {
     }
 
     deleteScreen() {
-        this._dialog.open(ConfirmationModalComponent, {
-            width: '500px',
-            height: '350px',
-            data: {
-                status: 'warning',
-                message: 'Delete Screen',
-                data: 'Are you sure you want to delete this screen',
-                return_msg: '',
-                action: 'delete',
-            },
-        }).afterClosed().subscribe((result) => {
-            if (result == 'delete') {
-                let array_to_delete = [];
-                array_to_delete.push(this.screen_id);
+        this._dialog
+            .open(ConfirmationModalComponent, {
+                width: '500px',
+                height: '350px',
+                data: {
+                    status: 'warning',
+                    message: 'Delete Screen',
+                    data: 'Are you sure you want to delete this screen',
+                    return_msg: '',
+                    action: 'delete',
+                },
+            })
+            .afterClosed()
+            .subscribe((result) => {
+                if (result == 'delete') {
+                    let array_to_delete = [];
+                    array_to_delete.push(this.screen_id);
 
-                this._screen
-                    .delete_screen(array_to_delete)
-                    .pipe(takeUntil(this._unsubscribe))
-                    .subscribe(
-                        () => {
-                            this._router.navigate([`/${this.customRoute}/screens`]);
-                        },
-                        (error) => {
-                            console.error(error);
-                        },
-                    );
-            }
-        });
+                    this._screen
+                        .delete_screen(array_to_delete)
+                        .pipe(takeUntil(this._unsubscribe))
+                        .subscribe(
+                            () => {
+                                this._router.navigate([`/${this.customRoute}/screens`]);
+                            },
+                            (error) => {
+                                console.error(error);
+                            },
+                        );
+                }
+            });
     }
 
     // Structure of Edit Screen Body

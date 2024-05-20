@@ -198,7 +198,7 @@
                             class="theme-btn"
                             type="submit"
                             (click)="arrangeData()"
-                            [disabled]="!form.valid || total_quantity > 20 || total_quantity == 0">
+                            [disabled]="!form.valid || total_quantity > 20 || total_quantity == 0 || !dealerHasValue">
                             {{ !page_data.from_edit_table ? 'Create Filler Feed' : 'Update Filler Feed' }}
                         </button>
                     </div>

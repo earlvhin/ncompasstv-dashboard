@@ -116,7 +116,8 @@
                             mat-raised-button
                             class="theme-btn mr-2"
                             [disabled]="
-                                form_invalid || !dealerHasValue ||
+                                form_invalid ||
+                                !dealerHasValue ||
                                 (canada_selected && new_advertiser_form.get('zip').value.length !== 6) ||
                                 (!canada_selected && new_advertiser_form.get('zip').value.length !== 5)
                             "

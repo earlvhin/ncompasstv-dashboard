@@ -117,13 +117,12 @@ export class UserSortModalComponent implements OnInit {
     }
 
     dealerSelected(selectedDealer: { id: string; value: string }) {
-
         //Null Checking
-        if(selectedDealer == null) {
-            this.dealerId ='';
+        if (selectedDealer == null) {
+            this.dealerId = '';
             return;
         }
-        
+
         this.dealerId = selectedDealer.id;
         this.selected_dealer = {
             dealerId: selectedDealer.id,
