@@ -718,7 +718,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
         const modal: MatDialogRef<AddTagModalComponent> = this._dialog.open(AddTagModalComponent, config);
         modal.componentInstance.ownerId = this.license_data.licenseId;
-        modal.componentInstance.ownerName = this.license_data.alias;
+        modal.componentInstance.owner_name = this.license_data.alias;
         modal.componentInstance.currentTags = this.tags as {
             name: string;
             tagColor: string;

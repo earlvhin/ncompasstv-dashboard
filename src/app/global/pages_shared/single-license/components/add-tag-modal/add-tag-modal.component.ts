@@ -16,7 +16,7 @@ import { ConfirmationModalComponent } from 'src/app/global/components_shared/pag
 export class AddTagModalComponent implements OnInit, OnDestroy {
     @Input() currentTags: TAG[] = [];
     @Input() ownerId: string = null;
-    @Input() ownerName: string = null;
+    @Input() owner_name: string = null;
     @ViewChild('tagMultiSelect', { static: true }) tagMultiSelect: MatSelect;
     checkNewTagsQueue: TAG[] = [];
     description = 'You may assign an existing tag or create one for this license';
@@ -123,7 +123,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
                 break;
             default:
                 data = this.currentTags;
-                await this.onDeleteTagFromOwner(tag.tagId, tag.name, this.ownerId, this.ownerName);
+                await this.onDeleteTagFromOwner(tag.tagId, tag.name, this.ownerId, this.owner_name);
                 return;
         }
 
@@ -153,7 +153,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
         const data: CREATE_AND_ASSIGN_TAG = {
             tagtypeid: '2',
             createdBy: this._currentUser.user_id,
-            owners: [{ id: this.ownerId, name: this.ownerName }],
+            owners: [{ id: this.ownerId, name: this.owner_name }],
             new: tagsToAdd,
             existing: tagsToAssign,
         };
