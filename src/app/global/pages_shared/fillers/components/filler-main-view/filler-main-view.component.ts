@@ -180,7 +180,10 @@ export class FillerMainViewComponent implements OnInit {
     }
 
     navigateToFillerGroup(id) {
-        const customRoute = this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.roleRoute;
+        const customRoute =
+            this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin
+                ? UI_ROLE_DEFINITION_TEXT.administrator
+                : this.roleRoute;
         this._router.navigate([]).then(() => {
             window.open(`/${customRoute}/fillers/view-fillers-group/` + id, '_blank');
         });

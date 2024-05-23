@@ -65,6 +65,7 @@ export class CreateFillerFeedComponent implements OnInit {
                     id: this.existing_data.assignedDealers[0].dealerId,
                     value: this.existing_data.assignedDealers[0].businessName,
                 });
+                this.dealerHasValue = true;
             })
             .add(() => {
                 this.assignee_loaded = true;

@@ -177,11 +177,11 @@
                                     >{{ groups.name }}</span
                                 >
                                 <span class="sm-text text-dark">- {{ groups.quantity }} FILLERS</span>
-                                <span
+                                <!-- <span
                                     class="ml-3 fas fa-times text-danger clickable"
                                     (click)="removeSelectedFiller(groups)"
                                     title="Remove this Filler Group"
-                                    *ngIf="selected_groups.length > 1"></span>
+                                    *ngIf="selected_groups.length > 1 && !page_data.from_edit_table"></span> -->
                             </li>
                         </ul>
                     </div>
@@ -198,7 +198,7 @@
                             class="theme-btn"
                             type="submit"
                             (click)="arrangeData()"
-                            [disabled]="!form.valid || total_quantity > 20 || total_quantity == 0 || !dealerHasValue">
+                            [disabled]="!form.valid || total_quantity > 20 || total_quantity == 0">
                             {{ !page_data.from_edit_table ? 'Create Filler Feed' : 'Update Filler Feed' }}
                         </button>
                     </div>

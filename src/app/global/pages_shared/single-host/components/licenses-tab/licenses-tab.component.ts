@@ -44,7 +44,10 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
     ) {}
 
     ngOnInit() {
-        this.currentRole = this.currentRole == UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.currentRole;
+        this.currentRole =
+            this.currentRole == UI_ROLE_DEFINITION_TEXT.dealeradmin
+                ? UI_ROLE_DEFINITION_TEXT.administrator
+                : this.currentRole;
         this.tableColumns = this.columns;
         this.isViewOnly = this.currentUser.roleInfo.permission === 'V';
         this.searchLicenses();

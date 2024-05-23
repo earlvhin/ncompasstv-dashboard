@@ -381,13 +381,19 @@ export class CreatePlaylistComponent implements OnInit {
     }
 
     openConfirmationModal(id?) {
-        this._dialog.open(PlaylistCreatedModalComponent, {
-            disableClose: true,
-            width: '600px',
-        }).afterClosed().subscribe(() => {
-            const customRoute = this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.roleRoute;
-            this._router.navigate([`/${customRoute}/playlists/${id}`]);
-        });
+        this._dialog
+            .open(PlaylistCreatedModalComponent, {
+                disableClose: true,
+                width: '600px',
+            })
+            .afterClosed()
+            .subscribe(() => {
+                const customRoute =
+                    this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin
+                        ? UI_ROLE_DEFINITION_TEXT.administrator
+                        : this.roleRoute;
+                this._router.navigate([`/${customRoute}/playlists/${id}`]);
+            });
     }
 
     mediaViewer_open(a, content, i) {
@@ -419,11 +425,11 @@ export class CreatePlaylistComponent implements OnInit {
     setToDealer(dealer) {
         this.dealerHasValue = true;
 
-        if(dealer == null){
+        if (dealer == null) {
             this.dealerHasValue = false;
             return;
         }
-        
+
         this.formControl.dealer.setValue(this.isDealer ? dealer : dealer.id);
         this.dealerid = this.isDealer ? dealer : dealer.id;
         this.getAllContents();

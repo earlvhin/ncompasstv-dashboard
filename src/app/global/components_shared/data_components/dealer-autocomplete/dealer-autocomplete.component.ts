@@ -23,7 +23,6 @@ export class DealerAutocompleteComponent implements OnInit {
     @Output() dealer_selected: EventEmitter<any> = new EventEmitter();
     @Output() no_data_found = new EventEmitter();
 
-
     protected _unsubscribe: Subject<void> = new Subject<void>();
 
     constructor(private _dealer: DealerService) {}
@@ -34,17 +33,15 @@ export class DealerAutocompleteComponent implements OnInit {
     }
 
     getDealersMinified(keyword: string) {
-        this._dealer
-            .get_dealers_with_page_minified(1, keyword, 0, this.active_only)
-            .subscribe(
-                (response) => {
-                    response.paging.entities.map((dealer) =>
-                        this.dealers.push({ id: dealer.dealerId, value: dealer.businessName }),
-                    );
-                    this.setAutocomplete();
-                },
-                (error) => console.error(error),
-            );
+        this._dealer.get_dealers_with_page_minified(1, keyword, 0, this.active_only).subscribe(
+            (response) => {
+                response.paging.entities.map((dealer) =>
+                    this.dealers.push({ id: dealer.dealerId, value: dealer.businessName }),
+                );
+                this.setAutocomplete();
+            },
+            (error) => console.error(error),
+        );
     }
 
     setAutocomplete() {

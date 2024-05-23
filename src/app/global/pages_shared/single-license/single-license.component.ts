@@ -54,7 +54,7 @@ import {
     UI_HOST_SUPPORT,
     API_ACTIVITY,
     UI_ROLE_DEFINITION,
-    UI_ROLE_DEFINITION_TEXT
+    UI_ROLE_DEFINITION_TEXT,
 } from 'src/app/global/models';
 import { UpdateTvBrandDialogComponent } from './components/update-tv-brand-dialog/update-tv-brand-dialog.component';
 
@@ -95,7 +95,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     content_types = this._contentTypes;
     current_operation: { day: string; period: string };
     current_zone_name_selected: string;
-    customRoute = this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.roleRoute;
+    customRoute =
+        this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.roleRoute;
     dealerData: API_DEALER;
     dealer_route: string;
     duration_breakdown = { advertisers: 0, feeds: 0, fillers: 0, hosts: 0, others: 0, total: 0 };
@@ -525,7 +526,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 .pipe(takeUntil(this._unsubscribe))
                 .subscribe(
                     () => {
-
                         this._router.navigate([`/${this.customRoute}/licenses`]);
                     },
                     (error) => {

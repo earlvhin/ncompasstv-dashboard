@@ -176,7 +176,10 @@ export class CreateHostComponent implements OnInit {
     }
 
     addNewHostPlace() {
-        const customRoute = this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.roleRoute;
+        const customRoute =
+            this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin
+                ? UI_ROLE_DEFINITION_TEXT.administrator
+                : this.roleRoute;
         const url = this._router.serializeUrl(
             this._router.createUrlTree([`/${customRoute}/users/create-user/host`], {}),
         );
@@ -629,11 +632,10 @@ export class CreateHostComponent implements OnInit {
 
     setToDealer(dealersInfo: { id: string; value: string }): void {
         this.dealerHasValue = false;
-        if(dealersInfo != null){
+        if (dealersInfo != null) {
             this.newHostFormControls.dealerId.setValue(dealersInfo.id);
             this.dealerHasValue = true;
         }
-        
     }
 
     setToGeneralCategory(event: string) {
@@ -884,7 +886,10 @@ export class CreateHostComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(() => {
             if (!hostId) return;
-            const customRoute = this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.roleRoute;
+            const customRoute =
+                this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin
+                    ? UI_ROLE_DEFINITION_TEXT.administrator
+                    : this.roleRoute;
             this._router.navigate([`/${customRoute}/hosts`, hostId]);
         });
     }
