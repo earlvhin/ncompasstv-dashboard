@@ -85,7 +85,6 @@ export class AutocompleteComponent implements OnInit, OnDestroy, OnChanges {
             .pipe(takeUntil(this.ngUnsubscribe), debounceTime(1000))
             .subscribe((response) => {
                 this.isEmpty = response === '';
-
                 this.input_changed.emit(response);
             });
 
