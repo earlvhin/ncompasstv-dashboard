@@ -94,7 +94,7 @@ export class CreateHostComponent implements OnInit {
     paging: PAGING;
     place_id: string;
     searchDisabled = false;
-    selectedDealer: UI_AUTOCOMPLETE_DATA[];
+    selectedDealer: UI_AUTOCOMPLETE_DATA[] = [];
     selectedCity: string;
     selected_location: any;
     state_provinces: { state: string; abbreviation: string; region: string }[] = STATES_PROVINCES;
@@ -153,6 +153,7 @@ export class CreateHostComponent implements OnInit {
             const businessName = this._auth.current_user_value.roleInfo.businessName;
             const dealer = { id: dealerId, value: businessName };
             this.selectedDealer.push(dealer);
+
             this.setToDealer(dealer);
         }
 
