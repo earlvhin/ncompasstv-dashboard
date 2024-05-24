@@ -644,7 +644,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
     selectAllContents(): void {
         this.playlist_contents.forEach((i) => {
-            if (i.frequency !== 2 && i.frequency != 3) {
+            if (i.frequency !== 2 && i.frequency !== 3 && i.classification !== 'filler-v2') {
                 this.selected_playlist_content_ids.push(i.playlistContentId);
                 this.selected_contents.push({
                     playlistContentId: i.playlistContentId,

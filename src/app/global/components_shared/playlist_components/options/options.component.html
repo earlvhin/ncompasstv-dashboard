@@ -87,7 +87,7 @@
                     {{ content_data.dateCreated | date }}
                 </p>
                 <hr />
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center" *ngIf="content_data.classification != 'filler-v2'">
                     <mat-slide-toggle
                         (change)="toggleFullscreen($event)"
                         [checked]="content_data.isFullScreen == 1 ? true : false"
@@ -226,7 +226,11 @@
                 </div>
             </div>
             <hr />
-            <div class="overlayer">
+            <div
+                class="overlayer"
+                [title]="
+                    content_data.classification == 'filler-v2' ? 'Blacklisting not allowed for Filler Contents' : ''
+                ">
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="d-flex">
@@ -241,9 +245,9 @@
                             <div class="ml-2" *ngIf="host_license && host_license.length > 0">
                                 <mat-slide-toggle
                                     class="sm-text"
-                                    (change)="toggleAll($event)"
+                                    (change)="content_data.classification != 'filler-v2' && toggleAll($event)"
                                     [checked]="total_licenses === total_whitelist"
-                                    [disabled]="is_child_frequency">
+                                    [disabled]="content_data.classification == 'filler-v2' || is_child_frequency">
                                     <strong class="ml-2">Toggle All</strong>
                                 </mat-slide-toggle>
                             </div>
