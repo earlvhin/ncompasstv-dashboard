@@ -20,6 +20,8 @@ export class DealerAutocompleteComponent implements OnInit {
     @Input() active_only: boolean = false;
     @Input() isDealerAdmin = false;
     @Input() isDisabled = false;
+    @Input() field_label = 'Select Dealer Business Name';
+    @Input() field_placeholder = 'Ex. NCompass TV';
     @Output() dealer_selected: EventEmitter<any> = new EventEmitter();
     @Output() no_data_found = new EventEmitter();
 
@@ -46,8 +48,8 @@ export class DealerAutocompleteComponent implements OnInit {
 
     setAutocomplete() {
         this.dealers_data = {
-            label: 'Select Dealer Business Name',
-            placeholder: 'Ex. NCompass TV',
+            label: this.field_label,
+            placeholder: this.field_placeholder,
             data: this.dealers,
             initialValue: this.initial_value || [],
             unselect: true,

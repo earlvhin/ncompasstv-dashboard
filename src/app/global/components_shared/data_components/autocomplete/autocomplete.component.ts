@@ -80,19 +80,11 @@ export class AutocompleteComponent implements OnInit, OnDestroy, OnChanges {
             map((keyword) => this._filter(keyword)),
         );
 
-        // watch for update from parent component and update the control value
-        if (this.trigger_input_update) {
-            this.trigger_input_update.pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
-                this.autoCompleteControl.setValue(response, { emitEvent: false });
-            });
-        }
-
         // emit change on input field
         this.autoCompleteControl.valueChanges
             .pipe(takeUntil(this.ngUnsubscribe), debounceTime(1000))
             .subscribe((response) => {
                 this.isEmpty = response === '';
-
                 this.input_changed.emit(response);
             });
 

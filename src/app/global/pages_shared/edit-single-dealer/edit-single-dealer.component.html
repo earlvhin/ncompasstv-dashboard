@@ -17,21 +17,21 @@
         </button>
     </div>
     <ng-container *ngIf="is_form_loaded; else loaderSmall">
-        <form [formGroup]="edit_dealer_form" (ngSubmit)="saveDealerData()" class="text-left" id="edit-dealer-form">
+        <form [formGroup]="editDealerForm" (ngSubmit)="saveDealerData()" class="text-left" id="edit-dealer-form">
             <div class="row">
-                <div *ngFor="let field of edit_dealer_form_fields" class="{{ field.col }} mb-3">
+                <div *ngFor="let field of editDealerFormFields" class="{{ field.col }} mb-3">
                     <mat-form-field
                         class="full-width"
                         *ngIf="field.type !== 'toggle' && !field.isAutocomplete; else autocomplete">
                         <mat-label>{{ field.label }}</mat-label>
                         <span
                             class="validation-message warning sm-text py-1 text-danger"
-                            *ngIf="!email_not_valid && has_duplicate_email && field.control == 'email'">
+                            *ngIf="!emailNotValid && hasDuplicateEmail && field.control == 'email'">
                             This email is already taken.
                         </span>
                         <span
                             class="validation-message warning sm-text py-1 text-danger"
-                            *ngIf="email_not_valid && field.control == 'email'">
+                            *ngIf="emailNotValid && field.control == 'email'">
                             The email format is invalid.
                         </span>
                         <input
@@ -82,7 +82,7 @@
                 type="submit"
                 color="primary"
                 class="theme-btn mt-4 mr-2"
-                [disabled]="!enable_update_form">
+                [disabled]="!enableUpdateForm">
                 Update
             </button>
             <button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="false">Cancel</button>

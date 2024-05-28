@@ -25,22 +25,21 @@ import { CityData } from '../../models/api_cities_state.model';
 })
 export class EditSingleDealerComponent implements OnInit, OnDestroy {
     dealer = this.page_data.dealer;
-    edit_dealer_form: FormGroup;
-    edit_dealer_form_fields = this._editDealerFormFields;
-    email_not_valid: boolean = false;
-    enable_update_form: boolean = false;
-    has_duplicate_email: boolean = false;
+    editDealerForm: FormGroup;
+    editDealerFormFields = this._editDealerFormFields;
+    emailNotValid = false;
+    enableUpdateForm: boolean = false;
+    hasDuplicateEmail = false;
     is_active_dealer = this.dealer.status === 'A';
     is_admin = this._auth.current_role === 'administrator';
     is_form_loaded = false;
     is_password_field_type = true;
-    other_users: any;
+    otherUsers = [];
     selectedCity: string;
     start_date: any;
     today: Date;
     user = this.page_data.user;
 
-    private duplicate_email: any;
     protected _unsubscribe = new Subject<void>();
 
     constructor(
@@ -86,11 +85,16 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 
         if (dealer.startDate != null) this.onSelectStartDate(dealer.startDate, true);
 
-        this.enable_update_form = this.edit_dealer_form.valid;
+        this.enableUpdateForm = this.editDealerForm.valid;
     }
 
     setInitialCity(isLoaded: boolean): void {
         this.selectedCity = this.page_data.dealer.city;
+
+        //Set value to initial city
+        this._editFormControls.city.setValue(this.selectedCity);
+        this._editFormControls.state.setValue(this.page_data.dealer.state);
+        this._editFormControls.region.setValue(this.page_data.dealer.region);
     }
 
     citySelected(data: CityData): void {
@@ -132,7 +136,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
                 height,
                 panelClass: 'position-relative',
                 autoFocus: false,
-                data: { dealer_id: this.edit_dealer_form.get('dealer_id').value },
+                data: { dealer_id: this.editDealerForm.get('dealer_id').value },
             }),
         );
     }
@@ -142,8 +146,8 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
             let value: any = moment(e).format('YYYY-MM-DD');
             if (!e || e.trim().length <= 0 || e.includes('--')) value = moment();
             this.start_date = value;
-            this.edit_dealer_form.get('start_date').setValidators(null);
-            this.edit_dealer_form.get('start_date').updateValueAndValidity();
+            this.editDealerForm.get('start_date').setValidators(null);
+            this.editDealerForm.get('start_date').updateValueAndValidity();
         } else {
             this.start_date = moment(e).format('YYYY-MM-DD');
         }
@@ -202,14 +206,12 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
     }
 
     private checkEmailDuplicate(current_value: string): void {
-        this.duplicate_email = this.other_users.filter((user) => {
-            if (user.email == current_value && current_value != this.dealer.email) {
-                return user;
-            }
-        });
-
-        if (this.duplicate_email.length > 0) this.has_duplicate_email = true;
-        else this.has_duplicate_email = false;
+        if (this.otherUsers) {
+            let duplicateEmail = this.otherUsers.filter(
+                (user) => user.email === current_value && current_value != this.dealer.email,
+            );
+            this.hasDuplicateEmail = duplicateEmail.length > 0;
+        }
     }
 
     private getOtherUsers(page: number): void {
@@ -219,15 +221,16 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
             .subscribe((response) => {
                 if ('message' in response) return;
 
-                const users = [...response.paging.entities] as USER[];
-                this.other_users = users;
+                response.paging.entities.map((user) => {
+                    this.otherUsers.push(user);
+                });
 
                 if (response.paging.hasNextPage) this.getOtherUsers(response.paging.page + 1);
             });
     }
 
     private initializeForm(): void {
-        this.edit_dealer_form = this._form.group({
+        this.editDealerForm = this._form.group({
             dealer_id: [{ value: '', disabled: true }, Validators.required],
             business_name: ['', Validators.required],
             dealer_alias: [''],
@@ -265,7 +268,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
     }
 
     private mapUserInfoChanges() {
-        const { dealer_id, owner_f_name, owner_l_name, email } = this.edit_dealer_form.value;
+        const { dealer_id, owner_f_name, owner_l_name, email } = this.editDealerForm.value;
         const updatedBy = this._auth.current_user_value.user_id;
 
         return {
@@ -279,20 +282,11 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
     }
 
     private subscribeToFormChanges(): void {
-        this.edit_dealer_form.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(
+        this.editDealerForm.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(
             (data) => {
-                if (this._user.validate_email(data.email)) {
-                    this.checkEmailDuplicate(data.email);
-                    this.email_not_valid = false;
-                } else {
-                    this.email_not_valid = true;
-                }
-
-                if (this.edit_dealer_form.valid && !this.has_duplicate_email && !this.email_not_valid) {
-                    this.enable_update_form = true;
-                } else {
-                    this.enable_update_form = false;
-                }
+                this.emailNotValid = !this._user.validate_email(data.email);
+                if (!this.emailNotValid) this.checkEmailDuplicate(data.email);
+                this.enableUpdateForm = this.editDealerForm.valid && !this.hasDuplicateEmail && !this.emailNotValid;
             },
             (error) => {
                 console.error(error);
@@ -397,7 +391,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
     }
 
     protected get _editFormControls() {
-        return this.edit_dealer_form.controls;
+        return this.editDealerForm.controls;
     }
 
     protected get roleRoute() {

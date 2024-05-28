@@ -266,13 +266,14 @@
                     id="{{ 'drg_' + content.playlistContentId }}"
                     *ngFor="let content of playlist_contents; let i = index"
                     [attr.data-id]="content.playlistContentId"
-                    [class.undraggable]="content.isProtected && is_dealer"
+                    [class.undraggable]="content.isProtected && is_dealer && content.classification == 'filler-v2'"
                     [class.future-schedule]="content.scheduleStatus === 'future'"
                     [class.inactive-schedule]="content.scheduleStatus === 'inactive'"
                     [ngClass]="{
                         marked: isMarked(content.playlistContentId),
                         'col-lg-1': !list_view_mode,
-                        'col-lg-4': list_view_mode
+                        'col-lg-4': list_view_mode,
+                        disabled: content.classification == 'filler-v2'
                     }">
                     <app-playlist-content
                         [playlist_host_license]="playlist_host_license"
@@ -289,12 +290,13 @@
                         [schedule_status]="content.scheduleStatus"
                         (options_saved)="optionsSaved($event)"
                         (click)="
-                            selectedContent(
-                                content.playlistContentId,
-                                content.contentId,
-                                content.frequency,
-                                content.classification
-                            )
+                            content.classification != 'filler-v2' &&
+                                selectedContent(
+                                    content.playlistContentId,
+                                    content.contentId,
+                                    content.frequency,
+                                    content.classification
+                                )
                         "
                         (reset_playlist_content)="reloadPlaylist()"
                         (remove_playlist_content)="removePlaylistContent($event)">
