@@ -112,9 +112,8 @@ export class CreateFillerFeedComponent implements OnInit {
     public noWhitespace(control: FormControl) {
         let isWhitespace = (control.value || '').trim().length === 0;
         let isValid = !isWhitespace;
-        return isValid ? null : { 'whitespace': true }
+        return isValid ? null : { whitespace: true };
     }
-    
 
     protected get _formControls() {
         return this.form.controls;
@@ -314,12 +313,12 @@ export class CreateFillerFeedComponent implements OnInit {
     }
 
     public onIntervalChange(key: string): void {
-        if(key === '0') this._formControls.fillerInterval.setValue(1);
+        if (key === '0') this._formControls.fillerInterval.setValue(1);
     }
 
     public onDurationChange(key: string): void {
         let newKey = parseInt(key);
-        if(newKey < 20) this._formControls.fillerDuration.setValue(20);
+        if (newKey < 20) this._formControls.fillerDuration.setValue(20);
     }
 
     protected get roleRoute() {

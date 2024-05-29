@@ -29,13 +29,25 @@
                     <div class="col-lg-6">
                         <mat-form-field class="full-width">
                             <mat-label>Interval (days)</mat-label>
-                            <input matInput type="number" autocomplete="off" formControlName="fillerInterval" min="1" (keyup)="onIntervalChange($event.key)"/>
+                            <input
+                                matInput
+                                type="number"
+                                autocomplete="off"
+                                formControlName="fillerInterval"
+                                min="1"
+                                (keyup)="onIntervalChange($event.key)" />
                         </mat-form-field>
                     </div>
                     <div class="col-lg-6">
                         <mat-form-field class="full-width">
                             <mat-label>Duration (seconds)</mat-label>
-                            <input matInput type="number" autocomplete="off" formControlName="fillerDuration" min="20" (keyup)="onDurationChange($event.key)"/>
+                            <input
+                                matInput
+                                type="number"
+                                autocomplete="off"
+                                formControlName="fillerDuration"
+                                min="20"
+                                (keyup)="onDurationChange($event.key)" />
                         </mat-form-field>
                     </div>
                     <div
