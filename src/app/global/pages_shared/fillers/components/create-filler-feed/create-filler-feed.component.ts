@@ -314,7 +314,7 @@ export class CreateFillerFeedComponent implements OnInit {
 
     public onIntervalChange(key: string): void {
         const intervalKey = parseInt(key);
-        if (intervalKey < 1 ) this._formControls.fillerInterval.setValue(1);
+        if (intervalKey < 1) this._formControls.fillerInterval.setValue(1);
     }
 
     public onDurationChange(key: string): void {
