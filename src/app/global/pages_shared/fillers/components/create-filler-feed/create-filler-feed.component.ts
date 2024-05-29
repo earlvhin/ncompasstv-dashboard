@@ -317,7 +317,7 @@ export class CreateFillerFeedComponent implements OnInit {
     }
 
     public onDurationChange(key: string): void {
-        let newKey = parseInt(key);
+        const newKey = parseInt(key);
         if (newKey < 20) this._formControls.fillerDuration.setValue(20);
     }
 
