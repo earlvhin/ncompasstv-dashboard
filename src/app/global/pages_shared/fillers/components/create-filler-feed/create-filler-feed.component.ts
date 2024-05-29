@@ -101,13 +101,20 @@ export class CreateFillerFeedComponent implements OnInit {
 
     private initializeForm(): void {
         this.form = this._form_builder.group({
-            fillerGroupName: [null, Validators.required],
+            fillerGroupName: [null, [Validators.required, this.noWhitespace]],
             fillerInterval: [1, Validators.required],
             fillerDuration: [20, Validators.required],
             fillerQuantity: [null],
             fillerGroupId: [null],
         });
     }
+
+    public noWhitespace(control: FormControl) {
+        let isWhitespace = (control.value || '').trim().length === 0;
+        let isValid = !isWhitespace;
+        return isValid ? null : { 'whitespace': true }
+    }
+    
 
     protected get _formControls() {
         return this.form.controls;
@@ -304,6 +311,15 @@ export class CreateFillerFeedComponent implements OnInit {
         }
         this.dealerHasValue = false;
         this.unselected_dealer.push(this.existing_data.assignedDealers[0].dealerId);
+    }
+
+    public onIntervalChange(key: string): void {
+        if(key === '0') this._formControls.fillerInterval.setValue(1);
+    }
+
+    public onDurationChange(key: string): void {
+        let newKey = parseInt(key);
+        if(newKey < 20) this._formControls.fillerDuration.setValue(20);
     }
 
     protected get roleRoute() {
