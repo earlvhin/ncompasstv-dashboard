@@ -1,13 +1,12 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UpdateService } from '../../services';
-import { APP_VERSIONS, TABLE_VERSION } from '../../models';
+import { App, APP_VERSION, TABLE_VERSION } from '../../models';
 import { DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material';
 import { CreateAppVersionComponent } from '../../components_shared/version_components/create-app-version/create-app-version.component';
-import { title } from 'process';
 
 @Component({
     selector: 'app-single-version-control',
@@ -68,12 +67,10 @@ export class SingleVersionControlComponent implements OnInit, OnDestroy {
             .get_apps()
             .pipe(takeUntil(this.unSubscribe))
             .subscribe((data) => {
-                data.map((app) => {
-                    if (this.paramsPlayerId === app.appId) {
-                        this.appName = app.appName;
-                        return;
-                    }
-                });
+                if ('message' in data) return;
+
+                const appData = data as App[];
+                this.appName = appData.find((app) => this.paramsPlayerId === app.appId).appName;
             });
     }
 
@@ -85,10 +82,15 @@ export class SingleVersionControlComponent implements OnInit, OnDestroy {
             .get_app_versions()
             .pipe(takeUntil(this.unSubscribe))
             .subscribe(
-                (data: any[]) => {
-                    this.loading = false;
+                (data) => {
+                    if ('message' in data) {
+                        this.loading = false;
+                        return;
+                    }
 
-                    const appByParamsId = data.filter((app) => this.paramsPlayerId === app.appId);
+                    this.loading = false;
+                    const appVersions = data as APP_VERSION[];
+                    const appByParamsId = appVersions.filter((app) => this.paramsPlayerId === app.appId);
                     this.mapTableData(appByParamsId);
                 },
                 (error) => {
@@ -98,9 +100,13 @@ export class SingleVersionControlComponent implements OnInit, OnDestroy {
             );
     }
 
-    public mapTableData(tableData: APP_VERSIONS[]) {
+    public mapTableData(tableData: APP_VERSION[]) {
+        const sortedTableData = tableData.sort(
+            (a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime(),
+        );
+
         return this.tableDataVersion.data.push(
-            ...tableData.map((app) => [
+            ...sortedTableData.map((app) => [
                 {
                     value: app.version,
                     isHidden: false,

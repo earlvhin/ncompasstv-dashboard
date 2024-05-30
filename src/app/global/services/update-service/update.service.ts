@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs-compat/Observable';
 
 import { AuthService } from '../auth-service/auth.service';
-import { API_PLAYER_APP } from 'src/app/global/models';
+import { App, APP_VERSION } from 'src/app/global/models';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -49,7 +49,7 @@ export class UpdateService {
      * Get Apps from API
      * API GET Method to AWS
      */
-    get_apps(): Observable<API_PLAYER_APP[]> {
+    get_apps(): Observable<App[] | { message: string }> {
         return this._http.get<any>(`${environment.base_uri}${environment.getters.api_apps}`, this.httpOptions);
     }
 
@@ -69,7 +69,7 @@ export class UpdateService {
      * Get All App Versions
      * API GET Method to AWS
      */
-    get_app_versions() {
+    get_app_versions(): Observable<APP_VERSION[] | { message: string }> {
         return this._http.get<any>(`${environment.base_uri}${environment.getters.api_apps_versions}`, this.httpOptions);
     }
 
