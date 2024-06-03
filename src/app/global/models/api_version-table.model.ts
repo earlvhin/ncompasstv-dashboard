@@ -35,6 +35,16 @@ export interface App {
     githubUrl: string;
 }
 
+export interface APP_VERSION {
+    appId?: any;
+    dateCreated?: any;
+    dateUpdated?: null;
+    releaseNotes?: any;
+    version?: any;
+    versionId?: any;
+    zipUrl?: any;
+}
+
 export class APP_VERSIONS {
     appId?: any;
     dateCreated?: any;
