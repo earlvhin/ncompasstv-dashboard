@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { map, takeUntil } from 'rxjs/operators';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { filter, map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { TAG_OWNER, TAG_TYPE } from 'src/app/global/models';
@@ -20,6 +21,7 @@ export class TagsComponent implements OnInit, OnDestroy {
     owners: TAG_OWNER[] = [];
     ownersTabTagId = null;
     searchForm: FormGroup;
+    tagNameRoute = '';
     tagTypes: TAG_TYPE[] = [];
     tagTypesMutated: TAG_TYPE[] = [];
     title = 'Tags';
@@ -32,17 +34,40 @@ export class TagsComponent implements OnInit, OnDestroy {
     constructor(
         private _auth: AuthService,
         private _tag: TagService,
+        private _route: ActivatedRoute,
+        private _router: Router,
     ) {}
 
     ngOnInit() {
-        this.getAllTagTypes().add(() => (this.isContentReady = true));
-        this.getTagsCount();
-        this.subscribeToTagsCountRefresh();
+        // Initial route check and tagname availability
+        this.assignActiveTag();
+
+        // Route change watcher
+        this._router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
+            this.assignActiveTag();
+        });
     }
 
     ngOnDestroy() {
         this._unsubscribe.next();
         this._unsubscribe.complete();
+    }
+
+    assignActiveTag() {
+        const childRoute = this._route.firstChild;
+
+        if (childRoute) {
+            childRoute.paramMap.subscribe((params) => {
+                this.tagNameRoute = params.get('breadcrumb');
+            });
+        } else {
+            this.tagNameRoute = null;
+            this.isContentReady = false;
+        }
+
+        this.getAllTagTypes().add(() => (this.isContentReady = true));
+        this.getTagsCount();
+        this.subscribeToTagsCountRefresh();
     }
 
     clickedTagName(event: { tag: string }): void {

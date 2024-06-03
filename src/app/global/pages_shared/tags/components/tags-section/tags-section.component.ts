@@ -18,6 +18,7 @@ export class TagsSectionComponent implements OnInit, OnDestroy {
     @Input() currentUserRole: string;
     @Input() tab: string;
     @Input() tagTypes: TAG_TYPE[];
+    @Input() tagNameRoute = '';
 
     currentFilter = 'All';
     isLoading = true;
@@ -35,9 +36,13 @@ export class TagsSectionComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
-        if (!this.tags || this.tags.length <= 0) this.searchTags();
-        this.subscribeToSearch();
-        this.subscribeToRefreshTableData();
+        if (this.tagNameRoute) {
+            this.searchTags(this.tagNameRoute);
+        } else {
+            if (!this.tags || this.tags.length <= 0) this.searchTags();
+            this.subscribeToSearch();
+            this.subscribeToRefreshTableData();
+        }
     }
 
     ngOnDestroy() {

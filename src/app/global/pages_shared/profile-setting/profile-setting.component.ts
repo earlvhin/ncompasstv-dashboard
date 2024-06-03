@@ -256,13 +256,28 @@ export class ProfileSettingComponent implements OnInit {
         let count = 1;
 
         return activity.map((a) => {
+            let targetLink = '';
             const activityCodePrefix = a.activityCode.split('_')[0];
             const activitytUrl = ACTIVITY_URLS.find((ac) => ac.activityCodePrefix === activityCodePrefix);
-
             const targetName = a.targetName ? a.targetName : '--';
-            const targetLink = nonExistentTargetIds.includes(a.targetId)
-                ? ''
-                : `/${this.currentRole}/${activitytUrl.activityURL}/${a.targetId}`;
+
+            if (nonExistentTargetIds.includes(a.targetId)) {
+                /**
+                 * This switch case block handles targets that don't have single pages available.
+                 * This will setup override links for them if need be.
+                 * @default targetLink = ''
+                 */
+                switch (activityCodePrefix) {
+                    case 'tag':
+                        targetLink = `/${this.currentRole}/${activitytUrl.activityURL}`;
+                        break;
+                    default:
+                        targetLink = '';
+                        break;
+                }
+            } else {
+                targetLink = `/${this.currentRole}/${activitytUrl.activityURL}/${a.targetId}`;
+            }
 
             return new USER_ACTIVITY(
                 { value: count++, editable: false },

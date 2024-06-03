@@ -85,6 +85,7 @@
                     [currentUserRole]="currentUserRole"
                     [tab]="'admin'"
                     [tagTypes]="tagTypes"
+                    [tagNameRoute]="tagNameRoute"
                     (onClickTagName)="clickedTagName($event)">
                 </app-tags-section>
             </ng-container>
@@ -97,7 +98,8 @@
                     [currentUserId]="currentUserId"
                     [currentUserRole]="currentUserRole"
                     [tab]="'admin'"
-                    [tagTypes]="tagTypesMutated">
+                    [tagTypes]="tagTypesMutated"
+                    [tagNameRoute]="tagNameRoute">
                 </app-tag-owners-section>
             </ng-container>
         </div>
