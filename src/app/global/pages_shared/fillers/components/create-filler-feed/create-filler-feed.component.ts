@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
 import { Subject } from 'rxjs';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
@@ -20,11 +20,13 @@ export class CreateFillerFeedComponent implements OnInit {
     enable_add_button: boolean = false;
     existing_data: any;
     dealerHasValue: boolean;
+    dealerLoaded = false;
     form: FormGroup;
     filler_name: string = '';
     filler_groups: any = [];
     filler_groups_original: any = [];
     filters = ['ALL', 'ADMIN', 'DEALER ADMIN', 'DEALER'];
+    formLoaded = false;
     groups_loaded: boolean = false;
     groups_to_remove: any = [];
     is_current_user_admin = this._isAdmin;
@@ -38,6 +40,7 @@ export class CreateFillerFeedComponent implements OnInit {
     fillerQuantity: any = {};
     total_quantity = 0;
     remaining = 20;
+    private debounceTimeout: any;
 
     protected _unsubscribe: Subject<void> = new Subject<void>();
 
@@ -48,6 +51,7 @@ export class CreateFillerFeedComponent implements OnInit {
         private _dialog: MatDialog,
         private _route: Router,
         private _auth: AuthService,
+        private _cdr: ChangeDetectorRef
     ) {}
 
     ngOnInit() {
@@ -61,11 +65,13 @@ export class CreateFillerFeedComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data: any) => {
                 this.existing_data = data;
-                this.selected_assignee.push({
-                    id: this.existing_data.assignedDealers[0].dealerId,
-                    value: this.existing_data.assignedDealers[0].businessName,
-                });
-                this.dealerHasValue = true;
+                if(this.existing_data.assignedDealers.length) {
+                    this.selected_assignee.push({
+                        id: this.existing_data.assignedDealers[0].dealerId,
+                        value: this.existing_data.assignedDealers[0].businessName,
+                    });
+                    this.dealerHasValue = true;
+                }
             })
             .add(() => {
                 this.assignee_loaded = true;
@@ -90,6 +96,8 @@ export class CreateFillerFeedComponent implements OnInit {
 
             this.selected_groups = data.fillerGroups;
             this.countTotalQuantity();
+
+            this.formLoaded = true;
         }, 1000);
     }
 
@@ -101,9 +109,9 @@ export class CreateFillerFeedComponent implements OnInit {
 
     private initializeForm(): void {
         this.form = this._form_builder.group({
-            fillerGroupName: [null, [Validators.required, this.noWhitespace]],
-            fillerInterval: [1, Validators.required],
-            fillerDuration: [20, Validators.required],
+            fillerGroupName: [{value: null, disabled: this.page_data.from_edit_table && !this.dealerLoaded}, [Validators.required, this.noWhitespace]],
+            fillerInterval: [{value: 1, disabled: this.page_data.from_edit_table && !this.dealerLoaded}, Validators.required],
+            fillerDuration: [{value: 20, disabled: this.page_data.from_edit_table && !this.dealerLoaded}, Validators.required],
             fillerQuantity: [null],
             fillerGroupId: [null],
         });
@@ -113,6 +121,13 @@ export class CreateFillerFeedComponent implements OnInit {
         let isWhitespace = (control.value || '').trim().length === 0;
         let isValid = !isWhitespace;
         return isValid ? null : { whitespace: true };
+    }
+
+    public formFullyLoaded(event: boolean): void {
+        this.dealerLoaded = event;
+        this._formControls.fillerGroupName.enable();
+        this._formControls.fillerInterval.enable();
+        this._formControls.fillerDuration.enable();
     }
 
     protected get _formControls() {
@@ -317,9 +332,13 @@ export class CreateFillerFeedComponent implements OnInit {
         if (intervalKey < 1) this._formControls.fillerInterval.setValue(1);
     }
 
-    public onDurationChange(key: string): void {
-        const newKey = parseInt(key);
-        if (newKey < 20) this._formControls.fillerDuration.setValue(20);
+    public onDurationChange(event: KeyboardEvent): void {
+        //Add timeout to allow users to type 1 (for hundred values) cause if not it always default to less than 20
+        clearTimeout(this.debounceTimeout);
+        this.debounceTimeout = setTimeout(() => {
+            const newKey = parseInt((event.target as HTMLInputElement).value);
+            if (newKey < 20) this._formControls.fillerDuration.setValue(20);
+        }, 500);
     }
 
     protected get roleRoute() {
