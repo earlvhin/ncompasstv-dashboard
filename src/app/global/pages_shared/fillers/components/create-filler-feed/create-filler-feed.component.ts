@@ -51,7 +51,7 @@ export class CreateFillerFeedComponent implements OnInit {
         private _dialog: MatDialog,
         private _route: Router,
         private _auth: AuthService,
-        private _cdr: ChangeDetectorRef
+        private _cdr: ChangeDetectorRef,
     ) {}
 
     ngOnInit() {
@@ -65,7 +65,7 @@ export class CreateFillerFeedComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data: any) => {
                 this.existing_data = data;
-                if(this.existing_data.assignedDealers.length) {
+                if (this.existing_data.assignedDealers.length) {
                     this.selected_assignee.push({
                         id: this.existing_data.assignedDealers[0].dealerId,
                         value: this.existing_data.assignedDealers[0].businessName,
@@ -109,9 +109,18 @@ export class CreateFillerFeedComponent implements OnInit {
 
     private initializeForm(): void {
         this.form = this._form_builder.group({
-            fillerGroupName: [{value: null, disabled: this.page_data.from_edit_table && !this.dealerLoaded}, [Validators.required, this.noWhitespace]],
-            fillerInterval: [{value: 1, disabled: this.page_data.from_edit_table && !this.dealerLoaded}, Validators.required],
-            fillerDuration: [{value: 20, disabled: this.page_data.from_edit_table && !this.dealerLoaded}, Validators.required],
+            fillerGroupName: [
+                { value: null, disabled: this.page_data.from_edit_table && !this.dealerLoaded },
+                [Validators.required, this.noWhitespace],
+            ],
+            fillerInterval: [
+                { value: 1, disabled: this.page_data.from_edit_table && !this.dealerLoaded },
+                Validators.required,
+            ],
+            fillerDuration: [
+                { value: 20, disabled: this.page_data.from_edit_table && !this.dealerLoaded },
+                Validators.required,
+            ],
             fillerQuantity: [null],
             fillerGroupId: [null],
         });
