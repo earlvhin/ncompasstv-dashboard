@@ -53,7 +53,7 @@ export class TagsComponent implements OnInit, OnDestroy {
         this._unsubscribe.complete();
     }
 
-    assignActiveTag() {
+    private assignActiveTag(): void {
         const childRoute = this._route.firstChild;
 
         if (childRoute) {
