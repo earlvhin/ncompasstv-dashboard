@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 
 import { BaseService } from './base.service';
 import {
+    API_TAG,
     CREATE_AND_ASSIGN_TAG,
     API_FILTERS,
     ADD_OWNER_RESPONSE,
@@ -138,8 +140,10 @@ export class TagService extends BaseService {
         return this.getRequest(!isDealer ? this.getters.tags_count : new_url);
     }
 
-    getTag(tagId: number) {
-        return this.getRequest(`${this.getters.tags_by_id}${tagId}`);
+    getTag(tagId: string) {
+        return this.getRequest(`${this.getters.tags_by_id}${tagId}`).pipe(
+            map((data: { tags: API_TAG[] }) => data.tags[0]),
+        );
     }
 
     getTagByOwner(ownerId: string): Observable<{ tags: TAG[] }> {

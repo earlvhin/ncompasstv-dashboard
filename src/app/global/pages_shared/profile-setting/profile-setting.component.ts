@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { MatTab } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, Subscription, forkJoin } from 'rxjs';
+import { DatePipe } from '@angular/common';
 import {
     AuthService,
     AdvertiserService,
@@ -23,7 +23,6 @@ import {
     USER_ACTIVITY,
 } from 'src/app/global/models';
 import { environment } from 'src/environments/environment';
-import { DatePipe } from '@angular/common';
 
 @Component({
     selector: 'app-profile-setting',
@@ -34,6 +33,7 @@ export class ProfileSettingComponent implements OnInit {
     activity_created_by: any;
     activity_data: UI_ACTIVITY_LOGS[] = [];
     activityData: API_ACTIVITY[] = [];
+    activityDataLoaded = false;
     advertiser_data: any;
     advertiser_details: any = {};
     content_details: any = {};
@@ -64,7 +64,6 @@ export class ProfileSettingComponent implements OnInit {
     subscription: Subscription = new Subscription();
     tab_selected: string = 'Dealer';
     user: API_USER_DATA;
-
     userActivityTable = [
         { name: '#', sortable: false },
         { name: 'Activity Target', column: 'targetName', sortable: false },
@@ -105,8 +104,6 @@ export class ProfileSettingComponent implements OnInit {
             this.getTotalAdvertisers(this._auth.current_user_value.roleInfo.dealerId);
             this.getTotalHosts(this._auth.current_user_value.roleInfo.dealerId);
             this.getTotalContents(this._auth.current_user_value.roleInfo.dealerId);
-            this.getDealerValuesById(this._auth.current_user_value.roleInfo.dealerId);
-            // this.getCreditCardsId(this._auth.current_user_value.roleInfo.dealerId);
             this.checkIfEnableShop();
             this.getDealerActivity(1);
             this.getDealer();
@@ -242,6 +239,7 @@ export class ProfileSettingComponent implements OnInit {
     }
 
     public getUserActivityData(page: number): void {
+        this.activityDataLoaded = false;
         this._user
             .getActivitiesByCurrentUser(this.sortActivityColumn, this.sortActivityOrder, page, 15)
             .pipe(takeUntil(this._unsubscribe))
@@ -249,32 +247,22 @@ export class ProfileSettingComponent implements OnInit {
                 const mappedData = this.new_activity_mapToUI(response.paging.entities, response.nonExistentTargetIds);
                 this.pagingActivityData = response.paging;
                 this.activityData = [...mappedData];
+                this.activityDataLoaded = true;
             });
     }
 
     public new_activity_mapToUI(activity: USER_ACTIVITY[], nonExistentTargetIds: string[]): any {
         let count = 1;
+        const noBreadcrumEntities = ['tag'];
 
         return activity.map((a) => {
             let targetLink = '';
+            let targetName = a.targetName ? a.targetName : '--';
             const activityCodePrefix = a.activityCode.split('_')[0];
             const activitytUrl = ACTIVITY_URLS.find((ac) => ac.activityCodePrefix === activityCodePrefix);
-            const targetName = a.targetName ? a.targetName : '--';
 
-            if (nonExistentTargetIds.includes(a.targetId)) {
-                /**
-                 * This switch case block handles targets that don't have single pages available.
-                 * This will setup override links for them if need be.
-                 * @default targetLink = ''
-                 */
-                switch (activityCodePrefix) {
-                    case 'tag':
-                        targetLink = `/${this.currentRole}/${activitytUrl.activityURL}`;
-                        break;
-                    default:
-                        targetLink = '';
-                        break;
-                }
+            if (nonExistentTargetIds && nonExistentTargetIds.includes(a.targetId)) {
+                targetLink = '';
             } else {
                 targetLink = `/${this.currentRole}/${activitytUrl.activityURL}/${a.targetId}`;
             }
@@ -283,13 +271,19 @@ export class ProfileSettingComponent implements OnInit {
                 { value: count++, editable: false },
                 { value: a.activityCode, hidden: true },
                 { value: a.activityLogId, hidden: true },
-                { value: a.initiatedBy, hidden: true },
-                { value: targetName, link: targetLink, new_tab_link: true, hidden: false },
+                {
+                    value: targetName,
+                    link: targetLink,
+                    new_tab_link: true,
+                    hidden: false,
+                    noBreadcrumb: noBreadcrumEntities.includes(activityCodePrefix),
+                },
                 {
                     value: `You ${a.activityDescription} ${a.ownerId === a.initiatedById ? '' : `for ${a.owner}`} `,
                     hidden: false,
                 },
                 { value: this._date.transform(a.dateCreated, "MMMM d, y, 'at' h:mm a"), hidden: false },
+                { value: a.initiatedBy, hidden: true },
                 { value: a.initiatedById, hidden: true },
                 { value: a.owner, hidden: true },
                 { value: a.ownerId, hidden: true },
@@ -327,21 +321,6 @@ export class ProfileSettingComponent implements OnInit {
                 }),
         );
     }
-
-    // getCreditCardsId(id) {
-    // 	this.subscription.add(
-    //         this._dealer.get_credit_cards(id).pipe(takeUntil(this._unsubscribe)).subscribe(
-    // 			(response:any) => {
-    //                 if(!response.message) {
-    //                     this.no_credit_card = false;
-    //                     this.dealer_email = response.email;
-    //                 } else {
-    //                     this.no_credit_card = true;
-    //                 }
-    //             }
-    //         )
-    //     )
-    // };
 
     getTotalLicenses(id) {
         this._license
@@ -404,13 +383,6 @@ export class ProfileSettingComponent implements OnInit {
                     console.error(error);
                 },
             );
-    }
-
-    tabSelected(event: { index: number }) {
-        this.getDealerActivity(1);
-        this.getUserActivityData(1);
-
-        return event;
     }
 
     goToUrl(): void {

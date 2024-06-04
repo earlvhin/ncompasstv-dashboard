@@ -4,6 +4,12 @@
             <div class="flex-even">
                 <h1 class="page-title">{{ title }}</h1>
             </div>
+            <div>
+                <button mat-button mat-raised-button class="theme-btn" *ngIf="tagNameRoute" (click)="navigateToTags()">
+                    <span class="button-label">Show All Tags</span>
+                    <span class="fas fa-tags ml-2 sm-text"></span>
+                </button>
+            </div>
         </div>
     </div>
     <hr class="mat-bl-em" />
@@ -36,78 +42,42 @@
     </div>
 
     <ng-container *ngTemplateOutlet="tags_normal_view"> </ng-container>
-    <!-- <mat-tab-group class="full-width custom-mat-tab mt-5" dynamicHeight *ngIf="!_isDealer(); else tags_normal_view">
-		<mat-tab label="Admin">
-			<ng-container *ngTemplateOutlet="tags_normal_view"> </ng-container>
-		</mat-tab> -->
 
-    <!-- DEALER TAB -->
-    <!-- <mat-tab label="Dealer">
-			<div class="mt-5 row d-flex">
-				<div class="col-lg-4">
-					<ng-container *ngIf="isContentReady; else loading">
-						<app-tags-section
-							[columns]="tagsTableSettings.columns"
-							[currentTagType]="currentTagType"
-							[currentUserId]="currentUserId"
-							[currentUserRole]="currentUserRole"
-							[tab]="'dealer'"
-							[tagTypes]="tagTypes"
-							(onClickTagName)="clickedTagName($event)">
-						</app-tags-section>
-					</ng-container>
-				</div>
+    <ng-template #tags_normal_view>
+        <div class="row mat-top-em">
+            <div class="col-lg-4">
+                <ng-container *ngIf="isContentReady; else loading">
+                    <app-tags-section
+                        [columns]="tagsTableSettings.columns"
+                        [currentTagType]="currentTagType"
+                        [currentUserId]="currentUserId"
+                        [currentUserRole]="currentUserRole"
+                        [tab]="'admin'"
+                        [tagTypes]="tagTypes"
+                        [tagNameRoute]="tagNameRoute"
+                        (onClickTagName)="clickedTagName($event)">
+                    </app-tags-section>
+                </ng-container>
+            </div>
 
-				<div class="col-lg-8">
-					<ng-container *ngIf="isContentReady; else loading">
-						<app-tag-owners-section
-							[columns]="tagOwnersTableSettings.columns"
-							[currentUserId]="currentUserId"
-							[currentUserRole]="currentUserRole"
-							[tab]="'dealer'"
-							[tagTypes]="tagTypesMutated">
-						</app-tag-owners-section>
-					</ng-container>
-				</div>
-			</div>
-		</mat-tab>
-	</mat-tab-group> -->
+            <div class="col-lg-8">
+                <ng-container *ngIf="isContentReady; else loading">
+                    <app-tag-owners-section
+                        [columns]="tagOwnersTableSettings.columns"
+                        [currentUserId]="currentUserId"
+                        [currentUserRole]="currentUserRole"
+                        [tab]="'admin'"
+                        [tagTypes]="tagTypesMutated"
+                        [tagNameRoute]="tagNameRoute">
+                    </app-tag-owners-section>
+                </ng-container>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template #loading>
+        <mat-card class="py-4">
+            <app-spinner [diameter]="100"></app-spinner>
+        </mat-card>
+    </ng-template>
 </div>
-
-<ng-template #tags_normal_view>
-    <div class="row mat-top-em">
-        <div class="col-lg-4">
-            <ng-container *ngIf="isContentReady; else loading">
-                <app-tags-section
-                    [columns]="tagsTableSettings.columns"
-                    [currentTagType]="currentTagType"
-                    [currentUserId]="currentUserId"
-                    [currentUserRole]="currentUserRole"
-                    [tab]="'admin'"
-                    [tagTypes]="tagTypes"
-                    [tagNameRoute]="tagNameRoute"
-                    (onClickTagName)="clickedTagName($event)">
-                </app-tags-section>
-            </ng-container>
-        </div>
-
-        <div class="col-lg-8">
-            <ng-container *ngIf="isContentReady; else loading">
-                <app-tag-owners-section
-                    [columns]="tagOwnersTableSettings.columns"
-                    [currentUserId]="currentUserId"
-                    [currentUserRole]="currentUserRole"
-                    [tab]="'admin'"
-                    [tagTypes]="tagTypesMutated"
-                    [tagNameRoute]="tagNameRoute">
-                </app-tag-owners-section>
-            </ng-container>
-        </div>
-    </div>
-</ng-template>
-
-<ng-template #loading>
-    <mat-card class="py-4">
-        <app-spinner [diameter]="100"></app-spinner>
-    </mat-card>
-</ng-template>

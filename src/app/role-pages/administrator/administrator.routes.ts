@@ -367,7 +367,7 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                 },
                 children: [
                     {
-                        path: ':breadcrumb',
+                        path: ':data',
                         component: TagsComponent,
                     },
                 ],

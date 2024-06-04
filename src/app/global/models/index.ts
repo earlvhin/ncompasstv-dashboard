@@ -45,6 +45,7 @@ export * from './api_single-playlist.model';
 export * from './api_single-screen.model';
 export * from './api_state.model';
 export * from './api_swap-content-response.model';
+export * from './api_tag.model';
 export * from './api_template.model';
 export * from './api_timezone.model';
 export * from './api_update-advertiser.model';

@@ -21,11 +21,11 @@ export class TagsComponent implements OnInit, OnDestroy {
     owners: TAG_OWNER[] = [];
     ownersTabTagId = null;
     searchForm: FormGroup;
+    tagId = '';
     tagNameRoute = '';
     tagTypes: TAG_TYPE[] = [];
     tagTypesMutated: TAG_TYPE[] = [];
     title = 'Tags';
-
     tagsTableSettings = { columns: this.getColumns() };
     tagOwnersTableSettings = { columns: this.getColumns('tag-owners') };
 
@@ -58,16 +58,18 @@ export class TagsComponent implements OnInit, OnDestroy {
 
         if (childRoute) {
             childRoute.paramMap.subscribe((params) => {
-                this.tagNameRoute = params.get('breadcrumb');
+                this.tagId = params.get('data');
             });
+
+            this.getTagById(this.tagId);
         } else {
+            this.tagId = null;
             this.tagNameRoute = null;
             this.isContentReady = false;
+            this.getAllTagTypes().add(() => (this.isContentReady = true));
+            this.getTagsCount();
+            this.subscribeToTagsCountRefresh();
         }
-
-        this.getAllTagTypes().add(() => (this.isContentReady = true));
-        this.getTagsCount();
-        this.subscribeToTagsCountRefresh();
     }
 
     clickedTagName(event: { tag: string }): void {
@@ -85,6 +87,20 @@ export class TagsComponent implements OnInit, OnDestroy {
     _isDealer() {
         const DEALER_ROLES = ['dealer', 'sub-dealer'];
         return DEALER_ROLES.includes(this._auth.current_role);
+    }
+
+    private getTagById(tagId: string) {
+        this._tag.getTag(tagId).subscribe({
+            next: (response) => {
+                this.tagNameRoute = response.name;
+                this.getAllTagTypes().add(() => (this.isContentReady = true));
+                this.getTagsCount();
+                this.subscribeToTagsCountRefresh();
+            },
+            error: (error) => {
+                console.error(error);
+            },
+        });
     }
 
     private getAllTagTypes() {
@@ -115,12 +131,9 @@ export class TagsComponent implements OnInit, OnDestroy {
         switch (table) {
             case 'tag-owners':
                 columns.push({ name: 'Assignee', class: 'p-3' }, { name: 'Tags', class: 'p-3' });
-
                 break;
-
             default:
                 columns.push({ name: 'Name', class: 'p-3' }, { name: 'Total', class: 'p-3' });
-
                 break;
         }
 
@@ -147,6 +160,10 @@ export class TagsComponent implements OnInit, OnDestroy {
                 },
             )
             .add(() => (this.isLoadingCount = false));
+    }
+
+    public navigateToTags(): void {
+        this._router.navigate(['../tags'], { relativeTo: this._route });
     }
 
     private subscribeToTagsCountRefresh() {
