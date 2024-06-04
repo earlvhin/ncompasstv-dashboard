@@ -140,7 +140,7 @@ export class TagService extends BaseService {
         return this.getRequest(!isDealer ? this.getters.tags_count : new_url);
     }
 
-    getTag(tagId: string) {
+    public getTag(tagId: string): Observable<API_TAG> {
         return this.getRequest(`${this.getters.tags_by_id}${tagId}`).pipe(
             map((data: { tags: API_TAG[] }) => data.tags[0]),
         );

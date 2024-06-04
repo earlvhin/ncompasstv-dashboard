@@ -89,7 +89,7 @@ export class TagsComponent implements OnInit, OnDestroy {
         return DEALER_ROLES.includes(this._auth.current_role);
     }
 
-    private getTagById(tagId: string) {
+    private getTagById(tagId: string): void {
         this._tag.getTag(tagId).subscribe({
             next: (response) => {
                 this.tagNameRoute = response.name;

@@ -144,7 +144,6 @@ export class ProfileSettingComponent implements OnInit {
 
                     this.getUserByIds(res.paging.entities.map((a) => a.initiatedBy)).subscribe((responses) => {
                         this.activity_created_by = responses;
-
                         const mappedData = this.activity_mapToUI(res.paging.entities);
                         this.pagingActivityData = res.paging;
                         this.activity_data = [...mappedData];
@@ -163,7 +162,6 @@ export class ProfileSettingComponent implements OnInit {
     }
     getUserByIds(ids: any[]) {
         const userObservables = ids.map((id) => this._user.get_user_by_id(id).pipe(takeUntil(this._unsubscribe)));
-
         return forkJoin(userObservables);
     }
 
@@ -279,7 +277,7 @@ export class ProfileSettingComponent implements OnInit {
                     noBreadcrumb: noBreadcrumEntities.includes(activityCodePrefix),
                 },
                 {
-                    value: `You ${a.activityDescription} ${a.ownerId === a.initiatedById ? '' : `for ${a.owner}`} `,
+                    value: `You ${a.activityDescription} ${a.ownerId === a.initiatedById ? '' : `for ${a.owner}`}`,
                     hidden: false,
                 },
                 { value: this._date.transform(a.dateCreated, "MMMM d, y, 'at' h:mm a"), hidden: false },
