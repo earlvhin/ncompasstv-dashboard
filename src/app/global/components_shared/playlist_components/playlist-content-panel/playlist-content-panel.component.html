@@ -8,15 +8,19 @@
                 </div>
                 |
                 <div class="total-contents video-contents">
-                    Videos: <b>{{ video_count || 0 }}</b>
+                    Videos: <b>{{ videoCount || 0 }}</b>
                 </div>
                 |
                 <div class="total-contents image-contents">
-                    Images: <b>{{ image_count || 0 }}</b>
+                    Images: <b>{{ imageCount || 0 }}</b>
                 </div>
                 |
                 <div class="total-contents feed-contents">
-                    Feeds: <b>{{ feed_count || 0 }}</b>
+                    Feeds: <b>{{ feedCount || 0 }}</b>
+                </div>
+                |
+                <div class="total-contents feed-contents">
+                    Fillers: <b>{{ fillerCount || 0 }}</b>
                 </div>
             </div>
         </div>
@@ -217,6 +221,10 @@
                 |
                 <div class="total-contents feed-contents">
                     Feeds: <b>{{ currentFeedCount || 0 }}</b>
+                </div>
+                |
+                <div class="total-contents feed-contents">
+                    Fillers: <b>{{ currentFillerCount || 0 }}</b>
                 </div>
             </div>
         </div>
