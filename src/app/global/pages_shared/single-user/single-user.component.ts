@@ -25,6 +25,7 @@ import { DatePipe } from '@angular/common';
 export class SingleUserComponent implements OnInit, OnDestroy {
     @ViewChild('dealerMultiSelect', { static: false }) dealerMultiSelect: MatSelect;
     activityData: USER_ACTIVITY[] = [];
+    activityLoaded = false;
     advertiser_id: string;
     bg_role: any;
     dealers_form = this._form.group({ dealers: [[], Validators.required] });
@@ -584,17 +585,30 @@ export class SingleUserComponent implements OnInit, OnDestroy {
         const mappedData = this.activity_mapToUI(response.paging.entities, response.nonExistentTargetIds);
         this.pagingActivityData = response.paging;
         this.activityData = [...mappedData];
+        this.activityLoaded = true;
     }
 
     public activity_mapToUI(activity: USER_ACTIVITY[], nonExistentTargetIds: string[]): any {
         let count = 1;
+        const noBreadcrumEntities = ['tag'];
+
         return activity.map((a) => {
+            let targetLink = '';
             const activityCodePrefix = a.activityCode.split('_')[0];
             const activitytUrl = ACTIVITY_URLS.find((ac) => ac.activityCodePrefix === activityCodePrefix);
             const targetName = a.targetName ? a.targetName : '--';
-            const targetLink = nonExistentTargetIds.includes(a.targetId)
-                ? ''
-                : `/${this.currentRole}/${activitytUrl.activityURL}/${a.targetId}`;
+
+            /** Tag owner check for unclickable un-owned tags */
+            if (activityCodePrefix == 'tag' && this.userId !== this.currentUser.user_id) {
+                nonExistentTargetIds.push(a.targetId);
+            }
+
+            if (nonExistentTargetIds && nonExistentTargetIds.includes(a.targetId)) {
+                targetLink = '';
+            } else {
+                targetLink = `/${this.currentRole}/${activitytUrl.activityURL}/${a.targetId}`;
+            }
+
             const activityDoneBy =
                 this.currentUser.user_id === a.initiatedById ? `${a.initiatedBy}(You)` : ` ${a.initiatedBy}`;
             const userActivityDescription =
@@ -612,6 +626,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
                     link: targetLink,
                     new_tab_link: true,
                     hidden: false,
+                    noBreadcrumb: noBreadcrumEntities.includes(activityCodePrefix),
                 },
                 {
                     value: userActivityDescription,
