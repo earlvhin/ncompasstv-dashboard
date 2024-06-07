@@ -47,6 +47,7 @@ export class ProfileSettingComponent implements OnInit {
     host_details: any = {};
     initial_load_activity = true;
     isDealer: boolean = false;
+    isSubDealer: boolean = false;
     is_prod: boolean = false;
     license_details: any = {};
     loading_advertiser: boolean = true;
@@ -62,7 +63,6 @@ export class ProfileSettingComponent implements OnInit {
     sortActivityColumn = 'DateCreated';
     sortActivityOrder = 'desc';
     subscription: Subscription = new Subscription();
-    tab_selected: string = 'Dealer';
     user: API_USER_DATA;
     userActivityTable = [
         { name: '#', sortable: false },
@@ -88,7 +88,7 @@ export class ProfileSettingComponent implements OnInit {
         private _dealer: DealerService,
         private _date: DatePipe,
         private _user: UserService,
-    ) {}
+    ) { }
 
     ngOnInit() {
         if (!environment.production) {
@@ -107,6 +107,8 @@ export class ProfileSettingComponent implements OnInit {
             this.checkIfEnableShop();
             this.getDealerActivity(1);
             this.getDealer();
+        } else if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION['sub-dealer']) {
+            this.isSubDealer = true;
         } else {
             this.isDealer = false;
             this.getUserActivityData(1);
