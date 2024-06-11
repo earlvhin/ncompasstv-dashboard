@@ -24,11 +24,12 @@ import { CityData } from '../../models/api_cities_state.model';
     styleUrls: ['./edit-single-dealer.component.scss'],
 })
 export class EditSingleDealerComponent implements OnInit, OnDestroy {
+    currentEmail: string;
     dealer = this.page_data.dealer;
+    disabledForm = false;
     editDealerForm: FormGroup;
     editDealerFormFields = this._editDealerFormFields;
     emailNotValid = false;
-    enableUpdateForm: boolean = false;
     hasDuplicateEmail = false;
     is_active_dealer = this.dealer.status === 'A';
     is_admin = this._auth.current_role === 'administrator';
@@ -58,7 +59,6 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
         this.initializeForm();
         this.fillForm();
         this.is_form_loaded = true;
-        this.getOtherUsers(1);
         this.subscribeToFormChanges();
     }
 
@@ -83,9 +83,8 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
         this._editFormControls.state.setValue(dealer.state);
         this._editFormControls.status.setValue(dealer.status);
 
+        this.currentEmail = dealer.email;
         if (dealer.startDate != null) this.onSelectStartDate(dealer.startDate, true);
-
-        this.enableUpdateForm = this.editDealerForm.valid;
     }
 
     setInitialCity(isLoaded: boolean): void {
@@ -206,27 +205,13 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
     }
 
     private checkEmailDuplicate(current_value: string): void {
-        if (this.otherUsers) {
-            let duplicateEmail = this.otherUsers.filter(
-                (user) => user.email === current_value && current_value != this.dealer.email,
-            );
-            this.hasDuplicateEmail = duplicateEmail.length > 0;
-        }
-    }
-
-    private getOtherUsers(page: number): void {
         this._user
-            .get_users_by_filters({ page, search: '' })
+            .checkIfDuplicateEmail(current_value)
             .pipe(takeUntil(this._unsubscribe))
-            .subscribe((response) => {
-                if ('message' in response) return;
-
-                response.paging.entities.map((user) => {
-                    this.otherUsers.push(user);
-                });
-
-                if (response.paging.hasNextPage) this.getOtherUsers(response.paging.page + 1);
-            });
+            .subscribe((response) => (this.hasDuplicateEmail = !!response.message))
+            .add(
+                () => (this.disabledForm = this.editDealerForm.invalid || this.hasDuplicateEmail || this.emailNotValid),
+            );
     }
 
     private initializeForm(): void {
@@ -284,9 +269,11 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
     private subscribeToFormChanges(): void {
         this.editDealerForm.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(
             (data) => {
-                this.emailNotValid = !this._user.validate_email(data.email);
-                if (!this.emailNotValid) this.checkEmailDuplicate(data.email);
-                this.enableUpdateForm = this.editDealerForm.valid && !this.hasDuplicateEmail && !this.emailNotValid;
+                if (data.email !== this.currentEmail) {
+                    this.emailNotValid = !this._user.validate_email(data.email);
+                    if (!this.emailNotValid) this.checkEmailDuplicate(data.email);
+                }
+                this.disabledForm = this.editDealerForm.invalid || this.hasDuplicateEmail || this.emailNotValid;
             },
             (error) => {
                 console.error(error);
