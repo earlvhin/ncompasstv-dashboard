@@ -48,7 +48,7 @@ export class ProfileSettingComponent implements OnInit {
     initial_load_activity = true;
     isDealer: boolean = false;
     isSubDealer: boolean = false;
-    is_prod: boolean = false;
+    isProd: boolean = false;
     license_details: any = {};
     loading_advertiser: boolean = true;
     loading_content: boolean = true;
@@ -91,27 +91,35 @@ export class ProfileSettingComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        if (!environment.production) {
-            this.is_prod = false;
-        } else {
-            this.is_prod = true;
-        }
-        if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
-            this.isDealer = true;
-            this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
-            this.current_user = this._auth.current_user_value;
-            this.getTotalLicenses(this._auth.current_user_value.roleInfo.dealerId);
-            this.getTotalAdvertisers(this._auth.current_user_value.roleInfo.dealerId);
-            this.getTotalHosts(this._auth.current_user_value.roleInfo.dealerId);
-            this.getTotalContents(this._auth.current_user_value.roleInfo.dealerId);
-            this.checkIfEnableShop();
-            this.getDealerActivity(1);
-            this.getDealer();
-        } else if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION['sub-dealer']) {
-            this.isSubDealer = true;
-        } else {
-            this.isDealer = false;
-            this.getUserActivityData(1);
+        this.isProd = !environment.production;
+
+        const userRole = this._auth.current_user_value.role_id;
+        const roleInfo = this._auth.current_user_value.roleInfo;
+        const dealerId = roleInfo ? roleInfo.dealerId : undefined;
+
+        switch (userRole) {
+            case UI_ROLE_DEFINITION.dealer:
+                this.isDealer = true;
+                this.dealer_id = dealerId;
+                this.current_user = this._auth.current_user_value;
+                this.getTotalLicenses(dealerId);
+                this.getTotalAdvertisers(dealerId);
+                this.getTotalHosts(dealerId);
+                this.getTotalContents(dealerId);
+                this.getDealerValuesById(dealerId);
+                this.checkIfEnableShop();
+                this.getDealerActivity(1);
+                this.getDealer();
+                break;
+
+            case UI_ROLE_DEFINITION['sub-dealer']:
+                this.isSubDealer = true;
+                break;
+
+            default:
+                this.isDealer = false;
+                this.getUserActivityData(1);
+                break;
         }
     }
 
@@ -386,7 +394,7 @@ export class ProfileSettingComponent implements OnInit {
     }
 
     goToUrl(): void {
-        if (this.is_prod) {
+        if (this.isProd) {
             window.open('https://shop.n-compass.online', '_blank');
         } else {
             window.open('http://dev.shop.n-compass.online', '_blank');
