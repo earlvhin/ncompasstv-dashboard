@@ -2,7 +2,7 @@ import { API_ENDPOINTS } from './api-endpoints';
 
 export const environment = {
     production: false,
-    base_uri: 'https://dev-api.n-compass.online/api/',
+    base_uri: 'https://api-development.n-compass.online:8005/api/',
     socket_server: 'https://dev-socket.n-compass.online',
     google_key: 'AIzaSyCtQeUg0lbyHkv-NwmlOKuR0AVYFOJ1VWY',
     tinymce_key: 'abs5vx4ocdaeymfu6a4m3vg4jjz3rkqcra1v48azbvttca7l',
