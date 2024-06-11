@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 // import { LicenseService } from '../../../services/license-service/license.service';
+import { API_CONTENT, API_BLOCKLIST_CONTENT, CREDITS, PLAYLIST_CHANGES, API_LICENSE } from 'src/app/global/models';
+import { Subject } from 'rxjs';
 import { API_DEALER } from 'src/app/global/models/api_dealer.model';
 import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-license-modal',
-    templateUrl: './license-modal.component.html',
-    styleUrls: ['./license-modal.component.scss'],
+    templateUrl: './target-license.component.html',
+    styleUrls: ['./target-license.component.scss'],
 })
-export class LicenseModalComponent implements OnInit {
+export class TargetLicenseModal implements OnInit {
     generate_license_form: FormGroup;
     dealer_id: string;
     is_submitted: boolean;
@@ -17,8 +19,21 @@ export class LicenseModalComponent implements OnInit {
     dealerHasValue: boolean;
     invalid_form: boolean = true;
     subscription = new Subscription();
+    host_license: any;
+    toggle_event: Subject<void> = new Subject<void>();
+    total_licenses = 0;
+    total_whitelist = 0;
+    is_child_frequency = false;
+    selected_data: any;
 
     constructor(
+        public _dialog_data: {
+            index: number;
+            content: API_CONTENT;
+            host_license: any;
+            total_contents?: number;
+            contents_list: any;
+        },
         private _form: FormBuilder,
         // private _license: LicenseService,
     ) {}
@@ -63,6 +78,8 @@ export class LicenseModalComponent implements OnInit {
         //         },
         //     );
     }
+
+    
 
     public setAssignedTo(dealer: any): void {
         this.dealerHasValue = false;

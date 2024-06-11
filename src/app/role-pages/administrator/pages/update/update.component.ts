@@ -6,6 +6,8 @@ import { takeUntil } from 'rxjs/operators';
 import { CreateAppComponent } from 'src/app/global/components_shared/version_components/create-app/create-app.component';
 import { App, TABLE_VERSION } from 'src/app/global/models';
 import { UpdateService } from 'src/app/global/services/update-service/update.service';
+import { TargetLicenseModal } from 'src/app/global/components_shared/license_components/target-license-modal/target-license.component';
+
 
 @Component({
     selector: 'app-update',
@@ -71,6 +73,16 @@ export class UpdateComponent implements OnInit, OnDestroy {
             .subscribe(() => {
                 this.ngOnInit();
             });
+    }
+
+    public targetLicenseModal() {
+        this._dialog
+            .open(TargetLicenseModal, {
+                height: '400px',
+                width: '500px',
+            })
+            .afterClosed()
+            .subscribe(() => this.ngOnInit());
     }
 
     public getApps() {
