@@ -88,7 +88,7 @@ export class ProfileSettingComponent implements OnInit {
         private _dealer: DealerService,
         private _date: DatePipe,
         private _user: UserService,
-    ) { }
+    ) {}
 
     ngOnInit() {
         if (!environment.production) {
