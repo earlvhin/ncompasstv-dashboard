@@ -393,11 +393,10 @@ export class ProfileSettingComponent implements OnInit {
             );
     }
 
-    goToUrl(): void {
-        if (this.isProd) {
-            window.open('https://shop.n-compass.online', '_blank');
-        } else {
-            window.open('http://dev.shop.n-compass.online', '_blank');
-        }
+    public goToUrl(): void {
+        const prodShopUrl = 'https://shop.n-compass.online';
+        const devShopUrl = 'http://dev.shop.n-compass.online';
+        const url = this.isProd ? prodShopUrl : devShopUrl;
+        window.open(url, '_blank');
     }
 }
