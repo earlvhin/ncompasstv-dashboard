@@ -6,7 +6,7 @@
             </div>
             <div class="col-lg-6 text-right">
                 <button
-                    *ngIf="!is_dealer_admin"
+                    *ngIf="!isDealerAdmin"
                     mat-button
                     mat-raised-button
                     (click)="addNewHostPlace()"
@@ -29,7 +29,7 @@
                         You can fill on the forms manually or search a business via the form on the right.
                     </p>
 
-                    <form [formGroup]="new_host_form" (ngSubmit)="onCreateHostPlace()" class="text-left">
+                    <form [formGroup]="newHostForm" (ngSubmit)="onCreateHostPlace()" class="text-left">
                         <div class="row mb-2">
                             <div class="col-lg-12">
                                 <app-dealer-autocomplete
@@ -59,7 +59,7 @@
                                     <app-autocomplete-field
                                         *ngIf="field.control == 'category' && !no_category; else no_category_selected"
                                         (data_value)="setToCategory($event)"
-                                        [data_reference]="categories_data"
+                                        [data_reference]="categoriesData"
                                         [primary_keyword]="'categoryName'"
                                         [key_of_value]="'categoryName'"
                                         [required]="field.is_required"
@@ -73,7 +73,7 @@
                                             else no_category_selected2
                                         "
                                         (data_value)="setToGeneralCategory($event)"
-                                        [data_reference]="gen_categories_data"
+                                        [data_reference]="genCategoriesData"
                                         [primary_keyword]="'generalCategory'"
                                         [key_of_value]="'generalCategory'"
                                         [required]="false"
@@ -159,7 +159,7 @@
                                     </div>
 
                                     <div class="flex-even">
-                                        <ng-container *ngIf="!is_always_open; else always_open">
+                                        <ng-container *ngIf="!isAlwaysOpen; else always_open">
                                             <ng-container *ngIf="h.status; else closed">
                                                 <div class="mb-3" *ngFor="let t of h.periods; let i = index">
                                                     <div class="d-flex align-items-center">
@@ -168,6 +168,7 @@
                                                                 <mat-label class="sm-text">Opening Hours</mat-label>
                                                                 <ngb-timepicker
                                                                     [(ngModel)]="t.openingHourData"
+                                                                    (ngModelChange)="onOpenTimeChange($event)"
                                                                     [spinners]="false"
                                                                     [meridian]="true"
                                                                     [ngModelOptions]="{
@@ -181,6 +182,7 @@
                                                                 <mat-label class="sm-text">Closing Hours</mat-label>
                                                                 <ngb-timepicker
                                                                     [(ngModel)]="t.closingHourData"
+                                                                    (ngModelChange)="onCloseTimeChange($event)"
                                                                     [spinners]="false"
                                                                     [meridian]="true"
                                                                     [ngModelOptions]="{
@@ -217,14 +219,28 @@
                                 </div>
                             </div>
                         </div>
+
+                        <ng-container *ngIf="!hasInvalidTime; else notInvalid">
+                            <button
+                                mat-button
+                                mat-raised-button
+                                class="theme-btn mr-2"
+                                [disabled]="newHostForm.invalid || is_creating_host || !dealerHasValue">
+                                {{ is_creating_host ? 'Saving Host Place...' : 'Submit' }}
+                            </button>
+                        </ng-container>
+                    </form>
+
+                    <ng-template #notInvalid>
                         <button
                             mat-button
                             mat-raised-button
                             class="theme-btn mr-2"
-                            [disabled]="new_host_form.invalid || is_creating_host || !dealerHasValue">
-                            {{ is_creating_host ? 'Saving Host Place...' : 'Submit' }}
+                            (click)="onClickInvalid()"
+                            [disabled]="newHostForm.invalid || is_creating_host || !dealerHasValue">
+                            Submit
                         </button>
-                    </form>
+                    </ng-template>
                 </ng-container>
 
                 <ng-template #loading>
@@ -247,8 +263,8 @@
                             placeholder="Search Host Business Name" />
                         <button
                             class="google-search-field-btn no-border right-0"
-                            [ngClass]="location_field ? 'disabled' : ''"
-                            [disabled]="location_field">
+                            [ngClass]="locationField ? 'disabled' : ''"
+                            [disabled]="locationField">
                             <span class="fas fa-search"></span>
                         </button>
                     </div>
