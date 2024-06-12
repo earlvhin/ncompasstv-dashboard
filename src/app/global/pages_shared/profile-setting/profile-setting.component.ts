@@ -47,6 +47,7 @@ export class ProfileSettingComponent implements OnInit {
     host_details: any = {};
     initial_load_activity = true;
     isDealer: boolean = false;
+    isDealerAdmin: boolean = false;
     isSubDealer: boolean = false;
     isProd: boolean = false;
     license_details: any = {};
@@ -114,6 +115,10 @@ export class ProfileSettingComponent implements OnInit {
 
             case UI_ROLE_DEFINITION['sub-dealer']:
                 this.isSubDealer = true;
+                break;
+
+            case UI_ROLE_DEFINITION['dealeradmin']:
+                this.isDealerAdmin = true;
                 break;
 
             default:
