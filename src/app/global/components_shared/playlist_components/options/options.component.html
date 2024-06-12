@@ -226,11 +226,7 @@
                 </div>
             </div>
             <hr />
-            <div
-                class="overlayer"
-                [title]="
-                    content_data.classification == 'filler-v2' ? 'Blacklisting not allowed for Filler Contents' : ''
-                ">
+            <div class="overlayer">
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="d-flex">
@@ -245,9 +241,9 @@
                             <div class="ml-2" *ngIf="host_license && host_license.length > 0">
                                 <mat-slide-toggle
                                     class="sm-text"
-                                    (change)="content_data.classification != 'filler-v2' && toggleAll($event)"
+                                    (change)="toggleAll($event)"
                                     [checked]="total_licenses === total_whitelist"
-                                    [disabled]="content_data.classification == 'filler-v2' || is_child_frequency">
+                                    [disabled]="is_child_frequency">
                                     <strong class="ml-2">Toggle All</strong>
                                 </mat-slide-toggle>
                             </div>

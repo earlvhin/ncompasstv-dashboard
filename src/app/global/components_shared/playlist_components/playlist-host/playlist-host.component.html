@@ -6,7 +6,7 @@
                 [checked]="hasActiveLicenses() || remove_in_blocklist.length > 0"
                 (click)="$event.stopPropagation()"
                 (change)="blocklistingAllLicenses($event, host_licenses.host.hostId)"
-                [disabled]="content_data.classification == 'filler-v2' || is_child_frequency">
+                [disabled]="is_child_frequency">
                 <h5 class="mb-0 ml-2">{{ cutString(host_licenses.host.name) }}</h5>
             </mat-slide-toggle>
         </div>
@@ -24,7 +24,7 @@
                 <mat-slide-toggle
                     class="align-middle"
                     (change)="blocklisting($event, l.licenseId)"
-                    [disabled]="content_data.classification == 'filler-v2' || is_child_frequency"
+                    [disabled]="is_child_frequency"
                     [checked]="!incoming_blocklist.includes(l.licenseId) || remove_in_blocklist.includes(l.licenseId)">
                     <h5 class="mb-0 ml-2">{{ l.alias || l.licenseKey }}</h5>
                 </mat-slide-toggle>
