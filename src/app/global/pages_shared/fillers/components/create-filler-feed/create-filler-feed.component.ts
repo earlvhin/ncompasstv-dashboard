@@ -38,8 +38,10 @@ export class CreateFillerFeedComponent implements OnInit {
     unselected_dealer: any = [];
     final_data_to_upload: any;
     fillerQuantity: any = {};
+    savingInProgress = false;
     total_quantity = 0;
     remaining = 20;
+    validatingValue = false;
     private debounceTimeout: any;
 
     protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -264,6 +266,7 @@ export class CreateFillerFeedComponent implements OnInit {
     }
 
     arrangeData() {
+        this.savingInProgress = true;
         this.final_data_to_upload = {
             name: this._formControls.fillerGroupName.value,
             Interval: this._formControls.fillerInterval.value,
@@ -342,12 +345,32 @@ export class CreateFillerFeedComponent implements OnInit {
     }
 
     public onDurationChange(event: KeyboardEvent): void {
+        this.validatingValue = true;
         //Add timeout to allow users to type 1 (for hundred values) cause if not it always default to less than 20
         clearTimeout(this.debounceTimeout);
         this.debounceTimeout = setTimeout(() => {
             const newKey = parseInt((event.target as HTMLInputElement).value);
             if (newKey < 20) this._formControls.fillerDuration.setValue(20);
+            this.validatingValue = false;
         }, 500);
+    }
+
+    public disableUpdateForm(): boolean {
+        const isFormInvalid = this.form.invalid;
+        const isQuantityOverLimit = this.total_quantity > 20;
+        const isQuantityZero = this.total_quantity === 0;
+        const isEditingFromTableAndDealerNotLoaded = this.page_data.from_edit_table && !this.dealerLoaded;
+        const isValidationInProgress = this.validatingValue;
+        const isSavingInProgress = this.savingInProgress;
+
+        return (
+            isFormInvalid ||
+            isQuantityOverLimit ||
+            isQuantityZero ||
+            isEditingFromTableAndDealerNotLoaded ||
+            isValidationInProgress ||
+            isSavingInProgress
+        );
     }
 
     protected get roleRoute() {

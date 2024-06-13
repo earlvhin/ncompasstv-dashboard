@@ -212,12 +212,7 @@
                             class="theme-btn"
                             type="submit"
                             (click)="arrangeData()"
-                            [disabled]="
-                                !form.valid ||
-                                total_quantity > 20 ||
-                                total_quantity == 0 ||
-                                (this.page_data.from_edit_table && !this.dealerLoaded)
-                            ">
+                            [disabled]="disableUpdateForm()">
                             {{ !page_data.from_edit_table ? 'Create Filler Feed' : 'Update Filler Feed' }}
                         </button>
                     </div>
