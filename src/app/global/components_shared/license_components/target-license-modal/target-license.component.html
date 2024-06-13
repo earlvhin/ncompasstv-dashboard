@@ -1,47 +1,53 @@
 <ng-container *ngIf="!license_generated; else success">
-    <div id="generate_license_form" class="generate-license-modal p-4 pb-0 h-100" *ngIf="!is_submitted; else loading">
+    <div id="target_release" class="generate-license-modal p-4 pb-0 h-100" *ngIf="!is_submitted; else loading">
         <ng-container>
-            <h3 class="mb-1">Generate License</h3>
-            <p class="sm-text mb-4">Choose a dealer and set number of license to generate.</p>
+            <h3 class="mb-1">Add Target Release</h3>
+            <!-- <p class="sm-text mb-4">Choose a dealer and set number of license to generate.</p> -->
             <app-dealer-autocomplete (dealer_selected)="setAssignedTo($event)" [active_only]="true">
             </app-dealer-autocomplete>
-            <form [formGroup]="generate_license_form">
-                <!-- <mat-form-field class="full-width">
-                    <mat-label>Number of Licenses</mat-label>
-                    <input
-                        id="generate_license_quantity"
-                        formControlName="number_of_license"
-                        matInput
-                        placeholder="Number of Licenses"
-                        type="number" />
-                </mat-form-field> -->
-                <button
-                    mat-button
-                    mat-raised-button
-                    class="theme-btn mt-2"
-                    (click)="generateLicense()"
-                    [disabled]="invalid_form || !dealerHasValue">
-                    <span class="button-label"> Generate License </span>
-                    <span class="fas fa-plus ml-2 sm-text"></span>
-                </button>
-                <!-- <div class="row">
+            <form [formGroup]="target_release">
+
+                <div class="preview">
+                    <div class="dealers-row d-flex">
+                        <h4>Dealers:</h4>
+                    </div>
+                </div>
+
+                <!-- Dealer Tags Preview -->
+                    <!-- DEALERS LIST -->
+                    <!-- <div
+                        class="selected-dealers-container d-flex flex-row align-items-start flex-wrap"
+                        *ngIf="selectedOwnersControl.value.length > 0">
+                        <div
+                            *ngFor="let owner of selectedOwnersControl.value; let i = index"
+                            class="owner d-flex align-items-center">
+                            <div class="business-name">{{ owner.displayName }}</div>
+                            <div class="remove-btn cursor-pointer" (click)="onRemoveOwner(i)">
+                                <mat-icon>close</mat-icon>
+                            </div>
+                        </div>
+                    </div> -->
+                
+
+                <div class="row mt-4">
+                    <hr class="full-width" />
                     <div class="col-lg-12">
                         <div class="d-flex">
-                            <div class="flex-even">
-                                <h4>Play Where</h4> -->
+                            <div class="flex-even mt-3">
+                                <h4>Play Where</h4>
                                 <!-- <p class="sm-text mb-4">Choose which host and license you want this content displayed.</p> -->
-                                <!-- <p class="sm-text mb-4" *ngIf="host_license && host_license.length > 0">
+                                <p class="sm-text mb-4">
                                     Content is currently playing on {{ total_whitelist }} out of
                                     {{ total_licenses }} licenses.
                                 </p>
                             </div>
-                            <div class="ml-2" *ngIf="host_license && host_license.length > 0">
+                            <div class="ml-2 mt-3" *ngIf="host_license && host_license.length > 0">
                                 <mat-slide-toggle
                                     class="sm-text"
                                     (change)="content_data.classification != 'filler-v2' && toggleAll($event)"
                                     [checked]="total_licenses === total_whitelist"
                                     [disabled]="content_data.classification == 'filler-v2' || is_child_frequency">
-                                    <strong class="ml-2">Toggle All</strong>
+                                    <strong class="ml-1">Toggle All</strong>
                                 </mat-slide-toggle>
                             </div>
                         </div>
@@ -55,7 +61,7 @@
                             [is_child_frequency]="is_child_frequency">
                         </app-play-where>
                     </div>
-                </div> -->
+                </div>
             </form>
         </ng-container>
     </div>

@@ -78,7 +78,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     public targetLicenseModal() {
         this._dialog
             .open(TargetLicenseModal, {
-                height: '400px',
+                height: '500px',
                 width: '500px',
             })
             .afterClosed()
