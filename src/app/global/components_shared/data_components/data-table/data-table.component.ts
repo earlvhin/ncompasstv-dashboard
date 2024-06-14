@@ -825,17 +825,19 @@ export class DataTableComponent implements OnInit {
                 .subscribe((response: boolean | string) => {
                     if (typeof response === 'boolean') return;
 
-                    this._feed
-                        .clone_feed(contentId, response, this.current_user.user_id)
-                        .pipe(takeUntil(this.ngUnsubscribe))
-                        .subscribe(
-                            () => {
-                                this.openConfirmationModal('success', 'Success!', 'Feed cloned');
-                            },
-                            (error) => {
-                                console.error('Error cloning feed', error);
-                            },
-                        );
+                    if (typeof response === 'string' && response.trim().length > 0) {
+                        this._feed
+                            .clone_feed(contentId, response, this.current_user.user_id)
+                            .pipe(takeUntil(this.ngUnsubscribe))
+                            .subscribe(
+                                () => {
+                                    this.openConfirmationModal('success', 'Success!', 'Feed cloned');
+                                },
+                                (error) => {
+                                    console.error('Error cloning feed', error);
+                                },
+                            );
+                    }
                 });
         });
     }
