@@ -59,6 +59,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
     contents_with_schedules: API_CONTENT[] = [];
     contents_without_schedules: API_CONTENT[] = [];
     currentFeedCount = 0;
+    currentFillerCount = 0;
     currentImageCount = 0;
     currentVideoCount = 0;
     currentStatusFilter: { key: string; label: string };
@@ -80,9 +81,10 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
     structured_incoming_blocklist = [];
     structured_remove_in_blocklist = [];
     structured_bulk_remove_in_blocklist = [];
-    feed_count: number;
-    image_count: number;
-    video_count: number;
+    feedCount: number;
+    fillerCount: number;
+    imageCount: number;
+    videoCount: number;
     incoming_blacklist_licenses = [];
     search_control = new FormControl();
     bulk_toggle: boolean;
@@ -266,7 +268,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
             );
     }
 
-    filterContentByFileType(type: string) {
+    public filterContentByFileType(type: string): void {
         this.currentFileTypeFilter = type;
         const fileTypes = (type: string) => this.getFileTypesByTypeName(type);
         const hasStatusFilter = typeof this.currentStatusFilter !== 'undefined';
@@ -274,73 +276,64 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
         const contents = Array.from(this._contentsBackup);
 
         if (type === 'all') {
-            if (currentStatusFilter.key === 'default') {
-                this.playlist_contents = Array.from(contents);
-                this.getCurrentAssetCount();
-                this.refreshSortableJs();
-                return;
-            }
-
-            this.playlist_contents = [
-                ...Array.from(contents).filter(
-                    (content: API_CONTENT) => content.scheduleStatus === currentStatusFilter.key,
-                ),
-            ];
-            this.getCurrentAssetCount();
-            this.refreshSortableJs();
-            return;
+            this.playlist_contents =
+                type === 'all' && currentStatusFilter.key === 'default'
+                    ? Array.from(contents)
+                    : Array.from(contents).filter((content) => content.scheduleStatus === currentStatusFilter.key);
+        } else {
+            this.playlist_contents =
+                type !== 'fillers'
+                    ? Array.from(contents).filter(
+                          (content) =>
+                              content.classification !== 'filler-v2' &&
+                              fileTypes(type).includes(content.fileType.toLowerCase()),
+                      )
+                    : Array.from(contents).filter((content) => content.classification === 'filler-v2');
         }
 
-        this.playlist_contents = [
-            ...Array.from(contents).filter((content) => fileTypes(type).includes(content.fileType.toLowerCase())),
-        ];
-
-        if (hasStatusFilter && currentStatusFilter.key !== 'default') {
-            this.playlist_contents = [
-                ...this.playlist_contents.filter(
-                    (content: API_CONTENT) => content.scheduleStatus === currentStatusFilter.key,
-                ),
-            ];
-        }
+        if (hasStatusFilter && currentStatusFilter.key !== 'default')
+            this.playlist_contents = this.playlist_contents.filter(
+                (content) => content.scheduleStatus === currentStatusFilter.key,
+            );
 
         this.getCurrentAssetCount();
         this.refreshSortableJs();
     }
 
-    filterContentByStatus(key: string): void {
-        const originalContents = this.playlist_content_backup;
+    public filterContentByStatus(key: string): void {
         const fileTypes = (type: string) => this.getFileTypesByTypeName(type);
-        this.currentStatusFilter = this.statusFilterOptions.filter((content) => content.key === key)[0];
+        this.currentStatusFilter = this.statusFilterOptions.find((content) => content.key === key);
 
         if (key === 'default') {
             this.playlist_content_backup = Array.from(this._contentsBackup);
             this.playlist_contents = Array.from(this._contentsBackup);
             this.setScheduleStatus();
 
-            const fileTypeFilter = this.currentFileTypeFilter;
-
-            if (typeof fileTypeFilter !== 'undefined' && fileTypeFilter !== 'all') {
-                const currentContents = Array.from(this.playlist_contents);
+            if (this.currentFileTypeFilter && this.currentFileTypeFilter !== 'all') {
                 const type = this.currentFileTypeFilter;
-                this.playlist_contents = currentContents.filter((content: API_CONTENT) =>
+                const currentContents = Array.from(this.playlist_contents);
+                const filteredContents =
+                    type !== 'fillers'
+                        ? currentContents.filter(
+                              (content) =>
+                                  content.classification !== 'filler-v2' &&
+                                  fileTypes(type).includes(content.fileType.toLowerCase()),
+                          )
+                        : currentContents.filter((content) => content.classification === 'filler-v2');
+                this.playlist_contents = filteredContents;
+            }
+        } else {
+            this.playlist_contents = [
+                ...this.playlist_content_backup.filter(
+                    (content) => content.classification !== 'filler-v2' && content.scheduleStatus === key,
+                ),
+            ];
+            if (this.currentFileTypeFilter && this.currentFileTypeFilter !== 'all') {
+                const type = this.currentFileTypeFilter;
+                this.playlist_contents = this.playlist_contents.filter((content) =>
                     fileTypes(type).includes(content.fileType.toLowerCase()),
                 );
             }
-
-            this.getCurrentAssetCount();
-            this.refreshSortableJs();
-
-            return;
-        }
-
-        this.playlist_contents = [...originalContents.filter((content) => content.scheduleStatus === key)];
-        const fileTypeFilter = this.currentFileTypeFilter;
-
-        if (typeof fileTypeFilter !== 'undefined' && fileTypeFilter !== 'all') {
-            const currentContents = Array.from(this.playlist_contents);
-            this.playlist_contents = currentContents.filter((content: API_CONTENT) =>
-                fileTypes(fileTypeFilter).includes(content.fileType.toLowerCase()),
-            );
         }
 
         this.getCurrentAssetCount();
@@ -349,15 +342,16 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
     getAssetCount(): void {
         const fileTypes = (type: string) => this.getFileTypesByTypeName(type);
-        this.video_count = this._contentsBackup.filter((i) =>
-            fileTypes('video').includes(i.fileType.toLowerCase()),
-        ).length;
-        this.image_count = this._contentsBackup.filter((i) =>
-            fileTypes('image').includes(i.fileType.toLowerCase()),
-        ).length;
-        this.feed_count = this._contentsBackup.filter((i) =>
-            fileTypes('feed').includes(i.fileType.toLowerCase()),
-        ).length;
+        this.fillerCount = this._contentsBackup.filter((i) => i.classification === 'filler-v2').length;
+        const ordinaryContent = this._contentsBackup.filter((i) => i.classification !== 'filler-v2');
+        const counts = {
+            video: ordinaryContent.filter((i) => fileTypes('video').includes(i.fileType.toLowerCase())).length,
+            image: ordinaryContent.filter((i) => fileTypes('image').includes(i.fileType.toLowerCase())).length,
+            feed: ordinaryContent.filter((i) => fileTypes('feed').includes(i.fileType.toLowerCase())).length,
+        };
+        this.videoCount = counts.video;
+        this.imageCount = counts.image;
+        this.feedCount = counts.feed;
     }
 
     emitReloadPlaylist(): void {
@@ -804,16 +798,20 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
     private getCurrentAssetCount() {
         const currentContents = Array.from(this.playlist_contents);
+        const fillerCurrentContents = currentContents.filter((content) => content.classification === 'filler-v2');
+        const ordinaryCurrentContents = currentContents.filter((content) => content.classification !== 'filler-v2');
         const fileTypes = (type: string) => this.getFileTypesByTypeName(type);
-        this.currentVideoCount = currentContents.filter((x: API_CONTENT) =>
+
+        this.currentVideoCount = ordinaryCurrentContents.filter((x: API_CONTENT) =>
             fileTypes('video').includes(x.fileType.toLowerCase()),
         ).length;
-        this.currentImageCount = currentContents.filter((x: API_CONTENT) =>
+        this.currentImageCount = ordinaryCurrentContents.filter((x: API_CONTENT) =>
             fileTypes('image').includes(x.fileType.toLowerCase()),
         ).length;
-        this.currentFeedCount = currentContents.filter((x: API_CONTENT) =>
+        this.currentFeedCount = ordinaryCurrentContents.filter((x: API_CONTENT) =>
             fileTypes('feed').includes(x.fileType.toLowerCase()),
         ).length;
+        this.currentFillerCount = fillerCurrentContents.length;
     }
 
     private getFileTypesByTypeName(data: string) {
@@ -1154,7 +1152,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
     }
 
     protected get _contentFileTypes() {
-        return ['all', 'image', 'video', 'feeds'];
+        return ['all', 'image', 'video', 'feeds', 'fillers'];
     }
 
     protected get _statusFilterOptions() {

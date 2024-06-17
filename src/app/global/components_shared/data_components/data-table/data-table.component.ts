@@ -735,7 +735,7 @@ export class DataTableComponent implements OnInit {
                                 },
                             ),
                         );
-                    case 'Host Document Alias':
+                        break;
                     case 'Host Photo Alias':
                         this._host
                             .update_file_alias(fields.id, response)
@@ -825,17 +825,19 @@ export class DataTableComponent implements OnInit {
                 .subscribe((response: boolean | string) => {
                     if (typeof response === 'boolean') return;
 
-                    this._feed
-                        .clone_feed(contentId, response, this.current_user.user_id)
-                        .pipe(takeUntil(this.ngUnsubscribe))
-                        .subscribe(
-                            () => {
-                                this.openConfirmationModal('success', 'Success!', 'Feed cloned');
-                            },
-                            (error) => {
-                                console.error('Error cloning feed', error);
-                            },
-                        );
+                    if (typeof response === 'string' && response.trim().length > 0) {
+                        this._feed
+                            .clone_feed(contentId, response, this.current_user.user_id)
+                            .pipe(takeUntil(this.ngUnsubscribe))
+                            .subscribe(
+                                () => {
+                                    this.openConfirmationModal('success', 'Success!', 'Feed cloned');
+                                },
+                                (error) => {
+                                    console.error('Error cloning feed', error);
+                                },
+                            );
+                    }
                 });
         });
     }

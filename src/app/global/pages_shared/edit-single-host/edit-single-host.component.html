@@ -167,20 +167,12 @@
                                         </mat-form-field>
                                     </div>
                                     <div class="flex-even pr-3">
-                                        <div *ngIf="cities_loaded; else loadingCities">
-                                            <app-autocomplete-field
-                                                [label]="'City'"
-                                                [placeholder]="'Ex. Chicago'"
-                                                (data_value)="setCity($event, true)"
-                                                [key_of_value]="'city_state'"
-                                                [data_reference]="city_state"
-                                                [search_keyword]="'city_state'"
-                                                [primary_keyword]="'city_state'"
-                                                [new_value]="city_selected"
-                                                [initial_value]="city_selected"
-                                                [is_city]="true">
-                                            </app-autocomplete-field>
-                                        </div>
+                                        <ng-container *ngIf="cities_loaded; else loadingCities">
+                                            <app-city-autocomplete
+                                            (city_selected)="setCity($event)"
+                                            [selected_city_from_google]="city_selected"
+                                            (city_autocomplete_ready)="setInitialCity($event)"></app-city-autocomplete>
+                                        </ng-container>
                                     </div>
                                     <div class="state-container">
                                         <mat-form-field>

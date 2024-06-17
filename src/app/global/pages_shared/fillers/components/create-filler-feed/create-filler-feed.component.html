@@ -17,7 +17,7 @@
     </div>
 
     <div class="row mt-3">
-        <div class="col-lg-12">
+        <div class="col-lg-12" *ngIf="(!page_data.from_edit_table && groups_loaded) || formLoaded; else loaderSmall">
             <form [formGroup]="form">
                 <div class="row">
                     <div class="col-lg-12">
@@ -29,13 +29,26 @@
                     <div class="col-lg-6">
                         <mat-form-field class="full-width">
                             <mat-label>Interval (days)</mat-label>
-                            <input matInput type="number" autocomplete="off" formControlName="fillerInterval" min="0" />
+                            <input
+                                matInput
+                                type="number"
+                                autocomplete="off"
+                                formControlName="fillerInterval"
+                                min="1"
+                                (input)="onIntervalChange($event.target.value)" />
                         </mat-form-field>
                     </div>
                     <div class="col-lg-6">
                         <mat-form-field class="full-width">
                             <mat-label>Duration (seconds)</mat-label>
-                            <input matInput type="number" autocomplete="off" formControlName="fillerDuration" min="0" />
+                            <input
+                                #durationInput
+                                matInput
+                                type="number"
+                                autocomplete="off"
+                                formControlName="fillerDuration"
+                                min="20"
+                                (keyup)="onDurationChange($event)" />
                         </mat-form-field>
                     </div>
                     <div
@@ -45,7 +58,8 @@
                             (dealer_selected)="setAssignedTo($event)"
                             [initial_value]="selected_assignee"
                             [active_only]="true"
-                            [isDealerAdmin]="isCurrentUserDealerAdmin"></app-dealer-autocomplete>
+                            [isDealerAdmin]="isCurrentUserDealerAdmin"
+                            (loaded)="formFullyLoaded($event)"></app-dealer-autocomplete>
                     </div>
                 </div>
 
@@ -83,7 +97,7 @@
                         </div>
                     </div>
 
-                    <div class="row" *ngIf="groups_loaded; else loaderSmall">
+                    <div class="row">
                         <div class="col-lg-10">
                             <app-autocomplete-field
                                 (data_value)="setFillerGroup($event)"
@@ -167,7 +181,7 @@
                 </div>
 
                 <div class="row" *ngIf="page_data.from_edit_table">
-                    <div class="col-lg-12" *ngIf="selected_groups.length > 0; else loaderSmall">
+                    <div class="col-lg-12">
                         <h4 class="mb-2">Filler Groups:</h4>
                         <ul class="pl-3">
                             <li *ngFor="let groups of selected_groups; let i = index">
@@ -198,7 +212,7 @@
                             class="theme-btn"
                             type="submit"
                             (click)="arrangeData()"
-                            [disabled]="!form.valid || total_quantity > 20 || total_quantity == 0">
+                            [disabled]="disableUpdateForm()">
                             {{ !page_data.from_edit_table ? 'Create Filler Feed' : 'Update Filler Feed' }}
                         </button>
                     </div>
