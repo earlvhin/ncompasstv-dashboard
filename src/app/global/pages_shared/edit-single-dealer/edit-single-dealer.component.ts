@@ -267,12 +267,19 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
     }
 
     private subscribeToFormChanges(): void {
+        this.editDealerForm.controls['email'].valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(
+            (data) => {
+                if (data !== this.currentEmail) {
+                    this.emailNotValid = !this._user.validate_email(data);
+                    if (!this.emailNotValid) this.checkEmailDuplicate(data);
+                }
+            },
+            (error) => {
+                console.error(error);
+            },
+        );
         this.editDealerForm.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(
             (data) => {
-                if (data.email !== this.currentEmail) {
-                    this.emailNotValid = !this._user.validate_email(data.email);
-                    if (!this.emailNotValid) this.checkEmailDuplicate(data.email);
-                }
                 this.disabledForm = this.editDealerForm.invalid || this.hasDuplicateEmail || this.emailNotValid;
             },
             (error) => {
