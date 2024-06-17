@@ -735,7 +735,7 @@ export class DataTableComponent implements OnInit {
                                 },
                             ),
                         );
-                    case 'Host Document Alias':
+                        break;
                     case 'Host Photo Alias':
                         this._host
                             .update_file_alias(fields.id, response)
