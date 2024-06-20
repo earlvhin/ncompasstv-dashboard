@@ -8,7 +8,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
     styleUrls: ['./clone-feed-dialog.component.scss'],
 })
 export class CloneFeedDialogComponent implements OnInit {
-    feedName = new FormControl(null, Validators.required);
+    feedName = new FormControl(null, [Validators.required, this.noWhitespaceValidator]);
     oldName: string;
 
     constructor(@Inject(MAT_DIALOG_DATA) public data: string) {
@@ -17,5 +17,11 @@ export class CloneFeedDialogComponent implements OnInit {
 
     ngOnInit() {
         this.feedName.setValue(`${this.oldName} clone`);
+    }
+
+    private noWhitespaceValidator(control: FormControl): { [key: string]: boolean } | null {
+        const isWhitespace = (control.value || '').trim().length === 0;
+        const isValid = !isWhitespace;
+        return isValid ? null : { whitespace: true };
     }
 }

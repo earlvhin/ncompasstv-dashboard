@@ -9,8 +9,11 @@
     </div>
 
     <ng-template #loader>
-        <div class="py-1 white-bg">
-            <app-spinner [diameter]="30"></app-spinner>
+        <div class="form-placeholder">
+            <mat-form-field appearance="standard" class="w-100 custom-autocomplete">
+                <mat-label>Loading ...</mat-label>
+                <input type="text" [value]="'Please wait'" matInput [disabled]="true" />
+            </mat-form-field>
         </div>
     </ng-template>
 </div>

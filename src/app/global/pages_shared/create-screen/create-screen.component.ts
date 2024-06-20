@@ -45,6 +45,7 @@ export class CreateScreenComponent implements OnInit {
     disabledPublish = false;
     gettingHostLicenses = false;
     has_no_licenses = false;
+    hasNoInstallationDate = false;
     hosts: API_HOST[] = [];
     hostId: string;
     hostsData = [];
@@ -226,7 +227,7 @@ export class CreateScreenComponent implements OnInit {
     licenseSelected(status: boolean, licenseId: string, index: number): void {
         if (status) {
             this.assigned_licenses.push(licenseId);
-
+            this.hasInstalledDate();
             return;
         }
 
@@ -236,6 +237,7 @@ export class CreateScreenComponent implements OnInit {
         this.assigned_licenses.splice(assignedIndex, 1);
         this.queued_install_dates.splice(queuedIndex, 1);
         this.licenses[index].installDate = null;
+        this.hasNoInstallationDate = false;
     }
 
     onBulkSetInstallDate(): void {
@@ -275,6 +277,8 @@ export class CreateScreenComponent implements OnInit {
                         const index = this.licenses.findIndex((license) => license.licenseId === id && idNotQueued);
 
                         if (index !== -1) this.licenses[index].installDate = date;
+
+                        this.hasInstalledDate();
                     });
 
                     return;
@@ -290,11 +294,21 @@ export class CreateScreenComponent implements OnInit {
                 }
 
                 this.licenses[index].installDate = date;
+                this.hasInstalledDate();
             },
             (error) => {
                 console.error(error);
             },
         );
+    }
+
+    private hasInstalledDate(): void {
+        this.assigned_licenses.forEach(() => {
+            this.hasNoInstallationDate = this.assigned_licenses.some((l) => {
+                const onLisenseWithDate = this.licenses.find((license) => license.licenseId === l);
+                return onLisenseWithDate.installDate === null;
+            });
+        });
     }
 
     publishScreen(): void {
@@ -464,8 +478,12 @@ export class CreateScreenComponent implements OnInit {
     }
 
     setToDealerOrHost(data: { id: string; value: string; dealerId?: string }) {
+        this.hasNoInstallationDate = false;
+
         if (data === null || !data.dealerId) {
             this.disabledPublish = true;
+            this.hostId = null;
+
             return;
         }
 
@@ -625,6 +643,8 @@ export class CreateScreenComponent implements OnInit {
 
     private getLicenseByHostId(id: string): void {
         this.licenses = [];
+        this.assigned_licenses = [];
+
         this.gettingHostLicenses = true;
         this._license
             .getLicensesByHostId(id)
@@ -640,6 +660,9 @@ export class CreateScreenComponent implements OnInit {
                     this.licenses = response;
                     this.has_no_licenses = false;
                     this.gettingHostLicenses = false;
+
+                    //To reset the toggle buttons if changed of Host
+                    this.slide_toggle_status = this.slide_toggle_status.map((status) => (status ? false : status));
                 },
                 (error) => {
                     console.error(error);

@@ -23,6 +23,7 @@ export class DealerAutocompleteComponent implements OnInit {
     @Input() field_label = 'Select Dealer Business Name';
     @Input() field_placeholder = 'Ex. NCompass TV';
     @Output() dealer_selected: EventEmitter<any> = new EventEmitter();
+    @Output() loaded = new EventEmitter();
     @Output() no_data_found = new EventEmitter();
 
     protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -55,6 +56,7 @@ export class DealerAutocompleteComponent implements OnInit {
             unselect: true,
             disabled: this.isDisabled || false,
         };
+        this.loaded.emit(true);
     }
 
     public dealerNotFound(keyword: string) {

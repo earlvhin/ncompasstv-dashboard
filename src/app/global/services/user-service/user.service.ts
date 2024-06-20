@@ -169,6 +169,11 @@ export class UserService extends BaseService {
         return this.postRequest(url, data);
     }
 
+    checkIfDuplicateEmail(email: string) {
+        const url = `${this.getters.email_duplicate_checkers}?email=${email}`;
+        return this.getRequest(url);
+    }
+
     validate_email(email: string) {
         const pattern =
             /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
