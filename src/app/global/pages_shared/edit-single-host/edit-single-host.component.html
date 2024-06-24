@@ -169,9 +169,11 @@
                                     <div class="flex-even pr-3">
                                         <ng-container *ngIf="cities_loaded; else loadingCities">
                                             <app-city-autocomplete
-                                            (city_selected)="setCity($event)"
-                                            [selected_city_from_google]="city_selected"
-                                            (city_autocomplete_ready)="setInitialCity($event)"></app-city-autocomplete>
+                                                (city_selected)="setCity($event)"
+                                                [selected_city_from_google]="city_selected"
+                                                (city_autocomplete_ready)="
+                                                    setInitialCity($event)
+                                                "></app-city-autocomplete>
                                         </ng-container>
                                     </div>
                                     <div class="state-container">

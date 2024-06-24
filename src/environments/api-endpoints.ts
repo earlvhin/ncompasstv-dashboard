@@ -194,6 +194,7 @@ export const API_ENDPOINTS = {
         api_apps: 'playerapp/getapp',
         api_apps_versions: 'playerapp/getappversions',
         api_apps_version: 'playerapp/getlatestversion?appid=',
+        api_apps_rollout_targets: 'playerapp/getrollouttargets',
         all_license_by_install_date: 'license/getlicensesbyinstalldate',
         contents_by_host: 'host/GetContents',
         content_by_host_id: 'content/getbyhostid',
