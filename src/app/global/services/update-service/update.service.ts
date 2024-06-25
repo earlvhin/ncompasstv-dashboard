@@ -77,7 +77,7 @@ export class UpdateService {
      * Get Apps from API
      * API GET Method to AWS
      */
-    get_rollout_targets(): Observable<APP_ROLLOUT_TARGETS[] | { message: string }> {
+    getRolloutTargets(): Observable<APP_ROLLOUT_TARGETS[] | { message: string }> {
         return this._http.get<any>(
             `${environment.base_uri}${environment.getters.api_apps_rollout_targets}`,
             this.httpOptions,

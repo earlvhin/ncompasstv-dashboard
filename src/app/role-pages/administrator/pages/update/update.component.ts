@@ -106,7 +106,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
             );
 
         this._updates
-            .get_rollout_targets()
+            .getRolloutTargets()
             .pipe(takeUntil(this.unSubscribe))
             .subscribe(
                 (data) => {
@@ -126,7 +126,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
             );
     }
 
-    public mapTableData(tableData: App[]) {
+    public mapTableData(tableData: App[]): number {
         const sortedTableData = tableData.sort(
             (a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime(),
         );
@@ -168,7 +168,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
         );
     }
 
-    public mapRolloutTargetTableData(tableData: APP_ROLLOUT_TARGETS[]) {
+    public mapRolloutTargetTableData(tableData: APP_ROLLOUT_TARGETS[]): number {
         const sortedTableData = tableData.sort((a, b) => a.dealerBusinessName.localeCompare(b.dealerBusinessName));
 
         return this.rolloutTargetTableData.data.push(
