@@ -1,0 +1,20 @@
+<div class="contact-number-container">
+    <form [formGroup]="contactForm">
+        <mat-form-field class="full-width">
+            <mat-label>Contact Number</mat-label>
+            <input
+                class="no-spinners"
+                matInput
+                formControlName="contactNumber"
+                [placeholder]="'Ex. 555 555 1234'"
+                [type]="'tel'"
+                [required]="false" />
+            <mat-error *ngIf="contactForm.controls['contactNumber'].hasError('pattern')">
+                Only numbers are allowed.
+            </mat-error>
+            <mat-error *ngIf="contactForm.controls['contactNumber'].hasError('minlength')">
+                Minimum length is 10 characters.
+            </mat-error>
+        </mat-form-field>
+    </form>
+</div>

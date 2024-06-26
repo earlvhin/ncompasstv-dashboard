@@ -1110,6 +1110,7 @@ export class CreateHostComponent implements OnInit {
                 type: 'tel',
                 min: '0',
                 is_required: false,
+                isComponent: true,
             },
             {
                 label: 'Latitude',

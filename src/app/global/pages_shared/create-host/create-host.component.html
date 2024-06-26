@@ -40,7 +40,7 @@
                             </div>
                             <div *ngFor="let field of new_host_form_fields" class="{{ field.col }} mb-2">
                                 <mat-form-field
-                                    *ngIf="!field.autocomplete && !field.checkbox; else custom_field"
+                                    *ngIf="!field.autocomplete && !field.checkbox && !field.isComponent; else custom_field"
                                     [hideRequiredMarker]="false"
                                     [floatLabel]="'auto'"
                                     class="full-width">
@@ -86,6 +86,10 @@
                                         <app-city-autocomplete
                                             (city_selected)="getSelectedCity($event)"
                                             [selected_city_from_google]="selectedCity"></app-city-autocomplete>
+                                    </ng-container>
+                                    
+                                    <ng-container *ngIf="field.control === 'contactNumber'">
+                                        <app-contact-number></app-contact-number>
                                     </ng-container>
 
                                     <!-- New Autocomplete Implementation-->
