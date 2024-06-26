@@ -18,6 +18,5 @@ export class ContactNumberComponent implements OnInit {
         });
     }
 
-    ngOnInit(): void {
-    }
+    ngOnInit(): void {}
 }
