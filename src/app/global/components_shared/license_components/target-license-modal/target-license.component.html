@@ -1,7 +1,10 @@
+<div>
+    <h3 class="mb-1">Add Target Release</h3>
+</div>
 <ng-container *ngIf="!license_generated; else success">
     <div id="target_release" class="generate-license-modal p-4 pb-0 h-100" *ngIf="!is_submitted; else loading">
+        
         <ng-container>
-            <h3 class="mb-1">Add Target Release</h3>
             <!-- <p class="sm-text mb-4">Choose a dealer and set number of license to generate.</p> -->
             <form [formGroup]="target_release">
                 <ng-container *ngIf="!isLoadingHosts; else loader">
@@ -33,12 +36,18 @@
                                                 <mat-option
                                                     *ngFor="let dealer of filteredDealers | async"
                                                     [value]="dealer">
-                                                    <div class="dealer md-text">
+                                                    <div class="dealer sm-text">
                                                         {{ dealer.businessName }}
                                                     </div>
                                                 </mat-option>
                                             </div>
                                             <footer class="selection">
+                                                <mat-checkbox class="text-left ml-3">
+                                                    
+                                                    <strong class="sm-text">
+                                                    Select All Dealer
+                                                    </strong>
+                                                </mat-checkbox>
                                                 <button
                                                     class="theme-btn _primary md-text mr-3"
                                                     (click)="dealerMultiSelect.close()">
@@ -82,11 +91,10 @@
                             </div>
                         </form>
                     </div>
-
                     <div class="search-result" *ngIf="selectedHosts && selectedDealersControl.value.length > 0">
-                        <div class="mb-2 text-center bg-white p-3">
+                        <!-- <div class="mb-2 text-center bg-white p-3">
                             <div class="col-lg-12 p-0 sm-text font-weight-bold">
-                                <span class="pr-2 right-border">
+                                <span class="pr-2 rightfrc trt-border">
                                     <span class="text-primary">{{ selectedDealers.length }}</span>
                                     <span class="text-gray"> Dealer(s) </span>
                                 </span>
@@ -138,25 +146,25 @@
                                     <span class="text-gray"> {{ filterLabelStatus }} </span>
                                 </span>
                             </ng-template>
-                        </div>
+                        </div> -->
                         <mat-accordion>
                             <div class="row">
                                 <div class="col-lg-12 pb-20">
                                     <mat-expansion-panel
-                                        class="mb-3 p-2"
+                                        class="mb-3"
                                         *ngFor="let dealer of selectedDealers; let i = index"
                                         [expanded]="dealer.dealerId === expandedDealerId"
                                         hideToggle="true"
                                         #example
                                         id="outer-mat">
-                                        <mat-expansion-panel-header class="pr-0 pl-0 mt-2">
-                                            <mat-panel-title class="md-text p-0">
+                                        <mat-expansion-panel-header class="pr-0 pl-0">
+                                            <mat-panel-title class="md-text p-0 align-items-center">
                                                 <p class="col-lg-11 text-left">
-                                                    <span class="font-weight-bold sm-text">
+                                                    <span class="font-weight-bold md-text">
                                                         {{ dealer.businessName }}
                                                     </span>
                                                     <br />
-                                                    <span class="md-text">
+                                                    <!-- <span class="sm-text">
                                                         <span class="text-primary font-weight-bold">{{
                                                             dealer.hosts.length
                                                         }}</span>
@@ -180,9 +188,9 @@
                                                             </span>
                                                         </ng-template>
                                                         License(s)
-                                                    </span>
+                                                    </span> -->
                                                     <br />
-                                                    <ng-container *ngIf="!hasStatusFilter; else filteredHostStats">
+                                                    <!-- <ng-container *ngIf="!hasStatusFilter; else filteredHostStats">
                                                         <span class="md-text">
                                                             <span class="pr-2 right-border">
                                                                 <span
@@ -209,8 +217,8 @@
                                                                 Offline
                                                             </span>
                                                         </span>
-                                                    </ng-container>
-                                                    <ng-template #filteredHostStats>
+                                                    </ng-container> -->
+                                                    <!-- <ng-template #filteredHostStats>
                                                         <span class="pr-2">
                                                             <span
                                                                 class="xsm-text fas fa-circle"
@@ -230,10 +238,11 @@
                                                             >
                                                             {{ filterLabelStatus }}
                                                         </span>
-                                                    </ng-template>
+                                                    </ng-template> -->
                                                 </p>
+                                               
                                                 <div
-                                                    class="col-lg-1 p-0 pt-3 text-right"
+                                                    class="col-lg-1 p-0 text-right"
                                                     *ngIf="dealer.hosts.length > 0">
                                                     <div *ngIf="!example.expanded" class="ctm-accordion-icon">
                                                         <i class="fas fa-plus"></i>
@@ -244,6 +253,7 @@
                                                 </div>
                                             </mat-panel-title>
                                         </mat-expansion-panel-header>
+                                        <h4>Host Name(s):</h4>
                                         <div class="row" *ngIf="dealer.hosts.length > 0">
                                             <div class="col-lg-12" *ngFor="let host of dealer.hosts">
                                                 <mat-expansion-panel
@@ -254,13 +264,13 @@
                                                     (click)="onExpandHost(host.hostId, dealer.dealerId)"
                                                     [expanded]="host.hostId === expandedHostId"
                                                     [class.panelBorder]="example.expanded">
-                                                    <mat-expansion-panel-header class="pr-0 pl-0 mt-2">
+                                                    <mat-expansion-panel-header class="pr-0 pl-0">
                                                         <mat-panel-title class="md-text p-0">
                                                             <div class="col-lg-1 p-0 mt-2 mr-2 ml-2 text-left">
-                                                                <img
+                                                                <!-- <img
                                                                     class="map-header-status"
                                                                     [src]="host.iconUrl"
-                                                                    alt="Status" />
+                                                                    alt="Status" /> -->
                                                             </div>
                                                             <p class="col-lg-9 p-0 mt-1 mr-2 text-left">
                                                                 <span class="font-weight-bold md-text">
@@ -273,7 +283,7 @@
                                                                     {{ host.postalCode }}
                                                                 </span>
                                                             </p>
-                                                            <div class="col-lg-2 p-0 pt-2 text-right">
+                                                            <div class="col-lg-2 p-0 text-right">
                                                                 <div
                                                                     *ngIf="!example.expanded"
                                                                     class="ctm-accordion-icon">
