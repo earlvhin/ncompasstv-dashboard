@@ -28,7 +28,6 @@
                         *ngIf="!f.is_autocomplete && f.type !== 'password' && !f.isComponent; else customField">
                         <mat-label>{{ f.label }}</mat-label>
                         <input
-                            *ngIf="f.type !== 'password'; else passwordField"
                             formControlName="{{ f.control }}"
                             matInput
                             type="{{ f.type }}"
