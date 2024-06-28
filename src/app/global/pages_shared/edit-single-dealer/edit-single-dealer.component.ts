@@ -24,6 +24,8 @@ import { CityData } from '../../models/api_cities_state.model';
     styleUrls: ['./edit-single-dealer.component.scss'],
 })
 export class EditSingleDealerComponent implements OnInit, OnDestroy {
+    contactTouchAndInvalid = false;
+    currentContactValue: string;
     currentEmail: string;
     dealer = this.page_data.dealer;
     disabledForm = false;
@@ -84,6 +86,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
         this._editFormControls.status.setValue(dealer.status);
 
         this.currentEmail = dealer.email;
+        this.currentContactValue = dealer.contactNumber;
         if (dealer.startDate != null) this.onSelectStartDate(dealer.startDate, true);
     }
 
@@ -293,6 +296,14 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
         return this._user.update_user(this.mapUserInfoChanges()).pipe(takeUntil(this._unsubscribe));
     }
 
+    public getContactValue(value: string): void {
+        this._editFormControls.c_number.setValue(value);
+    }
+
+    public setContactNumberToInvalid(status: boolean): void {
+        this.contactTouchAndInvalid = status;
+    }
+
     protected get _editDealerFormFields() {
         return [
             {
@@ -342,6 +353,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
                 control: 'c_number',
                 placeholder: 'Ex. 0123456789',
                 col: 'col-lg-6',
+                isComponent: true,
             },
             {
                 label: 'Contact Person',

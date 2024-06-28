@@ -22,7 +22,10 @@
                 <div *ngFor="let field of editDealerFormFields" class="{{ field.col }} mb-3">
                     <mat-form-field
                         class="full-width"
-                        *ngIf="field.type !== 'toggle' && !field.isAutocomplete; else autocomplete">
+                        *ngIf="
+                            field.type !== 'toggle' && !field.isAutocomplete && !field.isComponent;
+                            else autocomplete
+                        ">
                         <mat-label>{{ field.label }}</mat-label>
                         <span
                             class="validation-message warning sm-text py-1 text-danger"
@@ -54,7 +57,15 @@
                         </mat-icon>
                     </mat-form-field>
                     <ng-template #autocomplete>
+                        <ng-container *ngIf="field.control === 'c_number'">
+                            <app-contact-number
+                                (contact_value)="getContactValue($event)"
+                                (touch_and_not_valid)="setContactNumberToInvalid($event)"
+                                [initial_value]="currentContactValue"></app-contact-number>
+                        </ng-container>
+
                         <app-city-autocomplete
+                            *ngIf="field.control === 'city'"
                             (city_selected)="citySelected($event)"
                             [selected_city_from_google]="selectedCity"
                             (city_autocomplete_ready)="setInitialCity($event)"></app-city-autocomplete>

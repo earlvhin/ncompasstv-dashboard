@@ -28,6 +28,7 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
     advertiser_name: string;
     advertiserField = false;
     back_btn: string;
+    contactTouchAndInvalid = false;
     dealers: API_DEALER[] = [];
     dealers_data: any[] = [];
     dealer_id: string;
@@ -155,6 +156,7 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
                 type: 'text',
                 placeholder: 'Ex: 1-222-456-7890',
                 width: 'col-lg-6',
+                isComponent: true,
             },
             {
                 label: 'Email Address',
@@ -292,6 +294,14 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
 
     toggleRetypePasswordFieldType(): void {
         this.is_retype_password_field_type = !this.is_retype_password_field_type;
+    }
+
+    public getContactValue(value: string): void {
+        this.formControls.contactNumber.setValue(value);
+    }
+
+    public setContactNumberToInvalid(status: boolean): void {
+        this.contactTouchAndInvalid = status;
     }
 
     private getAdvertisers(page: number): void {

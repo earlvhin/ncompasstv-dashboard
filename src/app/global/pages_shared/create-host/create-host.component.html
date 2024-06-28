@@ -40,7 +40,10 @@
                             </div>
                             <div *ngFor="let field of new_host_form_fields" class="{{ field.col }} mb-2">
                                 <mat-form-field
-                                    *ngIf="!field.autocomplete && !field.checkbox && !field.isComponent; else custom_field"
+                                    *ngIf="
+                                        !field.autocomplete && !field.checkbox && !field.isComponent;
+                                        else custom_field
+                                    "
                                     [hideRequiredMarker]="false"
                                     [floatLabel]="'auto'"
                                     class="full-width">
@@ -87,9 +90,13 @@
                                             (city_selected)="getSelectedCity($event)"
                                             [selected_city_from_google]="selectedCity"></app-city-autocomplete>
                                     </ng-container>
-                                    
+
                                     <ng-container *ngIf="field.control === 'contactNumber'">
-                                        <app-contact-number></app-contact-number>
+                                        <app-contact-number
+                                            (contact_value)="getContactValue($event)"
+                                            (touch_and_not_valid)="
+                                                setContactNumberToInvalid($event)
+                                            "></app-contact-number>
                                     </ng-container>
 
                                     <!-- New Autocomplete Implementation-->
@@ -229,7 +236,9 @@
                                 mat-button
                                 mat-raised-button
                                 class="theme-btn mr-2"
-                                [disabled]="newHostForm.invalid || is_creating_host || !dealerHasValue">
+                                [disabled]="
+                                    newHostForm.invalid || is_creating_host || !dealerHasValue || contactTouchAndInvalid
+                                ">
                                 {{ is_creating_host ? 'Saving Host Place...' : 'Submit' }}
                             </button>
                         </ng-container>

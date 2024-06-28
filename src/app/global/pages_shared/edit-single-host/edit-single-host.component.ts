@@ -52,7 +52,9 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
     category_selected: string;
     closed_without_edit = false;
     canadaSelected: boolean = false;
+    contactTouchAndInvalid = false;
     created_by = this.page_data.createdBy[0];
+    currentContactValue: string;
     dealer = this.page_data.dealer;
     dealers_data: API_DEALER[] = [];
     dealers_loaded = false;
@@ -108,7 +110,6 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
         this.subscribeToZipChanges();
         this.subscribeToRegionChanges();
         this.subscribeToStateChanges();
-        this.subscribeToContactNumberChanges();
         this.getHostContents();
         this.getCategories();
         this.getTimezones();
@@ -514,20 +515,19 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
         const { city, state, region } = data || { city: '', state: '', region: '' };
         this.city_selected = data.city;
 
-        if(!this.canadaSelected){
+        if (!this.canadaSelected) {
             this._formControls.city.setValue(city);
             this._formControls.state.setValue(state);
             this._formControls.region.setValue(region);
 
             this.city_selected = data.city;
-        }
-        else {
+        } else {
             this.canada_selected = data.country === 'CA';
         }
     }
 
     public setInitialCity(isLoaded: boolean): void {
-        this.city_selected = this.page_data.host.city;       
+        this.city_selected = this.page_data.host.city;
 
         //Set value to initial city
         this._formControls.city.setValue(this.city_selected);
@@ -631,6 +631,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
         this._formControls.contactNumber.setValue(host.contactNumber ? host.contactNumber : '0000000000', {
             emitEvent: false,
         });
+        this.currentContactValue = host.contactNumber;
     }
 
     private getCategories(): void {
@@ -788,14 +789,6 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
         control.updateValueAndValidity({ emitEvent: false });
     }
 
-    private subscribeToContactNumberChanges() {
-        const control = this._formControls.contactNumber;
-
-        control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(300)).subscribe((response: string) => {
-            control.patchValue(response.substring(0, 10), { emitEvent: false });
-        });
-    }
-
     private subscribeToFormValidation() {
         const form = this.edit_host_form;
 
@@ -841,6 +834,14 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
             const result = country === 'US' ? response.substring(0, 5) : formatCanadaZip(response);
             control.patchValue(result, { emitEvent: false });
         });
+    }
+
+    public getContactValue(value: string): void {
+        this._formControls.contactNumber.setValue(value);
+    }
+
+    public setContactNumberToInvalid(status: boolean): void {
+        this.contactTouchAndInvalid = status;
     }
 
     protected get _businessHours(): UI_OPERATION_DAYS[] {

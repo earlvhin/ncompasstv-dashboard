@@ -22,17 +22,19 @@
         <!-- Dynamic Form Row/Columns -->
         <div class="row mb-3">
             <div *ngFor="let f of form_fields_view" class="{{ f.width }}">
-                <mat-form-field class="full-width">
+                <mat-form-field class="full-width" *ngIf="f.type !== 'password' && !f.isComponent; else customField">
                     <mat-label>{{ f.label }}</mat-label>
                     <input
-                        *ngIf="f.type !== 'password'; else passwordField"
                         formControlName="{{ f.control }}"
                         matInput
                         type="{{ f.type }}"
                         placeholder="{{ f.placeholder }}" />
+                </mat-form-field>
 
-                    <ng-template #passwordField>
-                        <div class="password-container" *ngIf="f.control === 'password'">
+                <ng-template #customField>
+                    <mat-form-field class="full-width" *ngIf="f.control === 'password'">
+                        <mat-label>{{ f.label }}</mat-label>
+                        <div class="password-container">
                             <div class="field d-flex">
                                 <input
                                     formControlName="{{ f.control }}"
@@ -44,8 +46,11 @@
                                 </mat-icon>
                             </div>
                         </div>
+                    </mat-form-field>
 
-                        <div class="password-container" *ngIf="f.control === 're_password'">
+                    <mat-form-field class="full-width" *ngIf="f.control === 're_password'">
+                        <mat-label>{{ f.label }}</mat-label>
+                        <div class="password-container">
                             <div class="field d-flex">
                                 <input
                                     formControlName="{{ f.control }}"
@@ -60,8 +65,15 @@
                                 </mat-icon>
                             </div>
                         </div>
-                    </ng-template>
-                </mat-form-field>
+                    </mat-form-field>
+
+                    <ng-container *ngIf="f.control === 'contactNo'">
+                        <app-contact-number
+                            (contact_value)="getContactValue($event)"
+                            (touch_and_not_valid)="setContactNumberToInvalid($event)">
+                        </app-contact-number>
+                    </ng-container>
+                </ng-template>
 
                 <div class="validation" *ngIf="f.type === 'password'">
                     <span
@@ -145,7 +157,7 @@
         </div>
         <!-- Dealer Select -->
 
-        <button mat-button mat-raised-button class="theme-btn" [disabled]="form_invalid">
+        <button mat-button mat-raised-button class="theme-btn" [disabled]="form_invalid || contactTouchAndInvalid">
             Create Dealer Administrator
         </button>
     </form>

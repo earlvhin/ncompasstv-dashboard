@@ -8,12 +8,11 @@
                 formControlName="contactNumber"
                 [placeholder]="'Ex. 555 555 1234'"
                 [type]="'tel'"
-                [required]="false" />
-            <mat-error *ngIf="contactForm.controls['contactNumber'].hasError('pattern')">
-                Only numbers are allowed.
-            </mat-error>
+                [required]="false"
+                (input)="numberValidator($event)"
+                [maxlength]="10" />
             <mat-error *ngIf="contactForm.controls['contactNumber'].hasError('minlength')">
-                Minimum length is 10 characters.
+                Contact Number should be 10-digit.
             </mat-error>
         </mat-form-field>
     </form>

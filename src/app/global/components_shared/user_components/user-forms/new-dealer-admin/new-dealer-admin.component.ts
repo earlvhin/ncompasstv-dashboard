@@ -18,6 +18,7 @@ import { API_DEALER } from 'src/app/global/models';
 })
 export class NewDealerAdminComponent implements OnInit {
     @ViewChild('dealerMultiSelect', { static: false }) dealerMultiSelect: MatSelect;
+    contactTouchAndInvalid = false;
     dealers_list: any = [];
     original_dealers: any = [];
     form_invalid: boolean = true;
@@ -54,10 +55,11 @@ export class NewDealerAdminComponent implements OnInit {
         },
         {
             label: 'Contact Number',
-            control: 'contactnumber',
+            control: 'contactNo',
             placeholder: 'Ex: 1-222-456-7890',
             type: 'text',
             width: 'col-lg-6',
+            isComponent: true,
         },
         {
             label: 'Email Address',
@@ -100,7 +102,7 @@ export class NewDealerAdminComponent implements OnInit {
             roleid: [UI_ROLE_DEFINITION.dealeradmin],
             firstname: ['', Validators.required],
             lastname: ['', Validators.required],
-            contactnumber: ['', Validators.required],
+            contactNo: ['', Validators.required],
             email: ['', Validators.required],
             password: ['', Validators.compose([Validators.required, Validators.minLength(8)])],
             re_password: [{ value: '', disabled: true }, Validators.required],
@@ -292,6 +294,14 @@ export class NewDealerAdminComponent implements OnInit {
 
     toggleRetypePasswordFieldType(): void {
         this.is_retype_password_field_type = !this.is_retype_password_field_type;
+    }
+
+    public getContactValue(value: string): void {
+        this.new_admin_form.controls.contactNo.setValue(value);
+    }
+
+    public setContactNumberToInvalid(status: boolean): void {
+        this.contactTouchAndInvalid = status;
     }
 
     protected get roleRoute() {
