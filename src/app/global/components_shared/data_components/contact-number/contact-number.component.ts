@@ -28,10 +28,13 @@ export class ContactNumberComponent implements OnInit {
     ngOnInit(): void {
         if (this.initial_value) this.contactFormControls.contactNumber.setValue(this.initial_value);
         this.contactForm.statusChanges.pipe(distinctUntilChanged()).subscribe((status) => {
-            if (status === 'VALID') {
-                this.contact_value.emit(this.contactFormControls.contactNumber.value);
-                this.touch_and_not_valid.emit(false);
-            } else this.touch_and_not_valid.emit(true);
+            if (status !== 'VALID') {
+                this.touch_and_not_valid.emit(true)
+                return;
+           }
+           
+           this.contact_value.emit(this.contactFormControls.contactNumber.value);
+           this.touch_and_not_valid.emit(false);
         });
     }
 
