@@ -29,12 +29,12 @@ export class ContactNumberComponent implements OnInit {
         if (this.initial_value) this.contactFormControls.contactNumber.setValue(this.initial_value);
         this.contactForm.statusChanges.pipe(distinctUntilChanged()).subscribe((status) => {
             if (status !== 'VALID') {
-                this.touch_and_not_valid.emit(true)
+                this.touch_and_not_valid.emit(true);
                 return;
-           }
-           
-           this.contact_value.emit(this.contactFormControls.contactNumber.value);
-           this.touch_and_not_valid.emit(false);
+            }
+
+            this.contact_value.emit(this.contactFormControls.contactNumber.value);
+            this.touch_and_not_valid.emit(false);
         });
     }
 
