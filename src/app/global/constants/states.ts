@@ -313,6 +313,5 @@ export const STATES_PROVINCES = [
         state: 'Yukon',
         abbreviation: 'YT',
         region: 'NC',
-    }
-
+    },
 ];
