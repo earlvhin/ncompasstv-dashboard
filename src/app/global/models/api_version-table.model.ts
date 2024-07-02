@@ -72,3 +72,10 @@ export class APP_VERSIONS {
         this.zipUrl = zipUrl;
     }
 }
+export interface APP_ROLLOUT_TARGETS {
+    licenseKey: string;
+    alias: string;
+    uiVersion: string;
+    serverVersion: string;
+    dealerBusinessName: string;
+}

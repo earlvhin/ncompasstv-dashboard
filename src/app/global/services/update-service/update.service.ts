@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs-compat/Observable';
 
 import { AuthService } from '../auth-service/auth.service';
-import { App, APP_VERSION } from 'src/app/global/models';
+import { App, APP_VERSION, APP_ROLLOUT_TARGETS } from 'src/app/global/models';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -71,6 +71,17 @@ export class UpdateService {
      */
     get_app_versions(): Observable<APP_VERSION[] | { message: string }> {
         return this._http.get<any>(`${environment.base_uri}${environment.getters.api_apps_versions}`, this.httpOptions);
+    }
+
+    /**
+     * Get Apps from API
+     * API GET Method to AWS
+     */
+    getRolloutTargets(): Observable<APP_ROLLOUT_TARGETS[] | { message: string }> {
+        return this._http.get<any>(
+            `${environment.base_uri}${environment.getters.api_apps_rollout_targets}`,
+            this.httpOptions,
+        );
     }
 
     /**

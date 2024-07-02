@@ -15,3 +15,14 @@ export interface UI_STORE_HOUR_PERIOD {
     closingHourData?: { hour: number; minute: number; second?: number };
     day?: string; // used to pass the day name for checking
 }
+
+export interface UI_STORE_HOURS_OPENING {
+    close: any;
+    open: any;
+}
+
+export interface UI_HOUR {
+    hour?: number;
+    minute?: number;
+    second?: number;
+}

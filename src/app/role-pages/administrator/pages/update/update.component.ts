@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CreateAppComponent } from 'src/app/global/components_shared/version_components/create-app/create-app.component';
-import { App, TABLE_VERSION } from 'src/app/global/models';
+import { App, TABLE_VERSION, APP_ROLLOUT_TARGETS } from 'src/app/global/models';
 import { UpdateService } from 'src/app/global/services/update-service/update.service';
 import { TargetLicenseModal } from 'src/app/global/components_shared/license_components/target-license-modal/target-license.component';
 
@@ -31,6 +31,13 @@ export class UpdateComponent implements OnInit, OnDestroy {
                     title: 'Delete App',
                 },
             ],
+        },
+    };
+    rolloutTargetTableData: TABLE_VERSION = {
+        label: ['#', 'Dealer', 'License Key', 'Alias', 'UI Version', 'Server Version'],
+        data: [],
+        hasActions: {
+            actions: [],
         },
     };
 
@@ -88,6 +95,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     public getApps() {
         this.loading = true;
         this.tableDataVersion.data = [];
+        this.rolloutTargetTableData.data = [];
 
         this._updates
             .get_apps()
@@ -108,9 +116,29 @@ export class UpdateComponent implements OnInit, OnDestroy {
                     this.loading = false;
                 },
             );
+
+        this._updates
+            .getRolloutTargets()
+            .pipe(takeUntil(this.unSubscribe))
+            .subscribe(
+                (data) => {
+                    if ('message' in data) {
+                        this.loading = false;
+                        return;
+                    }
+
+                    const targets = data as APP_ROLLOUT_TARGETS[];
+                    this.mapRolloutTargetTableData(targets);
+                    this.loading = false;
+                },
+                (error) => {
+                    console.error(error);
+                    this.loading = false;
+                },
+            );
     }
 
-    public mapTableData(tableData: App[]) {
+    public mapTableData(tableData: App[]): number {
         const sortedTableData = tableData.sort(
             (a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime(),
         );
@@ -147,6 +175,38 @@ export class UpdateComponent implements OnInit, OnDestroy {
                     value: i.appId,
                     uniqueIdentifier: i.appId,
                     isHidden: true,
+                },
+            ]),
+        );
+    }
+
+    public mapRolloutTargetTableData(tableData: APP_ROLLOUT_TARGETS[]): number {
+        const sortedTableData = tableData.sort((a, b) => a.dealerBusinessName.localeCompare(b.dealerBusinessName));
+
+        return this.rolloutTargetTableData.data.push(
+            ...sortedTableData.map((i) => [
+                {
+                    value: i.dealerBusinessName,
+                    isHidden: false,
+                    //isLink: true,
+                    //insideLink: i.appId,
+                    //newTab: true,
+                },
+                {
+                    value: i.licenseKey,
+                    isHidden: false,
+                },
+                {
+                    value: i.alias,
+                    isHidden: false,
+                },
+                {
+                    value: i.uiVersion ? i.uiVersion : 'No Version Available',
+                    isHidden: false,
+                },
+                {
+                    value: i.serverVersion ? i.serverVersion : 'No Version Available',
+                    isHidden: false,
                 },
             ]),
         );

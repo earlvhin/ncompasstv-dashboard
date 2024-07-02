@@ -226,9 +226,9 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 
     private initializeForm() {
         this.new_feed_form = this._form.group({
-            feedTitle: [null, Validators.required],
+            feedTitle: [null, [Validators.required, this.noWhitespaceValidator]],
             feedDescription: [null],
-            feedUrl: [null, Validators.required],
+            feedUrl: [null, [Validators.required, this.noWhitespaceValidator]],
             assignTo: [null],
             feedType: [this.feed_types[0].id, Validators.required],
             embeddedscript: [null],
@@ -236,6 +236,12 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 
         this.subscribeToFeedTypeChanges();
         this.subscribeToFeedUrlChanges();
+    }
+
+    private noWhitespaceValidator(control: AbstractControl): { [key: string]: boolean } | null {
+        const isWhitespace = (control.value || '').trim().length === 0;
+        const isValid = !isWhitespace;
+        return isValid ? null : { whitespace: true };
     }
 
     // Autocomplete beyond this point

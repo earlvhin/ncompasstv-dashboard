@@ -194,6 +194,7 @@ export const API_ENDPOINTS = {
         api_apps: 'playerapp/getapp',
         api_apps_versions: 'playerapp/getappversions',
         api_apps_version: 'playerapp/getlatestversion?appid=',
+        api_apps_rollout_targets: 'playerapp/getrollouttargets',
         all_license_by_install_date: 'license/getlicensesbyinstalldate',
         contents_by_host: 'host/GetContents',
         content_by_host_id: 'content/getbyhostid',
@@ -201,6 +202,7 @@ export const API_ENDPOINTS = {
         distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled
         distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
         dma_hosts_by_rank: 'dma/GetHostListsByRankLocatorPage',
+        email_duplicate_checkers: 'user/checkifduplicateemail',
         export_advertiser: 'advertiser/export?dealer_id=',
         export_all_advertiser: 'advertiser/ExportAll',
         export_advertiser_dealer: 'dealer/ExportDealerAdvertisers',

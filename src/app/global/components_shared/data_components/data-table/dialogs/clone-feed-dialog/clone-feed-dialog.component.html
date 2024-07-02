@@ -8,6 +8,10 @@
         <div class="mat-top-em">
             <mat-form-field appearance="fill" class="full-width">
                 <input matInput placeholder="Feed Name" [formControl]="feedName" />
+                <mat-error *ngIf="feedName.hasError('required')">Feed Name is required</mat-error>
+                <mat-error *ngIf="feedName.hasError('whitespace')"
+                    >Feed Name cannot be empty or whitespace only</mat-error
+                >
             </mat-form-field>
         </div>
         <div class="text-right">

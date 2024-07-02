@@ -30,6 +30,8 @@ import {
     UI_CITY_AUTOCOMPLETE_DATA,
     UI_CITY_AUTOCOMPLETE,
     UI_AUTOCOMPLETE_INITIAL_DATA,
+    UI_HOUR,
+    UI_STORE_HOURS_OPENING,
 } from 'src/app/global/models';
 
 import {
@@ -55,38 +57,41 @@ import { CityData } from '../../models/api_cities_state.model';
     providers: [TitleCasePipe],
 })
 export class CreateHostComponent implements OnInit {
-    cities_state_data: CITIES_STATE;
-    categories_data: API_PARENT_CATEGORY[];
-    city_loaded = false;
-    city_state: City[] = [];
     canadaSelected: boolean = false;
-    city_selected: string;
-    gen_categories_data: any[];
+    categoriesData: API_PARENT_CATEGORY[];
     category_selected: string;
     child_category: string;
+    citiesStateData: CITIES_STATE;
+    city_loaded = false;
+    city_selected: string;
+    city_state: City[] = [];
+    create_host_data: UI_AUTOCOMPLETE = { label: 'City', placeholder: 'Type anything', data: [] };
     current_host_image: string;
-    dealers_data: API_DEALER[] = [];
     dealer_name: string;
     dealerHasValue: boolean;
+    dealersData: API_DEALER[] = [];
+    genCategoriesData: any[];
     google_operation_days = this._googleOperationDays;
     google_place_form: FormGroup;
     google_result: any;
-    is_always_open = false;
+    hasInvalidTime = false;
     is_admin = this.isAdmin;
+    isAlwaysOpen = false;
     is_creating_host = false;
     is_dealer = this.isDealer;
+    isDealerAdmin = false;
     is_loading_categories = true;
     is_page_ready = false;
+    isListVisible: boolean = false;
     lat = 39.7395247;
     lng = -105.1524133;
-    is_dealer_admin = false;
     loading_data = true;
     loading_search = false;
-    location_field = true;
     location_candidate_fetched = false;
+    locationField = true;
     location_selected = false;
-    new_host_form: FormGroup;
     new_host_form_fields = this._createFormFields;
+    newHostForm: FormGroup;
     no_category = false;
     no_category2 = false;
     no_result = false;
@@ -94,16 +99,16 @@ export class CreateHostComponent implements OnInit {
     paging: PAGING;
     place_id: string;
     searchDisabled = false;
-    selectedDealer: UI_AUTOCOMPLETE_DATA[] = [];
-    selectedCity: string;
     selected_location: any;
+    selectedCity: string;
+    selectedDealer: UI_AUTOCOMPLETE_DATA[] = [];
     state_provinces: { state: string; abbreviation: string; region: string }[] = STATES_PROVINCES;
-    timezones: API_TIMEZONE[];
+    modifiedStorePeriod: UI_STORE_HOURS_OPENING[] = [];
+    storeHoursPeriod: UI_STORE_HOUR_PERIOD[];
     timezone_autocomplete: UI_AUTOCOMPLETE;
+    timezones: API_TIMEZONE[];
     title = 'Create Host Place';
     trigger_data: Subject<any> = new Subject<any>();
-    create_host_data: UI_AUTOCOMPLETE = { label: 'City', placeholder: 'Type anything', data: [] };
-    isListVisible: boolean = false;
     update_timezone_value = new Subject<UI_AUTOCOMPLETE_DATA | string>();
 
     private is_search = false;
@@ -140,7 +145,7 @@ export class CreateHostComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        if (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) this.is_dealer_admin = true;
+        if (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) this.isDealerAdmin = true;
         this.current_host_image = this.default_host_image;
         this.initializeCreateHostForm();
         this.initializeGooglePlaceForm();
@@ -166,6 +171,8 @@ export class CreateHostComponent implements OnInit {
     }
 
     addHours(data: UI_OPERATION_DAYS) {
+        this.hasInvalidTime = true;
+
         const hours = {
             id: uuid.v4(),
             day_id: data.id,
@@ -174,6 +181,40 @@ export class CreateHostComponent implements OnInit {
         };
 
         data.periods.push(hours);
+    }
+
+    public onOpenTimeChange(time: { hour: number; minute: number; second?: number }): void {
+        this.onTimeChange(time);
+    }
+
+    public onCloseTimeChange(time: { hour: number; minute: number; second?: number }): void {
+        this.onTimeChange(time);
+    }
+
+    private onTimeChange(time: { hour: number; minute: number; second?: number }): void {
+        if (time === null) {
+            this.hasInvalidTime = true;
+            return;
+        }
+
+        this.timeValidator();
+    }
+
+    private timeValidator(): void {
+        this.hasInvalidTime = false;
+        this.storeHoursPeriod = [];
+
+        this.operation_days.forEach((data) => {
+            if (data.status && data.periods.length > 0) {
+                data.periods.forEach((period) => {
+                    this.storeHoursPeriod.push(period);
+                });
+            }
+        });
+
+        this.hasInvalidTime = this.storeHoursPeriod.some(
+            (period) => !period.openingHourData || !period.closingHourData,
+        );
     }
 
     addNewHostPlace() {
@@ -205,7 +246,7 @@ export class CreateHostComponent implements OnInit {
             .get_cities()
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((response) => {
-                this.cities_state_data = response.map((city) => {
+                this.citiesStateData = response.map((city) => {
                     return new CITIES_STATE_DATA(
                         city.id,
                         city.city,
@@ -223,10 +264,10 @@ export class CreateHostComponent implements OnInit {
             .get_cities_data()
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((response) => {
-                this.cities_state_data = response;
+                this.citiesStateData = response;
 
                 this.city_field_data.data = [
-                    ...this.cities_state_data.data
+                    ...this.citiesStateData.data
                         .map((data) => {
                             return {
                                 id: data.id,
@@ -324,31 +365,56 @@ export class CreateHostComponent implements OnInit {
         });
     }
 
+    private onConvertOperatingHours(period: UI_STORE_HOUR_PERIOD): void {
+        const openingHour = period.openingHourData;
+        const closingHour = period.closingHourData;
+
+        const formatTime = (time: UI_HOUR): string => {
+            const hourString = time.hour.toString().padStart(2, '0');
+            const minuteString = time.minute.toString().padStart(2, '0');
+            return `${hourString}${minuteString}`;
+        };
+
+        const openingHourFormatted = formatTime(openingHour);
+        const closingHourFormatted = formatTime(closingHour);
+
+        const modifiedPeriod = {
+            close: {
+                day: period.day_id,
+                time: closingHourFormatted,
+            },
+            open: {
+                day: period.day_id,
+                time: openingHourFormatted,
+            },
+        };
+
+        this.modifiedStorePeriod.push(modifiedPeriod);
+    }
+
+    public onClickInvalid(): void {
+        this.openWarningModal(
+            'error',
+            'Failed to create host',
+            'Please ensure that all business hours are accurately provided for each input field',
+            null,
+            null,
+        );
+        return;
+    }
+
     onCreateHostPlace() {
-        this.operation_days.map((data) => {
+        this.modifiedStorePeriod = [];
+
+        this.operation_days.forEach((data) => {
             if (data.status && data.periods.length > 0) {
-                data.periods.map((period) => {
-                    if (period.open != '' && period.close == '') {
-                        this.form_invalid = true;
-                    } else if (period.close != '' && period.open == '') {
-                        this.form_invalid = true;
-                    } else {
-                        this.form_invalid = false;
-                    }
+                data.periods.forEach((period) => {
+                    this.onConvertOperatingHours(period);
                 });
             }
         });
 
-        if (this.form_invalid) {
-            this.openWarningModal(
-                'error',
-                'Failed to create host',
-                'Kindly verify that all business hours opening should have closing time.',
-                null,
-                null,
-            );
-            return;
-        }
+        this.mapOperationHours(this.modifiedStorePeriod);
 
         const newHostPlace = new API_CREATE_HOST({
             dealerId: this.newHostFormControls.dealerId.value,
@@ -552,7 +618,7 @@ export class CreateHostComponent implements OnInit {
 
         // Get Business Place Details
         this.getMoreBusinessPlaceDetails(this.selected_location);
-        this.new_host_form.markAllAsTouched();
+        this.newHostForm.markAllAsTouched();
         this._helper.onTouchPaginatedAutoCompleteField.next();
 
         this._timezone.getTimezoneByCoordinates(data.latitude, data.longitude).subscribe(
@@ -590,6 +656,7 @@ export class CreateHostComponent implements OnInit {
 
     removeHours(data: UI_OPERATION_DAYS, index: number) {
         data.periods.splice(index, 1);
+        this.timeValidator();
     }
 
     searchStateAndRegion(state: string) {
@@ -612,8 +679,8 @@ export class CreateHostComponent implements OnInit {
             .subscribe(
                 (data) => {
                     if (data.paging.entities && data.paging.entities.length > 0)
-                        this.dealers_data = data.paging.entities;
-                    else this.dealers_data = [];
+                        this.dealersData = data.paging.entities;
+                    else this.dealersData = [];
                     this.paging = data.paging;
                 },
                 (error) => {
@@ -678,7 +745,7 @@ export class CreateHostComponent implements OnInit {
                 .pipe(takeUntil(this._unsubscribe))
                 .subscribe(
                     (data) => {
-                        this.dealers_data = data.dealers;
+                        this.dealersData = data.dealers;
                         this.paging = data.paging;
                         this.loading_data = false;
                     },
@@ -694,7 +761,7 @@ export class CreateHostComponent implements OnInit {
                 .pipe(takeUntil(this._unsubscribe))
                 .subscribe(
                     (data) => {
-                        this.dealers_data = data.dealers;
+                        this.dealersData = data.dealers;
                         this.paging = data.paging;
                         this.loading_data = false;
                         this.loading_search = false;
@@ -710,7 +777,7 @@ export class CreateHostComponent implements OnInit {
         const upperCaseAlphabets = '^[A-Z]+$';
         const numbersOnly = '^[0-9]+$';
 
-        this.new_host_form = this._form.group({
+        this.newHostForm = this._form.group({
             dealerId: ['', Validators.required],
             businessName: ['', Validators.required],
             is_canada: [''],
@@ -746,8 +813,8 @@ export class CreateHostComponent implements OnInit {
             createdBy: this._auth.current_user_value.user_id,
         });
 
-        this.new_host_form.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
-            this.form_invalid = this.new_host_form.invalid;
+        this.newHostForm.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+            this.form_invalid = this.newHostForm.invalid;
         });
 
         this.subscribeToContactNumberChanges();
@@ -760,9 +827,9 @@ export class CreateHostComponent implements OnInit {
 
         this.google_place_form.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
             if (this.google_place_form.valid) {
-                this.location_field = false;
+                this.locationField = false;
             } else {
-                this.location_field = true;
+                this.locationField = true;
                 this.location_candidate_fetched = false;
             }
         });
@@ -785,12 +852,12 @@ export class CreateHostComponent implements OnInit {
                     const dealersData = getDealers as { dealers: API_DEALER[]; paging: PAGING };
                     const timezones = getTimeZones as API_TIMEZONE[];
 
-                    this.categories_data = categories.map((category) => {
+                    this.categoriesData = categories.map((category) => {
                         category.categoryName = this._titlecase.transform(category.categoryName);
                         return category;
                     });
 
-                    this.gen_categories_data = genCategories.map((category) => {
+                    this.genCategoriesData = genCategories.map((category) => {
                         category.generalCategory = this._titlecase.transform(category.generalCategory);
                         return category;
                     });
@@ -809,7 +876,7 @@ export class CreateHostComponent implements OnInit {
                         }),
                     ];
 
-                    this.dealers_data = dealersData.dealers;
+                    this.dealersData = dealersData.dealers;
                     this.paging = dealersData.paging;
                     this.loading_data = false;
                     this.is_page_ready = true;
@@ -1189,7 +1256,7 @@ export class CreateHostComponent implements OnInit {
     }
 
     public get newHostFormControls() {
-        return this.new_host_form.controls;
+        return this.newHostForm.controls;
     }
 
     protected get roleInfo() {

@@ -51,6 +51,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
     categories_data: API_PARENT_CATEGORY[];
     category_selected: string;
     closed_without_edit = false;
+    canadaSelected: boolean = false;
     created_by = this.page_data.createdBy[0];
     dealer = this.page_data.dealer;
     dealers_data: API_DEALER[] = [];
@@ -509,41 +510,28 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
             });
     }
 
-    setCity(data, fromSelect?): void {
-        let cityState = data.split(',')[0].trim();
-        if (!this.canada_selected) {
-            this._formControls.city.setValue(cityState);
-            this.city_selected = cityState;
-            this._location
-                .get_states_regions(data.substr(data.indexOf(',') + 2))
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    (data) => {
-                        if (data.length) {
-                            this._formControls.state.setValue(data[0].abbreviation);
-                            this._formControls.region.setValue(data[0].region);
-                        }
+    public setCity(data): void {
+        const { city, state, region } = data || { city: '', state: '', region: '' };
+        this.city_selected = data.city;
 
-                        if (fromSelect) {
-                            this._formControls.zip.setValue('');
-                        }
-                    },
-                    (error) => {
-                        console.error(error);
-                    },
-                );
+        if (!this.canadaSelected) {
+            this._formControls.city.setValue(city);
+            this._formControls.state.setValue(state);
+            this._formControls.region.setValue(region);
+
+            this.city_selected = data.city;
         } else {
-            let sliced_address = data.split(', ');
-            let filtered_data = this.city_state.filter((city) => {
-                return city.city === sliced_address[0];
-            });
-
-            this._formControls.city.setValue(cityState);
-            if (filtered_data.length) {
-                this._formControls.state.setValue(filtered_data[0].state);
-                this._formControls.region.setValue(filtered_data[0].region);
-            }
+            this.canada_selected = data.country === 'CA';
         }
+    }
+
+    public setInitialCity(isLoaded: boolean): void {
+        this.city_selected = this.page_data.host.city;
+
+        //Set value to initial city
+        this._formControls.city.setValue(this.city_selected);
+        this._formControls.state.setValue(this.page_data.host.state);
+        this._formControls.region.setValue(this.page_data.host.region);
     }
 
     setCategory(event: string): void {
