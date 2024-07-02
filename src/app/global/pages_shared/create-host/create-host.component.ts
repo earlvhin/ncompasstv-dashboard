@@ -27,9 +27,7 @@ import {
     UI_STORE_HOUR,
     UI_STORE_HOUR_PERIOD,
     UI_ROLE_DEFINITION_TEXT,
-    UI_CITY_AUTOCOMPLETE_DATA,
     UI_CITY_AUTOCOMPLETE,
-    UI_AUTOCOMPLETE_INITIAL_DATA,
     UI_HOUR,
     UI_STORE_HOURS_OPENING,
 } from 'src/app/global/models';
@@ -161,8 +159,6 @@ export class CreateHostComponent implements OnInit {
 
             this.setToDealer(dealer);
         }
-
-        this.getCitiesAndStates();
     }
 
     ngOnDestroy() {
@@ -239,46 +235,6 @@ export class CreateHostComponent implements OnInit {
 
     closeGoogleDropdownList() {
         this.isListVisible = false;
-    }
-
-    getCities() {
-        this._location
-            .get_cities()
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((response) => {
-                this.citiesStateData = response.map((city) => {
-                    return new CITIES_STATE_DATA(
-                        city.id,
-                        city.city,
-                        city.abbreviation,
-                        city.state,
-                        city.region,
-                        city.country,
-                    );
-                });
-            });
-    }
-
-    getCitiesAndStates() {
-        this._location
-            .get_cities_data()
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((response) => {
-                this.citiesStateData = response;
-
-                this.city_field_data.data = [
-                    ...this.citiesStateData.data
-                        .map((data) => {
-                            return {
-                                id: data.id,
-                                value: `${data.city}, ${data.state}`,
-                                display: data.city,
-                                country: data.country,
-                            };
-                        })
-                        .filter((data) => data),
-                ];
-            });
     }
 
     getFullDayName(abbreviatedDay: string): string {
@@ -665,33 +621,6 @@ export class CreateHostComponent implements OnInit {
         )[0];
     }
 
-    searchBoxTrigger(event: { is_search: boolean; page: number }) {
-        this.is_search = event.is_search;
-        this.getDealers(event.page);
-    }
-
-    searchDealer(keyword: string) {
-        this.loading_search = true;
-
-        this._dealer
-            .get_search_dealer(keyword)
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(
-                (data) => {
-                    if (data.paging.entities && data.paging.entities.length > 0)
-                        this.dealersData = data.paging.entities;
-                    else this.dealersData = [];
-                    this.paging = data.paging;
-                },
-                (error) => {
-                    console.error(error);
-                },
-            )
-            .add(() => {
-                this.loading_search = false;
-            });
-    }
-
     setToCategory(event: string) {
         this.no_category = true;
         this.newHostFormControls.category.setValue(this._titlecase.transform(event).replace(/_/g, ' '));
@@ -734,43 +663,6 @@ export class CreateHostComponent implements OnInit {
             hour12: true,
         } as Intl.DateTimeFormatOptions;
         return time.toLocaleString('en-US', options);
-    }
-
-    private getDealers(page: number) {
-        if (page > 1) {
-            this.loading_data = true;
-
-            this._dealer
-                .get_dealers_with_page(page, '')
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    (data) => {
-                        this.dealersData = data.dealers;
-                        this.paging = data.paging;
-                        this.loading_data = false;
-                    },
-                    (error) => {
-                        console.error(error);
-                    },
-                );
-        } else {
-            if (this.is_search) this.loading_search = true;
-
-            this._dealer
-                .get_dealers_with_page(page, '')
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    (data) => {
-                        this.dealersData = data.dealers;
-                        this.paging = data.paging;
-                        this.loading_data = false;
-                        this.loading_search = false;
-                    },
-                    (error) => {
-                        console.error(error);
-                    },
-                );
-        }
     }
 
     private initializeCreateHostForm() {

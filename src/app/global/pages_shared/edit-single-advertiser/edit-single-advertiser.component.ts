@@ -22,9 +22,12 @@ import {
     API_UPDATE_ADVERTISER,
     City,
     PAGING,
+    UI_AUTOCOMPLETE_DATA,
     UI_CONFIRMATION_MODAL,
     UI_ROLE_DEFINITION,
 } from 'src/app/global/models';
+
+import { CityData } from '../../models/api_cities_state.model';
 
 @Component({
     selector: 'app-edit-single-advertiser',
@@ -56,6 +59,8 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
     is_form_ready = false;
     is_dealer = this._auth.current_role === 'dealer';
     paging: PAGING;
+    selectedDealer: UI_AUTOCOMPLETE_DATA[] = [];
+    selectedCity: string;
 
     protected _unsubscribe = new Subject<void>();
 
@@ -74,36 +79,14 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
-        this.searchDealers();
         this.getCategories();
         this.initializeForm();
         this.zipCodeValidation();
-        if (this.advertiser.postalCode.length > 5) this.getCanadaAddress({ checked: true }, false);
-        else this.getCities();
-        this.fillCityOfAdvertiser();
     }
 
     ngOnDestroy(): void {
         this._unsubscribe.next();
         this._unsubscribe.complete();
-    }
-
-    fillCityOfAdvertiser() {
-        this._location
-            .get_states_by_abbreviation(this.advertiser.state)
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(
-                (data) => {
-                    let city = '';
-                    city = this.advertiser.city.split(',')[0].trim();
-                    this._formControls.city.setValue(city);
-                    this.city_selected = city;
-                    this.setCity(city);
-                },
-                (error) => {
-                    console.error(error);
-                },
-            );
     }
 
     setCategory(event: string): void {
@@ -113,92 +96,13 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
         this._formControls.category.setValue(event);
     }
 
-    setCity(data, fromSelect?): void {
-        let cityState = data.split(',')[0].trim();
-        if (!this.canada_selected) {
-            this._formControls.city.setValue(cityState);
-            this.city_selected = cityState;
-            this._location
-                .get_states_regions(data.substr(data.indexOf(',') + 2))
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    (data) => {
-                        if (data.length) {
-                            this._formControls.state.setValue(data[0].abbreviation);
-                            this._formControls.region.setValue(data[0].region);
-                        }
-
-                        if (fromSelect) {
-                            this._formControls.zip.setValue('');
-                        }
-                    },
-                    (error) => {
-                        console.error(error);
-                    },
-                );
-        } else {
-            let sliced_address = data.split(', ');
-            let filtered_data = this.city_state.filter((city) => {
-                return city.city === sliced_address[0];
-            });
-
-            this._formControls.city.setValue(cityState);
-            if (filtered_data.length) {
-                this._formControls.state.setValue(filtered_data[0].state);
-                this._formControls.region.setValue(filtered_data[0].region);
-            }
-        }
-    }
-
-    editBusinessName(value: boolean): void {
-        this.closed_without_edit = value;
-        this.disable_business_name = value;
-    }
-
-    getCanadaAddress(value, clearAction = true) {
-        this.canada_selected = value.checked;
-        if (clearAction) this.clearAddressValue();
-        if (value.checked) this.getCanadaCities();
-        else this.getCities();
-    }
-
     clearAddressValue() {
         this._formControls.address.setValue('');
-        this.city_selected = '';
+        this.selectedCity = '';
         this._formControls.city.setValue('');
         this._formControls.state.setValue('');
         this._formControls.region.setValue('');
         this._formControls.zip.setValue('');
-    }
-
-    getCanadaCities() {
-        this._location
-            .get_canada_cities()
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((response: any) => {
-                this.city_state = response.map((city) => {
-                    return new City(
-                        city.city,
-                        `${city.city}, ${city.state_whole}`,
-                        city.state,
-                        city.region,
-                        city.state_whole,
-                    );
-                });
-            })
-            .add(() => (this.cities_loaded = true));
-    }
-
-    getCities() {
-        this._location
-            .get_cities()
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((response: any) => {
-                this.city_state = response.map((city) => {
-                    return new City(city.city, `${city.city}, ${city.state}`, city.state);
-                });
-            })
-            .add(() => (this.cities_loaded = true));
     }
 
     private addCurrentDealerToList(): void {
@@ -282,27 +186,8 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
         return this._advertiser.create_advertiser_activity_logs(activity).pipe(takeUntil(this._unsubscribe));
     }
 
-    searchDealers(keyword = '') {
-        this._dealer
-            .get_search_dealer(keyword)
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((data) => {
-                if (data.paging.entities.length <= 0) {
-                    this.dealers_data = [];
-                    return;
-                }
-
-                this.dealers_data = data.paging.entities;
-                this.paging = data.paging;
-            })
-            .add(() => (this.dealers_loaded = true));
-    }
-
-    setDealer(dealerId: string) {
-        const filteredDealer = this.dealers_data.filter((dealer) => dealer.dealerId === dealerId)[0];
-        this._formControls.dealerId.setValue(this.initial_dealer_id);
-        this.dealer_name = filteredDealer.businessName;
-        this.current_dealer = filteredDealer;
+    public dealerSelected(data: { id: string; value: string }): void {
+        this._formControls.dealerId.setValue(data.id);
     }
 
     private getCategories(): void {
@@ -366,20 +251,34 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
         this._formControls.lat.setValue(advertiser.latitude);
         this._formControls.long.setValue(advertiser.longitude);
         this._formControls.address.setValue(advertiser.address);
-        if (advertiser.city.indexOf(',') > -1) {
-            this._formControls.city.setValue(advertiser.city, { emitEvent: false });
-        } else {
-            this.fillCityOfAdvertiser();
-        }
-
-        this._formControls.state.setValue(advertiser.state);
-        this._formControls.zip.setValue(advertiser.postalCode);
-        this._formControls.region.setValue(advertiser.region);
         this._formControls.dealerId.setValue(this.dialog_data.dealer.dealerId);
         this.dealer_name = dealer.businessName;
         this.onSelectCategory(advertiser.category);
+
+        this.selectedDealer.push({
+            id: dealer.dealerId,
+            value: dealer.businessName,
+        });
+
         this.initial_dealer_id = advertiser.dealerId;
         this.is_form_ready = true;
+    }
+
+    public citySelected(data: CityData): void {
+        const { city, state, region } = data || { city: '', state: '', region: '' };
+        this._formControls.city.setValue(city ? city : '');
+        this._formControls.state.setValue(state || '');
+        this._formControls.region.setValue(region || '');
+    }
+
+    public setInitialCity(isLoaded: boolean): void {
+        this.selectedCity = this.dialog_data.advertiser.city;
+
+        //Set value to initial city
+        this._formControls.city.setValue(this.selectedCity);
+        this._formControls.state.setValue(this.dialog_data.advertiser.state);
+        this._formControls.region.setValue(this.dialog_data.advertiser.region);
+        this._formControls.zip.setValue(this.dialog_data.advertiser.postalCode);
     }
 
     protected get _editAdvertiserFormFields() {

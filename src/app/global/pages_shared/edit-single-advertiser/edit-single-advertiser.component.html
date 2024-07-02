@@ -19,38 +19,25 @@
     <ng-container *ngIf="is_form_ready; else loading">
         <form [formGroup]="edit_advertiser_form" (ngSubmit)="saveAdvertiserData()" class="text-left">
             <div class="row">
-                <div class="col-lg-11 mb-3" *ngIf="!is_dealer">
-                    <ng-container *ngIf="dealers_loaded; else loaderSmall">
-                        <app-autocomplete-field
-                            [data_reference]="dealers_data"
-                            [primary_keyword]="'businessName'"
-                            [key_of_value]="'dealerId'"
-                            (data_value)="setDealer($event)"
-                            [required]="true"
-                            [label]="'Type in a Dealer Business Name'"
-                            [new_value]="dealer_name"
-                            [initial_value]="dealer_name"
-                            [disabled]="disable_business_name"
-                            [paging]="paging"
-                            (searched)="searchDealers($event)"
-                            [no_edit]="closed_without_edit">
-                        </app-autocomplete-field>
-                    </ng-container>
-                </div>
-
-                <div class="col-lg-1 mt-4 mb-3" *ngIf="!is_dealer && disable_business_name">
-                    <span class="fa fa-pencil cursor-pointer" (click)="editBusinessName(false)"></span>
-                </div>
-                <div class="col-lg-1 mt-4 mb-3" *ngIf="!is_dealer && !disable_business_name">
-                    <span class="fa fa-times text-danger cursor-pointer" (click)="editBusinessName(true)"></span>
+                <div class="col-lg-12 mb-3" *ngIf="!is_dealer">
+                    <app-dealer-autocomplete
+                        (dealer_selected)="dealerSelected($event)"
+                        [initial_value]="selectedDealer"
+                        [active_only]="true"
+                        [isDisabled]="is_dealer">
+                    </app-dealer-autocomplete>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-lg-6">
                     <mat-form-field class="business-name mr-3 full-width">
-                        <mat-label>Host Business Name</mat-label>
-                        <input matInput type="text" formControlName="businessName" placeholder="Ex. Angel's Burger" />
+                        <mat-label>Advertiser Business Name</mat-label>
+                        <input
+                            matInput
+                            type="text"
+                            formControlName="businessName"
+                            placeholder="Ex. NcompassTV Advertiser" />
                     </mat-form-field>
                 </div>
 
@@ -97,17 +84,6 @@
                 </div>
             </div>
 
-            <div class="row mb-3">
-                <div class="col-lg-12">
-                    <mat-checkbox
-                        [(ngModel)]="canada_selected"
-                        [ngModelOptions]="{ standalone: true }"
-                        (change)="getCanadaAddress($event)">
-                        Canada Address
-                    </mat-checkbox>
-                </div>
-            </div>
-
             <div class="row">
                 <div class="col-lg-6">
                     <mat-form-field class="full-width">
@@ -120,22 +96,12 @@
                     </mat-form-field>
                 </div>
 
-                <ng-container *ngIf="cities_loaded; else loadingCities">
-                    <div class="col-lg-6">
-                        <app-autocomplete-field
-                            [label]="'City'"
-                            [placeholder]="'Ex. Chicago'"
-                            (data_value)="setCity($event, true)"
-                            [key_of_value]="'city_state'"
-                            [data_reference]="city_state"
-                            [search_keyword]="'city_state'"
-                            [primary_keyword]="'city_state'"
-                            [new_value]="city_selected"
-                            [initial_value]="city_selected"
-                            [is_city]="true">
-                        </app-autocomplete-field>
-                    </div>
-                </ng-container>
+                <div class="col-lg-6">
+                    <app-city-autocomplete
+                        (city_selected)="citySelected($event)"
+                        [selected_city_from_google]="selectedCity"
+                        (city_autocomplete_ready)="setInitialCity($event)"></app-city-autocomplete>
+                </div>
 
                 <ng-template #loadingCities>
                     <div class="flex-even">
