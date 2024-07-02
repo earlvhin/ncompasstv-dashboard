@@ -42,12 +42,6 @@
                                                 </mat-option>
                                             </div>
                                             <footer class="selection">
-                                                <mat-checkbox class="text-left ml-3">
-                                                    
-                                                    <strong class="sm-text">
-                                                    Select All Dealer
-                                                    </strong>
-                                                </mat-checkbox>
                                                 <button
                                                     class="theme-btn _primary md-text mr-3"
                                                     (click)="dealerMultiSelect.close()">
@@ -92,61 +86,6 @@
                         </form>
                     </div>
                     <div class="search-result" *ngIf="selectedHosts && selectedDealersControl.value.length > 0">
-                        <!-- <div class="mb-2 text-center bg-white p-3">
-                            <div class="col-lg-12 p-0 sm-text font-weight-bold">
-                                <span class="pr-2 rightfrc trt-border">
-                                    <span class="text-primary">{{ selectedDealers.length }}</span>
-                                    <span class="text-gray"> Dealer(s) </span>
-                                </span>
-                                <span class="pl-2 pr-2 right-border">
-                                    <span class="text-primary">{{ selectedHosts.length }}</span>
-                                    <span class="text-gray"> Host(s) </span>
-                                </span>
-                                <span class="pl-2">
-                                    <span class="text-primary">{{ selectedLicenses.length }}</span>
-                                    <span class="text-gray"> Assigned License(s) </span>
-                                </span>
-                            </div>
-                            <div class="col-lg-12 mt-1 p-0 sm-text font-weight-bold">
-                                <ng-container *ngIf="!hasStatusFilter; else statusFilterStats">
-                                    <span class="pr-2 right-border">
-                                        <span class="text-primary xsm-text fas fa-circle mr-1 ml-4"></span>
-                                        <span class="text-primary">{{ totalOnlineLicenses }}</span>
-                                        <span class="text-gray"> Online </span>
-                                    </span>
-                                    <span class="pr-2 right-border">
-                                        <span class="text-pending xsm-text fas fa-circle ml-2 mr-2"></span>
-                                        <span class="text-pending">{{ totalPendingLicenses }}</span>
-                                        <span class="text-gray"> Pending </span>
-                                    </span>
-                                    <span class="pl-2">
-                                        <span class="text-danger xsm-text fas fa-circle mr-1"></span>
-                                        <span class="text-danger">{{ totalOfflineLicenses }}</span>
-                                        <span class="text-gray"> Offline </span>
-                                    </span>
-                                </ng-container>
-                            </div>
-                            <ng-template #statusFilterStats>
-                                <span class="pr-2">
-                                    <span
-                                        class="xsm-text fas fa-circle mr-1 ml-4"
-                                        [ngClass]="{
-                                            'text-primary': filterLabelStatus === 'Online',
-                                            'text-danger': filterLabelStatus === 'Offline',
-                                            'text-pending': filterLabelStatus === 'Pending'
-                                        }"></span>
-                                    <span
-                                        [ngClass]="{
-                                            'text-primary': filterLabelStatus === 'Online',
-                                            'text-danger': filterLabelStatus === 'Offline',
-                                            'text-pending': filterLabelStatus === 'Pending'
-                                        }"
-                                        >{{ totalLicenses }}</span
-                                    >
-                                    <span class="text-gray"> {{ filterLabelStatus }} </span>
-                                </span>
-                            </ng-template>
-                        </div> -->
                         <mat-accordion>
                             <div class="row">
                                 <div class="col-lg-12 pb-20">
@@ -163,87 +102,18 @@
                                                     <span class="font-weight-bold md-text">
                                                         {{ dealer.businessName }}
                                                     </span>
+                                                    <mat-checkbox class="text-left pl-3">
+                                                        <strong class="sm-text">
+                                                        Select All
+                                                        </strong>
+                                                    </mat-checkbox>
                                                     <br />
-                                                    <!-- <span class="sm-text">
-                                                        <span class="text-primary font-weight-bold">{{
-                                                            dealer.hosts.length
-                                                        }}</span>
-                                                        Host(s) |
-                                                        <ng-container
-                                                            *ngIf="
-                                                                !hasStatusFilter;
-                                                                else dealerLicenseCountFiltered
-                                                            ">
-                                                            <span class="text-primary font-weight-bold">
-                                                                {{
-                                                                    dealer.onlineLicenseCount +
-                                                                        dealer.offlineLicenseCount +
-                                                                        dealer.pendingLicenseCount
-                                                                }}
-                                                            </span>
-                                                        </ng-container>
-                                                        <ng-template #dealerLicenseCountFiltered>
-                                                            <span class="font-weight-bold">
-                                                                {{ dealer.totalLicenseCount }}
-                                                            </span>
-                                                        </ng-template>
-                                                        License(s)
-                                                    </span> -->
-                                                    <br />
-                                                    <!-- <ng-container *ngIf="!hasStatusFilter; else filteredHostStats">
-                                                        <span class="md-text">
-                                                            <span class="pr-2 right-border">
-                                                                <span
-                                                                    class="text-primary xsm-text fas fa-circle"></span>
-                                                                <span class="text-primary font-weight-bold">
-                                                                    {{ dealer.onlineLicenseCount }}
-                                                                </span>
-                                                                Online
-                                                            </span>
-                                                            <span class="pl-3 pr-2 right-border">
-                                                                <span
-                                                                    class="text-pending xsm-text fas fa-circle"></span>
-                                                                <span class="text-pending font-weight-bold">
-                                                                    {{ dealer.pendingLicenseCount }}
-                                                                </span>
-                                                                Pending
-                                                            </span>
-                                                            <span class="pl-2">
-                                                                <span
-                                                                    class="text-danger xsm-text fas fa-circle"></span>
-                                                                <span class="text-danger font-weight-bold">
-                                                                    {{ dealer.offlineLicenseCount }}
-                                                                </span>
-                                                                Offline
-                                                            </span>
-                                                        </span>
-                                                    </ng-container> -->
-                                                    <!-- <ng-template #filteredHostStats>
-                                                        <span class="pr-2">
-                                                            <span
-                                                                class="xsm-text fas fa-circle"
-                                                                [ngClass]="{
-                                                                    'text-primary': filterLabelStatus === 'Online',
-                                                                    'text-danger': filterLabelStatus === 'Offline',
-                                                                    'text-pending': filterLabelStatus === 'Pending'
-                                                                }"></span>
-                                                            <span
-                                                                class="font-weight-bold"
-                                                                [ngClass]="{
-                                                                    'text-primary': filterLabelStatus === 'Online',
-                                                                    'text-danger': filterLabelStatus === 'Offline',
-                                                                    'text-pending': filterLabelStatus === 'Pending'
-                                                                }">
-                                                                {{ dealer.totalLicenseCount }}</span
-                                                            >
-                                                            {{ filterLabelStatus }}
-                                                        </span>
-                                                    </ng-template> -->
                                                 </p>
-                                               
+            
                                                 <div
                                                     class="col-lg-1 p-0 text-right"
                                                     *ngIf="dealer.hosts.length > 0">
+                                                   
                                                     <div *ngIf="!example.expanded" class="ctm-accordion-icon">
                                                         <i class="fas fa-plus"></i>
                                                     </div>
@@ -259,7 +129,7 @@
                                                 <mat-expansion-panel
                                                     #example
                                                     id="outer-mat"
-                                                    class="mb-3 p-2"
+                                                    class="mb-3 p-2 pt-2"
                                                     hideToggle
                                                     (click)="onExpandHost(host.hostId, dealer.dealerId)"
                                                     [expanded]="host.hostId === expandedHostId"
@@ -275,7 +145,13 @@
                                                             <p class="col-lg-9 p-0 mt-1 mr-2 text-left">
                                                                 <span class="font-weight-bold md-text">
                                                                     {{ host.name }}
+                                                                    <mat-checkbox class="text-left pl-3">
+                                                                        <strong class="sm-text">
+                                                                        Select All License
+                                                                        </strong>
+                                                                    </mat-checkbox>
                                                                 </span>
+                                                                
                                                                 <br />
                                                                 <span class="sm-text">
                                                                     {{ host.city }}
