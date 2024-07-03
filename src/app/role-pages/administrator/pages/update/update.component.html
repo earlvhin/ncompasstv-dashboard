@@ -1,8 +1,5 @@
 <div class="app-version">
     <ng-container *ngIf="!loading; else loader">
-            </div>
-        </div>
-
         <hr class="mat-bl-em" />
 
         <div class="row no-gutters">
@@ -36,17 +33,19 @@
 
                     <!-- ROLLOUT TARGETS TAB -->
                     <mat-tab id="rollout-targets-tab" label="Rollout Targets">
-                        
-                        <div class="flex-even text-right mr-2">
-                            <button
-                                mat-button
-                                mat-raised-button
-                                class="theme-btn"
-                                (click)="targetLicenseModal()"
-                                [disabled]="is_view_only">
-                                <span class="button-label">Add Target License</span>
-                                <!-- <span class="fas fa-upload ml-2 sm-text"></span> -->
-                            </button>
+                        <div class="mat-top-em">
+                            <div class="flex">
+                                <div class="flex-2 d-inline-flex">
+                                    <button
+                                    mat-button
+                                    mat-raised-button
+                                    class="theme-btn pi-control sm-text"
+                                    (click)="targetLicenseModal()">
+                                    <span class="fas fa-plus"></span>
+                                    <span class="ml-2 button_text_animation">Add Target License</span>
+                                </button>
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="row">
