@@ -85,8 +85,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
     public targetLicenseModal() {
         this._dialog
             .open(TargetLicenseModal, {
-                height: '500px',
-                width: '500px',
+                height: '700px',
+                width: '1000px',
             })
             .afterClosed()
             .subscribe(() => this.ngOnInit());

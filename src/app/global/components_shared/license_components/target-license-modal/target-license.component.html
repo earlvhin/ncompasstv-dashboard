@@ -3,12 +3,12 @@
 </div>
 <ng-container *ngIf="!license_generated; else success">
     <div id="target_release" class="generate-license-modal p-4 pb-0 h-100" *ngIf="!is_submitted; else loading">
-        
         <ng-container>
             <!-- <p class="sm-text mb-4">Choose a dealer and set number of license to generate.</p> -->
             <form [formGroup]="target_release">
                 <ng-container *ngIf="!isLoadingHosts; else loader">
                     <div class="search-bar pl-3 pt-2 pr-3">
+                        <!-- TODO: Convert to a component -->
                         <form [formGroup]="dealerSelection">
                             <div class="d-flex">
                                 <div class="search-input full-width">
@@ -28,9 +28,7 @@
                                                         [placeholderLabel]="'Search Dealer Name'"
                                                         [clearSearchInput]="false"
                                                         [searching]="isSearching">
-                                                        <mat-icon class="clear" ngxMatSelectSearchClear
-                                                            >close</mat-icon
-                                                        >
+                                                        <mat-icon class="clear" ngxMatSelectSearchClear>close</mat-icon>
                                                     </ngx-mat-select-search>
                                                 </mat-option>
                                                 <mat-option
@@ -54,9 +52,7 @@
                             </div>
                             <div class="preview">
                                 <div class="dealers-row p-0 pb-3">
-                                    <div
-                                        class="col-lg-12 p-0 d-flex"
-                                        *ngIf="selectedDealersControl.value.length > 0">
+                                    <div class="col-lg-12 p-0 d-flex" *ngIf="selectedDealersControl.value.length > 0">
                                         <div class="col-lg-7 p-0 pb-1">
                                             <h5>Dealer Name(s):</h5>
                                         </div>
@@ -84,8 +80,10 @@
                                 </div>
                             </div>
                         </form>
+                        <!-- TODO: Convert to a component -->
                     </div>
-                    <div class="search-result" *ngIf="selectedHosts && selectedDealersControl.value.length > 0">
+                    <div class="search-result" *ngIf="selectedDealers">
+                        <!-- TODO: Convert to a component -->
                         <mat-accordion>
                             <div class="row">
                                 <div class="col-lg-12 pb-20">
@@ -102,18 +100,16 @@
                                                     <span class="font-weight-bold md-text">
                                                         {{ dealer.businessName }}
                                                     </span>
-                                                    <mat-checkbox class="text-left pl-3">
-                                                        <strong class="sm-text">
-                                                        Select All
-                                                        </strong>
+                                                    <mat-checkbox
+                                                        class="text-left pl-3"
+                                                        [checked]="isDealerSelected(dealer.dealerId)"
+                                                        (change)="selectAllHostAndLicenses($event, dealer.dealerId)">
+                                                        <strong class="sm-text"> Select All </strong>
                                                     </mat-checkbox>
                                                     <br />
                                                 </p>
-            
-                                                <div
-                                                    class="col-lg-1 p-0 text-right"
-                                                    *ngIf="dealer.hosts.length > 0">
-                                                   
+
+                                                <div class="col-lg-1 p-0 text-right" *ngIf="dealer.hosts.length > 0">
                                                     <div *ngIf="!example.expanded" class="ctm-accordion-icon">
                                                         <i class="fas fa-plus"></i>
                                                     </div>
@@ -127,31 +123,34 @@
                                         <div class="row" *ngIf="dealer.hosts.length > 0">
                                             <div class="col-lg-12" *ngFor="let host of dealer.hosts">
                                                 <mat-expansion-panel
-                                                    #example
+                                                    #hostExpansion
                                                     id="outer-mat"
                                                     class="mb-3 p-2 pt-2"
                                                     hideToggle
-                                                    (click)="onExpandHost(host.hostId, dealer.dealerId)"
-                                                    [expanded]="host.hostId === expandedHostId"
-                                                    [class.panelBorder]="example.expanded">
+                                                    [class.panelBorder]="hostExpansion.expanded">
                                                     <mat-expansion-panel-header class="pr-0 pl-0">
                                                         <mat-panel-title class="md-text p-0">
-                                                            <div class="col-lg-1 p-0 mt-2 mr-2 ml-2 text-left">
-                                                                <!-- <img
-                                                                    class="map-header-status"
-                                                                    [src]="host.iconUrl"
-                                                                    alt="Status" /> -->
-                                                            </div>
+                                                            <div class="col-lg-1 p-0 mt-2 mr-2 ml-2 text-left"></div>
                                                             <p class="col-lg-9 p-0 mt-1 mr-2 text-left">
                                                                 <span class="font-weight-bold md-text">
                                                                     {{ host.name }}
-                                                                    <mat-checkbox class="text-left pl-3">
+                                                                    <button
+                                                                        (click)="
+                                                                            isHostSelected(host.hostId);
+                                                                            $event.stopPropagation()
+                                                                        ">
+                                                                        CLICK ME
+                                                                    </button>
+                                                                    <mat-checkbox
+                                                                        class="text-left pl-3"
+                                                                        (click)="$event.stopPropagation()"
+                                                                        [checked]="isLicenseSelected(host.hostId)">
                                                                         <strong class="sm-text">
-                                                                        Select All License
+                                                                            Select All Licensessssssss
                                                                         </strong>
                                                                     </mat-checkbox>
                                                                 </span>
-                                                                
+
                                                                 <br />
                                                                 <span class="sm-text">
                                                                     {{ host.city }}
@@ -183,23 +182,18 @@
                                                                 class="col-xs-6 mr-3"
                                                                 *ngFor="let license of host.licenses">
                                                                 <div>
-                                                                    <span
-                                                                        class="fas fa-circle mr-1 sm-text"
-                                                                        [ngClass]="{
-                                                                            'text-primary':
-                                                                                license.status === 'online',
-                                                                            'text-danger':
-                                                                                license.status === 'offline',
-                                                                            'text-pending':
-                                                                                license.status === 'pending'
-                                                                        }">
+                                                                    <span>
+                                                                        <mat-checkbox class="text-left pl-3">
+                                                                            <strong class="sm-text">
+                                                                                <!-- select -->
+                                                                            </strong>
+                                                                        </mat-checkbox>
                                                                     </span>
                                                                     <a
                                                                         [routerLink]="setLink(license.licenseId)"
                                                                         target="_blank">
                                                                         {{
-                                                                            license.alias &&
-                                                                            license.alias.length > 0
+                                                                            license.alias && license.alias.length > 0
                                                                                 ? license.alias
                                                                                 : license.licenseKey
                                                                         }}
@@ -218,9 +212,9 @@
                                 </div>
                             </div>
                         </mat-accordion>
+                        <!-- TODO: Convert to a component -->
                     </div>
                 </ng-container>
-                
             </form>
         </ng-container>
 
@@ -229,22 +223,18 @@
                 <app-spinner></app-spinner>
             </div>
         </ng-template>
-        
+
         <ng-template #loader_sm>
-                <div class="text-center py-4">
-                    <app-spinner [diameter]="65"></app-spinner>
-                    <h5 class="mt-3">Getting License Information. Please Wait.</h5>
-                </div>
-            </ng-template>
-        
-        <ng-template #loader_sm_no_text>
-                <div class="loader-sm-no-text py-4">
-                    <app-spinner [diameter]="65"></app-spinner>
-                </div>
+            <div class="text-center py-4">
+                <app-spinner [diameter]="65"></app-spinner>
+                <h5 class="mt-3">Getting License Information. Please Wait.</h5>
+            </div>
         </ng-template>
 
-
+        <ng-template #loader_sm_no_text>
+            <div class="loader-sm-no-text py-4">
+                <app-spinner [diameter]="65"></app-spinner>
+            </div>
+        </ng-template>
     </div>
 </ng-container>
-
-
