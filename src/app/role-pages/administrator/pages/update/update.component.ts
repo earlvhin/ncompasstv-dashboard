@@ -8,7 +8,6 @@ import { App, TABLE_VERSION, APP_ROLLOUT_TARGETS } from 'src/app/global/models';
 import { UpdateService } from 'src/app/global/services/update-service/update.service';
 import { TargetLicenseModal } from 'src/app/global/components_shared/license_components/target-license-modal/target-license.component';
 
-
 @Component({
     selector: 'app-update',
     templateUrl: './update.component.html',
@@ -85,7 +84,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     public targetLicenseModal() {
         this._dialog
             .open(TargetLicenseModal, {
-                height: '700px',
+                height: '680px',
                 width: '1000px',
             })
             .afterClosed()

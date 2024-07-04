@@ -218,6 +218,12 @@ breadcrumb {
     }
 }
 
+.search-result-mat-expansion-panel {
+    .mat-expansion-panel-header-title {
+        margin: 0 !important;
+    }
+}
+
 #reportsDrop {
     max-height: 235px;
     overflow-y: auto;

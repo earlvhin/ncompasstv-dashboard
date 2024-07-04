@@ -190,48 +190,6 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
             });
     }
 
-    // private getLicenseByHost(id: string): void {
-    //     this.isLoadingLicenseCount = true;
-
-    //     this._license
-    //         .getLicensesByHostId(id)
-    //         .pipe(takeUntil(this._unsubscribe))
-    //         .subscribe(
-    //             (response: any) => {
-    //                 let online = 0;
-    //                 const statistics = {
-    //                     basis: 0,
-    //                     basis_label: 'Licenses',
-    //                     good_value: 0,
-    //                     good_value_label: 'Online',
-    //                     bad_value: 0,
-    //                     bad_value_label: 'Offline',
-    //                 };
-
-    //                 if (response.message) {
-    //                     this.hostLicenses = [];
-    //                     return;
-    //                 }
-
-    //                 this.hostLicenses = response;
-
-    //                 if (this.filterStatus) this.hostLicenses.filter((x) => x.piStatus === this.filterStatus);
-
-    //                 this.hostLicenses.forEach((license) => {
-    //                     if (license.piStatus == 1) online += 1;
-    //                 });
-
-    //                 statistics.basis = this.hostLicenses.length;
-    //                 statistics.good_value = online;
-    //                 statistics.bad_value = this.hostLicenses.length - online;
-    //             },
-    //             (error) => {
-    //                 console.error(error);
-    //             },
-    //         )
-    //         .add(() => setTimeout(() => (this.isLoadingLicenseCount = false), 1000));
-    // }
-
     private mapMarkersToUI(useCurrentHosts = true): UI_HOST_LOCATOR_MARKER_DEALER_MODE[] {
         let hosts: API_HOST[] = [];
         Array.from(this.selectedDealers).forEach((dealer) => (hosts = hosts.concat(dealer.hosts)));
@@ -263,22 +221,11 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
     }
 
     private onSelectDealer() {
-        console.log('SELECTED!', this.unfilteredDealers);
-
-        console.log(this.selectedDealerHostLicense);
-
-        // console.log("ALERT!!!!")
-        // this.selectedHosts = [];
-        // this.selectedLicenses = [];
-        // this.expandedHostId = null;
-        // this.expandedDealerId = null;
-
         this.selectedDealers = Array.from(this.unfilteredDealers).map((dealer) => {
             // set host licenses and filter hosts with no licenses
             dealer.hosts = Array.from(this.unfilteredHosts)
                 .filter((host) => host.dealerId === dealer.dealerId)
                 .map((host) => {
-                    console.log(host);
                     host.licenses = Array.from(this.unfilteredLicenses).filter(
                         (license) => license.hostId === host.hostId,
                     );
@@ -293,8 +240,6 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
 
         this.mapMarkers = this.mapMarkersToUI();
         this.selectedLocation = true;
-
-        // if (this.isFiltered) this.filterLicensesByStatus(this.filterStatus);
     }
 
     private searchDealers(key: string): void {
@@ -364,24 +309,76 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
 
     public selectAllHostAndLicenses(e: { checked: boolean }, dealerId) {
         if (!e.checked) {
-            this.selectedDealerHostLicense = [...this.selectedDealerHostLicense.filter((i) => !i.dealerId)];
-            console.log(this.selectAllHostAndLicenses);
+            this.selectedDealerHostLicense = [...this.selectedDealerHostLicense.filter((i) => i.dealerId !== dealerId)];
             return;
         }
 
-        this.selectedDealerHostLicense = [
-            ...this.selectedDealers.map((dealer: any) => {
-                if (dealer && dealer.dealerId === dealerId) {
-                    const mappedLicenses = dealer.licenses.map((l: any) => ({
+        const filteredLicenses = this.selectedDealers.reduce((acc: any[], dealer: any) => {
+            if (dealer && dealer.dealerId === dealerId) {
+                return [
+                    ...acc,
+                    ...dealer.licenses.map((l: any) => ({
                         hostId: l.hostId,
                         dealerId: l.dealerId,
                         licenseId: l.licenseId,
-                    }));
+                    })),
+                ];
+            }
+            return acc;
+        }, []);
 
-                    return mappedLicenses;
-                }
-            }),
-        ];
+        this.selectedDealerHostLicense = [...this.selectedDealerHostLicense, ...filteredLicenses];
+    }
+
+    public selectLicense(e: { checked: boolean }, dealerId, licenseId) {
+        if (!e.checked) {
+            this.selectedDealerHostLicense = [
+                ...this.selectedDealerHostLicense.filter((i) => i.licenseId !== licenseId),
+            ];
+            return;
+        }
+
+        /** @TODO - set actual interface instead of any */
+        this.selectedDealers.forEach((dealer: any) => {
+            if (dealer && dealer.dealerId === dealerId) {
+                this.selectedDealerHostLicense.push(
+                    dealer.licenses
+                        .filter((license: any) => license.licenseId == licenseId)
+                        .map((l) => {
+                            return {
+                                licenseId: l.licenseId,
+                                hostId: l.hostId,
+                                dealerId: l.dealerId,
+                            };
+                        })[0],
+                );
+            }
+        });
+    }
+
+    public selectHost(e: { checked: boolean }, dealerId, hostId) {
+        if (!e.checked) {
+            this.selectedDealerHostLicense = [...this.selectedDealerHostLicense.filter((i) => i.hostId !== hostId)];
+            return;
+        }
+
+        /** @TODO - set actual interface instead of any */
+        this.selectedDealers.forEach((dealer: any) => {
+            if (dealer && dealer.dealerId === dealerId) {
+                this.selectedDealerHostLicense = [
+                    ...this.selectedDealerHostLicense,
+                    ...dealer.licenses
+                        .filter((license: any) => license.hostId == hostId)
+                        .map((l) => ({
+                            licenseId: l.licenseId,
+                            hostId: l.hostId,
+                            dealerId: l.dealerId,
+                        })),
+                ];
+            }
+        });
+
+        console.log('selectHost', this.selectedDealerHostLicense);
     }
 
     public isDealerSelected(dealerId: string) {
@@ -389,16 +386,10 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
     }
 
     public isHostSelected(hostId: string) {
-        console.log(
-            '#isHostSelected',
-            hostId,
-            this.selectedDealerHostLicense.some((obj) => obj.hostId === hostId),
-        );
         return this.selectedDealerHostLicense.some((obj) => obj.hostId === hostId);
     }
 
     public isLicenseSelected(licenseId: string) {
-        console.log('#isLicenseSelected activated');
         return this.selectedDealerHostLicense.some((obj) => obj.licenseId === licenseId);
     }
 }

@@ -196,7 +196,7 @@ import { SliderFormComponent } from './components_shared/feed_components/slider-
 import { SpinnerComponent } from './components_shared/page_components/spinner/spinner.component';
 import { SubstringPipe } from './pipes/substring.pipe';
 import { SuccessAnimationComponent } from './components_shared/page_components/success-animation/success-animation.component';
-import { TargetLicenseModal} from './components_shared/license_components/target-license-modal/target-license.component'
+import { TargetLicenseModal } from './components_shared/license_components/target-license-modal/target-license.component';
 import { TemplateMinimapComponent } from './components_shared/template_components/template-minimap/template-minimap.component';
 import { TemplateZonesComponent } from './components_shared/template_components/template-zones/template-zones.component';
 import { ThumbnailCardComponent } from './components_shared/media_components/thumbnail-card/thumbnail-card.component';

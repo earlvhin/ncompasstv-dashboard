@@ -1,25 +1,8 @@
 .search-result {
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: #eaeaea;
     padding: 15px;
-    margin-top: 8px;
-    max-height: 425px;
+    height: 330px;
     overflow-y: scroll;
-}
-
-.host-licenses-list {
-    margin-left: 22px;
-
-    .pi-status {
-        margin-left: 10px;
-        border-radius: 5px;
-        background: #ee5454;
-        font-size: 12px;
-        padding: 1px 7px;
-
-        &.online {
-            background: #8ec641;
-        }
-    }
 }
 
 .loader-sm-no-text {
@@ -110,26 +93,14 @@
             line-height: 25px;
         }
     }
+}
 
-    .dealers-row {
-        .selected-dealers-container {
-            .dealer {
-                margin-right: 5px;
-                margin-bottom: 5px;
-                padding: 1px 5px 1px 7px;
-                font-size: 12px;
-                border-radius: 5px;
-                color: white;
-                border: 1px solid gray;
-                background-color: #8ec641;
-            }
-
-            .disable-dealer {
-                pointer-events: none;
-                background-color: gray;
-            }
-        }
-    }
+.selected-dealers-container {
+    height: 50px;
+    position: relative;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
 }
 
 .pb-20 {
