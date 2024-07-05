@@ -71,7 +71,7 @@ export class AddProgrammaticModalComponent implements OnInit {
         return this.programmaticForm.get('programmaticKeyValues') as FormArray;
     }
 
-    addKeyValue(): void {
+    public addKeyValue(): void {
         let keyValue = this._form.group({
             key: ['', requiredIfOtherHasContentValidator('value')],
             value: ['', requiredIfOtherHasContentValidator('key')],
@@ -80,11 +80,11 @@ export class AddProgrammaticModalComponent implements OnInit {
         this.programmaticKeyValues.push(keyValue);
     }
 
-    removeKeyValue(index: number): void {
+    public removeKeyValue(index: number): void {
         this.programmaticKeyValues.removeAt(index);
     }
 
-    addProgrammatic(): void {
+    public addProgrammatic(): void {
         this._programmatic
             .createProgrammatic(this.programmaticForm.value)
             .pipe(takeUntil(this._unsubscribe))
@@ -106,7 +106,7 @@ export class AddProgrammaticModalComponent implements OnInit {
         dialog.afterClosed().subscribe(() => this._dialog_ref.close(true));
     }
 
-    markAsTouched(dataSet: FormArray, fieldIndex: number, controlName: string): void {
+    public markAsTouched(dataSet: FormArray, fieldIndex: number, controlName: string): void {
         const control = dataSet.at(fieldIndex).get(controlName);
         if (control) {
             control.markAsTouched();
@@ -114,7 +114,7 @@ export class AddProgrammaticModalComponent implements OnInit {
         this.validateAllFormFields(this.programmaticForm);
     }
 
-    validateAllFormFields(formGroup: FormGroup) {
+    private validateAllFormFields(formGroup: FormGroup): void {
         Object.keys(formGroup.controls).forEach((field) => {
             const control = formGroup.get(field);
             if (control instanceof FormArray) {

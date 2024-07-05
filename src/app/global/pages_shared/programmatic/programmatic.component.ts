@@ -30,7 +30,7 @@ export class ProgrammaticComponent implements OnInit {
 
     ngOnDestroy() {}
 
-    openAddProgrammaticModal(): void {
+    public openAddProgrammaticModal(): void {
         this._dialog
             .open(AddProgrammaticModalComponent, {
                 height: 'auto',
@@ -40,7 +40,7 @@ export class ProgrammaticComponent implements OnInit {
             .subscribe(() => this.ngOnInit());
     }
 
-    getGlobalSettings() {
+    private getGlobalSettings(): void {
         this._tool.getGlobalSettings().subscribe((data) => {});
     }
 }
