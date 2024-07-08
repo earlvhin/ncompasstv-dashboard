@@ -94,12 +94,9 @@
                                     <ng-container *ngIf="field.control === 'contactNumber'">
                                         <app-contact-number
                                             (contact_value)="getContactValue($event)"
-                                            (touch_and_not_valid)="
-                                                setContactNumberToInvalid($event)
-                                            "
+                                            (touch_and_not_valid)="setContactNumberToInvalid($event)"
                                             (value_empty)="contactCleared($event)"
-                                            [required]="false"
-                                            ></app-contact-number>
+                                            [required]="false"></app-contact-number>
                                     </ng-container>
 
                                     <!-- New Autocomplete Implementation-->
@@ -234,29 +231,17 @@
                             </div>
                         </div>
 
-                        <ng-container *ngIf="!hasInvalidTime; else notInvalid">
+                        <ng-container>
                             <button
                                 mat-button
                                 mat-raised-button
                                 class="theme-btn mr-2"
-                                [disabled]="
-                                    newHostForm.invalid || is_creating_host || !dealerHasValue || contactTouchAndInvalid || !contactIsCleared
-                                ">
+                                (click)="hasInvalidTime ? onClickInvalid() : null"
+                                [disabled]="disableSaveButton()">
                                 {{ is_creating_host ? 'Saving Host Place...' : 'Submit' }}
                             </button>
                         </ng-container>
                     </form>
-
-                    <ng-template #notInvalid>
-                        <button
-                            mat-button
-                            mat-raised-button
-                            class="theme-btn mr-2"
-                            (click)="onClickInvalid()"
-                            [disabled]="newHostForm.invalid || is_creating_host || !dealerHasValue || contactTouchAndInvalid || !contactIsCleared">
-                            Submit
-                        </button>
-                    </ng-template>
                 </ng-container>
 
                 <ng-template #loading>

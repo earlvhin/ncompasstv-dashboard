@@ -12,7 +12,7 @@ export class ContactNumberComponent implements OnInit {
 
     @Input() disable: boolean;
     @Input() initial_value: string;
-    @Input() required= true;
+    @Input() required = true;
     @Output() contact_value = new EventEmitter<string>();
     @Output() touch_and_not_valid = new EventEmitter<boolean>();
     @Output() value_empty = new EventEmitter<boolean>();

@@ -849,6 +849,10 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
         this.contactIsCleared = status;
     }
 
+    public disableUpdateButton(): boolean {
+        return this.has_invalid_schedule || this.edit_host_form.invalid || this.contactTouchAndInvalid || !this.contactIsCleared;
+    }
+
     protected get _businessHours(): UI_OPERATION_DAYS[] {
         return [
             {
