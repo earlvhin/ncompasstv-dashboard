@@ -1075,7 +1075,13 @@ export class CreateHostComponent implements OnInit {
     }
 
     public disableSaveButton(): boolean {
-        return this.newHostForm.invalid || this.is_creating_host || !this.dealerHasValue || this.contactTouchAndInvalid || !this.contactIsCleared;
+        return (
+            this.newHostForm.invalid ||
+            this.is_creating_host ||
+            !this.dealerHasValue ||
+            this.contactTouchAndInvalid ||
+            !this.contactIsCleared
+        );
     }
 
     protected get _createFormFields() {
