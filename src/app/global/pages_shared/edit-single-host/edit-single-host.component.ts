@@ -53,6 +53,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
     closed_without_edit = false;
     canadaSelected: boolean = false;
     contactTouchAndInvalid = false;
+    contactIsCleared = true;
     created_by = this.page_data.createdBy[0];
     currentContactValue: string;
     dealer = this.page_data.dealer;
@@ -842,6 +843,10 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 
     public setContactNumberToInvalid(status: boolean): void {
         this.contactTouchAndInvalid = status;
+    }
+
+    public contactCleared(status: boolean): void {
+        this.contactIsCleared = status;
     }
 
     protected get _businessHours(): UI_OPERATION_DAYS[] {

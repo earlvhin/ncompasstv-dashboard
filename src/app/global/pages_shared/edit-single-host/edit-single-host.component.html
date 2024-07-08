@@ -107,7 +107,9 @@
                                         <app-contact-number
                                             (contact_value)="getContactValue($event)"
                                             (touch_and_not_valid)="setContactNumberToInvalid($event)"
-                                            [initial_value]="currentContactValue"></app-contact-number>
+                                            [initial_value]="currentContactValue"
+                                            (value_empty)="contactCleared($event)"
+                                            [required]="false"></app-contact-number>
                                     </div>
                                 </div>
 
@@ -383,7 +385,7 @@
                             type="submit"
                             class="theme-btn mt-4 mr-2"
                             color="primary"
-                            [disabled]="has_invalid_schedule || edit_host_form.invalid || contactTouchAndInvalid">
+                            [disabled]="has_invalid_schedule || edit_host_form.invalid || contactTouchAndInvalid || !contactIsCleared">
                             Update
                         </button>
                         <button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="false">

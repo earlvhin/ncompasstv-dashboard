@@ -66,6 +66,7 @@ export class CreateHostComponent implements OnInit {
     city_selected: string;
     city_state: City[] = [];
     contactTouchAndInvalid = false;
+    contactIsCleared = true;
     create_host_data: UI_AUTOCOMPLETE = { label: 'City', placeholder: 'Type anything', data: [] };
     current_host_image: string;
     dealer_name: string;
@@ -1067,6 +1068,10 @@ export class CreateHostComponent implements OnInit {
 
     public setContactNumberToInvalid(status: boolean): void {
         this.contactTouchAndInvalid = status;
+    }
+    
+    public contactCleared(status: boolean): void {
+        this.contactIsCleared = status;
     }
 
     protected get _createFormFields() {

@@ -12,8 +12,10 @@ export class ContactNumberComponent implements OnInit {
 
     @Input() disable: boolean;
     @Input() initial_value: string;
+    @Input() required= true;
     @Output() contact_value = new EventEmitter<string>();
     @Output() touch_and_not_valid = new EventEmitter<boolean>();
+    @Output() value_empty = new EventEmitter<boolean>();
 
     constructor() {
         this.contactForm = new FormGroup({
@@ -43,12 +45,10 @@ export class ContactNumberComponent implements OnInit {
         else this.contactFormControls.contactNumber.enable();
     }
 
-    public numberValidator(event: any) {
-        const pattern = /^[0-9]*$/;
-        if (!pattern.test(event.target.value)) {
-            //enter only numeric
-            event.target.value = event.target.value.replace(/[^0-9]/g, '');
-        }
+    public numberValidator(event: any): void {
+        const value = event.target.value;
+        if (value) event.target.value = value.replace(/[^0-9]/g, '');
+        else this[this.required ? 'touch_and_not_valid' : 'value_empty'].emit(true);
     }
 
     protected get contactFormControls() {

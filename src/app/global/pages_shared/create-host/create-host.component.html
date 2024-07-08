@@ -96,7 +96,10 @@
                                             (contact_value)="getContactValue($event)"
                                             (touch_and_not_valid)="
                                                 setContactNumberToInvalid($event)
-                                            "></app-contact-number>
+                                            "
+                                            (value_empty)="contactCleared($event)"
+                                            [required]="false"
+                                            ></app-contact-number>
                                     </ng-container>
 
                                     <!-- New Autocomplete Implementation-->
@@ -237,7 +240,7 @@
                                 mat-raised-button
                                 class="theme-btn mr-2"
                                 [disabled]="
-                                    newHostForm.invalid || is_creating_host || !dealerHasValue || contactTouchAndInvalid
+                                    newHostForm.invalid || is_creating_host || !dealerHasValue || contactTouchAndInvalid || !contactIsCleared
                                 ">
                                 {{ is_creating_host ? 'Saving Host Place...' : 'Submit' }}
                             </button>
@@ -250,7 +253,7 @@
                             mat-raised-button
                             class="theme-btn mr-2"
                             (click)="onClickInvalid()"
-                            [disabled]="newHostForm.invalid || is_creating_host || !dealerHasValue">
+                            [disabled]="newHostForm.invalid || is_creating_host || !dealerHasValue || contactTouchAndInvalid || !contactIsCleared">
                             Submit
                         </button>
                     </ng-template>
