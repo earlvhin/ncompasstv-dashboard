@@ -28,10 +28,10 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
     currentContactValue: string;
     currentEmail: string;
     dealer = this.page_data.dealer;
-    disabledForm = false;
     editDealerForm: FormGroup;
     editDealerFormFields = this._editDealerFormFields;
     emailNotValid = false;
+    emailValidating = false;
     hasDuplicateEmail = false;
     is_active_dealer = this.dealer.status === 'A';
     is_admin = this._auth.current_role === 'administrator';
@@ -208,12 +208,16 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
     }
 
     private checkEmailDuplicate(current_value: string): void {
+        this.emailValidating = true;
         this._user
             .checkIfDuplicateEmail(current_value)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((response) => (this.hasDuplicateEmail = !!response.message))
             .add(
-                () => (this.disabledForm = this.editDealerForm.invalid || this.hasDuplicateEmail || this.emailNotValid),
+                () => {
+                    this.emailValidating = false;
+                    this.disabledForm();
+                }
             );
     }
 
@@ -276,7 +280,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
                     this.emailNotValid = !this._user.validate_email(data.email);
                     if (!this.emailNotValid) this.checkEmailDuplicate(data.email);
                 }
-                this.disabledForm = this.editDealerForm.invalid || this.hasDuplicateEmail || this.emailNotValid;
+                this.disabledForm();
             },
             (error) => {
                 console.error(error);
@@ -387,6 +391,10 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
                 col: 'col-lg-6',
             },
         ];
+    }
+
+    public disabledForm(): boolean {
+        return this.editDealerForm.invalid || this.hasDuplicateEmail || this.emailNotValid || this.contactTouchAndInvalid || this.emailValidating;
     }
 
     protected get _editFormControls() {
