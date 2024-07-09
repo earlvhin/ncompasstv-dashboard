@@ -63,6 +63,8 @@ export class CreateHostComponent implements OnInit {
     city_loaded = false;
     city_selected: string;
     city_state: City[] = [];
+    contactTouchAndInvalid = false;
+    contactIsCleared = true;
     create_host_data: UI_AUTOCOMPLETE = { label: 'City', placeholder: 'Type anything', data: [] };
     current_host_image: string;
     dealer_name: string;
@@ -701,7 +703,7 @@ export class CreateHostComponent implements OnInit {
             timezone: ['', Validators.required],
             zone: [''],
             contactPerson: [''],
-            contactNumber: ['', [Validators.minLength(10), Validators.maxLength(10), Validators.pattern(numbersOnly)]],
+            contactNumber: [''],
             createdBy: this._auth.current_user_value.user_id,
         });
 
@@ -709,7 +711,6 @@ export class CreateHostComponent implements OnInit {
             this.form_invalid = this.newHostForm.invalid;
         });
 
-        this.subscribeToContactNumberChanges();
         this.subscribeToRegionChanges();
         this.subscribeToStateChanges();
     }
@@ -914,14 +915,6 @@ export class CreateHostComponent implements OnInit {
         this.subscribeToZipChanges();
     }
 
-    private subscribeToContactNumberChanges() {
-        const control = this.newHostFormControls.contactNumber;
-
-        control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(300)).subscribe((response: string) => {
-            control.patchValue(response.substring(0, 10), { emitEvent: false });
-        });
-    }
-
     private subscribeToRegionChanges() {
         const control = this.newHostFormControls.region;
 
@@ -959,6 +952,28 @@ export class CreateHostComponent implements OnInit {
             const result = country === 'US' ? response.substring(0, 5) : formatCanadaZip(response);
             control.patchValue(result, { emitEvent: false });
         });
+    }
+
+    public getContactValue(value: string): void {
+        this.newHostFormControls.contactNumber.setValue(value);
+    }
+
+    public setContactNumberToInvalid(status: boolean): void {
+        this.contactTouchAndInvalid = status;
+    }
+
+    public contactCleared(status: boolean): void {
+        this.contactIsCleared = status;
+    }
+
+    public disableSaveButton(): boolean {
+        return (
+            this.newHostForm.invalid ||
+            this.is_creating_host ||
+            !this.dealerHasValue ||
+            this.contactTouchAndInvalid ||
+            !this.contactIsCleared
+        );
     }
 
     protected get _createFormFields() {
@@ -1002,6 +1017,7 @@ export class CreateHostComponent implements OnInit {
                 type: 'tel',
                 min: '0',
                 is_required: false,
+                isComponent: true,
             },
             {
                 label: 'Latitude',

@@ -19,6 +19,7 @@ import { PAGING } from 'src/app/global/models';
 })
 export class NewSubDealerComponent implements OnInit, OnDestroy {
     back_btn: string;
+    contactTouchAndInvalid = false;
     dealers: API_DEALER[] = [];
     form_fields_view: any;
     form_invalid: boolean = true;
@@ -123,6 +124,7 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
                 type: 'text',
                 placeholder: 'Ex: 1-222-456-7890',
                 width: 'col-lg-6',
+                isComponent: true,
             },
             {
                 label: 'Email Address',
@@ -336,6 +338,14 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
                 ),
             );
         }
+    }
+
+    public getContactValue(value: string): void {
+        this.form.controls.contactNo.setValue(value);
+    }
+
+    public setContactNumberToInvalid(status: boolean): void {
+        this.contactTouchAndInvalid = status;
     }
 
     protected get roleRoute() {

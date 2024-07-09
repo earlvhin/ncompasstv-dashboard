@@ -22,14 +22,27 @@
                     </div>
 
                     <div class="row">
-                        <mat-form-field class="col-lg-12" *ngFor="let f of form_fields_view">
-                            <mat-label>{{ f.label }}</mat-label>
-                            <input
-                                matInput
-                                formControlName="{{ f.control }}"
-                                [type]="f.type"
-                                [placeholder]="f.placeholder" />
-                        </mat-form-field>
+                        <div class="col-lg-12" *ngFor="let f of form_fields_view">
+                            <mat-form-field class="full-width" *ngIf="!f.isComponent; else customField">
+                                <mat-label>{{ f.label }}</mat-label>
+                                <input
+                                    matInput
+                                    formControlName="{{ f.control }}"
+                                    [type]="f.type"
+                                    [placeholder]="f.placeholder" />
+                            </mat-form-field>
+
+                            <ng-template #customField>
+                                <ng-container *ngIf="f.control === 'contact'">
+                                    <app-contact-number
+                                        (contact_value)="getContactValue($event)"
+                                        (touch_and_not_valid)="setContactNumberToInvalid($event)"
+                                        [initial_value]="currentContactValue"
+                                        [disable]="disableField"></app-contact-number>
+                                </ng-container>
+                            </ng-template>
+                        </div>
+
                         <div *ngIf="is_dealer">
                             <mat-form-field class="col-lg-12" *ngFor="let f of form_fields_view_additional">
                                 <mat-label>{{ f.label }}</mat-label>
@@ -47,7 +60,7 @@
                             mat-button
                             mat-raised-button
                             class="theme-btn mt-4 mr-3"
-                            [disabled]="!update_info_form_disabled">
+                            [disabled]="!update_info_form_disabled || contactTouchAndInvalid">
                             Update
                         </button>
                         <button

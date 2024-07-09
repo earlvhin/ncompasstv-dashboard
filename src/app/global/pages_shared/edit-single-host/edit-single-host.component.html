@@ -104,18 +104,12 @@
                                     </div>
 
                                     <div class="flex-even pr-3">
-                                        <mat-form-field class="full-width">
-                                            <mat-label>Contact Number</mat-label>
-                                            <input
-                                                matInput
-                                                formControlName="contactNumber"
-                                                class="no-spinners"
-                                                type="tel"
-                                                min="10"
-                                                max="10"
-                                                pattern="^[0-9]{10,10}$"
-                                                placeholder="Ex. 1 234 567 890" />
-                                        </mat-form-field>
+                                        <app-contact-number
+                                            (contact_value)="getContactValue($event)"
+                                            (touch_and_not_valid)="setContactNumberToInvalid($event)"
+                                            [initial_value]="currentContactValue"
+                                            (value_empty)="contactCleared($event)"
+                                            [required]="false"></app-contact-number>
                                     </div>
                                 </div>
 
@@ -143,16 +137,6 @@
                                                 placeholder="Ex. 58.933" />
                                         </mat-form-field>
                                     </div>
-                                </div>
-
-                                <div class="flex">
-                                    <mat-checkbox
-                                        [(ngModel)]="canada_selected"
-                                        [ngModelOptions]="{ standalone: true }"
-                                        (change)="getCanadaAddress($event)"
-                                        class="sm-text">
-                                        Canada Address
-                                    </mat-checkbox>
                                 </div>
 
                                 <div class="flex">
@@ -401,7 +385,7 @@
                             type="submit"
                             class="theme-btn mt-4 mr-2"
                             color="primary"
-                            [disabled]="has_invalid_schedule || edit_host_form.invalid">
+                            [disabled]="disableUpdateButton()">
                             Update
                         </button>
                         <button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="false">

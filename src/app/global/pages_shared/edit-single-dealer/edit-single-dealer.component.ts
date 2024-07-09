@@ -24,12 +24,15 @@ import { CityData } from '../../models/api_cities_state.model';
     styleUrls: ['./edit-single-dealer.component.scss'],
 })
 export class EditSingleDealerComponent implements OnInit, OnDestroy {
+    contactTouchAndInvalid = false;
+    currentContactValue: string;
     currentEmail: string;
     dealer = this.page_data.dealer;
     disabledForm = false;
     editDealerForm: FormGroup;
     editDealerFormFields = this._editDealerFormFields;
     emailNotValid = false;
+    emailValidating = false;
     hasDuplicateEmail = false;
     is_active_dealer = this.dealer.status === 'A';
     is_admin = this._auth.current_role === 'administrator';
@@ -84,6 +87,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
         this._editFormControls.status.setValue(dealer.status);
 
         this.currentEmail = dealer.email;
+        this.currentContactValue = dealer.contactNumber;
         if (dealer.startDate != null) this.onSelectStartDate(dealer.startDate, true);
     }
 
@@ -205,13 +209,15 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
     }
 
     private checkEmailDuplicate(current_value: string): void {
+        this.emailValidating = true;
         this._user
             .checkIfDuplicateEmail(current_value)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((response) => (this.hasDuplicateEmail = !!response.message))
-            .add(
-                () => (this.disabledForm = this.editDealerForm.invalid || this.hasDuplicateEmail || this.emailNotValid),
-            );
+            .add(() => {
+                this.emailValidating = false;
+                this.disabledForm();
+            });
     }
 
     private initializeForm(): void {
@@ -280,7 +286,11 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
         );
         this.editDealerForm.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(
             (data) => {
-                this.disabledForm = this.editDealerForm.invalid || this.hasDuplicateEmail || this.emailNotValid;
+                if (data.email !== this.currentEmail) {
+                    this.emailNotValid = !this._user.validate_email(data.email);
+                    if (!this.emailNotValid) this.checkEmailDuplicate(data.email);
+                }
+                this.disabledForm();
             },
             (error) => {
                 console.error(error);
@@ -298,6 +308,14 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 
     private updateUserData(): Observable<any> {
         return this._user.update_user(this.mapUserInfoChanges()).pipe(takeUntil(this._unsubscribe));
+    }
+
+    public getContactValue(value: string): void {
+        this._editFormControls.c_number.setValue(value);
+    }
+
+    public setContactNumberToInvalid(status: boolean): void {
+        this.contactTouchAndInvalid = status;
     }
 
     protected get _editDealerFormFields() {
@@ -349,6 +367,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
                 control: 'c_number',
                 placeholder: 'Ex. 0123456789',
                 col: 'col-lg-6',
+                isComponent: true,
             },
             {
                 label: 'Contact Person',
@@ -382,6 +401,16 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
                 col: 'col-lg-6',
             },
         ];
+    }
+
+    public disabledForm(): boolean {
+        return (
+            this.editDealerForm.invalid ||
+            this.hasDuplicateEmail ||
+            this.emailNotValid ||
+            this.contactTouchAndInvalid ||
+            this.emailValidating
+        );
     }
 
     protected get _editFormControls() {

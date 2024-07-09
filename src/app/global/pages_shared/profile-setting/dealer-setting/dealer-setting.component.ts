@@ -27,6 +27,9 @@ export class DealerSettingComponent implements OnInit, OnDestroy {
     advertiser_details: any = {};
     content_data: any;
     content_details: any = {};
+    currentContactValue: string;
+    contactTouchAndInvalid = false;
+    disableField = true;
     form_fields_view = [
         {
             label: 'Business Name',
@@ -68,6 +71,7 @@ export class DealerSettingComponent implements OnInit, OnDestroy {
             placeholder: 'Ex: 123-456-789',
             type: 'text',
             width: 'col-lg-4',
+            isComponent: true,
         },
         {
             label: 'Contact Person',
@@ -139,6 +143,7 @@ export class DealerSettingComponent implements OnInit, OnDestroy {
                 .pipe(takeUntil(this._unsubscribe))
                 .subscribe(() => this.getUserById(this._params.snapshot.params.data)),
         );
+        this.disableField = true;
     }
 
     ngOnDestroy() {
@@ -194,6 +199,8 @@ export class DealerSettingComponent implements OnInit, OnDestroy {
                 this.update_info_form_disabled_typing = true;
             }
         });
+
+        this.currentContactValue = this.user_data.contactNumber;
     }
 
     activateEdit(x) {
@@ -203,12 +210,14 @@ export class DealerSettingComponent implements OnInit, OnDestroy {
             this.update_user.controls['owner_f_name'].enable();
             this.update_user.controls['owner_l_name'].enable();
             this.update_user.controls['contact'].enable();
+            this.disableField = false;
         } else {
             this.update_user.controls['contact_person'].disable();
             this.update_user.controls['business_name'].disable();
             this.update_user.controls['owner_f_name'].disable();
             this.update_user.controls['owner_l_name'].disable();
             this.update_user.controls['contact'].disable();
+            this.disableField = true;
             this.readyUpdateForm();
         }
         this.update_info_form_disabled = x;
@@ -293,6 +302,14 @@ export class DealerSettingComponent implements OnInit, OnDestroy {
 
     isDisabled(): boolean {
         return this.update_info_form_disabled;
+    }
+
+    public getContactValue(value: string): void {
+        this.update_user.controls.contact.setValue(value);
+    }
+
+    public setContactNumberToInvalid(status: boolean): void {
+        this.contactTouchAndInvalid = status;
     }
 
     protected get currentUser() {
