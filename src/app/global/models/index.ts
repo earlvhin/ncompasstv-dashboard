@@ -21,6 +21,7 @@ export * from './api_export-dealer.model';
 export * from './api_feed.model';
 export * from './api_feed_generator.model';
 export * from './api_filters.model';
+export * from './api_filler-group.model';
 export * from './api_google-map.model';
 export * from './api_host.model';
 export * from './api_host-content.model';
