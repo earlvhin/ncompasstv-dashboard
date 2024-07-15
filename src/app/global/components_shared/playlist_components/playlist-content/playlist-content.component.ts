@@ -107,7 +107,7 @@ export class PlaylistContentComponent implements OnInit, OnDestroy {
         const dialog = this._dialog.open(OptionsComponent, {
             data,
             width: '1200px',
-            height: '750px',
+            height: '800px',
         });
 
         dialog.afterClosed().subscribe((response) => {
