@@ -77,5 +77,7 @@ export interface APP_ROLLOUT_TARGETS {
     alias: string;
     uiVersion: string;
     serverVersion: string;
-    dealerBusinessName: string;
+    businessName: string;
+    dealerId: string;
+    licenseId: string;
 }

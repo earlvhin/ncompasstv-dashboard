@@ -597,6 +597,11 @@ export class LicenseService extends BaseService {
         return this.postRequest(this.updaters.api_update_player_background, data);
     }
 
+    // Updates the toggle settings for the player
+    update_toggle_settings(data: { licenseIds: string[]; enableUpdates: boolean }) {
+        return this.postRequest(this.updaters.license_toggle_update, data);
+    }
+
     delete_screenshots(id) {
         const base = `${this.deleters.api_remove_screenshots}`;
         const params = this.setUrlParams({ licenseId: id }, false, true);

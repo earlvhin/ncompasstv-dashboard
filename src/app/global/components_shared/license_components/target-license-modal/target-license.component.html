@@ -52,7 +52,7 @@
                 <!-- Search Input Field -->
 
                 <!-- Preview Area -->
-                <div class="preview-selected">
+                <div class="preview-selected mat-card">
                     <ng-container>
                         <div class="section-title d-flex align-items-start mb-1">
                             <span class="sm-text font-weight-bold flex-even">Selected Dealers:</span>
@@ -72,7 +72,7 @@
                                     *ngFor="let dealer of selectedDealersControl.value; let i = index"
                                     class="badge badge-success bg-primary p-2 mr-2 mb-2"
                                     [ngClass]="!isFiltered ? 'dealer' : 'disable-dealer'">
-                                    <span class="sm-text mr-2">{{ dealer.businessName }}</span>
+                                    <span class="mr-2 p-2">{{ dealer.businessName }}</span>
                                     <button class="naked-btn font-weight-bold text-danger" (click)="onRemoveDealer(i)">
                                         <i class="far fa-times"></i>
                                     </button>
@@ -193,15 +193,16 @@
             </div>
         </div>
 
-        <button mat-button mat-raised-button class="theme-btn mr-2">
-            <span class="fas fa-save"></span>
-            <span class="ml-2">Submit</span>
+        <button
+            mat-button
+            mat-raised-button
+            class="theme-btn mr-2"
+            (click)="onSubmit()"
+            [disabled]="!selectedDealersControl.value.length">
+            Submit
         </button>
 
-        <button mat-button mat-raised-button class="theme-btn btn-danger" mat-dialog-close>
-            <span class="fas fa-save"></span>
-            <span class="ml-2">Cancel</span>
-        </button>
+        <button mat-button mat-raised-button class="theme-btn" mat-dialog-close>Cancel</button>
     </ng-container>
 
     <ng-template #loader>

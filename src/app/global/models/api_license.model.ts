@@ -98,6 +98,7 @@ export interface API_LICENSE_PROPS {
     tvDisplaySettings?: number;
     fastEdgeMonitoringTool?: number;
     displayControlSettings?: number;
+    enableUpdates?: boolean;
 }
 
 interface screenInfo {

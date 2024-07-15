@@ -7,6 +7,7 @@ import { CreateAppComponent } from 'src/app/global/components_shared/version_com
 import { App, TABLE_VERSION, APP_ROLLOUT_TARGETS } from 'src/app/global/models';
 import { UpdateService } from 'src/app/global/services/update-service/update.service';
 import { TargetLicenseModal } from 'src/app/global/components_shared/license_components/target-license-modal/target-license.component';
+import { LicenseService } from 'src/app/global/services';
 
 @Component({
     selector: 'app-update',
@@ -36,15 +37,26 @@ export class UpdateComponent implements OnInit, OnDestroy {
         label: ['#', 'Dealer', 'License Key', 'Alias', 'UI Version', 'Server Version'],
         data: [],
         hasActions: {
-            actions: [],
+            value: true,
+            actions: [
+                {
+                    label: 'Delete',
+                    icon: 'fas fa-trash',
+                    action: 'delete_app',
+                    title: 'Delete App',
+                },
+            ],
         },
     };
+
+    private targets: APP_ROLLOUT_TARGETS[] = [];
 
     protected unSubscribe = new Subject<void>();
 
     constructor(
         private _date: DatePipe,
         private _dialog: MatDialog,
+        private _license: LicenseService,
         private _updates: UpdateService,
     ) {}
 
@@ -81,10 +93,27 @@ export class UpdateComponent implements OnInit, OnDestroy {
             });
     }
 
+    public onDeleteTargetLicense(id: string) {
+        this._license
+            .update_toggle_settings({ licenseIds: [id], enableUpdates: false })
+            .pipe(takeUntil(this.unSubscribe))
+            .subscribe({
+                next: () => {
+                    const index = this.targets.findIndex((x) => x.licenseId === id);
+                    this.targets.splice(index, 1);
+                    this.rolloutTargetTableData.data = [];
+                    this.mapRolloutTargetTableData(this.targets);
+                },
+                error: (err) => {
+                    console.error(err);
+                },
+            });
+    }
+
     public targetLicenseModal() {
         this._dialog
             .open(TargetLicenseModal, {
-                height: '680px',
+                height: '710px',
                 width: '1000px',
             })
             .afterClosed()
@@ -117,17 +146,18 @@ export class UpdateComponent implements OnInit, OnDestroy {
             );
 
         this._updates
-            .getRolloutTargets()
+            .getLicenseUpdateStatus({ enableUpdates: true })
             .pipe(takeUntil(this.unSubscribe))
             .subscribe(
-                (data) => {
-                    if ('message' in data) {
+                (res) => {
+                    console.log(res);
+                    if (res.status === 'error') {
                         this.loading = false;
                         return;
                     }
 
-                    const targets = data as APP_ROLLOUT_TARGETS[];
-                    this.mapRolloutTargetTableData(targets);
+                    this.targets = res.data.entities as APP_ROLLOUT_TARGETS[];
+                    this.mapRolloutTargetTableData(this.targets);
                     this.loading = false;
                 },
                 (error) => {
@@ -180,23 +210,28 @@ export class UpdateComponent implements OnInit, OnDestroy {
     }
 
     public mapRolloutTargetTableData(tableData: APP_ROLLOUT_TARGETS[]): number {
-        const sortedTableData = tableData.sort((a, b) => a.dealerBusinessName.localeCompare(b.dealerBusinessName));
+        const sortedTableData = tableData.sort((a, b) => a.businessName.localeCompare(b.businessName));
+        const dealerBaseURL = '/administrator/dealers/';
+        const licenseBaseURL = '/administrator/licenses/';
 
         return this.rolloutTargetTableData.data.push(
             ...sortedTableData.map((i) => [
                 {
-                    value: i.dealerBusinessName,
+                    value: i.businessName,
                     isHidden: false,
-                    //isLink: true,
-                    //insideLink: i.appId,
-                    //newTab: true,
+                    isLink: true,
+                    insideLink: dealerBaseURL + i.dealerId + '/' + i.businessName,
+                    newTab: true,
                 },
                 {
                     value: i.licenseKey,
                     isHidden: false,
+                    isLink: true,
+                    insideLink: licenseBaseURL + i.licenseId + '/' + i.licenseKey,
+                    newTab: true,
                 },
                 {
-                    value: i.alias,
+                    value: i.alias ? i.alias : 'N/A',
                     isHidden: false,
                 },
                 {
@@ -206,6 +241,11 @@ export class UpdateComponent implements OnInit, OnDestroy {
                 {
                     value: i.serverVersion ? i.serverVersion : 'No Version Available',
                     isHidden: false,
+                },
+                {
+                    value: i.licenseId,
+                    uniqueIdentifier: i.licenseId,
+                    isHidden: true,
                 },
             ]),
         );

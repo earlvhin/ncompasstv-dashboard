@@ -52,7 +52,8 @@
                             <div class="col-lg-12 app-version--table">
                                 <app-version-table
                                     [table_data]="rolloutTargetTableData"
-                                    (on_delete)="onDeleteApp($event)"></app-version-table>
+                                    (on_delete)="onDeleteTargetLicense($event)">
+                                </app-version-table>
                             </div>
                         </div>
                     </mat-tab>
