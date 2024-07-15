@@ -28,7 +28,6 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
     currentContactValue: string;
     currentEmail: string;
     dealer = this.page_data.dealer;
-    disabledForm = false;
     editDealerForm: FormGroup;
     editDealerFormFields = this._editDealerFormFields;
     emailNotValid = false;
