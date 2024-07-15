@@ -59,9 +59,11 @@
                 <div class="row no-gutters">
                     <div class="col-lg-12">
                         <div class="playlist-media-panel border material-shadow bg-light p-2 mb-4">
-                            <ng-container *ngIf="media_files; else loading">
+                            <ng-container *ngIf="media_files && !loadingFillers; else loading">
                                 <div *ngIf="!file_not_found; else not_found" class="h-100">
-                                    <div class="row no-gutters" *ngIf="media_files.length > 0; else loading">
+                                    <div
+                                        class="row no-gutters"
+                                        *ngIf="media_files.length && !loadingFillers; else loading">
                                         <div class="col-lg-2" *ngFor="let content of media_files; let i = index">
                                             <div
                                                 class="m-1 position-relative"
@@ -82,7 +84,7 @@
 
                                     <div
                                         class="d-flex align-items-center w-100 mt-3"
-                                        *ngIf="media_files.length > 0 && isGettingData">
+                                        *ngIf="media_files.length && isGettingData">
                                         <div class="w-100">
                                             <app-spinner></app-spinner>
                                         </div>
@@ -115,7 +117,7 @@
                             </ng-template>
 
                             <ng-template #loading>
-                                <div class="loader-overlay h-100">
+                                <div class="loader-overlay">
                                     <app-spinner></app-spinner>
                                 </div>
                             </ng-template>
@@ -148,8 +150,8 @@
                     <div class="col-lg-12">
                         <div class="playlist-media-panel overflow-x-hidden border material-shadow bg-light p-2 mb-4">
                             <div *ngIf="!in_progress_saving_fillers; else savingFillers">
-                                <div *ngIf="!no_filler_groups; else nodata">
-                                    <div class="row no-gutters" *ngIf="filler_groups.length > 0; else loading">
+                                <div *ngIf="!noFillerGroups; else nodata">
+                                    <div class="row no-gutters" *ngIf="!loadingFillers; else loading">
                                         <div class="col-lg-2" *ngFor="let data of filler_groups">
                                             <div class="row">
                                                 <div
@@ -217,7 +219,7 @@
                                 </div>
                             </ng-template>
                             <ng-template #savingFillers>
-                                <div class="loader-overlay bg-dark text-white text-center h-100 pt-5">
+                                <div class="bg-dark text-white text-center h-100 pt-5">
                                     <h4 class="mt-5">Saving Fillers</h4>
                                     <span class="sm-text">Please wait, while we update your playlist contents. </span>
                                     <mat-spinner [diameter]="100" class="mt-5"></mat-spinner>

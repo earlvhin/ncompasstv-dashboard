@@ -5,7 +5,7 @@
             <div class="form-header mb-4">
                 <h3 class="mb-1 mt-2">Edit {{ message }}</h3>
             </div>
-            <div class="form-body mb-3">
+            <div class="form-body mat-bl-em">
                 <mat-form-field
                     appearance="fill"
                     class="full-width"
@@ -51,7 +51,7 @@
                     <span class="sm-text text-primary">{{ status.additional_params.placername }}</span>
                 </div>
             </div>
-            <div class="form-body mb-3" *ngIf="status.label == 'Screen Type'">
+            <div class="form-body mat-bl-em" *ngIf="status.label == 'Screen Type'">
                 <ng-container *ngIf="screen_types.length > 0; else loader">
                     <app-autocomplete-field
                         [data_reference]="screen_types"
@@ -67,7 +67,7 @@
             </div>
             <!-- Form Body: Screen -->
 
-            <div class="form-body mb-3" *ngIf="status.label == 'Hosts'">
+            <div class="form-body mat-bl-em" *ngIf="status.label == 'Hosts'">
                 <ng-container *ngIf="hosts_data; else loader">
                     <app-autocomplete
                         [field_data]="hosts_data"

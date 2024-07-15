@@ -23,7 +23,7 @@ export class PlaylistMediaComponent implements OnInit {
     floating_contents: API_CONTENT[] = [];
     file_not_found: boolean = false;
     filler_groups: any = [];
-    no_filler_groups: boolean = false;
+    noFillerGroups = false;
     show_floating: boolean = false;
     page: number = 1;
     paging: any;
@@ -31,6 +31,7 @@ export class PlaylistMediaComponent implements OnInit {
     selected_groups: any = [];
     isActiveTab: number = 0;
     active_filler: number;
+    loadingFillers = false;
     // subscription: Subscription = new Subscription();
 
     current_selection: any = '';
@@ -224,7 +225,9 @@ export class PlaylistMediaComponent implements OnInit {
         });
     }
 
-    getAllFillerGroups(role?) {
+    public getAllFillerGroups(role?: number): void {
+        this.loadingFillers = true;
+        this.noFillerGroups = false;
         this._filler
             .get_filler_feeds_by_role(role, this._dialog_data.dealer_id)
             .pipe(takeUntil(this._unsubscribe))
@@ -239,8 +242,11 @@ export class PlaylistMediaComponent implements OnInit {
                         group.totalFillers = sum;
                     });
                     this.filler_groups = data.paging.entities;
-                    this.no_filler_groups = false;
-                } else this.no_filler_groups = true;
+                    this.noFillerGroups = false;
+                } else this.noFillerGroups = true;
+            })
+            .add(() => {
+                this.loadingFillers = false;
             });
     }
 

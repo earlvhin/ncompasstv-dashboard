@@ -15,6 +15,9 @@ import { UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
     styleUrls: ['./user-setting.component.scss'],
 })
 export class UserSettingComponent implements OnInit {
+    contactTouchAndInvalid = false;
+    currentContactValue: string;
+    disableField = true;
     subscription: Subscription = new Subscription();
     update_user: FormGroup;
     user_data: USER_PROFILE;
@@ -63,6 +66,7 @@ export class UserSettingComponent implements OnInit {
             placeholder: 'Ex: 123-456-789',
             type: 'text',
             width: 'col-lg-6',
+            isComponent: true,
         },
     ];
 
@@ -121,6 +125,7 @@ export class UserSettingComponent implements OnInit {
         );
 
         this.is_view_only = this.currentUser.roleInfo.permission === 'V';
+        this.disableField = true;
     }
 
     ngOnDestroy() {
@@ -209,6 +214,16 @@ export class UserSettingComponent implements OnInit {
                 }
             }),
         );
+
+        this.currentContactValue = this.user_data.contactNumber;
+    }
+
+    public getContactValue(value: string): void {
+        this.update_user.controls.contact.setValue(value);
+    }
+
+    public setContactNumberToInvalid(status: boolean): void {
+        this.contactTouchAndInvalid = status;
     }
 
     openConfirmationModal(status, message, data): void {
@@ -228,10 +243,12 @@ export class UserSettingComponent implements OnInit {
             this.update_user.controls['contact'].enable();
             this.update_user.controls['firstname'].enable();
             this.update_user.controls['lastname'].enable();
+            this.disableField = false;
         } else {
             this.update_user.controls['contact'].disable();
             this.update_user.controls['firstname'].disable();
             this.update_user.controls['lastname'].disable();
+            this.disableField = true;
             this.readyUpdateForm();
         }
         this.update_info_form_disabled = value;

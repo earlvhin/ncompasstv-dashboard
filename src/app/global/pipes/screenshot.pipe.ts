@@ -5,25 +5,45 @@ import { DatePipe } from '@angular/common';
     name: 'screenshot',
 })
 export class ScreenshotPipe extends DatePipe implements PipeTransform {
-    public slicedString: string;
+    transform(value: string): string {
+        const DATE_FORMAT = 'MMM d, y';
+        const TIME_FORMAT = 'h:mm a';
+        const splitString = value.split('/');
+        let extracted = splitString[splitString.length - 1].split('.')[0];
 
-    transform(value: any, ...args: any[]): any {
-        const handle_removed = value.substring(value.lastIndexOf('/') + 1);
-        let s_date = handle_removed.substring(0, handle_removed.indexOf('--'));
-        let s_time = handle_removed.substring(handle_removed.indexOf('--') + 2);
-        (s_time = s_time.split('_')), (s_time = s_time.slice(0, 2));
-        s_time = s_time.join(':');
-        let valid_time = s_time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [s_time];
-
-        if (valid_time.length > 1) {
-            // If valid_time format correct
-            valid_time = valid_time.slice(1); // Remove full string match value
-            valid_time[5] = +valid_time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
-            valid_time[0] = +valid_time[0] % 12 || 12; // Adjust hours
+        // Check if the screenshot filename is using the old format
+        if (extracted.includes('_')) {
+            const splitOldFormat = extracted.split('_');
+            extracted = splitOldFormat[splitOldFormat.length - 1];
         }
 
-        valid_time = valid_time.join(''); // return adjusted time or original string
+        const parseDateValue = (rawDateValue: string) => {
+            let index = 0;
 
-        return `${super.transform(s_date.split('_').join('/'), 'MMM d, y')} \n ${valid_time}`;
+            const LENGTHS = {
+                year: 4,
+                month: 2,
+                day: 2,
+                hour: 2,
+                minute: 2,
+                second: 2,
+            };
+
+            const lengthList = Object.values(LENGTHS).map((value) => value);
+
+            const values = lengthList.map((length) => {
+                const value = rawDateValue.substring(index, index + length);
+                index += length;
+                return value;
+            });
+
+            const [year, month, day, hour, minute, second] = values;
+            return new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`);
+        };
+
+        const parsed = parseDateValue(extracted);
+        const date = super.transform(parsed, DATE_FORMAT);
+        const time = super.transform(parsed, TIME_FORMAT);
+        return `${date} \n ${time}`;
     }
 }

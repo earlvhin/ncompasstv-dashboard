@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
     styleUrls: ['./new-admin.component.scss'],
 })
 export class NewAdminComponent implements OnInit {
+    contactTouchAndInvalid = false;
     form_invalid: boolean = true;
     form_title: string = 'New Administrator User';
     new_admin_form: FormGroup;
@@ -48,6 +49,7 @@ export class NewAdminComponent implements OnInit {
             placeholder: 'Ex: 1-222-456-7890',
             type: 'text',
             width: 'col-lg-6',
+            isComponent: true,
         },
         {
             label: 'Email Address',
@@ -208,6 +210,14 @@ export class NewAdminComponent implements OnInit {
 
     toggleRetypePasswordFieldType(): void {
         this.is_retype_password_field_type = !this.is_retype_password_field_type;
+    }
+
+    public getContactValue(value: string): void {
+        this.new_admin_form.controls.contactnumber.setValue(value);
+    }
+
+    public setContactNumberToInvalid(status: boolean): void {
+        this.contactTouchAndInvalid = status;
     }
 
     protected get roleRoute() {

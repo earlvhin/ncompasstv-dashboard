@@ -23,6 +23,7 @@ import { CityData } from 'src/app/global/models/api_cities_state.model';
 export class NewDealerComponent implements OnInit, OnDestroy {
     @Output() dealer_created = new EventEmitter();
     city_state: City[] = [];
+    contactTouchAndInvalid = false;
     current_dealer_id: string;
     form_description: string = 'Fill the form below to create a new Dealer.';
     form_fields_view: any[];
@@ -181,6 +182,14 @@ export class NewDealerComponent implements OnInit, OnDestroy {
         this.is_retype_password_field_type = !this.is_retype_password_field_type;
     }
 
+    public getContactValue(value: string): void {
+        this.new_dealer_form.controls.contactNumber.setValue(value);
+    }
+
+    public setContactNumberToInvalid(status: boolean): void {
+        this.contactTouchAndInvalid = status;
+    }
+
     private createForm(): void {
         this.form_fields_view = [
             {
@@ -226,11 +235,12 @@ export class NewDealerComponent implements OnInit, OnDestroy {
                 type: 'text',
             },
             {
-                label: 'Contact Person Phone',
+                label: 'Contact Number',
                 control: 'contactNumber',
                 placeholder: 'Ex: 1-222-456-7890',
                 width: 'col-lg-6',
                 type: 'text',
+                isComponent: true,
             },
             {
                 label: 'City',

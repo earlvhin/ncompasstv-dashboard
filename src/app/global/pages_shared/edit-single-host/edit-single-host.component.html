@@ -104,18 +104,12 @@
                                     </div>
 
                                     <div class="flex-even pr-3">
-                                        <mat-form-field class="full-width">
-                                            <mat-label>Contact Number</mat-label>
-                                            <input
-                                                matInput
-                                                formControlName="contactNumber"
-                                                class="no-spinners"
-                                                type="tel"
-                                                min="10"
-                                                max="10"
-                                                pattern="^[0-9]{10,10}$"
-                                                placeholder="Ex. 1 234 567 890" />
-                                        </mat-form-field>
+                                        <app-contact-number
+                                            (contact_value)="getContactValue($event)"
+                                            (touch_and_not_valid)="setContactNumberToInvalid($event)"
+                                            [initial_value]="currentContactValue"
+                                            (value_empty)="contactCleared($event)"
+                                            [required]="false"></app-contact-number>
                                     </div>
                                 </div>
 
@@ -169,9 +163,11 @@
                                     <div class="flex-even pr-3">
                                         <ng-container *ngIf="cities_loaded; else loadingCities">
                                             <app-city-autocomplete
-                                            (city_selected)="setCity($event)"
-                                            [selected_city_from_google]="city_selected"
-                                            (city_autocomplete_ready)="setInitialCity($event)"></app-city-autocomplete>
+                                                (city_selected)="setCity($event)"
+                                                [selected_city_from_google]="city_selected"
+                                                (city_autocomplete_ready)="
+                                                    setInitialCity($event)
+                                                "></app-city-autocomplete>
                                         </ng-container>
                                     </div>
                                     <div class="state-container">
@@ -399,7 +395,7 @@
                             type="submit"
                             class="theme-btn mt-4 mr-2"
                             color="primary"
-                            [disabled]="has_invalid_schedule || edit_host_form.invalid">
+                            [disabled]="disableUpdateButton()">
                             Update
                         </button>
                         <button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="false">

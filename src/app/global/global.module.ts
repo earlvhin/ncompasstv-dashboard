@@ -33,6 +33,7 @@ import { CloneScreenComponent } from './components_shared/screen_components/clon
 import { ColorPickerModule } from 'ngx-color-picker';
 import { ConfirmTemplateModalComponent } from './components_shared/template_components/confirm-template-modal/confirm-template-modal.component';
 import { ConfirmationModalComponent } from './components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { ContactNumberComponent } from './components_shared/data_components/contact-number/contact-number.component';
 import { ContentScheduleCardComponent } from './components_shared/playlist_components/content-schedule-cards/content-schedule-card.component';
 import { ContentsTabComponent } from './components_shared/reports_components/contents-tab/contents-tab.component';
 import { CreateAdvertiserComponent } from './pages_shared/create-advertiser/create-advertiser.component';
@@ -276,6 +277,7 @@ const ngComponents = [
     CloneScreenComponent,
     ConfirmTemplateModalComponent,
     ConfirmationModalComponent,
+    ContactNumberComponent,
     ContentScheduleCardComponent,
     ContentsTabComponent,
     CreateAdvertiserComponent,
