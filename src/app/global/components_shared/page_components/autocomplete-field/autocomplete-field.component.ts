@@ -157,6 +157,7 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
     }
 
     search(event: { target: { value: any } }) {
+        this.searched.emit(event.target.value);
         if (event.target.value) {
             this.search_result = this.data_reference.filter((res) => {
                 if (res[this.primary_keyword].toLowerCase().includes(event.target.value.toLowerCase())) {
