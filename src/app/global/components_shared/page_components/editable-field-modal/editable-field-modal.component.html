@@ -83,7 +83,12 @@
                 <button mat-button mat-raised-button class="theme-btn bg-danger mr-2" mat-dialog-close>
                     Cancel <i class="fas fa-times ml-2"></i>
                 </button>
-                <button mat-button mat-raised-button class="theme-btn" (click)="updateDropdown()" [disabled]="!canSaveScreenType">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn"
+                    (click)="updateDropdown()"
+                    [disabled]="!canSaveScreenType">
                     Save <i class="fas fa-save ml-2"></i>
                 </button>
             </div>
