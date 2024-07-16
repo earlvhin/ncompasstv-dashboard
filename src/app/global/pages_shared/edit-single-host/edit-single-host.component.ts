@@ -529,16 +529,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
     }
 
     public setInitialCity(isLoaded: boolean): void {
-        this.city_selected = this.page_data.host.city;       
-
-        //Set value to initial city
-        this._formControls.city.setValue(this.city_selected);
-        this._formControls.state.setValue(this.page_data.host.state);
-        this._formControls.region.setValue(this.page_data.host.region);
-    }
-
-    public setInitialCity(isLoaded: boolean): void {
-        this.city_selected = this.page_data.host.city;       
+        this.city_selected = this.page_data.host.city;
 
         //Set value to initial city
         this._formControls.city.setValue(this.city_selected);

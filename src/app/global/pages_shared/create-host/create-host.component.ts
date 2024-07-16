@@ -242,6 +242,28 @@ export class CreateHostComponent implements OnInit {
         this.isListVisible = false;
     }
 
+    getCitiesAndStates() {
+        this._location
+            .get_cities_data()
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((response) => {
+                this.citiesStateData = response;
+
+                this.city_field_data.data = [
+                    ...this.citiesStateData.data
+                        .map((data) => {
+                            return {
+                                id: data.id,
+                                value: `${data.city}, ${data.state}`,
+                                display: data.city,
+                                country: data.country,
+                            };
+                        })
+                        .filter((data) => data),
+                ];
+            });
+    }
+
     getFullDayName(abbreviatedDay: string): string {
         switch (abbreviatedDay.toLowerCase()) {
             case 'm':

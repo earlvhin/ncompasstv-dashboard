@@ -216,7 +216,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
             .subscribe((response) => (this.hasDuplicateEmail = !!response.message))
             .add(() => {
                 this.emailValidating = false;
-                this.disabledForm();
+                this.disableForm();
             });
     }
 
@@ -290,7 +290,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
                     this.emailNotValid = !this._user.validate_email(data.email);
                     if (!this.emailNotValid) this.checkEmailDuplicate(data.email);
                 }
-                this.disabledForm();
+                this.disableForm();
             },
             (error) => {
                 console.error(error);
@@ -403,7 +403,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
         ];
     }
 
-    public disabledForm(): boolean {
+    public disableForm(): boolean {
         return (
             this.editDealerForm.invalid ||
             this.hasDuplicateEmail ||
