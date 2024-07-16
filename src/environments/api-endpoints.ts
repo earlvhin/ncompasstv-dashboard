@@ -288,7 +288,6 @@ export const API_ENDPOINTS = {
         dealer_contract_files: 'dealer/savecontractfiles',
         dealer_territory_files: 'dealer/saveterritoryfiles',
         placer_upload: 'placer/process',
-        programmatic: 'programmatic/create',
         sub_dealer_account: 'account/createsubaccount',
         tag: 'tag/create',
         tag_add_and_assign: 'tag/admin/create/generic',

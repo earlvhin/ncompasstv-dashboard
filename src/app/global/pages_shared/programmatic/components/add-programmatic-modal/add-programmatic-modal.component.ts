@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import {
     FormArray,
     FormBuilder,
@@ -9,13 +9,12 @@ import {
     ValidatorFn,
     ValidationErrors,
 } from '@angular/forms';
-import { MatError } from '@angular/material/form-field';
-import { VALID_URL_PATTERN } from 'src/app/global/constants/common';
-import { MatDialog, MatDialogRef } from '@angular/material';
-import { ProgrammaticService } from 'src/app/global/services/programmatic-service/programmatic.service';
-import { Subject } from 'rxjs';
-import { Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+
+import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { ProgrammaticService } from 'src/app/global/services/programmatic-service/programmatic.service';
+import { VALID_URL_PATTERN } from 'src/app/global/constants/common';
 
 @Component({
     selector: 'app-add-programmatic-modal',
@@ -23,12 +22,11 @@ import { takeUntil } from 'rxjs/operators';
     styleUrls: ['./add-programmatic-modal.component.scss'],
 })
 export class AddProgrammaticModalComponent implements OnInit {
-    programmaticForm: FormGroup;
-    isSubmitted: boolean;
+    hasClickedSubmit = false;
+    invalidForm = true;
     licenseGenerated: boolean;
-    invalid_form: boolean = true;
-    subscription = new Subscription();
-    protected _unsubscribe: Subject<void> = new Subject<void>();
+    programmaticForm: FormGroup;
+    protected ngUnsubscribe = new Subject<void>();
 
     constructor(
         private _dialog: MatDialog,
@@ -45,26 +43,21 @@ export class AddProgrammaticModalComponent implements OnInit {
             programmaticKeyValues: this._form.array([], uniqueValuesValidator('key')),
         });
 
-        this.subscription.add(
-            this.programmaticForm.valueChanges.subscribe((data) => {
-                if (this.programmaticForm.valid) {
-                    this.invalid_form = false;
-                } else {
-                    this.invalid_form = true;
-                }
-            }),
-        );
-
-        this.programmaticKeyValues.valueChanges.subscribe(() => {
-            //this.autoPopulateId();
+        this.programmaticForm.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
+            next: () => {
+                this.invalidForm = this.programmaticForm.invalid;
+            },
+            error: (e) => {
+                console.error(e);
+            },
         });
 
         this.addKeyValue();
     }
 
     ngOnDestroy() {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     get programmaticKeyValues(): FormArray {
@@ -85,15 +78,17 @@ export class AddProgrammaticModalComponent implements OnInit {
     }
 
     public addProgrammatic(): void {
+        this.hasClickedSubmit = true;
+
         this._programmatic
-            .createProgrammatic(this.programmaticForm.value)
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(
-                () => this.showSuccessModal(),
-                (error) => {
-                    console.error(error);
+            .addVendor(this.programmaticForm.value)
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe({
+                next: () => this.showSuccessModal(),
+                error: (err) => {
+                    console.error('Failed to add a programmatic vendor!', err);
                 },
-            );
+            });
     }
 
     private showSuccessModal(): void {
@@ -101,9 +96,13 @@ export class AddProgrammaticModalComponent implements OnInit {
             width: '500px',
             height: '350px',
             data: { status: 'success', message: 'Programmatic created!' },
+            disableClose: true,
         });
 
-        dialog.afterClosed().subscribe(() => this._dialog_ref.close(true));
+        dialog
+            .afterClosed()
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(() => this._dialog_ref.close(true));
     }
 
     public markAsTouched(dataSet: FormArray, fieldIndex: number, controlName: string): void {

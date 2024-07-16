@@ -11,7 +11,6 @@ import { AddCardComponent } from './pages_shared/profile-setting/payment-setting
 import { AddFillerContentComponent } from './pages_shared/fillers/components/add-filler-content/add-filler-content.component';
 import { AddFillerFeedsComponent } from './pages_shared/fillers/components/add-filler-content/components/add-filler-feeds/add-filler-feeds.component';
 import { AddFillerGroupComponent } from './pages_shared/fillers/components/add-filler-group/add-filler-group.component';
-import { AddProgrammaticModalComponent } from './components_shared/programmatic_components/add-programmatic-modal/add-programmatic-modal.component';
 import { AdvertiserViewComponent } from './components_shared/locator_components/advertiser-view/advertiser-view.component';
 import { AgmCoreModule } from '@agm/core';
 import { AssignLicenseModalComponent } from './components_shared/license_components/assign-license-modal/assign-license-modal.component';
@@ -171,7 +170,6 @@ import { PlaylistInfoComponent } from './components_shared/playlist_components/p
 import { PlaylistMediaComponent } from './components_shared/playlist_components/playlist-media/playlist-media.component';
 import { PlaylistMediaThumbnailComponent } from './components_shared/playlist_components/playlist-media-thumbnail/playlist-media-thumbnail.component';
 import { ProfileSettingComponent } from './pages_shared/profile-setting/profile-setting.component';
-import { ProgrammaticComponent } from './pages_shared/programmatic/programmatic.component';
 import { PushUpdateComponent } from './components_shared/playlist_components/push-update/push-update.component';
 import { RemoteTerminalComponent } from './components_shared/tools_component/remote-terminal/remote-terminal.component';
 import { RenameModalComponent } from './components_shared/media_components/rename-modal/rename-modal.component';
@@ -253,7 +251,6 @@ import {
     MatTooltipModule,
     MatIconModule,
     MatButtonToggleModule,
-    MatSnackBar,
     MatSnackBarModule,
 } from '@angular/material';
 
@@ -262,7 +259,6 @@ const ngComponents = [
     AddFillerContentComponent,
     AddFillerFeedsComponent,
     AddFillerGroupComponent,
-    AddProgrammaticModalComponent,
     AdvertiserViewComponent,
     AssignLicenseModalComponent,
     AutocompleteComponent,
@@ -416,7 +412,6 @@ const ngComponents = [
     PlaylistMediaComponent,
     PlaylistMediaThumbnailComponent,
     ProfileSettingComponent,
-    ProgrammaticComponent,
     PushUpdateComponent,
     RemoteTerminalComponent,
     RenameModalComponent,
@@ -513,7 +508,6 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective, ClickOu
         AddFillerContentComponent,
         AddFillerFeedsComponent,
         AddFillerGroupComponent,
-        AddProgrammaticModalComponent,
         AssignLicenseModalComponent,
         BulkEditBusinessHoursComponent,
         BulkOptionsComponent,

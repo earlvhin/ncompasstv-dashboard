@@ -8,29 +8,16 @@
     <div class="row">
         <div class="col-lg-12">
             <mat-tab-group dynamicHeight>
-                <mat-tab label="Vendors">
+                <!-- TAB - GLOBAL SETTINGS -->
+                <mat-tab label="Global Settings">
                     <div class="row">
                         <div class="col-lg-5">
-                            <div class="mat-top-em">
-                                <div class="flex">
-                                    <div class="flex-2 d-inline-flex">
-                                        <button
-                                            mat-button
-                                            mat-raised-button
-                                            class="theme-btn pi-control sm-text"
-                                            (click)="openAddProgrammaticModal()">
-                                            <span class="fas fa-plus"></span>
-                                            <span class="ml-2 button_text_animation">Add Programmatic</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
                             <mat-card class="p-5 mt-5">
                                 <h3>Set Global Settings</h3>
                                 <p class="sm-text mb-4">
                                     Global settings are configuration fetched and applied by all players.
                                 </p>
-                                <form [formGroup]="global_settings_form">
+                                <form [formGroup]="globalSettingsForm">
                                     <mat-form-field class="mb-3 full-width" appearance="fill">
                                         <mat-label>Vistar Network ID</mat-label>
                                         <input
@@ -53,7 +40,7 @@
                                         mat-button
                                         mat-raised-button
                                         class="theme-btn"
-                                        [disabled]="!global_settings_form.valid">
+                                        [disabled]="!globalSettingsForm.valid">
                                         Save
                                     </button>
                                 </form>
@@ -62,8 +49,24 @@
                     </div>
                 </mat-tab>
 
+                <!-- TAB - TARGETS -->
                 <mat-tab label="Targets"> </mat-tab>
+
+                <!-- TAB - PROGRAMMATIC VENDORS -->
+                <mat-tab label="Vendors">
+                    <ng-container *ngIf="vendorsLoaded; else loader">
+                        <app-programmatic-vendors
+                            [vendors_list]="programmaticVendors"
+                            (on_refresh_vendors)="refreshVendorsList()"></app-programmatic-vendors>
+                    </ng-container>
+                </mat-tab>
             </mat-tab-group>
         </div>
     </div>
 </div>
+
+<ng-template #loader>
+    <div class="w-100 vh-50 d-flex align-items-center justify-content-center">
+        <app-spinner></app-spinner>
+    </div>
+</ng-template>

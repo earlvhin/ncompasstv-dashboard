@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { AddProgrammaticModalComponent } from 'src/app/global/components_shared/programmatic_components/add-programmatic-modal/add-programmatic-modal.component';
-import { ToolsService } from '../../services/tools/tools.service';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { takeUntil, finalize } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+
+import { ToolsService } from 'src/app/global/services';
+import { ProgrammaticService } from 'src/app/global/services';
+import { GetProgrammaticVendors, GLOBAL_SETTINGS, ProgrammaticVendor } from 'src/app/global/models';
 
 @Component({
     selector: 'app-tools',
@@ -10,37 +13,71 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
     styleUrls: ['./programmatic.component.scss'],
 })
 export class ProgrammaticComponent implements OnInit {
-    global_settings_form: FormGroup;
-    title: string = 'Programmatic';
+    globalSettingsForm: FormGroup;
+    vendorsLoaded = false;
+    programmaticVendors: ProgrammaticVendor[] = [];
+    globalSettings: GLOBAL_SETTINGS[];
+    title = 'Programmatic Settings';
+    protected ngUnsubscribe = new Subject<void>();
 
     constructor(
-        private _dialog: MatDialog,
         private _form: FormBuilder,
         private _tool: ToolsService,
+        private _programmatic: ProgrammaticService,
     ) {}
 
     ngOnInit() {
-        this.global_settings_form = this._form.group({
+        this.globalSettingsForm = this._form.group({
             vistarNetworkId: ['', Validators.required],
             vistarApiKey: ['', Validators.required],
         });
 
         this.getGlobalSettings();
+        this.loadInitialVendorsList();
     }
 
-    ngOnDestroy() {}
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+    }
 
-    public openAddProgrammaticModal(): void {
-        this._dialog
-            .open(AddProgrammaticModalComponent, {
-                height: 'auto',
-                width: '992px',
-            })
-            .afterClosed()
-            .subscribe(() => this.ngOnInit());
+    public refreshVendorsList(): void {
+        this.getAllVendors().subscribe({
+            next: (res) => {
+                this.programmaticVendors = res.data;
+            },
+            error: (e) => {
+                console.error(e);
+            },
+        });
+    }
+
+    private loadInitialVendorsList(): void {
+        this.vendorsLoaded = false;
+
+        this.getAllVendors()
+            .pipe(finalize(() => (this.vendorsLoaded = true)))
+            .subscribe({
+                next: (res) => (this.programmaticVendors = res.data),
+                error: (e) => console.error(e),
+            });
+    }
+
+    private getAllVendors(): Observable<GetProgrammaticVendors> {
+        return this._programmatic.getAllVendors().pipe(takeUntil(this.ngUnsubscribe));
     }
 
     private getGlobalSettings(): void {
-        this._tool.getGlobalSettings().subscribe((data) => {});
+        this._tool
+            .getGlobalSettings()
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe({
+                next: (res) => {
+                    this.globalSettings = res.globalSettings;
+                },
+                error: (e) => {
+                    console.error(e);
+                },
+            });
     }
 }

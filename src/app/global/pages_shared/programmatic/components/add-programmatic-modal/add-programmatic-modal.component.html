@@ -1,7 +1,16 @@
 <ng-container *ngIf="true; else success">
     <div id="add_programmatic_form" class="generate-license-modal p-4 pb-0 h-100" *ngIf="true; else loading">
         <ng-container>
-            <h3 class="mb-1">Create Programmatic</h3>
+            <div class="d-flex heading">
+                <div class="title flex-even">
+                    <h3 class="p-0">Create Programmatic</h3>
+                </div>
+                <div class="dialog-close-btn">
+                    <button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
+                        <span class="fas fa-times"></span>
+                    </button>
+                </div>
+            </div>
             <form [formGroup]="programmaticForm">
                 <mat-form-field class="full-width">
                     <mat-label>Name</mat-label>
@@ -9,12 +18,7 @@
                 </mat-form-field>
                 <mat-form-field class="full-width">
                     <mat-label>Description</mat-label>
-                    <textarea
-                        matInput
-                        formControlName="description"
-                        matInput
-                        type="textarea"
-                        placeholder="Details"></textarea>
+                    <textarea matInput formControlName="description" type="textarea" placeholder="Details"> </textarea>
                 </mat-form-field>
                 <mat-form-field class="full-width">
                     <mat-label>API URL</mat-label>
@@ -88,10 +92,12 @@
                     mat-raised-button
                     class="theme-btn mt-4"
                     (click)="addProgrammatic()"
-                    [disabled]="invalid_form">
+                    [disabled]="invalidForm || hasClickedSubmit">
                     <span class="button-label"> Save </span>
                     <span class="fas fa-plus ml-2 sm-text"></span>
                 </button>
+
+                <button mat-button mat-raised-button class="theme-btn mt-4 _danger"></button>
             </form>
         </ng-container>
     </div>
