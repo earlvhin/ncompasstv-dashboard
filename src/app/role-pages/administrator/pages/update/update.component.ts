@@ -1,13 +1,13 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CreateAppComponent } from 'src/app/global/components_shared/version_components/create-app/create-app.component';
 import { App, TABLE_VERSION, APP_ROLLOUT_TARGETS, API_FILTERS, PAGING } from 'src/app/global/models';
-import { UpdateService } from 'src/app/global/services/update-service/update.service';
 import { TargetLicenseModal } from 'src/app/global/components_shared/license_components/target-license-modal/target-license.component';
-import { LicenseService } from 'src/app/global/services';
+import { LicenseService, UpdateService } from 'src/app/global/services';
+import { Observable } from 'rxjs-compat';
 
 @Component({
     selector: 'app-update',
@@ -104,7 +104,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
             });
     }
 
-    public onDeleteTargetLicense(id: string) {
+    public onDeleteTargetLicense(id: string): void {
         this._license
             .update_toggle_settings({ licenseIds: [id], enableUpdates: false })
             .pipe(takeUntil(this.unSubscribe))
@@ -121,7 +121,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
             });
     }
 
-    public targetLicenseModal() {
+    public targetLicenseModal(): void {
         this._dialog
             .open(TargetLicenseModal, {
                 height: '710px',
@@ -156,7 +156,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
             );
     }
 
-    public getLicense() {
+    public getLicense(): void {
         this.licenseLoading = true;
         this.rolloutTargetTableData.data = [];
         this.hasNoData = false;
@@ -166,7 +166,6 @@ export class UpdateComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.unSubscribe))
             .subscribe(
                 (res) => {
-                    // console.log(res);
                     if (res.status === 'error') {
                         this.licenseLoading = false;
                         return;
@@ -237,14 +236,14 @@ export class UpdateComponent implements OnInit, OnDestroy {
                     value: i.businessName,
                     isHidden: false,
                     isLink: true,
-                    insideLink: dealerBaseURL + i.dealerId + '/' + i.businessName,
+                    insideLink: `${dealerBaseURL}${i.dealerId}/${i.businessName}`,
                     newTab: true,
                 },
                 {
                     value: i.licenseKey,
                     isHidden: false,
                     isLink: true,
-                    insideLink: licenseBaseURL + i.licenseId + '/' + i.licenseKey,
+                    insideLink: `${licenseBaseURL}${i.licenseId}/${i.licenseKey}`,
                     newTab: true,
                 },
                 {
@@ -268,13 +267,13 @@ export class UpdateComponent implements OnInit, OnDestroy {
         );
     }
 
-    private getTargetLicenses(type = 'default') {
+    private getTargetLicenses(type = 'default'): Observable<any> {
         let filters = type === 'export' ? { page: 1, enableUpdates: true } : this.filters;
         filters.enableUpdates = true;
         return this._updates.getLicenseUpdateStatus(filters).pipe(takeUntil(this.unSubscribe));
     }
 
-    public preLoadTargetLicenses() {
+    public preLoadTargetLicenses(): Subscription {
         this.filters.page++;
 
         return this.getTargetLicenses().subscribe((response) => {
@@ -292,7 +291,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
         });
     }
 
-    public addToTable() {
+    public addToTable(): void {
         this.currentTableData = this.currentTableData.concat(this.queuedTableData);
         this.preLoadTargetLicenses();
     }
