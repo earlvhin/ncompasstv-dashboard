@@ -41,22 +41,11 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
     isLoadingLicenseCount = false;
     isSearching = false;
     isChecked: boolean = false;
-    // lat = 39.7395247;
-    // lng = -105.1524133;
-    // mapMarkers: UI_HOST_LOCATOR_MARKER_DEALER_MODE[];
-    // previousMarker: AgmInfoWindow;
-    // selectedLocation = false;
     selectedDealers: API_DEALER[];
     selectedDealersControl = this.dealerSelection.get('selectedDealers');
     selectedHosts: API_HOST[];
     selectedLicenses: API_LICENSE_PROPS[] = [];
-    // totalLicenses = 0;
-    // totalOfflineLicenses = 0;
-    // totalOnlineLicenses = 0;
-    // totalPendingLicenses = 0;
 
-    // private exportedMapMarker: any[];
-    // private markStoreHours: string;
     private unfilteredHosts: API_HOST[] = [];
     private unfilteredLicenses: API_LICENSE_PROPS[] = [];
     private unfilteredDealers: API_DEALER[] = [];
@@ -72,9 +61,6 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.getDealers(1);
-        // this.totalOnlineLicenses = 0;
-        // this.totalOfflineLicenses = 0;
-        // this.totalPendingLicenses = 0;
         this.subscribeToDealerSearch();
         this.subscribeToDealerSelect();
     }
@@ -91,7 +77,6 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
         this.unfilteredDealers = [];
         this.unfilteredLicenses = [];
         this.unfilteredHosts = [];
-        // this.mapMarkers = [];
         this.selectedDealerHostLicense = [];
     }
 
@@ -275,6 +260,8 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
             };
             this.updateToggleSettings(data);
         }
+
+        return false;
     }
 
     private mapSelectedDealerHostLicense(dealers: API_DEALER[], dealerId?: string) {

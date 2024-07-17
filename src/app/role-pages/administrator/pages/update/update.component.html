@@ -1,27 +1,26 @@
 <div class="app-version">
-    <ng-container *ngIf="!loading; else loader">
-        <hr class="mat-bl-em" />
+    <hr class="mat-bl-em" />
 
-        <div class="row no-gutters">
-            <div class="col-lg-12">
-                <mat-tab-group dynamicHeight #tabGroup class="custom-mat-tab">
-                    <!-- PLAYER APPS TAB -->
-                    <mat-tab id="player-apps-tab" label="Player Apps">
-                        <div class="mat-top-em">
-                            <div class="flex">
-                                <div class="flex-2 d-inline-flex">
-                                    <button
-                                        mat-button
-                                        mat-raised-button
-                                        class="theme-btn pi-control sm-text"
-                                        (click)="onAddApp()">
-                                        <span class="fas fa-plus"></span>
-                                        <span class="ml-2 button_text_animation">Add App</span>
-                                    </button>
-                                </div>
+    <div class="row no-gutters">
+        <div class="col-lg-12">
+            <mat-tab-group dynamicHeight #tabGroup class="custom-mat-tab">
+                <!-- PLAYER APPS TAB -->
+                <mat-tab id="player-apps-tab" label="Player Apps">
+                    <div class="mat-top-em">
+                        <div class="flex">
+                            <div class="flex-2 d-inline-flex">
+                                <button
+                                    mat-button
+                                    mat-raised-button
+                                    class="theme-btn pi-control sm-text"
+                                    (click)="onAddApp()">
+                                    <span class="fas fa-plus"></span>
+                                    <span class="ml-2 button_text_animation">Add App</span>
+                                </button>
                             </div>
                         </div>
-
+                    </div>
+                    <ng-container *ngIf="!appLoading; else loader">
                         <div class="row">
                             <div class="col-lg-12 app-version--table">
                                 <app-version-table
@@ -29,25 +28,25 @@
                                     (on_delete)="onDeleteApp($event)"></app-version-table>
                             </div>
                         </div>
-                    </mat-tab>
-
-                    <!-- ROLLOUT TARGETS TAB -->
-                    <mat-tab id="rollout-targets-tab" label="Rollout Targets">
-                        <div class="mat-top-em">
-                            <div class="flex">
-                                <div class="flex-2 d-inline-flex">
-                                    <button
-                                        mat-button
-                                        mat-raised-button
-                                        class="theme-btn pi-control sm-text"
-                                        (click)="targetLicenseModal()">
-                                        <span class="fas fa-plus"></span>
-                                        <span class="ml-2 button_text_animation">Add Target License</span>
-                                    </button>
-                                </div>
+                    </ng-container>
+                </mat-tab>
+                <!-- ROLLOUT TARGETS TAB -->
+                <mat-tab id="rollout-targets-tab" label="Rollout Targets">
+                    <div class="mat-top-em">
+                        <div class="flex">
+                            <div class="flex-2 d-inline-flex">
+                                <button
+                                    mat-button
+                                    mat-raised-button
+                                    class="theme-btn pi-control sm-text"
+                                    (click)="targetLicenseModal()">
+                                    <span class="fas fa-plus"></span>
+                                    <span class="ml-2 button_text_animation">Add Target License</span>
+                                </button>
                             </div>
                         </div>
-
+                    </div>
+                    <ng-container *ngIf="!licenseLoading; else loader">
                         <div class="row">
                             <div class="col-lg-12 app-version--table">
                                 <app-version-table
@@ -56,11 +55,21 @@
                                 </app-version-table>
                             </div>
                         </div>
-                    </mat-tab>
-                </mat-tab-group>
-            </div>
+                        <div class="load-data-button-container d-flex justify-content-center mat-top-em">
+                            <button
+                                mat-raised-button
+                                class="theme-btn _primary"
+                                (click)="addToTable()"
+                                [disabled]="hasNoData">
+                                <ng-container> Load more licenses...</ng-container>
+                                <ng-template #preloadingData> Loading licenses... </ng-template>
+                            </button>
+                        </div>
+                    </ng-container>
+                </mat-tab>
+            </mat-tab-group>
         </div>
-    </ng-container>
+    </div>
 
     <ng-template #loader>
         <div class="w-100 vh-50 d-flex align-items-center justify-content-center">

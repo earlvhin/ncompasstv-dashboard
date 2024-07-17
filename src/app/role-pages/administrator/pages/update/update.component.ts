@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CreateAppComponent } from 'src/app/global/components_shared/version_components/create-app/create-app.component';
-import { App, TABLE_VERSION, APP_ROLLOUT_TARGETS } from 'src/app/global/models';
+import { App, TABLE_VERSION, APP_ROLLOUT_TARGETS, API_FILTERS, PAGING } from 'src/app/global/models';
 import { UpdateService } from 'src/app/global/services/update-service/update.service';
 import { TargetLicenseModal } from 'src/app/global/components_shared/license_components/target-license-modal/target-license.component';
 import { LicenseService } from 'src/app/global/services';
@@ -17,7 +17,16 @@ import { LicenseService } from 'src/app/global/services';
 export class UpdateComponent implements OnInit, OnDestroy {
     addedSuccess = false;
     apps: App[] = [];
-    loading: boolean = false;
+    currentTableData: TABLE_VERSION[] = [];
+    filters: API_FILTERS = { page: 1, pageSize: 15 };
+    hasNoData = false;
+    appLoading: boolean = false;
+    licenseLoading: boolean = false;
+    isPageReady = false;
+
+    private queuedTableData: TABLE_VERSION[] = [];
+    private currentPaging: PAGING = null;
+
     tableDataVersion: TABLE_VERSION = {
         label: ['#', 'Title', 'Description', 'Current Version', 'Date Created', 'URL'],
         data: [],
@@ -62,6 +71,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.getApps();
+        this.getLicense();
+        this.resetFilters();
     }
 
     ngOnDestroy(): void {
@@ -121,9 +132,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
     }
 
     public getApps() {
-        this.loading = true;
+        this.appLoading = true;
         this.tableDataVersion.data = [];
-        this.rolloutTargetTableData.data = [];
 
         this._updates
             .get_apps()
@@ -131,38 +141,45 @@ export class UpdateComponent implements OnInit, OnDestroy {
             .subscribe(
                 (data) => {
                     if ('message' in data) {
-                        this.loading = false;
+                        this.appLoading = false;
                         return;
                     }
 
                     const appData = data as App[];
                     this.mapTableData(appData);
-                    this.loading = false;
+                    this.appLoading = false;
                 },
                 (error) => {
                     console.error(error);
-                    this.loading = false;
+                    this.appLoading = false;
                 },
             );
+    }
+
+    public getLicense() {
+        this.licenseLoading = true;
+        this.rolloutTargetTableData.data = [];
+        this.hasNoData = false;
 
         this._updates
             .getLicenseUpdateStatus({ enableUpdates: true })
             .pipe(takeUntil(this.unSubscribe))
             .subscribe(
                 (res) => {
-                    console.log(res);
+                    // console.log(res);
                     if (res.status === 'error') {
-                        this.loading = false;
+                        this.licenseLoading = false;
                         return;
                     }
+                    this.hasNoData = res.data.hasNextPage === false ? true : this.hasNoData;
 
                     this.targets = res.data.entities as APP_ROLLOUT_TARGETS[];
                     this.mapRolloutTargetTableData(this.targets);
-                    this.loading = false;
+                    this.licenseLoading = false;
                 },
                 (error) => {
                     console.error(error);
-                    this.loading = false;
+                    this.licenseLoading = false;
                 },
             );
     }
@@ -249,5 +266,41 @@ export class UpdateComponent implements OnInit, OnDestroy {
                 },
             ]),
         );
+    }
+
+    private getTargetLicenses(type = 'default') {
+        let filters = type === 'export' ? { page: 1, enableUpdates: true } : this.filters;
+        filters.enableUpdates = true;
+        return this._updates.getLicenseUpdateStatus(filters).pipe(takeUntil(this.unSubscribe));
+    }
+
+    public preLoadTargetLicenses() {
+        this.filters.page++;
+
+        return this.getTargetLicenses().subscribe((response) => {
+            if (response.data.entities.length === 0) {
+                this.hasNoData = true;
+                return;
+            }
+
+            this.hasNoData = response.data.hasNextPage === false ? true : this.hasNoData;
+
+            this.currentPaging = response.data;
+            this.queuedTableData = response.data.entities;
+            this.mapRolloutTargetTableData(response.data.entities);
+            this.filters.page = response.data.page;
+        });
+    }
+
+    public addToTable() {
+        this.currentTableData = this.currentTableData.concat(this.queuedTableData);
+        this.preLoadTargetLicenses();
+    }
+
+    private resetFilters(): void {
+        this.filters = {
+            page: 1,
+            pageSize: 15,
+        };
     }
 }
