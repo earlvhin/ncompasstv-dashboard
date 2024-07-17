@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-// import { LicenseService } from '../../../services/license-service/license.service';
+import { LicenseService } from '../../../services/license-service/license.service';
 import { API_DEALER } from 'src/app/global/models/api_dealer.model';
 import { Subscription } from 'rxjs';
 
@@ -20,7 +20,7 @@ export class LicenseModalComponent implements OnInit {
 
     constructor(
         private _form: FormBuilder,
-        // private _license: LicenseService,
+        private _license: LicenseService,
     ) {}
 
     ngOnInit() {
@@ -51,17 +51,17 @@ export class LicenseModalComponent implements OnInit {
     }
 
     generateLicense() {
-        // this.is_submitted = true;
-        // this._license
-        //     .generate_license(this.formControls.dealer.value, this.formControls.number_of_license.value)
-        //     .subscribe(
-        //         (data) => {
-        //             this.license_generated = true;
-        //         },
-        //         (error) => {
-        //             console.error(error);
-        //         },
-        //     );
+        this.is_submitted = true;
+        this._license
+            .generate_license(this.formControls.dealer.value, this.formControls.number_of_license.value)
+            .subscribe(
+                (data) => {
+                    this.license_generated = true;
+                },
+                (error) => {
+                    console.error(error);
+                },
+            );
     }
 
     public setAssignedTo(dealer: any): void {
