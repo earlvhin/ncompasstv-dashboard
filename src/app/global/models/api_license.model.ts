@@ -135,3 +135,10 @@ export interface API_PLAYER_BACKGROUND {
     licenseId: string;
     licenseKey: string;
 }
+
+export interface LicenseWithUpdatesMinified {
+    hostId: string;
+    dealerId: string;
+    licenseId: string;
+    isUpdateEnabled: boolean;
+}

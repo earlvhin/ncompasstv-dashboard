@@ -1,15 +1,12 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { TitleCasePipe } from '@angular/common';
-import { MatDialog, MatDialogRef, MatSelect } from '@angular/material';
-import { AgmInfoWindow } from '@agm/core';
+import { MatDialogRef, MatSelect } from '@angular/material';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { ReplaySubject, Subject } from 'rxjs';
-import { saveAs } from 'file-saver';
-import * as moment from 'moment';
 
-import { API_DEALER, API_HOST, API_LICENSE_PROPS, UI_HOST_LOCATOR_MARKER_DEALER_MODE } from 'src/app/global/models';
-import { AuthService, DealerService, LicenseService, UpdateService } from 'src/app/global/services';
+import { API_DEALER, API_HOST, API_LICENSE_PROPS, LicenseWithUpdatesMinified } from 'src/app/global/models';
+import { AuthService, DealerService, LicenseService } from 'src/app/global/services';
 
 @Component({
     selector: 'app-license-modal',
@@ -19,34 +16,25 @@ import { AuthService, DealerService, LicenseService, UpdateService } from 'src/a
 })
 export class TargetLicenseModal implements OnInit, OnDestroy {
     @ViewChild('dealerMultiSelect', { static: false }) dealerMultiSelect: MatSelect;
-    areSearchResultsHidden = false;
-    currentRole = this._auth.current_role;
-    dealers: API_DEALER[];
     dealerFilterControl = new FormControl(null);
     dealerSelection = this._formBuilder.group({ selectedDealers: [[], Validators.required] });
     expandedDealerId: string;
-    expandedHostId: string = null;
     filteredDealers = new ReplaySubject<API_DEALER[]>(1);
-    hostLicenses: API_LICENSE_PROPS[] = [];
-    hostCheckboxSelected: boolean = false;
     isFiltered = false;
-    selectedDealerHostLicense = [];
-    unselectedDealerHostLicense = [];
-
     isLoadingData = true;
     isLoadingHosts = true;
     isLoadingLicenseCount = false;
     isSearching = false;
-    isChecked: boolean = false;
-    selectedDealers: API_DEALER[];
     selectedDealersControl = this.dealerSelection.get('selectedDealers');
-    selectedHosts: API_HOST[];
-    selectedLicenses: API_LICENSE_PROPS[] = [];
+    selectedDealers: API_DEALER[];
 
+    private currentRole = this._auth.current_role;
+    private selectedDealerHostLicense = [];
     private unfilteredHosts: API_HOST[] = [];
     private unfilteredLicenses: API_LICENSE_PROPS[] = [];
     private unfilteredDealers: API_DEALER[] = [];
-    protected _unsubscribe = new Subject<void>();
+    private unselectedDealerHostLicense = [];
+    protected ngUnsubscribe = new Subject<void>();
 
     constructor(
         private _auth: AuthService,
@@ -63,11 +51,11 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
-    public onClearSelection() {
+    public onClearSelection(): void {
         this.selectedDealersControl.value.length = 0;
         this.dealerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
         this.selectedDealers = [];
@@ -77,13 +65,13 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
         this.selectedDealerHostLicense = [];
     }
 
-    public onRemoveDealer(index: number) {
+    public onRemoveDealer(index: number): void {
         this.selectedDealersControl.value.splice(index, 1);
         this.dealerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
         this.onSelectDealer();
     }
 
-    public setLink(licenseId: string) {
+    public setLink(licenseId: string): string[] {
         let role = this.currentRole;
         if (role === 'dealeradmin') role = 'administrator';
         return [`/${role}/licenses/${licenseId}`];
@@ -96,7 +84,7 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
         this._dealer
             .get_dealers_with_host(page, '', true)
             .pipe(
-                takeUntil(this._unsubscribe),
+                takeUntil(this.ngUnsubscribe),
                 // mapped the response because generalCategory is only found in paging.entities
                 map((response: { dealers: API_DEALER[]; paging: { entities: API_DEALER[] } }) => {
                     const { entities } = response.paging;
@@ -123,7 +111,6 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
                         (dealer, index, merged) =>
                             merged.findIndex((mergedDealer) => mergedDealer.dealerId === dealer.dealerId) === index,
                     );
-                    this.dealers = unique;
                     this.filteredDealers.next(unique);
                 },
                 (error) => {
@@ -143,19 +130,16 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
             dealer.hosts = Array.from(this.unfilteredHosts)
                 .filter((host) => host.dealerId === dealer.dealerId)
                 .map((host) => {
-                    host.licenses = Array.from(this.unfilteredLicenses).filter(
-                        (license) => license.hostId === host.hostId,
-                    );
-
-                    this.selectedLicenses = this.selectedLicenses.concat(host.licenses);
+                    host.licenses = Array.from(this.unfilteredLicenses).filter((l) => l.hostId === host.hostId);
                     return host;
                 })
                 .filter((host) => host.licenses.length > 0);
 
             return dealer;
         });
+
         this.selectedDealerHostLicense = this.mapSelectedDealerHostLicense(this.selectedDealers).filter(
-            (i: any) => i.isUpdateEnabled,
+            (i) => i.isUpdateEnabled,
         );
     }
 
@@ -164,14 +148,13 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
 
         this._dealer
             .get_search_dealer_with_host(key)
-            .pipe(takeUntil(this._unsubscribe))
+            .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(
-                (response: { dealers: API_DEALER[]; paging: { entities: any[] } }) => {
+                (response: { dealers: API_DEALER[]; paging: { entities: API_DEALER[] } }) => {
                     const { dealers, paging } = response;
                     const { entities } = paging;
 
                     if (entities.length <= 0) {
-                        this.dealers = [];
                         return;
                     }
 
@@ -180,7 +163,6 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
                         (dealer, index, merged) =>
                             merged.findIndex((mergedDealer) => mergedDealer.dealerId === dealer.dealerId) === index,
                     );
-                    this.dealers = unique;
                     this.filteredDealers.next(unique);
                 },
                 (error) => {
@@ -189,12 +171,13 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
             )
             .add(() => (this.isSearching = false));
     }
+
     private subscribeToDealerSearch(): void {
         const control = this.dealerFilterControl;
 
         control.valueChanges
             .pipe(
-                takeUntil(this._unsubscribe),
+                takeUntil(this.ngUnsubscribe),
                 debounceTime(1000),
                 map((keyword) => {
                     if (control.invalid) return;
@@ -207,7 +190,7 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
     }
 
     private subscribeToDealerSelect(): void {
-        this.dealerSelection.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+        this.dealerSelection.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
             if (this.dealerSelection.invalid) return;
             this.unfilteredDealers = [];
             this.unfilteredHosts = [];
@@ -226,7 +209,7 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
     private updateToggleSettings(data: { licenseIds: string[]; enableUpdates: boolean }): void {
         this._license
             .update_toggle_settings(data)
-            .pipe(takeUntil(this._unsubscribe))
+            .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe({
                 next: (res) => {
                     this._dialog_ref.close();
@@ -258,9 +241,9 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
         }
     }
 
-    private mapSelectedDealerHostLicense(dealers: API_DEALER[], dealerId?: string) {
+    private mapSelectedDealerHostLicense(dealers: API_DEALER[], dealerId?: string): LicenseWithUpdatesMinified[] {
         if (!dealerId) {
-            const mapped = dealers.reduce((acc, d) => {
+            const mapped: LicenseWithUpdatesMinified[] = dealers.reduce((acc, d) => {
                 return acc.concat(
                     d.licenses.map((l) => ({
                         hostId: l.hostId,
@@ -270,11 +253,10 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
                     })),
                 );
             }, []);
-            console.log(mapped);
             return mapped;
         }
 
-        const filteredLicenses = dealers.reduce((acc, dealer) => {
+        const filteredLicenses: LicenseWithUpdatesMinified[] = dealers.reduce((acc, dealer) => {
             if (dealer && dealer.dealerId === dealerId) {
                 return [
                     ...acc,
@@ -291,8 +273,7 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
         return filteredLicenses;
     }
 
-    public selectAllHostAndLicenses(e: { checked: boolean }, dealerId): void {
-        this.isChecked = e.checked;
+    public selectAllHostAndLicenses(e: { checked: boolean }, dealerId: string): void {
         if (!e.checked) {
             this.unselectedDealerHostLicense = [
                 ...this.unselectedDealerHostLicense,
@@ -310,14 +291,13 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
         ];
     }
 
-    public selectLicense(e: { checked: boolean }, dealerId, licenseId): void {
-        this.isChecked = e.checked;
-
+    public selectLicense(e: { checked: boolean }, dealerId: string, licenseId: string): void {
         if (!e.checked) {
             this.unselectedDealerHostLicense = [
                 ...this.unselectedDealerHostLicense,
                 ...this.selectedDealerHostLicense.filter((i) => i.licenseId == licenseId),
             ];
+
             this.selectedDealerHostLicense = [
                 ...this.selectedDealerHostLicense.filter((i) => i.licenseId !== licenseId),
             ];
@@ -328,12 +308,11 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
             ...this.unselectedDealerHostLicense.filter((i) => i.licenseId !== licenseId),
         ];
 
-        /** @TODO - set actual interface instead of any */
         this.selectedDealers.forEach((dealer: API_DEALER) => {
             if (dealer && dealer.dealerId === dealerId) {
                 this.selectedDealerHostLicense.push(
                     dealer.licenses
-                        .filter((license: any) => license.licenseId == licenseId)
+                        .filter((license) => license.licenseId == licenseId)
                         .map((l) => {
                             return {
                                 licenseId: l.licenseId,
@@ -346,8 +325,7 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
         });
     }
 
-    public selectHost(e: { checked: boolean }, dealerId, hostId): void {
-        this.isChecked = e.checked;
+    public selectHost(e: { checked: boolean }, dealerId: string, hostId: string): void {
         if (!e.checked) {
             this.unselectedDealerHostLicense = [
                 ...this.unselectedDealerHostLicense,
@@ -359,13 +337,12 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
 
         this.unselectedDealerHostLicense = [...this.unselectedDealerHostLicense.filter((i) => i.hostId !== hostId)];
 
-        /** @TODO - set actual interface instead of any */
         this.selectedDealers.forEach((dealer: API_DEALER) => {
             if (dealer && dealer.dealerId === dealerId) {
                 this.selectedDealerHostLicense = [
                     ...this.selectedDealerHostLicense,
                     ...dealer.licenses
-                        .filter((license: any) => license.hostId == hostId)
+                        .filter((license) => license.hostId == hostId)
                         .map((l) => ({
                             licenseId: l.licenseId,
                             hostId: l.hostId,
