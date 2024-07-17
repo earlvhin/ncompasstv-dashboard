@@ -162,7 +162,7 @@
                                 </mat-panel-title>
                             </mat-expansion-panel-header>
                             <div class="px-4 pt-2" *ngIf="!isLoadingLicenseCount; else loader_sm_no_text">
-                                <ng-container *ngIf="host.licenses.length > 0; else no_licenses_text">
+                                <ng-container *ngIf="host.licenses.length; else no_licenses_text">
                                     <div class="mt-2" *ngFor="let license of host.licenses">
                                         <mat-checkbox
                                             (change)="selectLicense($event, license.dealerId, license.licenseId)"
