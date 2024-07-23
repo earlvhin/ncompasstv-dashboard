@@ -30,21 +30,13 @@
         </mat-form-field>
     </ng-template>
 
-    <mat-form-field class="full-width" appearance="fill">
-        <mat-label>Assign to Dealer</mat-label>
-        <input
-            matInput
-            type="text"
-            formControlName="assign_to"
-            placeholder="Choose a Dealer"
-            aria-label="Dealer"
-            [matAutocomplete]="auto" />
-        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-            <mat-option *ngFor="let option of filtered_options | async" [value]="option.businessName">
-                {{ option.businessName }}
-            </mat-option>
-        </mat-autocomplete>
-    </mat-form-field>
+    <app-dealer-autocomplete
+        (dealer_selected)="setAssignedTo($event)"
+        [initial_value]="autoCompleteSelectedDealer"
+        [isDisabled]="editingAsDealer"
+        [active_only]="true"></app-dealer-autocomplete>
+
+    <button mat-button mat-raised-button class="btn-danger cancel-btn" (click)="goBack()">Cancel</button>
 
     <button
         *ngIf="!editing; else editingBtn"
@@ -64,7 +56,7 @@
             mat-raised-button
             matStepperNext
             class="theme-btn"
-            [disabled]="!new_feed_form.controls.feed_title.valid"
+            [disabled]="!new_feed_form.valid || !editHasValue"
             (click)="structureFeedInfo()">
             <span class="button-label">Next</span>
             <span class="fas fa-long-arrow-alt-right ml-2"></span>
