@@ -82,7 +82,7 @@ export class ProgrammaticTabComponent implements OnInit {
         });
     }
 
-    async onToggleHostProgrammatic(event: MatSlideToggleChange, vendorId: string): Promise<void> {
+    public async onToggleHostProgrammatic(event: MatSlideToggleChange, vendorId: string): Promise<void> {
         let payload = {
             programmaticId: vendorId,
             hostId: this.hostId,
