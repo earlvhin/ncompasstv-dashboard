@@ -62,6 +62,7 @@ export * from './create_and_assign_tag.model';
 export * from './credits.model';
 export * from './credits-status.model';
 export * from './credits-to-submit.model';
+export * from './data-table-column.model';
 export * from './dialog-data-change-template.model';
 export * from './feed.model';
 export * from './form-controls.model';
