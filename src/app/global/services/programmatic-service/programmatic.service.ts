@@ -6,6 +6,7 @@ import {
     DeleteProgrammaticVendor,
     GetProgrammaticVendor,
     GetProgrammaticVendors,
+    GetProgrammaticVendorsIdAndNames,
     ProgrammaticVendor,
 } from 'src/app/global/models';
 
@@ -29,6 +30,10 @@ export class ProgrammaticService extends BaseService {
 
     getAllVendors(): Observable<GetProgrammaticVendors> {
         return this.getRequest(this.BASE_VENDOR_ENDPOINT);
+    }
+
+    getAllVendorsIdAndNames(): Observable<GetProgrammaticVendorsIdAndNames> {
+        return this.getRequest(this.getters.programmatic_all_vendors_id_and_names);
     }
 
     addVendor(body: ProgrammaticVendor): Observable<GetProgrammaticVendor> {
