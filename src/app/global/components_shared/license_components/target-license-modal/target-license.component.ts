@@ -67,6 +67,9 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
 
     public onRemoveDealer(index: number): void {
         this.selectedDealersControl.value.splice(index, 1);
+        this.selectedDealersControl.patchValue(this.selectedDealersControl.value);
+
+        if (!this.selectedDealersControl.value.length) this.unfilteredDealers = [];
         this.dealerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
         this.onSelectDealer();
     }
@@ -221,6 +224,9 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
     }
 
     public onSubmit(): void {
+        //test
+        console.log(this.selectedDealerHostLicense.length);
+
         if (this.unselectedDealerHostLicense.length) {
             const ids = this.unselectedDealerHostLicense.map((i) => i.licenseId);
             const data = {
@@ -249,7 +255,7 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
                         hostId: l.hostId,
                         dealerId: l.dealerId,
                         licenseId: l.licenseId,
-                        isUpdateEnabled: l.enableUpdates,
+                        isUpdateEnabled: true,
                     })),
                 );
             }, []);
@@ -354,7 +360,7 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
     }
 
     public isDealerSelected(dealerId: string): boolean {
-        return this.selectedDealerHostLicense.some((obj) => obj.dealerId === dealerId);
+        return true;
     }
 
     public isHostSelected(hostId: string): boolean {
