@@ -36,7 +36,7 @@ export class ProgrammaticTabComponent implements OnInit {
         this._unsubscribe.complete();
     }
 
-    getAllVendors(): void {
+    private getAllVendors(): void {
         this._programmatic
             .getAllVendorsIdAndNames()
             .pipe(takeUntil(this._unsubscribe))
@@ -54,7 +54,7 @@ export class ProgrammaticTabComponent implements OnInit {
             );
     }
 
-    getDisabledVendorIds(): void {
+    private getDisabledVendorIds(): void {
         this._host
             .getDisabledProgramamtics(this.hostId)
             .pipe(takeUntil(this._unsubscribe))
@@ -70,13 +70,13 @@ export class ProgrammaticTabComponent implements OnInit {
             );
     }
 
-    isVendorEnabled(vendorId: string): boolean {
+    public isVendorEnabled(vendorId: string): boolean {
         if (this.hostDisabledVendorsIds && this.hostDisabledVendorsIds.includes(vendorId)) return false;
 
         return true;
     }
 
-    showSuccessSnackBar(): void {
+    public showSuccessSnackBar(): void {
         this._snackbar.open(`Changes saved!`, '', {
             duration: 3000,
         });
