@@ -359,7 +359,7 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
         });
     }
 
-    public isDealerSelected(dealerId: string): boolean {
+    public isDealerSelected(): boolean {
         return true;
     }
 
