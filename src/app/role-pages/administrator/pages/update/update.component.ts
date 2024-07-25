@@ -51,8 +51,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
                 {
                     label: 'Delete',
                     icon: 'fas fa-trash',
-                    action: 'delete_app',
-                    title: 'Delete App',
+                    action: 'disable_update',
+                    title: 'Disable Update',
                 },
             ],
         },

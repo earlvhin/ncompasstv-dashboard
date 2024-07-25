@@ -224,9 +224,6 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
     }
 
     public onSubmit(): void {
-        //test
-        console.log(this.selectedDealerHostLicense.length);
-
         if (this.unselectedDealerHostLicense.length) {
             const ids = this.unselectedDealerHostLicense.map((i) => i.licenseId);
             const data = {
