@@ -214,7 +214,7 @@ export class TargetLicenseModal implements OnInit, OnDestroy {
             .update_toggle_settings(data)
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe({
-                next: (res) => {
+                next: () => {
                     this._dialog_ref.close();
                 },
                 error: (err) => {
