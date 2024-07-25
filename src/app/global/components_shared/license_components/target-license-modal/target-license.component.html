@@ -108,7 +108,7 @@
                                 <div class="flex-even">
                                     <mat-checkbox
                                         (click)="$event.stopPropagation()"
-                                        [checked]="isDealerSelected(dealer.dealerId)"
+                                        [checked]="isDealerSelected()"
                                         (change)="selectAllHostAndLicenses($event, dealer.dealerId)">
                                         <h5 class="ml-2">
                                             {{ dealer.businessName }}
