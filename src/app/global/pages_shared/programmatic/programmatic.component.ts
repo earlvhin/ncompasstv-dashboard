@@ -1,8 +1,8 @@
+import * as moment from 'moment-timezone';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { takeUntil, finalize } from 'rxjs/operators';
 import { Observable, Subject } from 'rxjs';
-
 import { ToolsService } from 'src/app/global/services';
 import { ProgrammaticService } from 'src/app/global/services';
 import { GetProgrammaticVendors, GLOBAL_SETTINGS, ProgrammaticVendor } from 'src/app/global/models';
@@ -43,12 +43,27 @@ export class ProgrammaticComponent implements OnInit {
 
     public refreshVendorsList(): void {
         this.getAllVendors().subscribe({
-            next: (res) => {
-                this.programmaticVendors = res.data;
-            },
+            next: (res) => (this.programmaticVendors = this.convertDateTimeCreatedToUserTimezone(res.data)),
             error: (e) => {
                 console.error(e);
             },
+        });
+    }
+
+    private getCurrentTimezone(): string {
+        return moment.tz.guess();
+    }
+
+    private convertToTimezone(utcDate: string, timeZone: string): string {
+        return moment.utc(utcDate).tz(timeZone).format('YYYY-MM-DD HH:mm:ss Z');
+    }
+
+    private convertDateTimeCreatedToUserTimezone(dates: ProgrammaticVendor[]): ProgrammaticVendor[] {
+        return dates.map((dateObject) => {
+            if (dateObject.dateCreated && typeof dateObject.dateCreated === 'string') {
+                dateObject.dateCreated = this.convertToTimezone(dateObject.dateCreated, this.getCurrentTimezone());
+            }
+            return dateObject;
         });
     }
 
@@ -58,7 +73,7 @@ export class ProgrammaticComponent implements OnInit {
         this.getAllVendors()
             .pipe(finalize(() => (this.vendorsLoaded = true)))
             .subscribe({
-                next: (res) => (this.programmaticVendors = res.data),
+                next: (res) => (this.programmaticVendors = this.convertDateTimeCreatedToUserTimezone(res.data)),
                 error: (e) => console.error(e),
             });
     }
