@@ -1,19 +1,21 @@
 import { EventEmitter, HostListener, Output } from '@angular/core';
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { Location } from '@angular/common';
 
-import { API_FEED_TYPES, API_GENERATED_FEED, GenerateSlideFeed, UI_AUTOCOMPLETE_DATA } from 'src/app/global/models';
+import { API_FEED_TYPES, API_GENERATED_FEED, GenerateSlideFeed } from 'src/app/global/models';
 import { AuthService, FeedService } from 'src/app/global/services';
 
+/**
+ * Component for managing feed information.
+ */
 @Component({
     selector: 'app-feed-info',
     templateUrl: './feed-info.component.html',
     styleUrls: ['./feed-info.component.scss'],
 })
-export class FeedInfoComponent implements OnInit, OnDestroy {
+export class FeedInfoComponent implements OnInit {
     @Input() dealers: { dealerId: string; businessName: string }[];
     @Input() editing: boolean = false;
     @Input() fetched_feed: API_GENERATED_FEED;
@@ -22,47 +24,66 @@ export class FeedInfoComponent implements OnInit, OnDestroy {
     @Output() feed_info = new EventEmitter();
     @Output() formChanges: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    autoCompleteSelectedDealer: UI_AUTOCOMPLETE_DATA[] = [];
-    selectedDealer: { dealerId: string; businessName: string };
-    dealerHasValue = false;
     existing: any;
     filtered_options: Observable<{ dealerId: string; businessName: string }[]>;
     generated_feed: GenerateSlideFeed;
     hasUnsavedChanges: boolean = false;
     isDealer = this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
-    editingAsDealer = false;
-    editHasValue = true;
+    isDisabled: boolean = false;
     new_feed_form: FormGroup;
     selected_dealer: string;
     private formSubscription: Subscription;
+    currentUser: any;
+    isEditingOrDealer: boolean = false;
 
+    // New properties for dealer-autocomplete
+    hasLoadedDealers = false;
+    isCurrentUserDealer = false;
+    selectedDealer: any[] = [];
+
+    /**
+     * Creates an instance of FeedInfoComponent.
+     * @param {AuthService} _auth - The authentication service.
+     * @param {FormBuilder} _form - The form builder service.
+     * @param {FeedService} _feed - The feed service.
+     */
     constructor(
         private _auth: AuthService,
         private _form: FormBuilder,
         private _feed: FeedService,
-        private _location: Location,
-    ) {}
+    ) {
+        this.currentUser = this._auth.current_user_value;
+        this.isCurrentUserDealer = this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
+        this.isEditingOrDealer = this.editing || this.isCurrentUserDealer;
+    }
 
+    /**
+     * Initializes the component.
+     */
     ngOnInit() {
-        if (this.editing && this.fetched_feed) this.initialSelectedDealer();
+        this.loadDealers();
         this.prepareFeedInfoForm();
 
         this.formSubscription = this.new_feed_form.valueChanges.subscribe((f) => {
-            this.hasUnsavedChanges = this.checkForUnsavedChanges(f);
+            this.hasUnsavedChanges =
+                f.feed_title || f.feed_type || f.description || (f.assign_to !== '' && !this.isDealer);
             this.formChanges.emit(this.hasUnsavedChanges);
             this.updateHasUnsavedChanges(this.hasUnsavedChanges);
         });
-
-        if (this.isDealer) this.editingAsDealer = true;
-
-        window.addEventListener('beforeunload', this.unloadNotification.bind(this));
     }
 
+    /**
+     * Cleans up the component.
+     */
     ngOnDestroy() {
-        window.removeEventListener('beforeunload', this.unloadNotification.bind(this));
+        window.removeEventListener('beforeunload', this.unloadNotification);
         this.formSubscription.unsubscribe();
     }
 
+    /**
+     * Handles the beforeunload event.
+     * @param {any} $event - The beforeunload event.
+     */
     @HostListener('window:beforeunload', ['$event'])
     unloadNotification($event: any): void {
         if (this.hasUnsavedChanges) {
@@ -70,125 +91,106 @@ export class FeedInfoComponent implements OnInit, OnDestroy {
         }
     }
 
-    private initialSelectedDealer(): void {
-        if (this.fetched_feed && this.fetched_feed.dealer) {
-            this.autoCompleteSelectedDealer.push({
-                id: this.fetched_feed.dealer.dealerId,
-                value: this.fetched_feed.dealer.businessName,
-            });
-        }
-    }
-
+    /**
+     * Updates the unsaved changes status.
+     * @param {boolean} value - The new unsaved changes status.
+     */
     updateHasUnsavedChanges(value: boolean) {
         this._feed.setInputChanges(value);
     }
 
-    structureFeedInfo() {
-        const feedData = this.editing ? this.getEditingFeedData() : this.new_feed_form.value;
-        this.feed_info.emit(feedData);
-    }
-
-    private getEditingFeedData() {
-        return {
-            feed_title: this.new_feed_form.controls.feed_title.value,
-            description: this.new_feed_form.controls.description.value,
-            feed_type: this.fetched_feed && this.fetched_feed.feedType ? this.fetched_feed.feedType.feedTypeId : null,
-            assign_to_id: this.selectedDealer
-                ? this.selectedDealer.dealerId
-                : this.fetched_feed && this.fetched_feed.dealer
-                  ? this.fetched_feed.dealer.dealerId
-                  : null,
-        };
-    }
-
-    private checkForUnsavedChanges(formValue: any): boolean {
-        return (
-            formValue.feed_title ||
-            formValue.feed_type ||
-            formValue.description ||
-            (formValue.assign_to !== '' && !this.isDealer)
-        );
-    }
-
-    private filter(value: string): { dealerId: string; businessName: string }[] {
-        const filter_value = value.toLowerCase();
-        const filtered_result = this.dealers
-            ? this.dealers.filter((i) => i.businessName.toLowerCase().includes(filter_value))
-            : [];
-
-        if (!this.is_dealer) {
-            this.selected_dealer = filtered_result[0] && value ? filtered_result[0].dealerId : null;
-            this.new_feed_form.controls.assign_to_id.setValue(this.selected_dealer);
+    /**
+     * Handles dealer selection.
+     * @param {Object} data - The selected dealer data.
+     * @param {string} data.id - The dealer ID.
+     * @param {string} data.value - The dealer business name.
+     */
+    dealerSelected(data: { id: string; value: string }) {
+        if (data) {
+            this.new_feed_form.patchValue({
+                assign_to: data.value,
+                assign_to_id: data.id,
+            });
+            this.selectedDealer = [data];
+        } else {
+            this.new_feed_form.patchValue({
+                assign_to: null,
+                assign_to_id: null,
+            });
+            this.selectedDealer = [];
         }
-
-        return filtered_result;
+        this.hasUnsavedChanges = true;
+        this.formChanges.emit(this.hasUnsavedChanges);
     }
 
+    /**
+     * Loads dealer information.
+     * @private
+     */
+    private loadDealers() {
+        this.hasLoadedDealers = true;
+
+        if (this.editing) {
+            if (this.fetched_feed.dealerId) {
+                this.selectedDealer = [
+                    {
+                        id: this.fetched_feed.dealerId,
+                        value: this.fetched_feed.dealer.businessName,
+                    },
+                ];
+            }
+        } else if (this.isCurrentUserDealer) {
+            this.selectedDealer = [
+                {
+                    id: this.currentUser.roleInfo.dealerId,
+                    value: this.currentUser.roleInfo.businessName,
+                },
+            ];
+        }
+    }
+
+    /**
+     * Prepares the feed information form.
+     * @private
+     */
     private prepareFeedInfoForm(): void {
-        const config = this.getFormConfig();
-        this.new_feed_form = this._form.group(config);
-        this.initializeAutocomplete();
-    }
+        let config: { [key: string]: any };
+        const feed = this.fetched_feed;
 
-    private getFormConfig(): { [key: string]: any } {
-        const baseConfig = {
+        config = {
             feed_title: ['', Validators.required],
             description: [''],
             feed_type: ['', Validators.required],
-            assign_to: [this.dealerHasValue ? this.selectedDealer.businessName : '', Validators.required],
-            assign_to_id: [this.dealerHasValue ? this.selectedDealer.dealerId : '', Validators.required],
+            assign_to: [''],
+            assign_to_id: [''],
         };
 
         if (this.editing) {
-            return this.getEditingFormConfig(baseConfig);
+            config['feed_title'] = [feed.feedTitle, Validators.required];
+            config['description'] = [feed.description];
+            config['feed_type'] = [{ value: feed.feedType.feedTypeId, disabled: true }, Validators.required];
+            config['assign_to'] = [{ value: feed.dealer ? feed.dealer.businessName : '', disabled: true }];
+            config['assign_to_id'] = [{ value: feed.dealerId, disabled: true }];
+        } else if (this.isCurrentUserDealer) {
+            config['assign_to'] = [{ value: this.currentUser.roleInfo.businessName, disabled: true }];
+            config['assign_to_id'] = [{ value: this.currentUser.roleInfo.dealerId, disabled: true }];
         }
 
-        return baseConfig;
+        this.new_feed_form = this._form.group(config);
     }
 
-    private getEditingFormConfig(baseConfig: { [key: string]: any }): { [key: string]: any } {
-        const feed = this.fetched_feed;
-        return {
-            ...baseConfig,
-            feed_title: [feed ? feed.feedTitle : '', Validators.required],
-            description: [feed ? feed.description : ''],
-            feed_type: [
-                { value: feed && feed.feedType ? feed.feedType.feedTypeId : '', disabled: true },
-                Validators.required,
-            ],
-            assign_to: [{ value: null, disabled: true }],
-            assign_to_id: [{ value: null, disabled: true }],
+    /**
+     * Structures and emits the feed information.
+     */
+    structureFeedInfo() {
+        const formValue = this.new_feed_form.value;
+        const feedInfo = {
+            feed_title: formValue.feed_title,
+            description: formValue.description,
+            feed_type: formValue.feed_type,
+            assign_to_id: this.isCurrentUserDealer ? this.currentUser.roleInfo.dealerId : formValue.assign_to_id,
         };
-    }
 
-    private initializeAutocomplete(): void {
-        this.filtered_options = this.new_feed_form.controls.assign_to.valueChanges.pipe(
-            startWith(''),
-            map((value) => this.filter(value)),
-        );
-    }
-
-    public setAssignedTo(dealer: any): void {
-        this.dealerHasValue = false;
-        if (dealer) {
-            this.editHasValue = true;
-            this.selectedDealer = {
-                businessName: dealer.value,
-                dealerId: dealer.id,
-            };
-            this.new_feed_form.controls.assign_to.setValue(dealer.value);
-            this.new_feed_form.controls.assign_to_id.setValue(dealer.id);
-            this.dealerHasValue = true;
-        } else {
-            this.editHasValue = false;
-            this.new_feed_form.controls.assign_to.setValue('');
-            this.new_feed_form.controls.assign_to_id.setValue('');
-        }
-        this.new_feed_form.controls.assign_to.updateValueAndValidity();
-        this.new_feed_form.controls.assign_to_id.updateValueAndValidity();
-    }
-
-    goBack() {
-        this._location.back();
+        this.feed_info.emit(feedInfo);
     }
 }

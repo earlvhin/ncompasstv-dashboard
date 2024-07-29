@@ -20,7 +20,7 @@
     </mat-form-field>
 
     <ng-template #default>
-        <mat-form-field class="full-width" appearance="fill" *ngIf="!editing">
+        <mat-form-field class="full-width" appearance="fill">
             <mat-label>Feed Type</mat-label>
             <mat-select formControlName="feed_type">
                 <mat-option *ngFor="let f of feed_types" [value]="f.feedTypeId">
@@ -30,13 +30,19 @@
         </mat-form-field>
     </ng-template>
 
-    <app-dealer-autocomplete
-        (dealer_selected)="setAssignedTo($event)"
-        [initial_value]="autoCompleteSelectedDealer"
-        [isDisabled]="editingAsDealer"
-        [active_only]="true"></app-dealer-autocomplete>
+    <ng-container *ngIf="hasLoadedDealers">
+        <app-dealer-autocomplete
+            *ngIf="!isCurrentUserDealer && !editing"
+            (dealer_selected)="dealerSelected($event)"
+            [initial_value]="selectedDealer"
+            [active_only]="true">
+        </app-dealer-autocomplete>
 
-    <button mat-button mat-raised-button class="btn-danger cancel-btn" (click)="goBack()">Cancel</button>
+        <mat-form-field *ngIf="isCurrentUserDealer || editing" class="full-width" appearance="fill">
+            <mat-label>Dealer</mat-label>
+            <input matInput [value]="selectedDealer[0]?.value" disabled />
+        </mat-form-field>
+    </ng-container>
 
     <button
         *ngIf="!editing; else editingBtn"
@@ -56,7 +62,7 @@
             mat-raised-button
             matStepperNext
             class="theme-btn"
-            [disabled]="!new_feed_form.valid || !editHasValue"
+            [disabled]="!new_feed_form.controls.feed_title.valid"
             (click)="structureFeedInfo()">
             <span class="button-label">Next</span>
             <span class="fas fa-long-arrow-alt-right ml-2"></span>
