@@ -58,7 +58,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
         },
     };
 
-    private targets: APP_ROLLOUT_TARGETS[] = [];
+    public targets: APP_ROLLOUT_TARGETS[] = [];
 
     protected unSubscribe = new Subject<void>();
 

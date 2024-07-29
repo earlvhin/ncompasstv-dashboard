@@ -32,7 +32,7 @@
                 </mat-tab>
                 <!-- ROLLOUT TARGETS TAB -->
                 <mat-tab id="rollout-targets-tab" label="Rollout Targets">
-                    <div class="mat-top-em">
+                    <div class="mat-top-em pb-3">
                         <div class="flex">
                             <div class="flex-2 d-inline-flex">
                                 <button
@@ -61,7 +61,7 @@
                                 class="theme-btn _primary"
                                 (click)="addToTable()"
                                 [disabled]="hasNoData">
-                                <ng-container> Load more licenses...</ng-container>
+                                <ng-container *ngIf="targets.length > 0"> Load more licenses...</ng-container>
                                 <ng-template #preloadingData> Loading licenses... </ng-template>
                             </button>
                         </div>
