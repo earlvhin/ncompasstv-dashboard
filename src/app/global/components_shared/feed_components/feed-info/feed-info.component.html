@@ -1,4 +1,4 @@
-<form [formGroup]="new_feed_form" class="full-width mb-4" #formDirective="ngForm">
+<form [formGroup]="newFeedForm" class="full-width mb-4" #formDirective="ngForm">
     <mat-form-field class="full-width" appearance="fill">
         <mat-label>Feed Title</mat-label>
         <input matInput formControlName="feed_title" />
@@ -50,7 +50,7 @@
         mat-raised-button
         matStepperNext
         class="theme-btn"
-        [disabled]="!new_feed_form.valid"
+        [disabled]="!newFeedForm.valid"
         (click)="structureFeedInfo()">
         <span class="button-label">Next</span>
         <span class="fas fa-long-arrow-alt-right ml-2"></span>
@@ -62,7 +62,7 @@
             mat-raised-button
             matStepperNext
             class="theme-btn"
-            [disabled]="!new_feed_form.controls.feed_title.valid"
+            [disabled]="!newFeedForm.controls.feed_title.valid"
             (click)="structureFeedInfo()">
             <span class="button-label">Next</span>
             <span class="fas fa-long-arrow-alt-right ml-2"></span>
