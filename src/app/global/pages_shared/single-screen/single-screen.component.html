@@ -84,7 +84,7 @@
                                 Playlist:
                                 <a
                                     [ngClass]="{
-                                        'text-danger': playlist_id === z.screen_template.playlist_id
+                                        'text-danger': playlist_id === z.screen_template.playlist_id,
                                     }"
                                     (click)="openPlaylistInNewTab(playlist_route, z.screen_template.playlist_id)"
                                     class="sm-text font-weight-bold mx-2 text-primary">

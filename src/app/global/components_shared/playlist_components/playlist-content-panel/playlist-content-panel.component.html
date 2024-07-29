@@ -241,7 +241,7 @@
                     [ngClass]="{
                         marked: isMarked(content),
                         'col-lg-4': list_view_mode,
-                        'col-lg-1': !list_view_mode
+                        'col-lg-1': !list_view_mode,
                     }">
                     <app-playlist-content
                         [playlist_host_license]="playlist_host_license"
@@ -281,7 +281,7 @@
                         marked: isMarked(content.playlistContentId),
                         'col-lg-1': !list_view_mode,
                         'col-lg-4': list_view_mode,
-                        disabled: content.classification == 'filler-v2'
+                        disabled: content.classification == 'filler-v2',
                     }">
                     <app-playlist-content
                         [playlist_host_license]="playlist_host_license"
