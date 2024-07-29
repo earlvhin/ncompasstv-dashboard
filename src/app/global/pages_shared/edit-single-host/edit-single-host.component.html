@@ -57,7 +57,7 @@
                                         <mat-icon
                                             class="clickable position-absolute mt-2 r-15 text-gray"
                                             [ngClass]="{
-                                                'text-danger': !is_dealer_change_disabled,
+                                                'text-danger': !is_dealer_change_disabled
                                             }"
                                             (click)="changeHostDealer(!is_dealer_change_disabled)">
                                             {{ is_dealer_change_disabled ? 'mode_edit' : 'close' }}
@@ -293,7 +293,7 @@
                                                                 [spinners]="false"
                                                                 [meridian]="true"
                                                                 [ngModelOptions]="{
-                                                                    standalone: true,
+                                                                    standalone: true
                                                                 }">
                                                             </ngb-timepicker>
                                                         </div>
@@ -310,7 +310,7 @@
                                                                 [spinners]="false"
                                                                 [meridian]="true"
                                                                 [ngModelOptions]="{
-                                                                    standalone: true,
+                                                                    standalone: true
                                                                 }">
                                                             </ngb-timepicker>
                                                         </div>

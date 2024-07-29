@@ -134,7 +134,7 @@
                                             [queryParams]="query_params"
                                             [ngClass]="{
                                                 'text-danger': data[d].past,
-                                                'new-order-color': data[d].is_new_order,
+                                                'new-order-color': data[d].is_new_order
                                             }">
                                             <ng-container>
                                                 <div *ngIf="!data[d].permission; else userWithPermission">
@@ -194,7 +194,7 @@
                                             "
                                             [ngClass]="{
                                                 'text-danger': data[d].past,
-                                                'new-order-color': data[d].is_new_order,
+                                                'new-order-color': data[d].is_new_order
                                             }">
                                             <ng-container>
                                                 <div *ngIf="!data[d].permission; else userWithPermission">
@@ -317,7 +317,7 @@
                                         'text-danger font-weight-bold': data[d].offline_field,
                                         'text-primary font-weight-bold': data[d].online_field,
                                         'text-danger': data[d].past,
-                                        'new-order-color': data[d].is_new_order,
+                                        'new-order-color': data[d].is_new_order
                                     }"
                                     class="white-space">
                                     <div
@@ -707,7 +707,7 @@
                                 id: data.id.value,
                                 name: data.file_name.value,
                                 count: data.play_count.value,
-                                duration: data.duration.value,
+                                duration: data.duration.value
                             })
                         "></i>
                 </td>

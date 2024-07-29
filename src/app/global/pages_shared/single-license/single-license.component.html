@@ -359,7 +359,7 @@
                                                                         class="title"
                                                                         [ngClass]="{
                                                                             good: pi_status,
-                                                                            bad: !pi_status,
+                                                                            bad: !pi_status
                                                                         }">
                                                                         {{ pi_status ? 'Online' : 'Offline' }}
                                                                     </h5>
@@ -373,7 +373,7 @@
                                                                         class="title"
                                                                         [ngClass]="{
                                                                             good: player_status,
-                                                                            bad: !player_status,
+                                                                            bad: !player_status
                                                                         }">
                                                                         {{ player_status ? 'Online' : 'Offline' }}
                                                                     </h5>
@@ -387,7 +387,7 @@
                                                                         class="title"
                                                                         [ngClass]="{
                                                                             good: cec_status,
-                                                                            bad: !cec_status,
+                                                                            bad: !cec_status
                                                                         }">
                                                                         {{ cec_status ? 'ON' : 'OFF' }}
                                                                     </h5>
@@ -405,7 +405,7 @@
                                                                         "
                                                                         [ngClass]="{
                                                                             good: display_status === 1,
-                                                                            bad: display_status !== 1,
+                                                                            bad: display_status !== 1
                                                                         }">
                                                                         <ng-container [ngSwitch]="display_status">
                                                                             <ng-container *ngSwitchCase="1"

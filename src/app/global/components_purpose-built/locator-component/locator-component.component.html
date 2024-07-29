@@ -268,8 +268,7 @@
                                                                         [ngClass]="{
                                                                             'text-primary': license.status === 'online',
                                                                             'text-danger': license.status === 'offline',
-                                                                            'text-pending':
-                                                                                license.status === 'pending',
+                                                                            'text-pending': license.status === 'pending'
                                                                         }">
                                                                         <i
                                                                             class="fas fa-circle xsm-text mr-3"></i> </span
@@ -367,13 +366,13 @@
                                                                                     'text-danger':
                                                                                         license.status === 'offline',
                                                                                     'text-pending':
-                                                                                        license.status === 'pending',
+                                                                                        license.status === 'pending'
                                                                                 }">
                                                                             </span>
                                                                             <a
                                                                                 [routerLink]="[
                                                                                     '/administrator/licenses/' +
-                                                                                        license.licenseId,
+                                                                                        license.licenseId
                                                                                 ]"
                                                                                 target="_blank"
                                                                                 class="clickable">
