@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
-import { FormArray, FormGroup } from '@angular/forms';
+import { EventEmitter, Injectable } from '@angular/core';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
 @Injectable()
 export class FormService {
-    private formArray: FormArray = new FormArray([]);
+    formArray = new FormArray([]);
+    onClearFormArray = new EventEmitter<void>();
 
     addForm(formGroup: FormGroup) {
         this.formArray.push(formGroup);

@@ -9,6 +9,7 @@ export class API_ZONE {
     width: number;
     background: string;
     order: number;
+    isMainZone: boolean;
 
     constructor(
         t_name: string,
@@ -18,6 +19,7 @@ export class API_ZONE {
         t_width: number,
         t_background: string,
         t_order: number,
+        t_main_zone = false,
     ) {
         this.name = t_name;
         this.xPos = t_xpos;
@@ -26,5 +28,6 @@ export class API_ZONE {
         this.width = t_width;
         this.background = t_background;
         this.order = t_order;
+        this.isMainZone = t_main_zone;
     }
 }

@@ -24,6 +24,11 @@
     color: white;
 }
 
-mat-action-row {
-    margin-top: 30px;
+.zone-controls {
+    align-items: center;
+    justify-content: space-between;
+}
+
+.reset-btn {
+    margin-right: 15px;
 }
