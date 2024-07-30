@@ -72,7 +72,7 @@ export class FeedInfoComponent implements OnInit {
      * @param {any} beforeUnloadEvent - The beforeunload event.
      */
     @HostListener('window:beforeunload', ['$event'])
-    private unloadNotification(beforeUnloadEvent: BeforeUnloadEvent): void {
+    public unloadNotification(beforeUnloadEvent: BeforeUnloadEvent): void {
         if (this.hasUnsavedChanges) {
             beforeUnloadEvent.preventDefault();
         }
