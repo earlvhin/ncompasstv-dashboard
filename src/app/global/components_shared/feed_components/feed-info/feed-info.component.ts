@@ -31,7 +31,6 @@ export class FeedInfoComponent implements OnInit {
     isCurrentUserDealer = false;
     isDealer = this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
     isDisabled = false;
-    isEditingOrDealer = false;
     newFeedForm: FormGroup;
     private formSubscription: Subscription;
     selectedDealer: UI_AUTOCOMPLETE_INITIAL_DATA[] = [];
@@ -49,7 +48,7 @@ export class FeedInfoComponent implements OnInit {
     ) {
         this.currentUser = this._auth.current_user_value;
         this.isCurrentUserDealer = this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
-        this.isEditingOrDealer = this.editing || this.isCurrentUserDealer;
+        console.log(this.isCurrentUserDealer);
     }
 
     ngOnInit() {

@@ -32,16 +32,18 @@
 
     <ng-container *ngIf="hasLoadedDealers">
         <app-dealer-autocomplete
-            *ngIf="!isCurrentUserDealer && !editing"
+            *ngIf="!isCurrentUserDealer && !editing; else dealerInput"
             (dealer_selected)="dealerSelected($event)"
             [initial_value]="selectedDealer"
             [active_only]="true">
         </app-dealer-autocomplete>
 
-        <mat-form-field *ngIf="isCurrentUserDealer || editing" class="full-width" appearance="fill">
-            <mat-label>Dealer</mat-label>
-            <input matInput [value]="selectedDealer[0]?.value" disabled />
-        </mat-form-field>
+        <ng-template #dealerInput>
+            <mat-form-field class="full-width" appearance="fill">
+                <mat-label>Dealer</mat-label>
+                <input matInput [value]="selectedDealer[0]?.value" disabled />
+            </mat-form-field>
+        </ng-template>
     </ng-container>
 
     <button
