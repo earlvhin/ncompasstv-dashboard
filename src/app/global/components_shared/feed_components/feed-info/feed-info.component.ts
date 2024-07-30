@@ -32,7 +32,6 @@ export class FeedInfoComponent implements OnInit {
     isDealer = this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
     isDisabled = false;
     newFeedForm: FormGroup;
-    private formSubscription: Subscription;
     selectedDealer: UI_AUTOCOMPLETE_INITIAL_DATA[] = [];
 
     /**
@@ -168,4 +167,6 @@ export class FeedInfoComponent implements OnInit {
 
         this.feed_info.emit(feedInfo);
     }
+
+    private formSubscription: Subscription;
 }
