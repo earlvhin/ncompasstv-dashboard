@@ -1,21 +1,16 @@
 import { EventEmitter, HostListener, Output } from '@angular/core';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable, Subscription } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 import {
     API_FEED_TYPES,
     API_GENERATED_FEED,
-    GenerateSlideFeed,
     UI_AUTOCOMPLETE_INITIAL_DATA,
     USER_LOCALSTORAGE,
 } from 'src/app/global/models';
 import { AuthService, FeedService } from 'src/app/global/services';
 
-/**
- * Component for managing feed information.
- */
 @Component({
     selector: 'app-feed-info',
     templateUrl: './feed-info.component.html',
@@ -24,22 +19,22 @@ import { AuthService, FeedService } from 'src/app/global/services';
 export class FeedInfoComponent implements OnInit {
     @Input() dealers: { dealerId: string; businessName: string }[];
     @Input() editing: boolean = false;
-    @Input() fetched_feed: API_GENERATED_FEED;
     @Input() feed_types: API_FEED_TYPES[];
+    @Input() fetched_feed: API_GENERATED_FEED;
     @Input() is_dealer: boolean = false;
     @Output() feed_info = new EventEmitter();
     @Output() form_changes: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    hasUnsavedChanges: boolean = false;
-    isDealer = this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
-    isDisabled: boolean = false;
-    newFeedForm: FormGroup;
     currentUser: USER_LOCALSTORAGE;
-    isEditingOrDealer: boolean = false;
     hasLoadedDealers = false;
+    hasUnsavedChanges = false;
     isCurrentUserDealer = false;
-    selectedDealer: UI_AUTOCOMPLETE_INITIAL_DATA[] = [];
+    isDealer = this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
+    isDisabled = false;
+    isEditingOrDealer = false;
+    newFeedForm: FormGroup;
     private formSubscription: Subscription;
+    selectedDealer: UI_AUTOCOMPLETE_INITIAL_DATA[] = [];
 
     /**
      * Creates an instance of FeedInfoComponent.
@@ -57,9 +52,6 @@ export class FeedInfoComponent implements OnInit {
         this.isEditingOrDealer = this.editing || this.isCurrentUserDealer;
     }
 
-    /**
-     * Initializes the component.
-     */
     ngOnInit() {
         this.loadDealers();
         this.prepareFeedInfoForm();
@@ -72,9 +64,6 @@ export class FeedInfoComponent implements OnInit {
         });
     }
 
-    /**
-     * Cleans up the component.
-     */
     ngOnDestroy() {
         window.removeEventListener('beforeunload', this.unloadNotification);
         this.formSubscription.unsubscribe();
@@ -95,7 +84,7 @@ export class FeedInfoComponent implements OnInit {
      * Updates the unsaved changes status.
      * @param {boolean} value - The new unsaved changes status.
      */
-    updateHasUnsavedChanges(value: boolean) {
+    private updateHasUnsavedChanges(value: boolean) {
         this._feed.setInputChanges(value);
     }
 
