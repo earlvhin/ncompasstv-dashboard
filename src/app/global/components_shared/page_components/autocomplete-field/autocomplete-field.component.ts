@@ -30,7 +30,7 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
     @Output() call_next_page = new EventEmitter();
     @Output() searched = new EventEmitter();
     @Output() search_triggered = new EventEmitter();
-    @Output() screen_type_selected = new EventEmitter();
+    @Output() screen_type_selected = new EventEmitter<string>();
     @Input() data_reference: Array<any>;
     @Input() paging: any;
     @Input() disabled: boolean;
