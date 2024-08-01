@@ -3,5 +3,13 @@
     "useTabs": false,
     "bracketSameLine": true,
     "trailingComma": "all",
+    "overrides": [
+        {
+            "files": "*.html",
+            "options": {
+                "trailingComma": "none"
+            }
+        }
+    ],
     "singleQuote": true
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Inject, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { finalize, takeUntil } from 'rxjs/operators';
 
 import { TemplateService } from 'src/app/global/services';
 
@@ -17,7 +17,7 @@ export class ConfirmTemplateModalComponent implements OnInit, OnDestroy {
     screen_height: number = 1080;
     is_submitted: boolean = false;
 
-    protected _unsubscribe: Subject<void> = new Subject<void>();
+    protected ngUnsubscribe = new Subject<void>();
     constructor(
         @Inject(MAT_DIALOG_DATA) public z_data: any,
         private _template: TemplateService,
@@ -28,8 +28,8 @@ export class ConfirmTemplateModalComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     saveTemplate() {
@@ -37,14 +37,14 @@ export class ConfirmTemplateModalComponent implements OnInit, OnDestroy {
 
         this._template
             .new_template(this.zone_data.zones)
-            .pipe(takeUntil(this._unsubscribe))
+            .pipe(
+                takeUntil(this.ngUnsubscribe),
+                finalize(() => (this.is_submitted = false)),
+            )
             .subscribe(
-                () => {
-                    this.data_saved = true;
-                    this.is_submitted = false;
-                },
-                (error) => {
-                    console.error(error);
+                () => (this.data_saved = true),
+                (e) => {
+                    console.error(e);
                 },
             );
     }

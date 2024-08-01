@@ -58,10 +58,11 @@
                         [primary_keyword]="'description'"
                         [key_of_value]="'screenTypeId'"
                         (data_value)="setScreenType($event)"
-                        [required]="false"
+                        [required]="true"
                         [label]="'Click to select a Screen Type'"
                         [new_value]="screen_init"
-                        [initial_value]="screen_init">
+                        [initial_value]="screen_init"
+                        (screen_type_selected)="onSearchScreenType($event)">
                     </app-autocomplete-field>
                 </ng-container>
             </div>
@@ -82,7 +83,12 @@
                 <button mat-button mat-raised-button class="theme-btn bg-danger mr-2" mat-dialog-close>
                     Cancel <i class="fas fa-times ml-2"></i>
                 </button>
-                <button mat-button mat-raised-button class="theme-btn" (click)="updateDropdown()">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn"
+                    (click)="updateDropdown()"
+                    [disabled]="!canSaveScreenType">
                     Save <i class="fas fa-save ml-2"></i>
                 </button>
             </div>

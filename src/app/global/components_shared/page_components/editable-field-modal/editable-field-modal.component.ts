@@ -23,6 +23,7 @@ export class EditableFieldModalComponent implements OnInit {
     screen_selected: string = null;
     reset_screen: boolean = false;
     subscription: Subscription = new Subscription();
+    canSaveScreenType: boolean = true;
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public _dialog_data: any,
@@ -38,6 +39,7 @@ export class EditableFieldModalComponent implements OnInit {
         if (this.status.dropdown_edit) {
             switch (this.status.label) {
                 case 'Screen Type':
+                    this.canSaveScreenType = false;
                     this.getScreenType();
                     break;
                 case 'Hosts':
@@ -73,9 +75,12 @@ export class EditableFieldModalComponent implements OnInit {
     getScreenType() {
         this.subscription.add(
             this._screen.get_screens_type().subscribe((data) => {
+                const currentScreenType = this.status.value
+                    ? data.find((f: any) => f.name.toLowerCase() == this.status.value.toLowerCase())
+                    : null;
                 this.screen_types = data;
                 this.screen_init = this.status.value;
-                this.setScreenType(this.status.id);
+                this.setScreenType(currentScreenType ? currentScreenType.screenTypeId : null);
             }),
         );
     }
@@ -104,6 +109,7 @@ export class EditableFieldModalComponent implements OnInit {
     setScreenType(type) {
         this.screen_selected = type;
         this.reset_screen = false;
+        this.canSaveScreenType = !!type;
     }
 
     clearScreenType() {
@@ -127,5 +133,9 @@ export class EditableFieldModalComponent implements OnInit {
                 default:
             }
         }
+    }
+
+    public onSearchScreenType(data: string): void {
+        this.canSaveScreenType = false;
     }
 }

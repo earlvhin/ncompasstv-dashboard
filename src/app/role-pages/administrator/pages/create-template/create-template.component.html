@@ -115,12 +115,21 @@
                                                             [cpDisableInput]="true"
                                                             [cpWidth]="478"
                                                             [cpToggle]="true"
-                                                            (colorPickerChange)="colorPicker(color, i)"
+                                                            (colorPickerChange)="colorPicker()"
                                                             matInput
                                                             type="text"
                                                             [value]="z.controls.background.value"
                                                             [style.background]="z.controls.background.value" />
                                                     </mat-form-field>
+
+                                                    <!-- TOGGLE FOR MAIN ZONE -->
+                                                    <mat-slide-toggle
+                                                        formControlName="isMainZone"
+                                                        (change)="toggleMainZone(i)"
+                                                        (click)="$event.stopPropagation()"
+                                                        [labelPosition]="'before'">
+                                                        <span> Set as the main zone </span>
+                                                    </mat-slide-toggle>
                                                 </div>
                                             </div>
                                         </div>
@@ -136,7 +145,7 @@
                             mat-button
                             mat-raised-button
                             class="theme-btn"
-                            [disabled]="disable_submit"
+                            [disabled]="disable_submit || !hasMainZoneSet"
                             (click)="confirmTemplateCreation()">
                             <span class="button-label"> Save </span>
                             <span class="fas fa-save"></span>

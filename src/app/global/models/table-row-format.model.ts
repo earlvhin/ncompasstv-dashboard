@@ -14,4 +14,5 @@ export interface TABLE_ROW_FORMAT {
     password?: string;
     status?: boolean;
     type?: string;
+    sortable?: boolean;
 }

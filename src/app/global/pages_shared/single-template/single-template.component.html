@@ -4,20 +4,31 @@
             <div class="title-section">
                 <div class="d-flex align-items-center">
                     <div class="flex-even">
-                        <!-- <h1 class="page-title">{{ data.template.name }}</h1> -->
                         <mat-form-field class="page-title template-name">
                             <input matInput [formControl]="templateNameCtrl" />
                         </mat-form-field>
                     </div>
+
+                    <!-- SAVE BUTTON -->
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn mx-1"
+                        (click)="onSubmit()"
+                        [disabled]="!templateNameCtrl.valid || !allFormsValid || !hasMainZoneSet">
+                        Save Changes
+                        <span class="fas fa-save ml-2 sm-text"></span>
+                    </button>
                 </div>
-                <hr class="mat-bl-em" />
             </div>
 
             <ng-container *ngIf="data.templateZones && data.templateZones.length > 0">
                 <div class="content-section d-flex flex-column">
                     <div class="zones">
                         <div class="zone" *ngFor="let zone of data.templateZones">
-                            <app-zone-expansion-panel [data]="zone"></app-zone-expansion-panel>
+                            <app-zone-expansion-panel
+                                [data]="zone"
+                                (toggled_main_zone)="setMainZone($event)"></app-zone-expansion-panel>
                         </div>
                     </div>
 
@@ -26,16 +37,6 @@
                     </div>
                 </div>
             </ng-container>
-
-            <button
-                mat-button
-                mat-raised-button
-                class="submit-btn bg-primary text-white"
-                (click)="onSubmit()"
-                [class.disabled]="!templateNameCtrl.valid || !allFormsValid"
-                [disabled]="!templateNameCtrl.valid || !allFormsValid">
-                Submit
-            </button>
         </ng-container>
 
         <ng-template #loading>

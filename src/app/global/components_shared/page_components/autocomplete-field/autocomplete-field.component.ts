@@ -30,6 +30,7 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
     @Output() call_next_page = new EventEmitter();
     @Output() searched = new EventEmitter();
     @Output() search_triggered = new EventEmitter();
+    @Output() screen_type_selected = new EventEmitter<string>();
     @Input() data_reference: Array<any>;
     @Input() paging: any;
     @Input() disabled: boolean;
@@ -157,6 +158,7 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
     }
 
     search(event: { target: { value: any } }) {
+        this.screen_type_selected.emit(event.target.value);
         if (event.target.value) {
             this.search_result = this.data_reference.filter((res) => {
                 if (res[this.primary_keyword].toLowerCase().includes(event.target.value.toLowerCase())) {

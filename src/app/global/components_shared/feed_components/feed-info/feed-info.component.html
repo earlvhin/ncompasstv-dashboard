@@ -1,4 +1,4 @@
-<form [formGroup]="new_feed_form" class="full-width mb-4" #formDirective="ngForm">
+<form [formGroup]="newFeedForm" class="full-width mb-4" #formDirective="ngForm">
     <mat-form-field class="full-width" appearance="fill">
         <mat-label>Feed Title</mat-label>
         <input matInput formControlName="feed_title" />
@@ -20,7 +20,7 @@
     </mat-form-field>
 
     <ng-template #default>
-        <mat-form-field class="full-width" appearance="fill" *ngIf="!editing">
+        <mat-form-field class="full-width" appearance="fill">
             <mat-label>Feed Type</mat-label>
             <mat-select formControlName="feed_type">
                 <mat-option *ngFor="let f of feed_types" [value]="f.feedTypeId">
@@ -30,21 +30,21 @@
         </mat-form-field>
     </ng-template>
 
-    <mat-form-field class="full-width" appearance="fill">
-        <mat-label>Assign to Dealer</mat-label>
-        <input
-            matInput
-            type="text"
-            formControlName="assign_to"
-            placeholder="Choose a Dealer"
-            aria-label="Dealer"
-            [matAutocomplete]="auto" />
-        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-            <mat-option *ngFor="let option of filtered_options | async" [value]="option.businessName">
-                {{ option.businessName }}
-            </mat-option>
-        </mat-autocomplete>
-    </mat-form-field>
+    <ng-container *ngIf="hasLoadedDealers">
+        <app-dealer-autocomplete
+            *ngIf="!isCurrentUserDealer && !editing; else dealerInput"
+            (dealer_selected)="dealerSelected($event)"
+            [initial_value]="selectedDealer"
+            [active_only]="true">
+        </app-dealer-autocomplete>
+
+        <ng-template #dealerInput>
+            <mat-form-field class="full-width" appearance="fill">
+                <mat-label>Dealer</mat-label>
+                <input matInput [value]="selectedDealer[0]?.value" disabled />
+            </mat-form-field>
+        </ng-template>
+    </ng-container>
 
     <button
         *ngIf="!editing; else editingBtn"
@@ -52,7 +52,7 @@
         mat-raised-button
         matStepperNext
         class="theme-btn"
-        [disabled]="!new_feed_form.valid"
+        [disabled]="!newFeedForm.valid"
         (click)="structureFeedInfo()">
         <span class="button-label">Next</span>
         <span class="fas fa-long-arrow-alt-right ml-2"></span>
@@ -64,7 +64,7 @@
             mat-raised-button
             matStepperNext
             class="theme-btn"
-            [disabled]="!new_feed_form.controls.feed_title.valid"
+            [disabled]="!newFeedForm.controls.feed_title.valid"
             (click)="structureFeedInfo()">
             <span class="button-label">Next</span>
             <span class="fas fa-long-arrow-alt-right ml-2"></span>
