@@ -11,6 +11,7 @@ import { ContentService } from '../../../../global/services/content-service/cont
 import { DealerService } from '../../../../global/services/dealer-service/dealer.service';
 import { UI_TABLE_CONTENT_METRICS } from '../../../../global/models/ui_table_content_metrics';
 import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../../models/ui_role-definition.model';
+import { HelperService } from 'src/app/global/services';
 
 @Component({
     selector: 'app-contents-tab',
@@ -88,6 +89,7 @@ export class ContentsTabComponent implements OnInit {
         private _dealer: DealerService,
         private _content: ContentService,
         private _auth: AuthService,
+        private _helper: HelperService,
     ) {}
 
     ngOnInit() {
@@ -114,20 +116,26 @@ export class ContentsTabComponent implements OnInit {
         this.getMediaFiles(1);
     }
 
-    onSelectStartDate(e) {
-        this.start_date = e;
-        this.start_date_for_query = moment(e).format('YYYY-MM-DD');
-        if (this.end_date && this.selected_dealer) {
-            this.getMediaFiles(1);
-        }
-    }
+    /**
+     * Callback function when selecting a date via the datepicker
+     * @param {Date} data
+     * @param {string} type
+     * @returns {void}
+     */
+    public dateSelected(data: Date, type: string = 'start'): void {
+        const parsed = this._helper.parseDate(data);
+        const stringified = this._helper.dateToString(parsed);
 
-    onSelectEndDate(e) {
-        this.end_date = e;
-        this.end_date_for_query = moment(e).format('YYYY-MM-DD');
-        if (this.start_date && this.selected_dealer) {
-            this.getMediaFiles(1);
+        if (type === 'start') {
+            this.start_date = parsed;
+            this.start_date_for_query = stringified;
+            if (this.end_date && this.selected_dealer) this.getMediaFiles(1);
+            return;
         }
+
+        this.end_date = parsed;
+        this.end_date_for_query = stringified;
+        if (this.start_date && this.selected_dealer) this.getMediaFiles(1);
     }
 
     getMetrics() {

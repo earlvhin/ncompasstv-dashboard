@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import * as moment from 'moment';
 import { Subject } from 'rxjs';
 
 import {
@@ -51,4 +52,25 @@ export class HelperService {
     };
     singleScreenData: API_SINGLE_SCREEN;
     singleUserData: API_USER_DATA;
+
+    /**
+     * Use this function to retrieve the correct date computation using the mat-datepicker.
+     * This is to fix the offset made when a user is on a different timezone.
+     * @param {string} data
+     * @returns {Date}
+     */
+    parseDate(data: Date): Date {
+        const result = new Date(data);
+        result.setMinutes(result.getMinutes() + result.getTimezoneOffset());
+        return result;
+    }
+
+    /**
+     * Converts a date object to string for readability
+     * @param {Date} data
+     * @returns {string}
+     */
+    dateToString(data: Date): string {
+        return moment(data).format('YYYY-MM-DD');
+    }
 }

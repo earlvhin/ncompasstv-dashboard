@@ -30,8 +30,8 @@
             <mat-label>Choose a date</mat-label>
             <input
                 matInput
-                (dateInput)="onSelectDate($event.value)"
                 [matDatepicker]="picker"
+                (dateInput)="onSelectDate($event.value)"
                 [(value)]="date"
                 readonly />
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>

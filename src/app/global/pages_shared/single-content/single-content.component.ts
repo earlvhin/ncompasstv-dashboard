@@ -24,7 +24,7 @@ import {
 } from 'src/app/global/models';
 
 import { environment as env } from 'src/environments/environment';
-import { AuthService, ContentService, PlaylistService } from 'src/app/global/services';
+import { AuthService, ContentService, HelperService, PlaylistService } from 'src/app/global/services';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
@@ -39,7 +39,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
     contentHistoryTableColumns = this._contentHistoryTableColumns;
     contentLogsReport: TABLE_ROW_FORMAT[][] = [];
     contentLogsReportTableColumns = this._contentLogsReportTableColumns;
-    endDate: string;
+    endDate: Date;
     hasGeneratedReport = false;
     hostCount = 0;
     isExporting = false;
@@ -54,7 +54,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
     screenCount = 0;
     screenshotUrl = `${env.third_party.filestack_screenshot}`;
     searchField = new FormControl(null);
-    startDate: string;
+    startDate: Date;
     totalDuration: string;
     totalPlayCount: number;
 
@@ -72,6 +72,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
         private _date: DatePipe,
         private _params: ActivatedRoute,
         private _dialog: MatDialog,
+        private _helper: HelperService,
     ) {}
 
     ngOnInit() {
@@ -95,10 +96,13 @@ export class SingleContentComponent implements OnInit, OnDestroy {
         this.isGeneratingReport = true;
         const errorMessage = 'Error Generating Report. Try changing the dates selected.';
 
+        const startDate = this._helper.dateToString(this.startDate);
+        const endDate = this._helper.dateToString(this.endDate);
+
         const request = this._content.generate_content_logs_report({
             contentId: this.contentId,
-            start: this.startDate.toString(),
-            end: this.endDate.toString(),
+            start: startDate,
+            end: endDate,
         });
 
         request.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
@@ -214,8 +218,8 @@ export class SingleContentComponent implements OnInit, OnDestroy {
         dialog.afterClosed().subscribe(() => {
             this.hasGeneratedReport = false;
             this.isGeneratingReport = false;
-            this.startDate = '';
-            this.endDate = '';
+            this.startDate = null;
+            this.endDate = null;
         });
     }
 
@@ -245,12 +249,11 @@ export class SingleContentComponent implements OnInit, OnDestroy {
      * Updates the start/end date datepickers with the provided data.
      * Datepicker for Content Logs Report.
      *
-     * @param {string} data The new start/end date in string format.
+     * @param {Date} data The new start/end date object
      * @returns {void}
      */
-    public selectStartOrEndDate(data: string, type = 'start'): void {
-        const DEFAULT_FORMAT = 'YYYY-MM-DD';
-        const result = moment(data).format(DEFAULT_FORMAT);
+    public dateSelected(data: Date, type = 'start'): void {
+        const result = this._helper.parseDate(data);
         type === 'start' ? (this.startDate = result) : (this.endDate = result);
     }
 
@@ -293,7 +296,10 @@ export class SingleContentComponent implements OnInit, OnDestroy {
         this.workbook = new Workbook();
         this.workbook.creator = 'NCompass TV';
         this.workbook.created = new Date();
-        this.worksheet = this.workbook.addWorksheet(this.startDate + ' - ' + this.endDate);
+        const start = this._helper.dateToString(this.startDate);
+        const end = this._helper.dateToString(this.endDate);
+
+        this.worksheet = this.workbook.addWorksheet(`${start} - ${end}`);
         this.isExporting = true;
 
         Object.keys(this.contentLogsReportTableColumns).forEach((key) => {
@@ -384,9 +390,10 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 
             const startDate = this._params.snapshot.queryParamMap.get('start_date');
             const endDate = this._params.snapshot.queryParamMap.get('end_date');
-            this.startDate = startDate ? moment(new Date(startDate)).format('YYYY-MM-DD') : null;
-            this.endDate = endDate ? moment(new Date(endDate)).format('YYYY-MM-DD') : null;
-            if (this.startDate && this.endDate) this.generateReport();
+
+            this.startDate = startDate ? this._helper.parseDate(new Date(startDate)) : null;
+            this.endDate = endDate ? this._helper.parseDate(new Date(endDate)) : null;
+            this.generateReport();
         });
     }
 
