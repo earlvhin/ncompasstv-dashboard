@@ -60,9 +60,7 @@ export class HelperService {
      * @returns {Date}
      */
     parseDate(data: Date): Date {
-        const result = new Date(data);
-        result.setMinutes(result.getMinutes() + result.getTimezoneOffset());
-        return result;
+        return moment.utc(data).toDate();
     }
 
     /**
