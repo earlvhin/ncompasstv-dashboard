@@ -112,7 +112,11 @@
             </ng-container>
 
             <ng-template #widgetButton>
-                <button mat-button mat-raised-button class="theme-btn mr-2">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn mr-2"
+                    [disabled]="new_feed_form.invalid || !dealerHasValue">
                     <ng-container *ngIf="isCreatingFeed"> Creating feed... </ng-container>
                     <ng-container *ngIf="!isCreatingFeed"> Submit </ng-container>
                 </button>
