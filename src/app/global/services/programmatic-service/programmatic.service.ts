@@ -40,6 +40,10 @@ export class ProgrammaticService extends BaseService {
         return this.postRequest(this.BASE_VENDOR_ENDPOINT, body);
     }
 
+    editVendor(body: ProgrammaticVendor): Observable<GetProgrammaticVendor> {
+        return this.putRequest(this.BASE_VENDOR_ENDPOINT, body);
+    }
+
     deleteVendor(id: string): Observable<DeleteProgrammaticVendor> {
         const url = `${this.BASE_VENDOR_ENDPOINT}/${id}`;
         return this.deleteRequest(url);

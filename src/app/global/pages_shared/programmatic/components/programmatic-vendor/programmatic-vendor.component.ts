@@ -14,10 +14,9 @@ import { DatePipe } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
 import { Observable } from 'rxjs-compat';
 import { Subject } from 'rxjs';
-
 import { DATA_TABLE, DATA_TABLE_ROW, DeleteProgrammaticVendor, ProgrammaticVendor } from 'src/app/global/models';
 import { ProgrammaticService } from 'src/app/global/services';
-import { AddProgrammaticModalComponent } from '../../components/add-programmatic-modal/add-programmatic-modal.component';
+import { AddEditProgrammaticModalComponent } from '../add-edit-programmatic-modal/add-edit-programmatic-modal.component';
 
 @Component({
     selector: 'app-programmatic-vendors',
@@ -61,7 +60,29 @@ export class ProgrammaticVendorComponent implements OnInit, OnChanges, OnDestroy
         };
 
         this._dialog
-            .open(AddProgrammaticModalComponent, config)
+            .open(AddEditProgrammaticModalComponent, config)
+            .afterClosed()
+            .subscribe({
+                next: () => {
+                    this.on_refresh_vendors.emit();
+                },
+            });
+    }
+
+    public onEditVendor(id: string): void {
+        let vendor = this.vendors_list.find(function (obj) {
+            return obj.id === id;
+        });
+
+        const config: MatDialogConfig = {
+            height: 'auto',
+            width: '992px',
+            disableClose: true,
+            data: vendor,
+        };
+
+        this._dialog
+            .open(AddEditProgrammaticModalComponent, config)
             .afterClosed()
             .subscribe({
                 next: () => {
@@ -163,6 +184,12 @@ export class ProgrammaticVendorComponent implements OnInit, OnChanges, OnDestroy
 
     protected get tableActions(): { label: string; icon: string; action: string; title: string }[] {
         return [
+            {
+                label: 'Edit',
+                icon: 'fas fa-edit',
+                action: 'edit_app',
+                title: 'Edit',
+            },
             {
                 label: 'Delete',
                 icon: 'fas fa-trash',

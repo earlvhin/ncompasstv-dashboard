@@ -10,7 +10,10 @@
 
     <div class="row">
         <div class="col-lg-12 programmatic-vendor--table">
-            <app-version-table [table_data]="vendorsMappedToTable" (on_delete)="onDeleteVendor($event)">
+            <app-version-table
+                [table_data]="vendorsMappedToTable"
+                (on_edit)="onEditVendor($event)"
+                (on_delete)="onDeleteVendor($event)">
             </app-version-table>
         </div>
     </div>

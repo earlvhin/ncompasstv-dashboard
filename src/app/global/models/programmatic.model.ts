@@ -36,7 +36,7 @@ export interface DeleteProgrammaticVendor extends BaseApiResponse {
     data: number;
 }
 
-class ProgrammaticKeyValues {
+export class ProgrammaticKeyValues {
     key: string;
     value: string;
 }
