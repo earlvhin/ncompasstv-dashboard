@@ -62,7 +62,9 @@
                             formControlName="value"
                             placeholder="Value" />
                     </mat-form-field>
-                    <mat-error *ngIf="keyValue.hasError('valueRequired') && keyValue.get('value').touched">
+                    <mat-error
+                        *ngIf="keyValue.hasError('valueRequired') && keyValue.get('value').touched"
+                        class="form-error-message">
                         Value is required if Key has content.
                     </mat-error>
                 </div>
