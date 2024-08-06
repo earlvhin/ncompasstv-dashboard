@@ -120,6 +120,9 @@ export class ProgrammaticVendorComponent implements OnInit, OnChanges, OnDestroy
         );
 
         return sortByDateDesc.map((x) => {
+            const descriptionLengthLimit = 40;
+            const descriptionHasToolTip = x.description.length > descriptionLengthLimit;
+
             return [
                 {
                     value: x.id,
@@ -134,8 +137,11 @@ export class ProgrammaticVendorComponent implements OnInit, OnChanges, OnDestroy
                     newTab: true,
                 },
                 {
-                    value: x.description,
+                    value: this.truncateText(x.description, descriptionLengthLimit),
                     isHidden: false,
+                    hasToolTip: descriptionHasToolTip,
+                    toolTipValue: x.description,
+                    toolTipPosition: 'below',
                 },
                 {
                     value: x.apiUrl,
@@ -154,6 +160,14 @@ export class ProgrammaticVendorComponent implements OnInit, OnChanges, OnDestroy
                 },
             ];
         });
+    }
+
+    private truncateText(data: string, limit = 250): string {
+        if (data.length > limit) {
+            return `${data.slice(0, limit)}...`;
+        }
+
+        return data;
     }
 
     private removeVendorFromCurrentList(id: string): void {

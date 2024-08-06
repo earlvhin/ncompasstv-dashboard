@@ -14,4 +14,5 @@ export interface DATA_TABLE_ROW {
     externalLink?: string;
     insideLink?: string;
     newTab?: boolean;
+    isTextTruncated?: boolean;
 }
