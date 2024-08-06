@@ -50,18 +50,11 @@ export class AddEditProgrammaticModalComponent implements OnInit {
 
         // Populate Key Value form
         if (this.isEdit) {
-            if (this.vendor.vendorKeyValues.length) {
-                this.vendor.vendorKeyValues.forEach((keyValue) => {
-                    this.addKeyValue(keyValue);
-                });
-            } else {
-                this.addKeyValue();
-            }
-
+            this.vendor.vendorKeyValues.length
+                ? this.vendor.vendorKeyValues.forEach((keyValue) => this.addKeyValue(keyValue))
+                : this.addKeyValue();
             this.programmaticForm.patchValue(this.vendor);
-        } else {
-            this.addKeyValue();
-        }
+        } else this.addKeyValue();
     }
 
     ngOnDestroy() {
@@ -126,14 +119,13 @@ export class AddEditProgrammaticModalComponent implements OnInit {
     }
 
     private showSuccessModal(): void {
-        const dialog = this._dialog.open(ConfirmationModalComponent, {
-            width: '500px',
-            height: '350px',
-            data: { status: 'success', message: 'Programmatic saved!' },
-            disableClose: true,
-        });
-
-        dialog
+        this._dialog
+            .open(ConfirmationModalComponent, {
+                width: '500px',
+                height: '350px',
+                data: { status: 'success', message: 'Programmatic saved!' },
+                disableClose: true,
+            })
             .afterClosed()
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(() => this._dialog_ref.close(true));
@@ -141,30 +133,26 @@ export class AddEditProgrammaticModalComponent implements OnInit {
 
     public markAsTouched(dataSet: FormArray, fieldIndex: number, controlName: string): void {
         const control = dataSet.at(fieldIndex).get(controlName);
-        if (control) {
-            control.markAsTouched();
-        }
+        if (control) control.markAsTouched();
+
         this.validateAllFormFields(this.programmaticForm);
     }
 
     private validateAllFormFields(formGroup: FormGroup): void {
         Object.keys(formGroup.controls).forEach((field) => {
             const control = formGroup.get(field);
-            if (control instanceof FormArray) {
+
+            if (control instanceof FormArray)
                 control.controls.forEach((group) => this.validateAllFormFields(group as FormGroup));
-            } else {
-                control.markAsTouched({ onlySelf: true });
-                control.updateValueAndValidity({ onlySelf: true });
-            }
+            else ['markAsTouched', 'updateValueAndValidity'].forEach((method) => control[method]({ onlySelf: true }));
         });
     }
 }
 
 export function uniqueValuesValidator(controlName: string): ValidatorFn {
     return (formArray: AbstractControl): { [key: string]: any } | null => {
-        if (!(formArray instanceof FormArray)) {
+        if (!(formArray instanceof FormArray))
             throw new Error('uniqueValuesValidator should be used on FormArray controls only');
-        }
 
         const values = formArray.controls.map((control) => control.get(controlName).value);
         const duplicates = values.filter((value, index, self) => self.indexOf(value) !== index);
@@ -177,17 +165,11 @@ export function keyValueValidator(): ValidatorFn {
     return (group: AbstractControl): { [key: string]: any } | null => {
         const keyControl = group.get('key');
         const valueControl = group.get('value');
-        if (!keyControl || !valueControl) {
-            return null;
-        }
+        if (!keyControl || !valueControl) return null;
+
         const key = keyControl.value;
         const value = valueControl.value;
 
-        if (!key && value) {
-            return { keyRequired: true };
-        } else if (key && !value) {
-            return { valueRequired: true };
-        }
-        return null;
+        return !key && value ? { keyRequired: true } : key && !value ? { valueRequired: true } : null;
     };
 }
