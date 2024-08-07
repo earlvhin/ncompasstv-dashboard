@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { takeUntil } from 'rxjs/operators';
+import { finalize, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { MatSlideToggleChange, MatSnackBar } from '@angular/material';
 import { ConfirmationDialogService, HostService, ProgrammaticService } from 'src/app/global/services';
@@ -60,12 +60,11 @@ export class ProgrammaticTabComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (response) => {
-                    if (response.data.length) {
-                        this.hostDisabledVendorsIds = response.data;
-                    }
+                    if (!response.data.length) return;
+                    this.hostDisabledVendorsIds = response.data;
                 },
-                (error) => {
-                    console.error(error);
+                (e) => {
+                    console.error('Failed to retrieve disabled vendor IDs', e);
                 },
             );
     }
@@ -82,65 +81,62 @@ export class ProgrammaticTabComponent implements OnInit {
         });
     }
 
+    /**
+     * Callback function when toggling the programmatic vendor
+     *
+     * @param {MatSlideToggleChange} event
+     * @param {string} vendorId
+     * @returns {Promise<void>}
+     */
     public async onToggleHostProgrammatic(event: MatSlideToggleChange, vendorId: string): Promise<void> {
-        let payload = {
-            programmaticId: vendorId,
-            hostId: this.hostId,
-        };
-        let checked = event.checked;
-        let warningMessagePrefix = checked ? 'Enable' : 'Disable';
-
-        const confirmAction = await this._confirmDialog
-            .warning({
-                message: warningMessagePrefix + ' vendor on this host?',
-                data: '',
-            })
-            .toPromise();
+        const checked = event.checked;
+        const warningMessagePrefix = checked ? 'Enable' : 'Disable';
+        const payload = { programmaticId: vendorId, hostId: this.hostId };
+        const dialogConfig = { message: `${warningMessagePrefix} vendor on this host?`, data: '' };
+        const confirmAction = await this._confirmDialog.warning(dialogConfig).toPromise();
 
         if (!confirmAction) {
             event.source.checked = !event.checked;
             return;
         }
 
-        // Enable Vendor on Host
+        // if checked/toggled ON, then enable the vendor
+        // else disable vendor
         if (checked) {
             this._host
                 .enableProgrammaticVendor(payload)
                 .pipe(takeUntil(this._unsubscribe))
                 .subscribe(
                     (response) => {
-                        if (response.data) {
-                            let vendorIdIndex = this.hostDisabledVendorsIds.indexOf(vendorId);
+                        if (!response.data) return;
 
-                            if (vendorIdIndex > -1) {
-                                this.hostDisabledVendorsIds.splice(vendorIdIndex, 1);
-                            }
-
-                            this.showSuccessSnackBar();
-                        }
+                        const vendorIdIndex = this.hostDisabledVendorsIds.indexOf(vendorId);
+                        if (vendorIdIndex > -1) this.hostDisabledVendorsIds.splice(vendorIdIndex, 1);
+                        this.showSuccessSnackBar();
                     },
-                    (error) => {
+                    (e) => {
+                        console.error('Failed to enable programmatic vendor', e);
                         this._confirmDialog.error();
                         event.source.checked = !event.checked;
                     },
                 );
-        } else {
-            this._host
-                .disableProgrammaticVendor(payload)
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    (response) => {
-                        if (response.data) {
-                            this.hostDisabledVendorsIds.push(vendorId);
-                        }
 
-                        this.showSuccessSnackBar();
-                    },
-                    (error) => {
-                        this._confirmDialog.error();
-                        event.source.checked = event.checked;
-                    },
-                );
+            return;
         }
+
+        this._host
+            .disableProgrammaticVendor(payload)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe(
+                (response) => {
+                    if (response.data) this.hostDisabledVendorsIds.push(vendorId);
+                    this.showSuccessSnackBar();
+                },
+                (e) => {
+                    console.error('Failed to disable programmatic vendor', e);
+                    this._confirmDialog.error();
+                    event.source.checked = event.checked;
+                },
+            );
     }
 }

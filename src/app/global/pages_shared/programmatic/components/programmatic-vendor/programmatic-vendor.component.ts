@@ -162,11 +162,15 @@ export class ProgrammaticVendorComponent implements OnInit, OnChanges, OnDestroy
         });
     }
 
-    private truncateText(data: string, limit = 250): string {
-        if (data.length > limit) {
-            return `${data.slice(0, limit)}...`;
-        }
-
+    /**
+     * Reduces the length of the string based on the given limit
+     *
+     * @param {string} data
+     * @param {number} limit
+     * @returns {string}
+     */
+    private truncateText(data: string, limit: number = 250): string {
+        if (data.length > limit) return `${data.slice(0, limit)}...`;
         return data;
     }
 
