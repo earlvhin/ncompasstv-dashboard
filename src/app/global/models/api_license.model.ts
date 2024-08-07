@@ -30,7 +30,7 @@ export interface API_LICENSE_PROPS {
     dateUpdated: string;
     dealerId: string;
     displayStatus?: any;
-    downloadSpeed?: string;
+    downloadSpeed?: number;
     emailSettings?: number;
     freeStorage: string;
     hostAddress: string;
@@ -93,7 +93,7 @@ export interface API_LICENSE_PROPS {
     tvBrand?: string;
     ui?: string;
     uiVersion: string;
-    uploadSpeed?: string;
+    uploadSpeed?: number;
     zone?: string;
     tvDisplaySettings?: number;
     fastEdgeMonitoringTool?: number;

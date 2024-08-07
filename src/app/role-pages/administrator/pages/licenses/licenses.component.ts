@@ -1245,8 +1245,8 @@ export class LicensesComponent implements OnInit {
         item.dateCreated = this._date.transform(item.dateCreated, 'MMM dd, yyyy');
         item.internetType = this.getInternetType(item.internetType);
         item.internetSpeed = item.internetSpeed == 'Fast' ? 'Good' : item.internetSpeed;
-        item.uploadSpeed = item.uploadSpeed ? this.roundOffNetworkData(parseInt(item.uploadSpeed)) : '';
-        item.downloadSpeed = item.downloadSpeed ? this.roundOffNetworkData(parseInt(item.uploadSpeed)) : '';
+        item.uploadSpeed = item.uploadSpeed;
+        item.downloadSpeed = item.downloadSpeed;
         item.isActivated = item.isActivated == 0 ? 'No' : 'Yes';
         const parse_version = item.appVersion ? JSON.parse(item.appVersion) : '';
         item.ui = parse_version && parse_version.ui ? parse_version.ui : '1.0.0';

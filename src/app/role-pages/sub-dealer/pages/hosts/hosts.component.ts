@@ -609,13 +609,13 @@ export class HostsComponent implements OnInit {
                     hidden: false,
                 },
                 {
-                    value: i.uploadSpeed ? this.roundOffNetworkData(parseInt(i.uploadSpeed)) : '--',
+                    value: i.uploadSpeed,
                     label: 'Speed',
                     customclass: this.getSpeedColorIndicator(i.uploadSpeed),
                     hidden: false,
                 },
                 {
-                    value: i.downloadSpeed ? this.roundOffNetworkData(parseInt(i.downloadSpeed)) : '--',
+                    value: i.downloadSpeed,
                     label: 'Speed',
                     customclass: this.getSpeedColorIndicator(i.downloadSpeed),
                     hidden: false,
