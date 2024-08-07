@@ -34,7 +34,7 @@ export class AddEditProgrammaticModalComponent implements OnInit {
 
         this.programmaticForm = this._form.group({
             name: ['', Validators.required],
-            description: ['', Validators.required],
+            description: ['', [Validators.required, Validators.maxLength(250)]],
             apiUrl: ['', [Validators.required, Validators.pattern(VALID_URL_PATTERN)]],
             vendorKeyValues: this._form.array([], uniqueValuesValidator('key')),
         });
