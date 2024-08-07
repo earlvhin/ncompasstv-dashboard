@@ -42,6 +42,7 @@ export interface API_LICENSE_PROPS {
     internetSpeed: string;
     internetType: string;
     isActivated?: any;
+    isFavorite?: boolean;
     isCecEnabled?: number;
     isRegistered: number;
     lastDisconnect?: string; // for export
