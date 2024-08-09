@@ -16,6 +16,7 @@ import {
     UI_ROLE_DEFINITION_TEXT,
     API_LICENSE_PROPS,
     WORKSHEET,
+    UI_OPERATION_DAYS,
 } from 'src/app/global/models';
 import { UserSortModalComponent } from 'src/app/global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
 import { LicenseModalComponent } from 'src/app/global/components_shared/license_components/license-modal/license-modal.component';
@@ -927,17 +928,21 @@ export class LicensesComponent implements OnInit {
         this._export.generate(filename, this.worksheet);
     }
 
-    getLabel(data: API_HOST) {
+    private getLabel(data: API_LICENSE_PROPS | API_HOST): {
+        date: string;
+        address: string;
+        schedule: string | string[];
+    } {
         this.now = moment().format('d');
         this.now = this.now;
-        let storehours = JSON.parse(data.storeHours);
+        let storehours = JSON.parse(data.storeHours) as UI_OPERATION_DAYS[];
         storehours = storehours.sort((a, b) => a.id - b.id);
 
         const isAlmostOpenAllDay = storehours[this.now].periods.some(
             (i) => i.open === '12:00 AM' && i.close === '11:59 PM',
         );
 
-        const modified_label = {
+        const result = {
             date: moment().format('LL'),
             address: data.hostAddress,
             schedule:
@@ -951,7 +956,7 @@ export class LicensesComponent implements OnInit {
                     : 'Closed',
         };
 
-        return modified_label;
+        return result;
     }
 
     getLicensesTotal() {
@@ -1315,9 +1320,9 @@ export class LicensesComponent implements OnInit {
         });
     }
 
-    private mapToLicensesTable(data): UI_LICENSE[] {
+    private mapToLicensesTable(data: API_LICENSE_PROPS[]): UI_LICENSE[] {
         let count = this.paging_data_licenses.pageStart;
-        return data.map((l: any) => {
+        return data.map((l) => {
             const table = new UI_LICENSE(
                 { value: count++, link: null, editable: false, hidden: false },
                 {
@@ -1375,12 +1380,13 @@ export class LicensesComponent implements OnInit {
                     hidden: false,
                 },
                 {
-                    value: l.contentsUpdated ? l.contentsUpdated : '--',
-                    label: 'Last Push',
+                    value: this._license.setToUtcDateTimeFormat(l.contentsUpdated, 'YYYY-MM-DDThh:mm:ssTZD'),
+                    label: 'Last Update',
                     hidden: false,
                 },
                 {
-                    value: l.timeIn ? this._date.transform(l.timeIn, 'MMM dd y \n h:mm a') : '--',
+                    value: this._license.setToUtcDateTimeFormat(l.timeIn, 'MM/DD/YYYY hh:mm:ss'),
+                    label: 'Last Startup',
                     hidden: false,
                 },
                 {
@@ -1547,12 +1553,12 @@ export class LicensesComponent implements OnInit {
                 no_show: true,
             },
             {
-                name: 'Last Push',
+                name: 'Last Update',
                 sortable: true,
                 column: 'ContentsUpdated',
                 key: 'contentsUpdated',
             },
-            { name: 'Last Disconnect', sortable: true, column: 'TimeIn', key: 'timeIn' },
+            { name: 'Last Startup', sortable: true, column: 'TimeIn', key: 'timeIn' },
             { name: 'Upload Speed', sortable: true, column: 'UploadSpeed', key: 'uploadSpeed' },
             { name: 'Download Speed', sortable: true, column: 'DownloadSpeed', key: 'downloadSpeed' },
             {

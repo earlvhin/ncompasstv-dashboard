@@ -88,7 +88,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     clear_screenshots = false;
     content_per_zone: UI_CONTENT_PER_ZONE[] = [];
     content_search_control: FormControl = new FormControl(null);
-    content_time_update: string;
+    contentsUpdated: string;
     content_schedule_statuses = this._contentScheduleStatuses;
     content_filters: { type: string; name: string }[] = [];
     content_owner_types = this._contentOwnerTypes;
@@ -1979,14 +1979,14 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
     private setLicenseDetails(data: API_LICENSE_PROPS): void {
         this.license_key = data.licenseKey;
-        this.lastStartup = this.setDefaultDateTimeFormat(data.timeIn, 'MMMM DD, YYYY, h:mm:ss A');
-        this.lastDisconnect = this.setDefaultDateTimeFormat(data.timeOut, 'MMMM DD, YYYY, h:mm:ss A');
+        this.lastStartup = this._license.setToUtcDateTimeFormat(data.timeIn, 'MMMM DD, YYYY, h:mm:ss A');
+        this.lastDisconnect = this._license.setToUtcDateTimeFormat(data.timeOut, 'MMMM DD, YYYY, h:mm:ss A');
         this.tags = data.tags as { name: string; tagColor: string }[];
         this.display_status = data.piStatus === 1 ? data.displayStatus : 0;
         this.cec_status = data.piStatus === 1 ? data.isCecEnabled === 1 : false;
         this.pi_status = data.piStatus === 1;
         this.player_status = data.playerStatus === 1;
-        this.content_time_update = this.setDefaultDateTimeFormat(data.contentsUpdated, 'YYYY-MM-DDThh:mm:ssTZD');
+        this.contentsUpdated = this._license.setToUtcDateTimeFormat(data.contentsUpdated, 'YYYY-MM-DDThh:mm:ssTZD');
         this.screen_type = data.screenType ? data.screenType : null;
         this.apps = data.appVersion ? JSON.parse(data.appVersion) : null;
         this.anydesk_id = data.anydeskId;
@@ -2031,11 +2031,11 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         return result;
     }
 
-    private setDefaultDateTimeFormat(dateTime: string, toParseFormat: string) {
-        if (!dateTime || dateTime.length <= 0) return 'N/A';
-        const toExpectedFormat = 'MMM DD, YYYY h:mm A';
-        return moment.utc(dateTime, toParseFormat).format(toExpectedFormat);
-    }
+    // private setDefaultDateTimeFormat(dateTime: string, toParseFormat: string) {
+    //     if (!dateTime || dateTime.length <= 0) return 'N/A';
+    //     const toExpectedFormat = 'MMM DD, YYYY h:mm A';
+    //     return moment.utc(dateTime, toParseFormat).format(toExpectedFormat);
+    // }
 
     private setDealerData(data) {
         const dealerId = data.dealer ? data.dealer.dealerId : data.host.dealerId;
