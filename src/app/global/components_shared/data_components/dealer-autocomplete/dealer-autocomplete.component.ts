@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
-import { DealerService } from 'src/app/global/services';
+import { DealerService, HelperService } from 'src/app/global/services';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { UI_AUTOCOMPLETE } from 'src/app/global/models';
@@ -28,7 +28,10 @@ export class DealerAutocompleteComponent implements OnInit {
 
     protected _unsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(private _dealer: DealerService) {}
+    constructor(
+        private _dealer: DealerService,
+        private _helper: HelperService,
+    ) {}
 
     ngOnInit() {
         if (this.isDealerAdmin) this.getDealerAdminDealers();
@@ -64,8 +67,9 @@ export class DealerAutocompleteComponent implements OnInit {
         this.dealer_selected.emit(null);
     }
 
-    setDealer(id) {
-        id ? this.dealer_selected.emit(id) : this.dealer_selected.emit(null);
+    public setDealer(data: { id: string; value: string }): void {
+        this._helper.currentlySelectedDealer = data;
+        this.dealer_selected.emit(data ? data : null);
     }
 
     private getDealerAdminDealers(): void {

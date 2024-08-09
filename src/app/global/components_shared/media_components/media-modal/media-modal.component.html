@@ -41,11 +41,10 @@
 
             <!-- Advertiser -->
             <div class="position-relative">
-                <app-autocomplete
-                    *ngIf="assignData.dealer && advertisers.length; else no_dealer_adv"
-                    [field_data]="advertisersData"
-                    (value_selected)="advertiserSelected($event)">
-                </app-autocomplete>
+                <app-advertiser-autocomplete
+                    *ngIf="assignData.dealer; else no_dealer_adv"
+                    (advertiser_selected)="advertiserSelected($event)">
+                </app-advertiser-autocomplete>
                 <ng-template #no_dealer_adv>
                     <p class="bg-info text-white p-2 mb-0 sm-text">No Advertiser Available</p>
                 </ng-template>
@@ -59,7 +58,7 @@
                             mat-raised-button
                             class="theme-btn mt-4 mr-2"
                             [mat-dialog-close]="assignData"
-                            [disabled]="!assignData.dealer">
+                            [disabled]="!assignData.dealer || !advertiserHasValue || !hostHasValue">
                             Done
                         </button>
                         <button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="assignData">

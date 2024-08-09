@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import * as moment from 'moment';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 import {
     API_ADVERTISER,
@@ -52,6 +52,7 @@ export class HelperService {
     };
     singleScreenData: API_SINGLE_SCREEN;
     singleUserData: API_USER_DATA;
+    currentlySelectedDealer: { id: string; value: string } = null;
 
     /**
      * Use this function to retrieve the correct date computation using the mat-datepicker.
