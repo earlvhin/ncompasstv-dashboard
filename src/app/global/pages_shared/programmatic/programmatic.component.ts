@@ -59,11 +59,19 @@ export class ProgrammaticComponent implements OnInit {
     }
 
     private convertDateTimeCreatedToUserTimezone(dates: ProgrammaticVendor[]): ProgrammaticVendor[] {
-        return dates.map((dateObject) => {
-            if (dateObject.dateCreated && typeof dateObject.dateCreated === 'string') {
-                dateObject.dateCreated = this.convertToTimezone(dateObject.dateCreated, this.getCurrentTimezone());
+        return dates.map((vendor) => {
+            const hasDateString = (data: ProgrammaticVendor) => {
+                return (
+                    typeof data.dateCreated !== 'undefined' && data.dateCreated && typeof data.dateCreated === 'string'
+                );
+            };
+
+            if (hasDateString(vendor)) {
+                const converted = this.convertToTimezone(vendor.dateCreated, this.getCurrentTimezone());
+                vendor.dateCreated = converted;
             }
-            return dateObject;
+
+            return vendor;
         });
     }
 

@@ -12,8 +12,8 @@ import {
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { DatePipe } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
-import { Observable } from 'rxjs-compat';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
+
 import { DATA_TABLE, DATA_TABLE_ROW, DeleteProgrammaticVendor, ProgrammaticVendor } from 'src/app/global/models';
 import { ProgrammaticService } from 'src/app/global/services';
 import { AddEditProgrammaticModalComponent } from '../add-edit-programmatic-modal/add-edit-programmatic-modal.component';
@@ -42,9 +42,7 @@ export class ProgrammaticVendorComponent implements OnInit, OnChanges, OnDestroy
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes['vendors_list']) {
-            this.updateVendorList();
-        }
+        if (changes['vendors_list']) this.updateVendorList();
     }
 
     ngOnDestroy(): void {
@@ -63,14 +61,12 @@ export class ProgrammaticVendorComponent implements OnInit, OnChanges, OnDestroy
             .open(AddEditProgrammaticModalComponent, config)
             .afterClosed()
             .subscribe({
-                next: () => {
-                    this.on_refresh_vendors.emit();
-                },
+                next: () => this.on_refresh_vendors.emit(),
             });
     }
 
     public onEditVendor(id: string): void {
-        let vendor = this.vendors_list.find(function (obj) {
+        const vendor = this.vendors_list.find(function (obj) {
             return obj.id === id;
         });
 
@@ -85,9 +81,7 @@ export class ProgrammaticVendorComponent implements OnInit, OnChanges, OnDestroy
             .open(AddEditProgrammaticModalComponent, config)
             .afterClosed()
             .subscribe({
-                next: () => {
-                    this.on_refresh_vendors.emit();
-                },
+                next: () => this.on_refresh_vendors.emit(),
             });
     }
 
