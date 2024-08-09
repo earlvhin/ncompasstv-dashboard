@@ -7,7 +7,6 @@ import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver';
 import * as moment from 'moment';
 
-import { environment } from 'src/environments/environment';
 import {
     API_ADVERTISER,
     API_HOST,
@@ -17,7 +16,8 @@ import {
     UI_DEALER_HOSTS,
     UI_TABLE_LICENSE_BY_HOST,
 } from 'src/app/global/models';
-import { AuthService, AdvertiserService, HostService, LicenseService } from 'src/app/global/services';
+
+import { AuthService, AdvertiserService, HostService, LicenseService, HelperService } from 'src/app/global/services';
 import { UserSortModalComponent } from 'src/app/global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
 
 @Component({
@@ -122,6 +122,7 @@ export class HostsComponent implements OnInit {
         private _host: HostService,
         private _license: LicenseService,
         private _title: TitleCasePipe,
+        private _helper: HelperService,
     ) {}
 
     ngOnInit() {
@@ -511,11 +512,17 @@ export class HostsComponent implements OnInit {
         let count = this.hostsPaging.pageStart;
 
         return data.map((hosts) => {
+            const hostNameLengthLimit = 20;
+            const hostNameHasToolTip = hosts.name.length > hostNameLengthLimit;
+
             return new UI_DEALER_HOSTS(
                 { value: hosts.hostId, link: null, editable: false, hidden: true },
                 { value: count++, link: null, editable: false, hidden: false },
                 {
-                    value: hosts.name,
+                    value: this._helper.truncateText(hosts.name, hostNameLengthLimit),
+                    has_tool_tip: hostNameHasToolTip,
+                    tool_tip_value: hosts.name,
+                    tool_tip_position: 'below',
                     link: `/${this.currentRole}/hosts/` + hosts.hostId,
                     editable: false,
                     hidden: false,
@@ -659,10 +666,6 @@ export class HostsComponent implements OnInit {
                 { value: i.isActivated, link: null, editable: false, hidden: true },
             );
         });
-    }
-
-    private roundOffNetworkData(data: number) {
-        return (Math.round(data * 100) / 100).toFixed(2) + ' MBPS';
     }
 
     private getSpeedColorIndicator(speed) {

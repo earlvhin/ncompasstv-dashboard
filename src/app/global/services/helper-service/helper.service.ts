@@ -72,4 +72,16 @@ export class HelperService {
     dateToString(data: Date): string {
         return moment(data).format('YYYY-MM-DD');
     }
+
+    /**
+     * Reduces the length of the string based on the given limit
+     *
+     * @param {string} data
+     * @param {number} limit
+     * @returns {string}
+     */
+    truncateText(data: string, limit: number = 250): string {
+        if (data.length > limit) return `${data.slice(0, limit)}...`;
+        return data;
+    }
 }

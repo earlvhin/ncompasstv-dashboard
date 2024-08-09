@@ -15,7 +15,7 @@ import {
     UI_DEALER_LICENSE_ZONE,
 } from 'src/app/global/models';
 
-import { AuthService, HostService, DealerService } from 'src/app/global/services';
+import { AuthService, HostService, DealerService, HelperService } from 'src/app/global/services';
 
 @Component({
     selector: 'app-hosts',
@@ -123,6 +123,7 @@ export class HostsComponent implements OnInit {
         private _dealer: DealerService,
         private _host: HostService,
         private _title: TitleCasePipe,
+        private _helper: HelperService,
     ) {}
 
     ngOnInit() {
@@ -333,11 +334,17 @@ export class HostsComponent implements OnInit {
         let count = this.hostsPaging.pageStart;
 
         return data.map((hosts) => {
+            const hostNameLengthLimit = 45;
+            const hostNameHasToolTip = hosts.name.length > hostNameLengthLimit;
+
             return new UI_DEALER_HOSTS(
                 { value: hosts.hostId, link: null, editable: false, hidden: true },
                 { value: count++, link: null, editable: false, hidden: false },
                 {
-                    value: hosts.name,
+                    value: this._helper.truncateText(hosts.name, hostNameLengthLimit),
+                    has_tool_tip: hostNameHasToolTip,
+                    tool_tip_value: hosts.name,
+                    tool_tip_position: 'below',
                     link: `/${this.currentRole}/hosts/` + hosts.hostId,
                     new_tab_link: true,
                     editable: false,

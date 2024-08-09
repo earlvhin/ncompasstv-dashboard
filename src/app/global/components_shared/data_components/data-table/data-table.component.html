@@ -140,7 +140,12 @@
                                                 <div *ngIf="!data[d].permission; else userWithPermission">
                                                     <span *ngIf="!data[d].compressed; else shortened_tooltip">
                                                         <div class="default-value-with-url d-flex align-items-center">
-                                                            <div class="value">
+                                                            <div
+                                                                class="value"
+                                                                [matTooltip]="
+                                                                    data[d].has_tool_tip ? data[d].tool_tip_value : ''
+                                                                "
+                                                                [matTooltipPosition]="data[d].tool_tip_position">
                                                                 {{ data[d].value }}
                                                             </div>
                                                             <ng-container
