@@ -2031,12 +2031,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         return result;
     }
 
-    // private setDefaultDateTimeFormat(dateTime: string, toParseFormat: string) {
-    //     if (!dateTime || dateTime.length <= 0) return 'N/A';
-    //     const toExpectedFormat = 'MMM DD, YYYY h:mm A';
-    //     return moment.utc(dateTime, toParseFormat).format(toExpectedFormat);
-    // }
-
     private setDealerData(data) {
         const dealerId = data.dealer ? data.dealer.dealerId : data.host.dealerId;
         this.businessName = data.dealer ? data.dealer.businessName : data.host.businessName;
