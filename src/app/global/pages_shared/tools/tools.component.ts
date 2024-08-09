@@ -8,6 +8,7 @@ import { ToolsService } from '../../services/tools/tools.service';
 import { GLOBAL_SETTINGS } from '../../models/api_global_settings.model';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { API_XML_DATA, EDITING_TOOLS } from 'src/app/global/models';
 
 @Component({
     selector: 'app-tools',
@@ -18,13 +19,24 @@ export class ToolsComponent implements OnInit {
     activity_code_form: FormGroup;
     activities: any;
     global_settings_form: FormGroup;
+    isEditing = false;
+    isEditingOwner: string;
+    isShowingMoreLoading = false;
+    loading = false;
+    page = 1;
+    pageSize = 15;
     title: string = 'Administrative Tools';
     remote_update_disabled: boolean;
     remote_reboot_disabled: boolean;
+    isShowMoreDisabled = false;
+    sortColumn = 'dateCreated';
+    sortOrder = 'desc';
     timeout_duration: number;
     timeout_message: string;
     terminal_entered_scripts: string[] = [];
     terminal_value: string;
+    xmlTagsForm: FormGroup;
+    xmlTagsData: API_XML_DATA[] = [];
 
     _socket: any;
 
@@ -55,10 +67,15 @@ export class ToolsComponent implements OnInit {
             vistarApiKey: ['', Validators.required],
         });
 
+        this.xmlTagsForm = this._form.group({
+            xmlTagName: ['', Validators.required],
+        });
+
         this.disableTimeoutChecker();
 
         this.getActivityCode();
         this.getGlobalSettings();
+        this.getAllXmlTag();
     }
 
     ngOnDestroy() {
@@ -128,7 +145,14 @@ export class ToolsComponent implements OnInit {
         );
     }
 
-    warningModal(status, message, data, return_msg, action): void {
+    private warningModal(
+        status: string,
+        message: string,
+        data: string,
+        return_msg: string,
+        action: string,
+        id?: string,
+    ): void {
         this._dialog.closeAll();
 
         let dialogRef = this._dialog.open(ConfirmationModalComponent, {
@@ -145,21 +169,32 @@ export class ToolsComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                if (result == 'update_reboot') {
-                    this._socket.emit('D_system_update');
-                } else if (result == 'reboot_only') {
-                    this._socket.emit('D_system_reboot');
-                } else if (result == 'run_script') {
-                    this.terminal_entered_scripts.push(this.terminal_value);
-                    this._socket.emit('D_run_script_to_all', this.terminal_value);
-                } else if (result == 'renew_socket') {
-                    this._tool.resetSocketConnection().subscribe((data) => (error) => {
-                        console.error(error);
-                    });
-                } else if (result == 'delete_screenshots') {
-                    this._tool.deleteScreenshots().subscribe((data) => (error) => {
-                        console.error(error);
-                    });
+                switch (result) {
+                    case 'update_reboot':
+                        this._socket.emit('D_system_update');
+                        break;
+                    case 'reboot_only':
+                        this._socket.emit('D_system_reboot');
+                        break;
+                    case 'run_script':
+                        this.terminal_entered_scripts.push(this.terminal_value);
+                        this._socket.emit('D_run_script_to_all', this.terminal_value);
+                        break;
+                    case 'renew_socket':
+                        this._tool.resetSocketConnection().subscribe((data) => (error) => {
+                            console.error(error);
+                        });
+                        break;
+                    case 'delete_screenshots':
+                        this._tool.deleteScreenshots().subscribe((data) => (error) => {
+                            console.error(error);
+                        });
+                        break;
+                    case 'xml_delete':
+                        this.onConfirmDeleteXmlTag(id);
+                        break;
+                    default:
+                        break;
                 }
 
                 const now = moment().format('MMMM Do YYYY, h:mm:ss a');
@@ -179,6 +214,7 @@ export class ToolsComponent implements OnInit {
     getActivityCode() {
         this._tool.getActivities().subscribe((data) => {
             this.activities = data;
+            this.loading = false;
         });
     }
 
@@ -186,28 +222,33 @@ export class ToolsComponent implements OnInit {
         this._tool.createActivity(this.activity_code_form.value).subscribe(
             (data) => {
                 this.activity_code_form.reset();
-                this.activity_code_form.clearValidators();
-                this.activity_code_form.updateValueAndValidity();
 
+                this.loading = true;
                 this.getActivityCode(); // Refresh the activity list
-                this._snackBar.open('Activity created successfully', 'Close', {
-                    duration: 8000,
-                    panelClass: ['snackbar-success', 'custom-close-button'],
-                });
+                this.onShowSnackBar('success', 'Activity created successfully');
             },
             (error) => {
                 console.error('Error creating activity:', error);
-                this._snackBar.open('Error creating activity', 'Close', {
-                    duration: 8000,
-                    panelClass: ['snackbar-error', 'custom-close-button'],
-                });
+                this.onShowSnackBar('error', 'Error creating activity');
             },
         );
     }
 
-    startEditing(activity: any) {
-        activity.editing = true;
-        activity.newDescription = activity.activityDescription;
+    public startEditing(data: EDITING_TOOLS, type: string): void {
+        switch (type) {
+            case 'edit_activity':
+                data.editing = true;
+                data.newDescription = data.activityDescription;
+                break;
+            case 'edit_xml':
+                this.isEditing = true;
+                this.isEditingOwner = data.id;
+
+                //Refresh the input if it has been edited but not saved, then proceed to edit another tag name.
+                this.getAllXmlTag();
+            default:
+                break;
+        }
     }
 
     saveDescription(activity: any) {
@@ -218,23 +259,27 @@ export class ToolsComponent implements OnInit {
             .updateActivity(activity.activityCode, { activityDescription: activity.activityDescription })
             .subscribe(
                 () => {
-                    this._snackBar.open('Activity description updated successfully', 'Close', {
-                        duration: 8000,
-                        panelClass: ['snackbar-success', 'custom-close-button'],
-                    });
+                    this.onShowSnackBar('success', 'Activity description updated successfully');
                 },
                 (error) => {
                     console.error('Error updating activity description:', error);
-                    this._snackBar.open('Error updating activity description', 'Close', {
-                        duration: 8000,
-                        panelClass: ['snackbar-error', 'custom-close-button'],
-                    });
+                    this.onShowSnackBar('error', 'Error updating activity description');
                 },
             );
     }
 
-    cancelEditing(activity: any) {
-        activity.editing = false;
+    public cancelEditing(data: EDITING_TOOLS, type: string): void {
+        switch (type) {
+            case 'cancel_activity':
+                data.editing = false;
+                break;
+            case 'cancel_xml':
+                this.isEditing = false;
+                this.getAllXmlTag();
+                break;
+            default:
+                break;
+        }
     }
 
     confirmDelete(activity: any) {
@@ -250,18 +295,100 @@ export class ToolsComponent implements OnInit {
         this._tool.deleteActivity(activityCode).subscribe(
             () => {
                 this.getActivityCode(); // Refresh activity list after deletion
-                this._snackBar.open(`${activityCode} activity deleted successfully`, 'Close', {
-                    duration: 8000,
-                    panelClass: ['snackbar-error', 'custom-close-button'], // Change to success panel class
-                });
+                this.onShowSnackBar('error', `${activityCode} activity deleted successfully`);
             },
             (error) => {
                 console.error('Error deleting activity:', error);
-                this._snackBar.open('Error deleting activity', 'Close', {
-                    duration: 8000,
-                    panelClass: ['snackbar-error', 'custom-close-button'],
-                });
+                this.onShowSnackBar('error', 'Error deleting activity');
             },
         );
+    }
+
+    //****** START XML TAGS
+
+    public saveXmlTag(): void {
+        this._tool.createXml({ name: this.xmlTagsForm.value.xmlTagName }).subscribe(
+            () => {
+                this.xmlTagsForm.reset();
+
+                this.loading = true;
+                this.getAllXmlTag();
+                this.onShowSnackBar('success', 'XML Tag created successfully');
+            },
+            (error) => {
+                console.error('Error creating XML tag', error);
+                this.onShowSnackBar('error', 'XML Tag Already Exist!');
+            },
+        );
+    }
+
+    private getAllXmlTag(): void {
+        this._tool.getAllXmlTag(this.sortColumn, this.sortOrder, this.page, this.pageSize).subscribe(
+            (response) => {
+                this.xmlTagsData = response.data.paging.entities;
+                this.isShowMoreDisabled = response.data.paging.totalEntities < response.data.paging.pageSize;
+                this.isShowingMoreLoading = false;
+                this.loading = false;
+            },
+            (error) => {
+                console.error('Error getting XML Tags', error);
+            },
+        );
+    }
+
+    public onSaveEditedXmlTag(a: API_XML_DATA): void {
+        this._tool.updateXmlTag(a.id, { Name: a.name }).subscribe(
+            () => {
+                this.isEditing = false;
+                this.onShowSnackBar('success', 'XML Tag edited successfully');
+            },
+            (error) => {
+                console.error('Error editing XML Tag', error);
+                this.onShowSnackBar('error', 'XML Tag Already Exist!');
+            },
+        );
+    }
+
+    public onDeleteXmlTag(id: string): void {
+        this.warningModal(
+            'warning',
+            'Delete XML Tag',
+            'Are you sure you want to delete this XML Tag?',
+            '',
+            'xml_delete',
+            id,
+        );
+    }
+
+    private onConfirmDeleteXmlTag(id: string): void {
+        this._tool.deleteXmlTag(id).subscribe(
+            () => {
+                this.getAllXmlTag();
+                this.onShowSnackBar('success', 'XML Tag deleted successfully');
+                this.loading = true;
+            },
+            (error) => {
+                console.error('Error deleting XML Tags', error);
+            },
+        );
+    }
+
+    public onShowMoreData(): void {
+        this.isShowMoreDisabled = true;
+        this.isShowingMoreLoading = true;
+
+        setTimeout(() => {
+            this.pageSize += 15;
+            this.getAllXmlTag();
+        }, 1000);
+    }
+
+    //****** END XML TAGS
+
+    private onShowSnackBar(status: string, message: string): void {
+        this._snackBar.open(message, 'Close', {
+            duration: 5000,
+            panelClass: [`snackbar-${status}`, 'custom-close-button'],
+        });
     }
 }
