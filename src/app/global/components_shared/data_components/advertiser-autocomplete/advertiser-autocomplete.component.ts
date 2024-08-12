@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
-import { AdvertiserService, HelperService } from 'src/app/global/services';
+import { AdvertiserService, AuthService, HelperService } from 'src/app/global/services';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { UI_AUTOCOMPLETE, UI_AUTOCOMPLETE_DATA } from 'src/app/global/models';
@@ -31,17 +31,18 @@ export class AdvertiserAutocompleteComponent implements OnInit {
     protected _unsubscribe: Subject<void> = new Subject();
 
     constructor(
+        private _auth: AuthService,
         private _advertiser: AdvertiserService,
         private _helper: HelperService,
     ) {}
 
     ngOnInit() {
-        this.onDealerSelected(this._helper.currentlySelectedDealer);
+        this.onDealerSelected(this.currentDealerId);
     }
 
     public setAutocomplete(advertisers: UI_AUTOCOMPLETE_DATA[]): void {
         this.advertiserData = {
-            label: 'Advertiser',
+            label: 'Select Advertiser Name',
             placeholder: 'Ex: Blue Iguana',
             data: advertisers,
             unselect: true,
@@ -83,10 +84,30 @@ export class AdvertiserAutocompleteComponent implements OnInit {
         this.advertiser_selected.emit(null);
     }
 
-    public onDealerSelected(dealerId): void {
-        if (dealerId.id) {
-            this.getAdvertisersMinified(dealerId.id);
-            return;
-        }
+    /**
+     * Handles the event when a user selects a dealer
+     *
+     * @param {string} dealerId
+     * @returns {void}
+     */
+    public onDealerSelected(dealerId: string): void {
+        if (!dealerId) return;
+        this.getAdvertisersMinified(dealerId);
+    }
+
+    protected get isDealer() {
+        const DEALER_ROLES = ['dealer', 'sub-dealer'];
+        return DEALER_ROLES.includes(this._auth.current_role);
+    }
+
+    /**
+     * Retrieves the dealer ID based on the isDealer flag
+     *
+     * returns {string} The dealer id in string value
+     */
+    protected get currentDealerId(): string {
+        const selectedDealer = this._helper.currentlySelectedDealer;
+        if (this.isDealer) return this._auth.current_user_value.roleInfo.dealerId;
+        return selectedDealer == null ? null : selectedDealer.id;
     }
 }
