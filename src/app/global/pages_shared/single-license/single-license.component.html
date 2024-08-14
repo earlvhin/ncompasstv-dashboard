@@ -1164,7 +1164,20 @@
                                     <div
                                         class="col-md-1"
                                         *ngFor="let a of content_per_zone[selected_zone_index].contents; let i = index">
-                                        <div class="mr-2">
+                                        <div
+                                            class="content-thumbnail-wrapper mr-2"
+                                            [ngClass]="
+                                                a.playlist_content_id == currentlyPlayingContent ? 'playing' : ''
+                                            ">
+                                            <div
+                                                class="playing-indicator-wrapper"
+                                                *ngIf="a.playlist_content_id == currentlyPlayingContent">
+                                                <div
+                                                    class="playing-indicator"
+                                                    [ngClass]="currentlyPlayingProgrammatic ? 'programmatic' : ''">
+                                                    <span class="fas fa-play"></span>
+                                                </div>
+                                            </div>
                                             <app-thumbnail-card
                                                 (click)="
                                                     onOpenMediaViewer(content_per_zone[selected_zone_index].contents, i)

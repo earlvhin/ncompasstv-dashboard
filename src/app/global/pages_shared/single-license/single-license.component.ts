@@ -95,6 +95,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     content_types = this._contentTypes;
     current_operation: { day: string; period: string };
     current_zone_name_selected: string;
+    currentlyPlayingContent: string = '';
+    currentlyPlayingProgrammatic: boolean = false;
     customRoute =
         this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.roleRoute;
     dealerData: API_DEALER;
@@ -1287,6 +1289,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         this.socketOnScreenshotSuccess();
         this.socketOnContentUpdated();
         this.socketOnCecCheck();
+        this.socketOnSyncPlaying();
     }
 
     private emitInitialSocketEvents(): void {
@@ -1756,11 +1759,13 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
                     this.current_zone_name_selected = selectedZoneName;
 
-                    this.screen_zone = {
-                        playlistName: selectedZone.playlist_name,
-                        playlistId: selectedZone.playlist_id,
-                        zone: selectedZone.zone_name,
-                    };
+                    if (selectedZone) {
+                        this.screen_zone = {
+                            playlistName: selectedZone.playlist_name,
+                            playlistId: selectedZone.playlist_id,
+                            zone: selectedZone.zone_name,
+                        };
+                    }
 
                     if (!this.has_background_zone) {
                         this._template.onSelectZone.emit(selectedZoneName);
@@ -2264,6 +2269,33 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         });
     }
 
+    private socketOnSyncPlaying(): void {
+        this._socket.on(
+            'currently_playing',
+            (data: { license_id: string; playlist_content_id: string; programmatic: boolean }) => {
+                // Check if triggered for license id
+                if (this.license_id !== data.license_id) return;
+
+                const ad =
+                    this.content_per_zone[this.selected_zone_index] &&
+                    this.content_per_zone[this.selected_zone_index].contents.find(
+                        (i: UI_CONTENT) => i.playlist_content_id === data.playlist_content_id,
+                    );
+
+                // Check if playlist content id is in the selected zone
+                if (ad || data.programmatic) {
+                    this.currentlyPlayingProgrammatic = data.programmatic;
+
+                    // Check if asset is programmatic
+                    if (this.currentlyPlayingProgrammatic) return;
+
+                    // Set playlist current playing content value is playlist content id is present
+                    if (data.playlist_content_id) this.currentlyPlayingContent = data.playlist_content_id;
+                }
+            },
+        );
+    }
+
     private socketOnSuccessfulSpeedTest(): void {
         this._socket.on('SS_speed_test_success', (data) => {
             const { license_id, pingLatency, downloadMbps, uploadMbps, date } = data;
@@ -2410,6 +2442,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         const description = `${currentZone} Zone: ${this.number_of_contents} items`;
         const title = ['Assets Breakdown', description];
 
+        if (!chart) return;
+
         chart.options.plugins.title = { display: true, text: title };
         chart.data.labels = [
             `Hosts: ${hosts}`,
@@ -2462,6 +2496,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         const { advertisers, feeds, fillers, hosts, others } = this.duration_breakdown;
         const description = `Total playtime: ${this.duration_breakdown_text.total}`;
         const title = ['Duration Breakdown', description];
+
+        if (!chart) return;
 
         chart.options.plugins.title = { display: true, text: title };
 
