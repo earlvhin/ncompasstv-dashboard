@@ -12,7 +12,7 @@ import {
     UI_AUTOCOMPLETE_DATA,
     UI_ROLE_DEFINITION,
 } from 'src/app/global/models';
-import { AdvertiserService, AuthService, ContentService, HostService } from 'src/app/global/services';
+import { AdvertiserService, AuthService, ContentService, HelperService, HostService } from 'src/app/global/services';
 import { DealerService, StatisticsService } from 'src/app/global/services';
 
 @Component({
@@ -25,6 +25,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
     advertisersData: UI_AUTOCOMPLETE;
     advertiserOwner: UI_AUTOCOMPLETE_DATA[] = [];
     advertiser_data: any[] = [];
+    advertiserHasValue = false;
     assignData = { dealer: '', host: '', advertiser: '' };
     dealers: any = [];
     dealers_data: any = [];
@@ -32,6 +33,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
     hostOwner: UI_AUTOCOMPLETE_DATA[] = [];
     hosts_data: any[] = [];
     hosts: API_HOST[] = [];
+    hostHasValue: boolean;
     initialLoad = false;
     isDealer = false;
     isEdit: boolean;
@@ -136,8 +138,10 @@ export class MediaModalComponent implements OnInit, OnDestroy {
     public advertiserSelected(data: { id: string; value: string }): void {
         if (data == null) {
             this.assignData.advertiser = '';
+            this.advertiserHasValue = false;
             return;
         }
+        this.advertiserHasValue = true;
         this.assignData.advertiser = data.id;
     }
 
@@ -168,8 +172,10 @@ export class MediaModalComponent implements OnInit, OnDestroy {
     public hostSelected(data: { id: string; value: string }): void {
         if (data == null) {
             this.assignData.host = '';
+            this.hostHasValue = false;
             return;
         }
+        this.hostHasValue = true;
         this.assignData.host = data.id;
     }
 

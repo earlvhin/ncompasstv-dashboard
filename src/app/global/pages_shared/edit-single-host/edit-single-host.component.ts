@@ -517,15 +517,15 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
         const { city, state, region } = data || { city: '', state: '', region: '' };
         this.city_selected = data.city;
 
-        if (!this.canadaSelected) {
-            this._formControls.city.setValue(city);
-            this._formControls.state.setValue(state);
-            this._formControls.region.setValue(region);
-
-            this.city_selected = data.city;
-        } else {
+        if (this.canadaSelected) {
             this.canada_selected = data.country === 'CA';
+            return;
         }
+
+        this._formControls.city.setValue(city);
+        this._formControls.state.setValue(state);
+        this._formControls.region.setValue(region);
+        this.city_selected = data.city;
     }
 
     public setInitialCity(isLoaded: boolean): void {

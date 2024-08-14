@@ -12,6 +12,7 @@ import { AddFillerContentComponent } from './pages_shared/fillers/components/add
 import { AddFillerFeedsComponent } from './pages_shared/fillers/components/add-filler-content/components/add-filler-feeds/add-filler-feeds.component';
 import { AddFillerGroupComponent } from './pages_shared/fillers/components/add-filler-group/add-filler-group.component';
 import { AdvertiserViewComponent } from './components_shared/locator_components/advertiser-view/advertiser-view.component';
+import { AdvertiserAutocompleteComponent } from './components_shared/data_components/advertiser-autocomplete/advertiser-autocomplete.component';
 import { AgmCoreModule } from '@agm/core';
 import { AssignLicenseModalComponent } from './components_shared/license_components/assign-license-modal/assign-license-modal.component';
 import { AutocompleteComponent } from './components_shared/data_components/autocomplete/autocomplete.component';
@@ -261,6 +262,7 @@ const ngComponents = [
     AddFillerFeedsComponent,
     AddFillerGroupComponent,
     AdvertiserViewComponent,
+    AdvertiserAutocompleteComponent,
     AssignLicenseModalComponent,
     AutocompleteComponent,
     AutocompleteFieldComponent,

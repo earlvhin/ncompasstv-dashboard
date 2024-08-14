@@ -1,0 +1,15 @@
+<div class="advertiser-autocomplete">
+    <app-autocomplete
+        [field_data]="advertiserData"
+        *ngIf="advertiserData.data.length; else loading"
+        (no_data_found)="advertiserNotFound($event)"
+        (value_selected)="setAdvertiser($event)">
+    </app-autocomplete>
+
+    <ng-template #loading>
+        <app-spinner *ngIf="!loadingAdvertiserData" [diameter]="30"></app-spinner>
+        <p class="bg-danger text-white p-2 mb-3 sm-text" *ngIf="advertiserDataFetched && !advertisers.length">
+            No advertisers found for this dealer
+        </p>
+    </ng-template>
+</div>

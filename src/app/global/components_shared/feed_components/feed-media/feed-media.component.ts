@@ -83,16 +83,13 @@ export class FeedMediaComponent implements OnInit {
 
             this.selected_media_files.push(media_file);
         } else {
-            if (this.selected_media_files.length < 1) {
-                this.selected_media_files.push(media_file);
-            } else {
-                if (this.selected_media_files.includes(media_file)) {
-                    this.selected_media_files = this.selected_media_files.filter(
-                        (i) => i.contentId !== media_file.contentId,
-                    );
-                    return;
-                }
-            }
+            const index = this.selected_media_files.findIndex((d) => d.contentId === media_file.contentId);
+
+            if (index !== -1) {
+                this.selected_media_files[index].contentId === media_file.contentId
+                    ? (this.selected_media_files = [])
+                    : (this.selected_media_files[0] = media_file);
+            } else this.selected_media_files = [media_file];
         }
     }
 

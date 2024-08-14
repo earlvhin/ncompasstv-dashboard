@@ -90,6 +90,11 @@ export class HostAutocompleteComponent implements OnInit, OnChanges {
         this.host_selected.emit(data || null);
     }
 
+    public hostNotFound(keyword: string): void {
+        this.hostsData.noData = 'Host Not Found';
+        this.host_selected.emit(null);
+    }
+
     onDealerSelected() {
         if (this.dealer_id) {
             this.getHostsMinified(this.dealer_id);

@@ -6,17 +6,17 @@
                     <mat-form-field class="full-width" appearance="fill" appDefaultDateFormat>
                         <mat-label class="md-text">Start Date</mat-label>
                         <input
-                            formControlName="start_date"
-                            (dateInput)="onSelectStartDate($event.value)"
                             matInput
+                            formControlName="start_date"
+                            (dateInput)="dateSelected($event.value, 'start')"
                             [matDatepickerFilter]="dateFilter"
-                            [matDatepicker]="datePicker"
+                            [matDatepicker]="startDatePicker"
                             readonly />
                         <mat-datepicker-toggle
                             matSuffix
-                            [for]="datePicker"
+                            [for]="startDatePicker"
                             [disabled]="searching"></mat-datepicker-toggle>
-                        <mat-datepicker #datePicker></mat-datepicker>
+                        <mat-datepicker #startDatePicker></mat-datepicker>
                     </mat-form-field>
                 </div>
             </div>
@@ -25,18 +25,18 @@
                     <mat-form-field class="full-width" appearance="fill" appDefaultDateFormat>
                         <mat-label class="md-text">End Date</mat-label>
                         <input
-                            formControlName="end_date"
-                            (dateInput)="onSelectEndDate($event.value)"
                             matInput
+                            formControlName="end_date"
+                            (dateInput)="dateSelected($event.value, 'end')"
                             [matDatepickerFilter]="dateFilter"
-                            [matDatepicker]="datePicker2"
+                            [matDatepicker]="endDatePicker"
                             [min]="start_date"
                             readonly />
                         <mat-datepicker-toggle
                             matSuffix
-                            [for]="datePicker2"
+                            [for]="endDatePicker"
                             [disabled]="searching"></mat-datepicker-toggle>
-                        <mat-datepicker #datePicker2></mat-datepicker>
+                        <mat-datepicker #endDatePicker></mat-datepicker>
                     </mat-form-field>
                 </div>
             </div>

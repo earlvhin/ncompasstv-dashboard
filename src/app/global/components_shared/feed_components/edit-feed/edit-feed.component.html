@@ -85,37 +85,47 @@
                     </div>
                 </ng-template>
 
-                <div class="alert alert-success" *ngIf="!isInvalidUrl && !isDirectTechUrl">
-                    <p class="sm-text font-weight-bold">Entered Feed URL is a supported format.</p>
-                </div>
-
-                <ng-container *ngIf="!isInvalidUrl && isDirectTechUrl">
-                    <div class="alert alert-warning">
-                        <p class="sm-text font-weight-bold">Entered Feed URL may be invalid.</p>
+                <ng-container *ngIf="!is_widget_feed">
+                    <div class="alert alert-success" *ngIf="!isInvalidUrl && !isDirectTechUrl">
+                        <p class="sm-text font-weight-bold">Entered Feed URL is a supported format.</p>
                     </div>
-                </ng-container>
 
-                <ng-container *ngIf="isInvalidUrl">
-                    <div class="alert alert-danger">
-                        <p class="sm-text font-weight-bold">Feed URL Error! Possible reasons may be:</p>
-                        <ul class="sm-text font-weight-bold pl-4">
-                            <li>Incorrect Link</li>
-                            <li>The feed URL does not start with "http" or "https"</li>
-                        </ul>
-                    </div>
+                    <ng-container *ngIf="!isInvalidUrl && isDirectTechUrl">
+                        <div class="alert alert-warning">
+                            <p class="sm-text font-weight-bold">Entered Feed URL may be invalid.</p>
+                        </div>
+                    </ng-container>
+
+                    <ng-container *ngIf="isInvalidUrl">
+                        <div class="alert alert-danger">
+                            <p class="sm-text font-weight-bold">Feed URL Error! Possible reasons may be:</p>
+                            <ul class="sm-text font-weight-bold pl-4">
+                                <li>Incorrect Link</li>
+                                <li>The feed URL does not start with "http" or "https"</li>
+                            </ul>
+                        </div>
+                    </ng-container>
                 </ng-container>
             </div>
             <div class="d-flex flex-even align-items-center">
-                <button
-                    mat-button
-                    mat-raised-button
-                    class="theme-btn mr-2"
-                    [disabled]="isInvalidUrl || !feedUrlHasValue || isValidatingUrl">
-                    Submit
-                </button>
+                <ng-container *ngIf="!is_widget_feed; else widgetButton">
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn mr-2"
+                        [disabled]="isInvalidUrl || !feedUrlHasValue || isValidatingUrl">
+                        Submit
+                    </button>
+                </ng-container>
                 <button mat-button mat-raised-button class="theme-btn btn-danger" [mat-dialog-close]="false">
                     Cancel
                 </button>
+
+                <ng-template #widgetButton>
+                    <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="edit_feed_form.invalid">
+                        Submit
+                    </button>
+                </ng-template>
             </div>
         </form>
     </ng-container>

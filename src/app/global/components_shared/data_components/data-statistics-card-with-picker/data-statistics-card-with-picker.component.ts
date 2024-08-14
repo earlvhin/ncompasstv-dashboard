@@ -1,9 +1,9 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { DealerService } from '../../../../global/services/dealer-service/dealer.service';
-import { API_DEALER } from '../../../../global/models/api_dealer.model';
 import * as moment from 'moment';
+import { DealerService, HelperService } from 'src/app/global/services';
+import { API_DEALER } from 'src/app/global/models';
 
 @Component({
     selector: 'app-data-statistics-card-with-picker',
@@ -62,6 +62,7 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
     constructor(
         private _form_builder: FormBuilder,
         private _dealer: DealerService,
+        private _helper: HelperService,
     ) {}
 
     ngOnInit() {
@@ -106,16 +107,19 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
         return this.is_date_valid;
     };
 
-    onSelectStartDate(e) {
-        this.start_date = e;
-        this.start_date_for_query = moment(e).format('YYYY-MM-DD');
-        this.checkIfCompleteData();
-    }
+    public dateSelected(date: Date, type: string = 'start'): void {
+        const parsed = this._helper.parseDate(date);
+        const stringified = this._helper.dateToString(parsed);
 
-    onSelectEndDate(e) {
-        this.end_date = e;
-        this.end_date_for_query = moment(e).format('YYYY-MM-DD');
-        this.updateValidity();
+        if (type === 'start') {
+            this.start_date = parsed;
+            this.start_date_for_query = stringified;
+        } else {
+            this.end_date = parsed;
+            this.end_date_for_query = stringified;
+            this.updateValidity();
+        }
+
         this.checkIfCompleteData();
     }
 

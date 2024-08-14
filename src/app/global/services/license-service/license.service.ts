@@ -729,6 +729,19 @@ export class LicenseService extends BaseService {
         return this.postRequest(this.updaters.tv_brand, body);
     }
 
+    /**
+     * Parses a datetime string to UTC in human-readable format using the Moment.js library
+     *
+     * @param {string} dateTime
+     * @param {string} parseFromFormat
+     * @returns {string} Returns the timestamp in human-readable string or '--' if the timestamp is null or blank
+     */
+    setToUtcDateTimeFormat(dateTime: string, parseFromFormat: string = 'MMMM DD, YYYY, h:mm:ss A'): string {
+        if (!dateTime || dateTime.length <= 0) return '--';
+        const parseToFormat = 'MMM DD, YYYY h:mm A';
+        return moment.utc(dateTime, parseFromFormat).format(parseToFormat);
+    }
+
     protected setUrlParams(filters: any, enforceTagSearchKey = false, allowBlanks = true) {
         let result = '';
         Object.keys(filters).forEach((key) => {
