@@ -25,7 +25,6 @@ export class MediaModalComponent implements OnInit, OnDestroy {
     advertisersData: UI_AUTOCOMPLETE;
     advertiserOwner: UI_AUTOCOMPLETE_DATA[] = [];
     advertiser_data: any[] = [];
-    advertiserHasValue = false;
     assignData = { dealer: '', host: '', advertiser: '' };
     dealers: any = [];
     dealers_data: any = [];
@@ -33,7 +32,6 @@ export class MediaModalComponent implements OnInit, OnDestroy {
     hostOwner: UI_AUTOCOMPLETE_DATA[] = [];
     hosts_data: any[] = [];
     hosts: API_HOST[] = [];
-    hostHasValue: boolean;
     initialLoad = false;
     isDealer = false;
     isEdit: boolean;
@@ -136,47 +134,35 @@ export class MediaModalComponent implements OnInit, OnDestroy {
     }
 
     public advertiserSelected(data: { id: string; value: string }): void {
-        if (data == null) {
-            this.assignData.advertiser = '';
-            this.advertiserHasValue = false;
-            return;
-        }
-        this.advertiserHasValue = true;
-        this.assignData.advertiser = data.id;
+        this.assignData.advertiser = data == null ? '' : data.id;
     }
 
     public dealerSelected(data: { id: string; value: string }): void {
-        if (data == null) {
-            this.assignData.dealer = '';
+        this.assignData.dealer = data == null ? '' : data.id;
+
+        if (!this.isEdit) {
+            this.getAdvertiserByDealerId();
             return;
         }
-        this.assignData.dealer = data.id;
 
-        if (this.isEdit) {
-            this.loading_data = false;
-            if (this.contentData.fileType != 'feed') {
-                this.assignData.host = '';
-                this.assignData.advertiser = '';
-                this.to_empty = true;
-                this.loading_form = false;
-                this.getAdvertiserByDealerId();
-            }
+        this.loading_data = false;
 
-            if (data.id != this.temp_dname) {
-                this.assignData.host = '';
-                this.assignData.advertiser = '';
-            }
-        } else this.getAdvertiserByDealerId();
+        if (this.contentData.fileType != 'feed') {
+            this.assignData.host = '';
+            this.assignData.advertiser = '';
+            this.to_empty = true;
+            this.loading_form = false;
+            this.getAdvertiserByDealerId();
+        }
+
+        if (data.id != this.temp_dname) {
+            this.assignData.host = '';
+            this.assignData.advertiser = '';
+        }
     }
 
     public hostSelected(data: { id: string; value: string }): void {
-        if (data == null) {
-            this.assignData.host = '';
-            this.hostHasValue = false;
-            return;
-        }
-        this.hostHasValue = true;
-        this.assignData.host = data.id;
+        this.assignData.host = data == null ? '' : data.id;
     }
 
     public onToggleFloatingContent(event: { checked: boolean }): void {
