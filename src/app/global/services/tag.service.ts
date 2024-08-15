@@ -79,7 +79,7 @@ export class TagService extends BaseService {
         return this.postRequest(this.creators.tag_type, body);
     }
 
-    deleteAllTagsFromOwner(id: string, displayName: string) {
+    deleteAllTagsFromOwner(id: string, displayName: string): Observable<any> {
         const body = { id, displayName };
         return this.postRequest(this.deleters.tag_by_owner_id, body);
     }

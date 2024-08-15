@@ -588,7 +588,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
         this.activityLoaded = true;
     }
 
-    public activity_mapToUI(activity: USER_ACTIVITY[], nonExistentTargetIds: string[]): any {
+    public activity_mapToUI(activity: USER_ACTIVITY[], nonExistentTargetIds: string[]): USER_ACTIVITY[] {
         let count = 1;
         const noBreadcrumEntities = ['tag'];
 

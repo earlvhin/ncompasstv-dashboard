@@ -36,13 +36,18 @@ export class TagsSectionComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
-        if (this.tagNameRoute) {
-            this.searchTags(this.tagNameRoute);
-        } else {
+        const isNullOrBlank = (data: string) => {
+            return typeof data === 'undefined' || !data || !data.length;
+        };
+
+        if (isNullOrBlank(this.tagNameRoute)) {
             if (!this.tags || this.tags.length <= 0) this.searchTags();
             this.subscribeToSearch();
             this.subscribeToRefreshTableData();
+            return;
         }
+
+        this.searchTags(this.tagNameRoute);
     }
 
     ngOnDestroy() {
