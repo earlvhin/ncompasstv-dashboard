@@ -110,8 +110,8 @@ export class LicensesComponent implements OnInit {
             hidden: true,
             no_show: true,
         },
-        { name: 'Last Push', sortable: true, key: 'contentsUpdated', column: 'ContentsUpdated' },
-        { name: 'Last Disconnect', sortable: true, key: 'timeIn', column: 'TimeIn' },
+        { name: 'Last Update', sortable: true, key: 'contentsUpdated', column: 'ContentsUpdated' },
+        { name: 'Last Startup', sortable: true, key: 'timeIn', column: 'TimeIn' },
         { name: 'Upload Speed', sortable: true, column: 'UploadSpeed', key: 'uploadSpeed' },
         { name: 'Download Speed', sortable: true, column: 'DownloadSpeed', key: 'downloadSpeed' },
         { name: 'Net Type', sortable: true, key: 'internetType', column: 'InternetType' },
@@ -712,8 +712,8 @@ export class LicensesComponent implements OnInit {
         item.isActivated = item.isActivated == 0 ? 'Inactive' : 'Active';
         item.piStatus = item.piStatus == 0 ? 'Offline' : 'Online';
         item.displayStatus = item.displayStatus == 1 ? 'ON' : 'OFF';
-        item.uploadSpeed = item.uploadSpeed ? this.roundOffNetworkData(parseInt(item.uploadSpeed)) : '';
-        item.downloadSpeed = item.downloadSpeed ? this.roundOffNetworkData(parseInt(item.uploadSpeed)) : '';
+        item.uploadSpeed = item.uploadSpeed;
+        item.downloadSpeed = item.downloadSpeed;
         item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';
         item.tagsToString = item.tags.join(',');
         item.storeHours = this.getStoreHourseParse(item);
@@ -845,13 +845,13 @@ export class LicensesComponent implements OnInit {
                     hidden: false,
                 },
                 {
-                    value: i.contentsUpdated ? this._date.transform(i.contentsUpdated) : '--',
+                    value: this._license.setToUtcDateTimeFormat(i.contentsUpdated, 'YYYY-MM-DDThh:mm:ssTZD'),
                     link: null,
                     editable: false,
                     hidden: false,
                 },
                 {
-                    value: i.timeIn ? this._date.transform(i.timeIn) : '--',
+                    value: this._license.setToUtcDateTimeFormat(i.timeIn, 'MM/DD/YYYY hh:mm:ss'),
                     link: null,
                     editable: false,
                     hidden: false,

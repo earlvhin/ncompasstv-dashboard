@@ -24,6 +24,7 @@ export * from './playlist-service/playlist.service';
 export * from './release-notes/release-notes.service';
 export * from './role-service/role.service';
 export * from './screen-service/screen.service';
+export * from './statistics-service/statistics.service';
 export * from './tag.service';
 export * from './template-service/template.service';
 export * from './user-service/user.service';

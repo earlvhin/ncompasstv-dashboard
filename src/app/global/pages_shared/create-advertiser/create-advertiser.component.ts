@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl, ValidatorFn } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { Router } from '@angular/router';
 import { Subscription, Subject, forkJoin, ObservableInput } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, debounceTime } from 'rxjs/operators';
 
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { ImageSelectionModalComponent } from '../../components_shared/page_components/image-selection-modal/image-selection-modal.component';
@@ -18,6 +18,10 @@ import {
     LocationService,
     MapService,
 } from 'src/app/global/services';
+
+import { STATES_PROVINCES } from '../../constants/states';
+import { AUTOCOMPLETE_ACTIONS } from '../../constants/autocomplete';
+import { CityData } from '../../models/api_cities_state.model';
 
 import {
     API_CREATE_ADVERTISER,
@@ -34,11 +38,9 @@ import {
     providers: [TitleCasePipe],
 })
 export class CreateAdvertiserComponent implements OnInit {
+    canadaSelected: boolean = false;
     categories_data: any;
-    city_loaded = false;
-    city_state: City[] = [];
     canada_selected: boolean = false;
-    city_selected: string;
     dealerHasValue: boolean;
     gen_categories_data: any[];
     category_selected: string;
@@ -52,7 +54,6 @@ export class CreateAdvertiserComponent implements OnInit {
     is_creating_advertiser: boolean = false;
     is_dealer: boolean = false;
     is_page_ready = false;
-    // is_24hours: boolean = false;
     lat: number = 39.7395247;
     lng: number = -105.1524133;
     loading_data: boolean = true;
@@ -68,11 +69,14 @@ export class CreateAdvertiserComponent implements OnInit {
     paging: any;
     place_id: string;
     search_keyword: string = '';
+    selectedCity: string;
     selectedDealer: UI_AUTOCOMPLETE_INITIAL_DATA[] = [];
     searchDisabled = false;
     selected_location: any;
+    stateAndProvinces: { state: string; abbreviation: string; region: string }[] = STATES_PROVINCES;
     subscription: Subscription = new Subscription();
     title: string = 'Create Advertiser Profile';
+    triggerData: Subject<any> = new Subject<any>();
     isListVisible: boolean = true;
 
     protected default_host_image = 'assets/media-files/admin-icon.png';
@@ -103,7 +107,6 @@ export class CreateAdvertiserComponent implements OnInit {
         this.initializeCreateAdvertiserForm();
         this.initializeGooglePlaceForm();
         this.loadInitialData();
-        this.getCities();
 
         if (this.isDealer || this.isSubDealer) {
             this.searchDisabled = true;
@@ -236,11 +239,7 @@ export class CreateAdvertiserComponent implements OnInit {
 
         this.subscription.add(
             this.new_advertiser_form.valueChanges.subscribe((data) => {
-                if (this.new_advertiser_form.valid) {
-                    this.form_invalid = false;
-                } else {
-                    this.form_invalid = true;
-                }
+                this.form_invalid = !(this.new_advertiser_form.valid && data.city !== '');
             }),
         );
 
@@ -284,7 +283,6 @@ export class CreateAdvertiserComponent implements OnInit {
                         return category;
                     });
 
-                    this.city_loaded = true;
                     this.loading_data = false;
                     this.is_page_ready = true;
                 },
@@ -294,61 +292,13 @@ export class CreateAdvertiserComponent implements OnInit {
             );
     }
 
-    setCity(data): void {
-        let cityState = data.split(',')[0].trim();
-        if (!this.canada_selected) {
-            this.newAdvertiserFormControls.city.setValue(cityState);
-            this.city_selected = cityState;
-            this._location
-                .get_states_regions(data.substr(data.indexOf(',') + 2))
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    (data) => {
-                        this.newAdvertiserFormControls.state.setValue(data[0].abbreviation);
-                        this.newAdvertiserFormControls.region.setValue(data[0].region);
-                    },
-                    (error) => {
-                        console.error(error);
-                    },
-                );
-        } else {
-            let sliced_address = data.split(', ');
-            let filtered_data = this.city_state.filter((city) => {
-                return city.city === sliced_address[0];
-            });
+    public getSelectedCity(data: CityData): void {
+        if (data) this.canada_selected = data.country === 'CA';
 
-            this.newAdvertiserFormControls.city.setValue(cityState);
-            this.newAdvertiserFormControls.state.setValue(filtered_data[0].state);
-            this.newAdvertiserFormControls.region.setValue(filtered_data[0].region);
-        }
-    }
-
-    getCities() {
-        this._location
-            .get_cities()
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((response: any) => {
-                this.city_state = response.map((city) => {
-                    return new City(city.city, `${city.city}, ${city.state}`, city.state);
-                });
-            });
-    }
-
-    getCanadaCities() {
-        this._location
-            .get_canada_cities()
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((response: any) => {
-                this.city_state = response.map((city) => {
-                    return new City(
-                        city.city,
-                        `${city.city}, ${city.state_whole}`,
-                        city.state,
-                        city.region,
-                        city.state_whole,
-                    );
-                });
-            });
+        const { city, state, region } = data || { city: '', state: '', region: '' };
+        this.newAdvertiserFormControls.city.setValue(city ? `${city}, ${state}` : `${state}`);
+        this.newAdvertiserFormControls.state.setValue(`${state}`);
+        this.newAdvertiserFormControls.region.setValue(`${region}`);
     }
 
     // Convenience getter for easy access to form fields
@@ -389,8 +339,15 @@ export class CreateAdvertiserComponent implements OnInit {
     }
 
     plotToMap(data: any) {
-        let sliced_address = data.address.split(', ');
-        let state = data.address.substring(data.address.lastIndexOf(','));
+        const sliced_address = data.address.split(', ');
+        const isCanada = data.address.includes('Canada');
+        const isUSA = data.address.includes('USA') || data.address.includes('United States');
+        const country = isCanada || isUSA ? sliced_address.pop() : '';
+        const [address, city, stateZip] = sliced_address;
+        const zipState = stateZip.split(' ');
+        const state = zipState[0];
+        const zip = isCanada ? `${zipState[1]}${zipState[2]}` : zipState[1];
+
         this.getGeneralCategory(data.type);
         this.setToCategory(data.type);
         this.place_id = data.placeId;
@@ -402,54 +359,89 @@ export class CreateAdvertiserComponent implements OnInit {
         this.newAdvertiserFormControls.lat.setValue(data.latitude);
         this.newAdvertiserFormControls.long.setValue(data.longitude);
 
-        // ADDRESS MAPPING
+        // Set Zip validation
+        this.setZipCodeValidation();
 
-        if (state.includes('Canada')) {
-            let state_zip = sliced_address[2].split(' ');
-            this.newAdvertiserFormControls.address.setValue(sliced_address[0]);
-            this.fillCityOfHost(state_zip[0], sliced_address[1]);
-            this.newAdvertiserFormControls.zip.setValue(`${state_zip[1]}${state_zip[2]}`);
-        } else {
-            if (sliced_address.length == 3) {
-                let state_zip = sliced_address[2].split(' ');
-                this.newAdvertiserFormControls.address.setValue(`${sliced_address[0]}`);
-                this.fillCityOfHost(state_zip[0], sliced_address[1]);
-                this.newAdvertiserFormControls.zip.setValue(`${state_zip[1]}`);
-            }
-            if (sliced_address.length == 4) {
-                let state_zip = sliced_address[2].split(' ');
-                this.newAdvertiserFormControls.address.setValue(sliced_address[0]);
-                this.setCity(sliced_address[1]);
-                this.newAdvertiserFormControls.zip.setValue(`${state_zip[1]} ${state_zip[2]}`);
-            }
-            if (sliced_address.length == 5) {
-                let state_zip = sliced_address[3].split(' ');
-                this.newAdvertiserFormControls.address.setValue(`${sliced_address[0]} ${sliced_address[1]}`);
-                this.setCity(sliced_address[1]);
-                this.newAdvertiserFormControls.zip.setValue(`${state_zip[1]} ${state_zip[2]}`);
-            }
-        }
+        const state_region: { state: string; abbreviation: string; region: string } = this.searchStateAndRegion(state);
 
+        // Set Address Values
+        this.newAdvertiserFormControls.address.setValue(
+            `${address}${sliced_address.length > 1 ? `, ${sliced_address.reverse().join(', ')}` : ''}`,
+        );
+        this.triggerData.next({ data: city, action: AUTOCOMPLETE_ACTIONS.static });
+        this.newAdvertiserFormControls.city.setValue(city);
+        this.selectedCity = city;
+        this.newAdvertiserFormControls.state.setValue(state_region.abbreviation);
+        this.newAdvertiserFormControls.region.setValue(state_region.region);
+        this.newAdvertiserFormControls.zip.setValue(zip);
+        this.setCanadaZip();
+
+        this._helper.onTouchPaginatedAutoCompleteField.next();
         this.new_advertiser_form.markAllAsTouched();
         this._helper.onTouchPaginatedAutoCompleteField.next();
     }
 
-    fillCityOfHost(state, city_add) {
-        if (!this.canada_selected) {
-            this._location
-                .get_states_by_abbreviation(state)
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    (data) => {
-                        let city = city_add + ', ' + data[0].state;
-                        this.setCity(city);
-                    },
-                    (error) => console.error(error),
-                );
-        } else {
-            let city = this.city_state.filter((canada_city) => canada_city.city === city_add);
-            this.setCity(city[0].city_state);
+    private setCanadaZip(): void {
+        if (!this.canadaSelected) return;
+        const control = this.newAdvertiserFormControls.zip;
+        const canadaZip = (control.value as string).trim();
+
+        if (canadaZip.length === 6) {
+            const left = canadaZip.substring(0, 3);
+            const right = canadaZip.substring(3, 6);
+            this.newAdvertiserFormControls.zip.patchValue(`${left} ${right}`, { emitEvent: false });
         }
+    }
+
+    private setZipCodeValidation(): void {
+        const control = this.newAdvertiserFormControls.zip;
+        const numbersOnly = '^[0-9]+$';
+        const canadianZipCodePattern = `^[A-Za-z]\\d[A-Za-z] \\d[A-Za-z]\\d$`;
+        const country = this.canadaSelected ? 'CA' : 'US';
+
+        let validators: ValidatorFn[] = [Validators.required];
+        const usZipValidators = [Validators.minLength(5), Validators.maxLength(5), Validators.pattern(numbersOnly)];
+        const canadaZipValidators = [
+            Validators.minLength(7),
+            Validators.maxLength(7),
+            Validators.pattern(canadianZipCodePattern),
+        ];
+        validators = country === 'CA' ? validators.concat(canadaZipValidators) : validators.concat(usZipValidators);
+
+        control.clearValidators();
+        control.setValidators(validators);
+        control.setErrors(null);
+        control.updateValueAndValidity({ emitEvent: false });
+        this.subscribeToZipChanges();
+    }
+
+    private subscribeToZipChanges() {
+        const control = this.newAdvertiserFormControls.zip;
+        const country = this.canadaSelected ? 'CA' : 'US';
+
+        const formatCanadaZip = (data: string) => {
+            const zip = data.replace(/\s/g, '');
+
+            if (zip && zip.length === 6) {
+                const clean = data.substring(0, 6);
+                const left = clean.substring(0, 3);
+                const right = clean.substring(3, 6);
+                return `${left} ${right}`;
+            }
+
+            return data;
+        };
+
+        control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(300)).subscribe((response: string) => {
+            const result = country === 'US' ? response.substring(0, 5) : formatCanadaZip(response);
+            control.patchValue(result, { emitEvent: false });
+        });
+    }
+
+    public searchStateAndRegion(state: string): { state: string; abbreviation: string; region: string } {
+        return this.stateAndProvinces.filter(
+            (s) => state.toLowerCase() == s.state.toLowerCase() || state.toLowerCase() == s.abbreviation.toLowerCase(),
+        )[0];
     }
 
     newAdvertiserProfile() {
@@ -511,22 +503,6 @@ export class CreateAdvertiserComponent implements OnInit {
         }
     }
 
-    getCanadaAddress(value) {
-        this.canada_selected = value.checked;
-        this.clearAddressValue();
-        if (value.checked) this.getCanadaCities();
-        else this.getCities();
-    }
-
-    clearAddressValue() {
-        this.newAdvertiserFormControls.address.setValue('');
-        this.city_selected = '';
-        this.newAdvertiserFormControls.city.setValue('');
-        this.newAdvertiserFormControls.state.setValue('');
-        this.newAdvertiserFormControls.region.setValue('');
-        this.newAdvertiserFormControls.zip.setValue('');
-    }
-
     private openConfirmationModal(status: string, message: string, data: any, id: string): void {
         this._dialog
             .open(ConfirmationModalComponent, {
@@ -580,7 +556,7 @@ export class CreateAdvertiserComponent implements OnInit {
         });
 
         this.newAdvertiserFormControls.city.valueChanges.subscribe((data) => {
-            this.city_selected = data;
+            this.selectedCity = data;
         });
 
         this.new_advertiser_form.controls['zip'].setValidators([Validators.required, Validators.maxLength(7)]);

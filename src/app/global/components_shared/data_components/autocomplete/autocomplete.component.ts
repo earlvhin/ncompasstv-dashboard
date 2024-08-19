@@ -14,7 +14,7 @@ import { FormControl } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, startWith, takeUntil } from 'rxjs/operators';
 import { UI_AUTOCOMPLETE, UI_AUTOCOMPLETE_DATA } from 'src/app/global/models';
-import { AuthService } from 'src/app/global/services';
+import { AuthService, HelperService } from 'src/app/global/services';
 
 @Component({
     selector: 'app-autocomplete',
@@ -49,7 +49,10 @@ export class AutocompleteComponent implements OnInit, OnDestroy, OnChanges {
 
     protected ngUnsubscribe = new Subject<void>();
 
-    constructor(private _auth: AuthService) {}
+    constructor(
+        private _auth: AuthService,
+        private _helper: HelperService,
+    ) {}
 
     ngOnInit() {
         this.setupAutocompleteField();
@@ -85,6 +88,7 @@ export class AutocompleteComponent implements OnInit, OnDestroy, OnChanges {
             .pipe(takeUntil(this.ngUnsubscribe), debounceTime(1000))
             .subscribe((response) => {
                 this.isEmpty = response === '';
+                if (this.isEmpty) this.removeSelection();
                 this.input_changed.emit(response);
             });
 

@@ -52,7 +52,10 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
     category_selected: string;
     closed_without_edit = false;
     canadaSelected: boolean = false;
+    contactTouchAndInvalid = false;
+    contactIsCleared = true;
     created_by = this.page_data.createdBy[0];
+    currentContactValue: string;
     dealer = this.page_data.dealer;
     dealers_data: API_DEALER[] = [];
     dealers_loaded = false;
@@ -514,19 +517,19 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
         const { city, state, region } = data || { city: '', state: '', region: '' };
         this.city_selected = data.city;
 
-        if (!this.canadaSelected) {
-            this._formControls.city.setValue(city);
-            this._formControls.state.setValue(state);
-            this._formControls.region.setValue(region);
-
-            this.city_selected = data.city;
-        } else {
+        if (this.canadaSelected) {
             this.canada_selected = data.country === 'CA';
+            return;
         }
+
+        this._formControls.city.setValue(city);
+        this._formControls.state.setValue(state);
+        this._formControls.region.setValue(region);
+        this.city_selected = data.city;
     }
 
     public setInitialCity(isLoaded: boolean): void {
-        this.city_selected = this.page_data.host.city;
+        this.city_selected = this.page_data.host.city;       
 
         //Set value to initial city
         this._formControls.city.setValue(this.city_selected);
@@ -630,6 +633,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
         this._formControls.contactNumber.setValue(host.contactNumber ? host.contactNumber : '0000000000', {
             emitEvent: false,
         });
+        this.currentContactValue = host.contactNumber;
     }
 
     private getCategories(): void {
@@ -840,6 +844,27 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
             const result = country === 'US' ? response.substring(0, 5) : formatCanadaZip(response);
             control.patchValue(result, { emitEvent: false });
         });
+    }
+
+    public getContactValue(value: string): void {
+        this._formControls.contactNumber.setValue(value);
+    }
+
+    public setContactNumberToInvalid(status: boolean): void {
+        this.contactTouchAndInvalid = status;
+    }
+
+    public contactCleared(status: boolean): void {
+        this.contactIsCleared = status;
+    }
+
+    public disableUpdateButton(): boolean {
+        return (
+            this.has_invalid_schedule ||
+            this.edit_host_form.invalid ||
+            this.contactTouchAndInvalid ||
+            !this.contactIsCleared
+        );
     }
 
     protected get _businessHours(): UI_OPERATION_DAYS[] {

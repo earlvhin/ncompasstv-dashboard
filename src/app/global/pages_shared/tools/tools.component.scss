@@ -80,6 +80,11 @@
 .description-input,
 .description-input:focus,
 .description-input:active {
-    border: none !important;
+    border: none;
     outline: none;
+    border-bottom: 1px solid rgb(128, 128, 128);
+}
+
+.table-index {
+    width: 50px;
 }

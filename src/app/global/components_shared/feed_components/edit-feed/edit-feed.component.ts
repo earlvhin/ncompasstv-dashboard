@@ -5,12 +5,17 @@ import { TitleCasePipe } from '@angular/common';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 
-import { API_DEALER, PAGING, UI_ROLE_DEFINITION, UI_TABLE_FEED } from 'src/app/global/models';
+import {
+    API_DEALER,
+    PAGING,
+    UI_AUTOCOMPLETE_INITIAL_DATA,
+    UI_ROLE_DEFINITION,
+    UI_TABLE_FEED,
+} from 'src/app/global/models';
 import { DealerService, FeedService } from 'src/app/global/services';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { CreateFeedComponent } from '../create-feed/create-feed.component';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
-import { debounceTime } from 'rxjs/operators';
 
 @Component({
     selector: 'app-edit-feed',
@@ -19,16 +24,16 @@ import { debounceTime } from 'rxjs/operators';
     providers: [TitleCasePipe],
 })
 export class EditFeedComponent implements OnInit, OnDestroy {
-    current_user_role = this._currentUserRole;
+    currentUserRole = this._currentUserRole;
     dealer_name: string;
     dealers: API_DEALER[];
     dealers_data: API_DEALER[] = [];
     edit_feed_form: FormGroup;
     filtered_options: Observable<any[]>;
     feedUrlHasValue = true;
-    has_selected_dealer_id = false;
-    is_current_user_dealer = this.current_user_role === 'dealer';
-    is_current_user_dealer_admin = this.current_user_role === 'dealeradmin';
+    hasSelectedDealerId = false;
+    isCurrentUserDealer = this.currentUserRole === 'dealer';
+    isCurrentUserDealerAdmin = this.currentUserRole === 'dealeradmin';
     isDirectTechUrl = false;
     is_form_ready = false;
     isInvalidUrl = false;
@@ -40,8 +45,9 @@ export class EditFeedComponent implements OnInit, OnDestroy {
     isValidatingUrl = false;
     loading_search = false;
     paging: PAGING;
+    selectedDealer: UI_AUTOCOMPLETE_INITIAL_DATA[] = [];
 
-    private is_current_user_admin = this.current_user_role === 'administrator';
+    private is_current_user_admin = this.currentUserRole === 'administrator';
     protected _unsubscribe = new Subject<void>();
 
     constructor(
@@ -56,14 +62,21 @@ export class EditFeedComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.initializeForm();
-        if (this.is_current_user_dealer) this.setDealerData();
-        if (this.is_current_user_admin || this.is_current_user_dealer_admin) this.setAdminData();
+        if (this.isCurrentUserDealer) this.setDealerData();
+        if (this.is_current_user_admin || this.isCurrentUserDealerAdmin) this.setAdminData();
     }
 
-    dealerSelected(data: string) {
+    public dealerSelected(data: UI_AUTOCOMPLETE_INITIAL_DATA | null): void {
         const control = this.edit_feed_form.get('dealerId');
-        control.setValue(data, { emitEvent: false });
-        this.has_selected_dealer_id = true;
+        if (data) {
+            control.setValue(data.id, { emitEvent: false });
+            this.hasSelectedDealerId = true;
+            this.selectedDealer = [data];
+        } else {
+            control.setValue(null, { emitEvent: false });
+            this.hasSelectedDealerId = false;
+            this.selectedDealer = [];
+        }
     }
 
     ngOnDestroy(): void {
@@ -88,7 +101,7 @@ export class EditFeedComponent implements OnInit, OnDestroy {
 
     searchData(keyword: string) {
         this.loading_search = true;
-        if (!keyword || keyword.trim().length === 0) this.has_selected_dealer_id = false;
+        if (!keyword || keyword.trim().length === 0) this.hasSelectedDealerId = false;
         this.edit_feed_form.get('dealerId').setValue(null, { emitEvent: false });
         this.dealer_name = keyword;
 
@@ -136,7 +149,7 @@ export class EditFeedComponent implements OnInit, OnDestroy {
         const setDealerId = () => {
             const roleId = this._auth.current_user_value.role_id;
             const currentUserBusinessName = this._auth.current_user_value.roleInfo.businessName;
-            const businessNameData = this._dialog_data.business_name as { id: string };
+            const businessNameData = this._dialog_data.business_name as { id: string; value: string };
             const dealerId = roleId === UI_ROLE_DEFINITION.dealer ? currentUserBusinessName : businessNameData.id;
             return dealerId === '--' ? null : dealerId;
         };
@@ -145,17 +158,19 @@ export class EditFeedComponent implements OnInit, OnDestroy {
         const feedTitleData = this._dialog_data.title as { value: string };
         const feedDescriptionData = this._dialog_data.description as { value: string };
         const feedType = this._dialog_data.classification as { value: string };
-        const dealerId = setDealerId;
+        const dealerId = setDealerId();
 
         this.edit_feed_form = this._form.group({
             contentId: [feedIdData.value, Validators.required],
             feedTitle: [feedTitleData.value, Validators.required],
             feedDescription: [feedDescriptionData.value],
-            dealerId: [dealerId, { disabled: true }],
+            dealerId: [{ value: dealerId, disabled: this.isCurrentUserDealer }, Validators.required],
             classification: [feedType.value.toLowerCase()],
         });
 
         this.is_form_ready = true;
+
+        this.hasSelectedDealerId = !!dealerId;
 
         if (feedType.value.toLowerCase() === 'widget') {
             this.is_widget_feed = true;
@@ -173,8 +188,18 @@ export class EditFeedComponent implements OnInit, OnDestroy {
         this.edit_feed_form.addControl('feedUrl', feedUrlControl);
         this.isInvalidUrl = this.urlCheck(feedUrlControl.value);
         this.subscribeToFeedUrlChanges();
-    }
 
+        if (dealerId) {
+            this.selectedDealer = [
+                {
+                    id: dealerId,
+                    value: this.isCurrentUserDealer
+                        ? this._auth.current_user_value.roleInfo.businessName
+                        : (this._dialog_data.business_name as { value: string }).value,
+                },
+            ];
+        }
+    }
     private setDealerData() {
         this.is_dealer = true;
         this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
@@ -184,8 +209,13 @@ export class EditFeedComponent implements OnInit, OnDestroy {
     private setAdminData() {
         const businessNameData = this._dialog_data.business_name as { id: string; value: string };
         this.dealer_name = businessNameData.value;
-        this.has_selected_dealer_id = true;
+        this.hasSelectedDealerId = true;
         this.getDealers(1);
+
+        this.selectedDealer.push({
+            id: businessNameData.id,
+            value: businessNameData.value,
+        });
     }
 
     private showConfirmationDialog(status: string, message: string, data: string) {
@@ -225,5 +255,15 @@ export class EditFeedComponent implements OnInit, OnDestroy {
 
     protected get _currentUserRole() {
         return this._auth.current_role;
+    }
+
+    public get isSubmitDisabled(): boolean {
+        return (
+            this.isInvalidUrl ||
+            !this.feedUrlHasValue ||
+            this.isValidatingUrl ||
+            !this.hasSelectedDealerId ||
+            this.edit_feed_form.invalid
+        );
     }
 }

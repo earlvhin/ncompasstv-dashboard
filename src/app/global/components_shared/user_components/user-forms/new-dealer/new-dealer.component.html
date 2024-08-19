@@ -21,50 +21,65 @@
             (ngSubmit)="createNewDealer(formDirective)"
             class="text-left position-relative">
             <div class="row mb-4">
-                <ng-container *ngFor="let field of form_fields_view">
-                    <div class="{{ field.width }}">
-                        <mat-form-field class="full-width" *ngIf="!field.is_autocomplete; else autocomplete">
+                <ng-container>
+                    <div *ngFor="let field of form_fields_view" class="{{ field.width }}">
+                        <mat-form-field
+                            class="full-width"
+                            *ngIf="
+                                !field.is_autocomplete && field.type !== 'password' && !field.isComponent;
+                                else customField
+                            ">
                             <mat-label>{{ field.label }}</mat-label>
                             <input
-                                *ngIf="field.type !== 'password'; else passwordField"
                                 formControlName="{{ field.control }}"
                                 type="{{ field.type }}"
                                 matInput
                                 placeholder="{{ field.placeholder }}" />
-
-                            <ng-template #passwordField>
-                                <div class="password-container" *ngIf="field.control === 'password'">
-                                    <div class="field">
-                                        <input
-                                            formControlName="{{ field.control }}"
-                                            matInput
-                                            placeholder="{{ field.placeholder }}"
-                                            [type]="is_password_field_type ? 'password' : 'text'" />
-                                        <mat-icon class="pw-visibility" matSuffix (click)="togglePasswordFieldType()">{{
-                                            is_password_field_type ? 'visibility_off' : 'visibility'
-                                        }}</mat-icon>
-                                    </div>
-                                </div>
-
-                                <div class="password-container" *ngIf="field.control === 're_password'">
-                                    <div class="field">
-                                        <input
-                                            matInput
-                                            formControlName="{{ field.control }}"
-                                            placeholder="{{ field.placeholder }}"
-                                            [type]="is_retype_password_field_type ? 'password' : 'text'" />
-                                        <mat-icon
-                                            class="pw-visibility"
-                                            matSuffix
-                                            (click)="toggleRetypePasswordFieldType()"
-                                            >{{
-                                                is_retype_password_field_type ? 'visibility_off' : 'visibility'
-                                            }}</mat-icon
-                                        >
-                                    </div>
-                                </div>
-                            </ng-template>
                         </mat-form-field>
+
+                        <ng-template #customField>
+                            <mat-form-field class="full-width" *ngIf="field.control === 'password'">
+                                <mat-label>{{ field.label }}</mat-label>
+                                <div class="field d-flex">
+                                    <input
+                                        formControlName="{{ field.control }}"
+                                        matInput
+                                        placeholder="{{ field.placeholder }}"
+                                        [type]="is_password_field_type ? 'password' : 'text'" />
+                                    <mat-icon class="pw-visibility" matSuffix (click)="togglePasswordFieldType()">{{
+                                        is_password_field_type ? 'visibility_off' : 'visibility'
+                                    }}</mat-icon>
+                                </div>
+                            </mat-form-field>
+
+                            <mat-form-field class="full-width" *ngIf="field.control === 're_password'">
+                                <mat-label>{{ field.label }}</mat-label>
+                                <div class="field d-flex">
+                                    <input
+                                        matInput
+                                        formControlName="{{ field.control }}"
+                                        placeholder="{{ field.placeholder }}"
+                                        [type]="is_retype_password_field_type ? 'password' : 'text'" />
+                                    <mat-icon
+                                        class="pw-visibility"
+                                        matSuffix
+                                        (click)="toggleRetypePasswordFieldType()"
+                                        >{{ is_retype_password_field_type ? 'visibility_off' : 'visibility' }}</mat-icon
+                                    >
+                                </div>
+                            </mat-form-field>
+
+                            <ng-container *ngIf="field.control === 'contactNumber'">
+                                <app-contact-number
+                                    (contact_value)="getContactValue($event)"
+                                    (touch_and_not_valid)="setContactNumberToInvalid($event)">
+                                </app-contact-number>
+                            </ng-container>
+
+                            <ng-container *ngIf="field.is_autocomplete">
+                                <app-city-autocomplete (city_selected)="citySelected($event)"></app-city-autocomplete>
+                            </ng-container>
+                        </ng-template>
 
                         <div class="validation" *ngIf="field.type === 'password'">
                             <span
@@ -81,14 +96,16 @@
                                 {{ password_match_msg }}
                             </span>
                         </div>
-
-                        <ng-template #autocomplete>
-                            <app-city-autocomplete (city_selected)="citySelected($event)"></app-city-autocomplete>
-                        </ng-template>
                     </div>
                 </ng-container>
             </div>
-            <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="form_invalid">Create Dealer</button>
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn mr-2"
+                [disabled]="form_invalid || contactTouchAndInvalid">
+                Create Dealer
+            </button>
         </form>
     </ng-container>
     <div class="submit-on-load d-flex align-items-center justify-content-center" *ngIf="is_submitted">

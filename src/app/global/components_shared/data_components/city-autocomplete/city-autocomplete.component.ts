@@ -70,6 +70,7 @@ export class CityAutocompleteComponent implements OnInit, OnChanges {
             this.cityFieldData.data = this.mapCityData(this.cityDataPrimary);
             this.cityFieldData.unselect = true;
             this.cityFieldData.noData = null;
+            this.selectedCity();
             return;
         }
 
@@ -135,7 +136,7 @@ export class CityAutocompleteComponent implements OnInit, OnChanges {
         }
     }
 
-    selectedCity(data: UI_CITY_AUTOCOMPLETE_DATA) {
+    selectedCity(data?: UI_CITY_AUTOCOMPLETE_DATA) {
         data ? this.city_selected.emit(data) : this.city_selected.emit(null);
     }
 }

@@ -137,12 +137,14 @@
                                             <mat-label class="md-text">Start Date</mat-label>
                                             <input
                                                 matInput
-                                                [matDatepicker]="datePicker"
-                                                (dateInput)="selectStartOrEndDate($event.value)"
+                                                [matDatepicker]="startDatePicker"
+                                                (dateInput)="dateSelected($event.value, 'start')"
                                                 [(value)]="startDate"
                                                 readonly />
-                                            <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
-                                            <mat-datepicker #datePicker></mat-datepicker>
+                                            <mat-datepicker-toggle
+                                                matSuffix
+                                                [for]="startDatePicker"></mat-datepicker-toggle>
+                                            <mat-datepicker #startDatePicker></mat-datepicker>
                                         </mat-form-field>
                                     </div>
 
@@ -151,15 +153,15 @@
                                             <mat-label class="md-text">End Date</mat-label>
                                             <input
                                                 matInput
-                                                [matDatepicker]="datePicker2"
-                                                (dateInput)="selectStartOrEndDate($event.value, 'end')"
+                                                [matDatepicker]="endDatePicker"
+                                                (dateInput)="dateSelected($event.value, 'end')"
                                                 [(value)]="endDate"
                                                 [min]="startDate"
                                                 readonly />
                                             <mat-datepicker-toggle
                                                 matSuffix
-                                                [for]="datePicker2"></mat-datepicker-toggle>
-                                            <mat-datepicker #datePicker2></mat-datepicker>
+                                                [for]="endDatePicker"></mat-datepicker-toggle>
+                                            <mat-datepicker #endDatePicker></mat-datepicker>
                                         </mat-form-field>
                                     </div>
 

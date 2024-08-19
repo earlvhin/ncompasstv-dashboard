@@ -206,13 +206,13 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
                     hidden: false,
                 },
                 online_status: {
-                    value: license.timeIn ? this._date.transform(license.timeIn) : '--',
+                    value: this._license.setToUtcDateTimeFormat(license.timeIn, 'MMMM D, YYYY, h:mm:ss A'),
                     link: null,
                     editable: false,
                     hidden: false,
                 },
                 offline_status: {
-                    value: license.timeOut ? this._date.transform(license.timeOut) : '--',
+                    value: this._license.setToUtcDateTimeFormat(license.timeOut, 'MMMM D, YYYY, h:mm:ss A'),
                     link: null,
                     editable: false,
                     hidden: false,

@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { FillerService, AuthService } from 'src/app/global/services';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
+import { UI_ROLE_DEFINITION_TEXT, API_FILLER_GROUP } from 'src/app/global/models';
 
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
@@ -22,18 +22,18 @@ export class CreateFillerFeedComponent implements OnInit {
     dealerHasValue: boolean;
     dealerLoaded = false;
     form: FormGroup;
-    filler_name: string = '';
-    filler_groups: any = [];
-    filler_groups_original: any = [];
+    fillerName: string = '';
+    fillerGroups: API_FILLER_GROUP[];
+    fillerGroupsOriginal: API_FILLER_GROUP[];
     filters = ['ALL', 'ADMIN', 'DEALER ADMIN', 'DEALER'];
     formLoaded = false;
-    groups_loaded: boolean = false;
-    groups_to_remove: any = [];
+    groupsLoaded = false;
+    groupsToRemove = [];
     is_current_user_admin = this._isAdmin;
     isCurrentUserDealerAdmin = this.isDealerAdmin;
     selected_assignee: any = [];
-    selected_group: any = this.page_data.group;
-    selected_groups: any = [];
+    selectedGroup: any = this.page_data.group;
+    selectedGroups: API_FILLER_GROUP[] = [];
     selected_dealer: any = [];
     unselected_dealer: any = [];
     final_data_to_upload: any;
@@ -88,7 +88,7 @@ export class CreateFillerFeedComponent implements OnInit {
 
         setTimeout(() => {
             data.fillerGroups.map((groups) => {
-                const existing_list = this.filler_groups.filter((list) => list.fillerGroupId == groups.fillerGroupId);
+                const existing_list = this.fillerGroups.filter((list) => list.fillerGroupId == groups.fillerGroupId);
                 groups.count = existing_list[0].count;
             });
 
@@ -96,15 +96,15 @@ export class CreateFillerFeedComponent implements OnInit {
                 this.removeItemsOnTheList(groups.fillerGroupId);
             });
 
-            this.selected_groups = data.fillerGroups;
+            this.selectedGroups = data.fillerGroups;
             this.countTotalQuantity();
 
             this.formLoaded = true;
         }, 1000);
     }
 
-    removeItemsOnTheList(id) {
-        this.filler_groups = this.filler_groups.filter((groups) => {
+    public removeItemsOnTheList(id): void {
+        this.fillerGroups = this.fillerGroups.filter((groups) => {
             return groups.fillerGroupId != id;
         });
     }
@@ -151,39 +151,38 @@ export class CreateFillerFeedComponent implements OnInit {
             .get_filler_group_for_feeds(assignee)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data: any) => {
-                let groups_with_count_only = data.paging.entities.filter((group) => {
+                let groupsWithCountOnly = data.paging.entities.filter((group) => {
                     return group.count > 0;
                 });
-                this.filler_groups = groups_with_count_only;
-                this.filler_groups_original = this.filler_groups;
+                this.fillerGroups = groupsWithCountOnly;
+                this.fillerGroupsOriginal = this.fillerGroups;
             })
             .add(() => {
-                this.groups_loaded = true;
+                this.groupsLoaded = true;
                 if (this.page_data.from_edit_table) {
                     this.getFillerFeedDetail(this.page_data.id);
                     return;
                 }
                 this.assignee_loaded = true;
-                if (this.selected_group.length != 0) {
-                    this.filler_name = this.selected_group.name;
-                    this.setFillerGroup(this.selected_group.fillerGroupId);
+                if (this.selectedGroup.length != 0) {
+                    this.fillerName = this.selectedGroup.name;
+                    this.setFillerGroup(this.selectedGroup.fillerGroupId);
                     this.addToSelectedFillerGroup();
                 }
             });
     }
 
-    onFilterGroup(filter) {
-        this.active_btn_filter = filter;
+    public onFilterGroup(filter): void {
         this.active_btn_filter = filter;
 
         switch (filter) {
             case 'ALL':
-                this.filler_groups = this.filler_groups_original;
+                this.fillerGroups = this.fillerGroupsOriginal;
                 break;
             case 'ADMIN':
             case 'DEALER':
             case 'DEALER ADMIN':
-                this.filler_groups = this.filler_groups_original.filter((group) => {
+                this.fillerGroups = this.fillerGroupsOriginal.filter((group) => {
                     return group.role == (filter === 'ADMIN' ? 1 : filter === 'DEALER' ? 2 : 3);
                 });
                 break;
@@ -236,31 +235,31 @@ export class CreateFillerFeedComponent implements OnInit {
         this.enable_add_button = true;
     }
 
-    addToSelectedFillerGroup() {
-        let group = this.filler_groups.filter((groups) => {
-            groups.quantity = 1;
-            return groups.fillerGroupId == this._formControls.fillerGroupId.value;
-        });
-        this.selected_groups.push(group[0]);
+    public addToSelectedFillerGroup(): void {
+        const selectedId = this._formControls.fillerGroupId.value;
+        const group = this.fillerGroups.find((groups) => groups.fillerGroupId === selectedId);
 
-        //Remove from current selection
-        this.filler_groups = this.filler_groups.filter((groups) => {
-            return groups.fillerGroupId != this._formControls.fillerGroupId.value;
-        });
+        if (group) {
+            group.quantity = 1;
+            this.selectedGroups.push(group);
+            this.fillerGroups = this.fillerGroups.filter((groups) => groups.fillerGroupId !== selectedId);
+            this.fillerGroupsOriginal = this.fillerGroupsOriginal.filter(
+                (groups) => groups.fillerGroupId !== selectedId,
+            );
+        }
+
         this.enable_add_button = false;
         this.countTotalQuantity();
     }
 
-    removeSelectedFiller(group) {
-        this.groups_to_remove.push(group.fillerGroupId);
+    public removeSelectedFiller(group): void {
+        const { fillerGroupId } = group;
 
-        //Push to current selection
-        this.filler_groups.push(group);
+        this.groupsToRemove.push(fillerGroupId);
+        this.fillerGroups.push(group);
+        this.fillerGroupsOriginal.push(group);
 
-        //Remove from selected groups
-        this.selected_groups = this.selected_groups.filter((groups) => {
-            return groups.fillerGroupId != group.fillerGroupId;
-        });
+        this.selectedGroups = this.selectedGroups.filter((groups) => groups.fillerGroupId !== fillerGroupId);
 
         this.countTotalQuantity();
     }
@@ -277,11 +276,11 @@ export class CreateFillerFeedComponent implements OnInit {
         };
 
         if (this.page_data.from_edit_table) {
-            this.final_data_to_upload.DeletePlaylistGroups = this.groups_to_remove;
+            this.final_data_to_upload.DeletePlaylistGroups = this.groupsToRemove;
             this.final_data_to_upload.fillerPlaylistId = this.existing_data.fillerPlaylistId;
         }
 
-        this.selected_groups.map((group) => {
+        this.selectedGroups.map((group) => {
             let group_selected = {
                 fillerGroupId: group.fillerGroupId,
                 Quantity: group.quantity,
@@ -292,29 +291,29 @@ export class CreateFillerFeedComponent implements OnInit {
         this.onSubmit(this.final_data_to_upload);
     }
 
-    disableSelectionField() {
-        if ((this.filler_groups.length == 0 && this.groups_loaded) || this.filler_name != '') return true;
+    public disableSelectionField(): boolean {
+        if ((this.fillerGroups.length == 0 && this.groupsLoaded) || this.fillerName != '') return true;
         else return false;
     }
 
-    countTotalQuantity() {
+    private countTotalQuantity(): void {
         this.total_quantity = 0;
         this.remaining = 20;
-        this.selected_groups.map((group) => {
+        this.selectedGroups.map((group) => {
             this.total_quantity = this.total_quantity + group.quantity;
         });
         this.remaining = this.remaining - this.total_quantity;
     }
 
-    enforceMinMax(el) {
+    public enforceMinMax(el): void {
         if (el.target.value != '') {
             if (parseInt(el.target.value) < parseInt(el.target.min)) el.target.value = el.target.min;
             if (parseInt(el.target.value) > parseInt(el.target.max)) el.target.value = el.target.max;
         }
     }
 
-    saveQuantity(index) {
-        this.selected_groups[index].quantity = this._formControls.fillerQuantity.value;
+    public saveQuantity(index): void {
+        this.selectedGroups[index].quantity = this._formControls.fillerQuantity.value;
         this.countTotalQuantity();
     }
 
@@ -331,7 +330,7 @@ export class CreateFillerFeedComponent implements OnInit {
             this.selected_dealer.push(data.id);
             this.getAllFillers('', data.id);
             //just incase there has been a group selected before assigning to an assignee so remove selected groups
-            this.selected_groups = [];
+            this.selectedGroups = [];
             this.countTotalQuantity();
             return;
         }

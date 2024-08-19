@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import * as moment from 'moment';
 
 import { ScreenService } from '../../../services/screen-service/screen.service';
-import { HostService } from 'src/app/global/services';
+import { HelperService, HostService } from 'src/app/global/services';
 import { UI_AUTOCOMPLETE } from 'src/app/global/models';
 @Component({
     selector: 'app-editable-field-modal',
@@ -15,7 +15,7 @@ export class EditableFieldModalComponent implements OnInit {
     message: string;
     status: any;
     data: string;
-    date: any;
+    date: Date;
     hosts_data: UI_AUTOCOMPLETE;
     host_selected: string = '';
     screen_init: string;
@@ -23,10 +23,12 @@ export class EditableFieldModalComponent implements OnInit {
     screen_selected: string = null;
     reset_screen: boolean = false;
     subscription: Subscription = new Subscription();
+    canSaveScreenType: boolean = true;
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public _dialog_data: any,
         public dialogRef: MatDialogRef<EditableFieldModalComponent>,
+        private _helper: HelperService,
         private _screen: ScreenService,
     ) {}
 
@@ -38,6 +40,7 @@ export class EditableFieldModalComponent implements OnInit {
         if (this.status.dropdown_edit) {
             switch (this.status.label) {
                 case 'Screen Type':
+                    this.canSaveScreenType = false;
                     this.getScreenType();
                     break;
                 case 'Hosts':
@@ -66,16 +69,19 @@ export class EditableFieldModalComponent implements OnInit {
         } else this.dialogRef.close(value);
     }
 
-    onSelectDate(value: any): void {
-        this.date = moment(value, 'YYYY-MM-DD').toDate();
+    onSelectDate(value: Date): void {
+        this.date = this._helper.parseDate(value);
     }
 
     getScreenType() {
         this.subscription.add(
             this._screen.get_screens_type().subscribe((data) => {
+                const currentScreenType = this.status.value
+                    ? data.find((f: any) => f.name.toLowerCase() == this.status.value.toLowerCase())
+                    : null;
                 this.screen_types = data;
                 this.screen_init = this.status.value;
-                this.setScreenType(this.status.id);
+                this.setScreenType(currentScreenType ? currentScreenType.screenTypeId : null);
             }),
         );
     }
@@ -104,6 +110,7 @@ export class EditableFieldModalComponent implements OnInit {
     setScreenType(type) {
         this.screen_selected = type;
         this.reset_screen = false;
+        this.canSaveScreenType = !!type;
     }
 
     clearScreenType() {
@@ -127,5 +134,9 @@ export class EditableFieldModalComponent implements OnInit {
                 default:
             }
         }
+    }
+
+    public onSearchScreenType(data: string): void {
+        this.canSaveScreenType = false;
     }
 }

@@ -1,6 +1,5 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
 
@@ -14,6 +13,8 @@ import {
     API_PLAYLIST_MINIFIED,
     API_SWAP_CONTENT_RESPONSE,
     UI_ROLE_DEFINITION,
+    API_PLAYLIST,
+    PAGING,
 } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { BaseService } from '../base.service';
@@ -53,7 +54,12 @@ export class PlaylistService extends BaseService {
         return this.getRequest(`${this.getters.api_get_playlist}` + '?page=' + `${page}` + '&search=' + `${key}`);
     }
 
-    get_all_playlists(page, key, column?, order?) {
+    get_all_playlists(
+        page = 1,
+        key: string,
+        column?: string,
+        order?: string,
+    ): Observable<{ message?: string; playlists: API_PLAYLIST[]; paging: PAGING }> {
         const base = `${this.getters.api_get_all_playlist}`;
         const params = this.setUrlParams({ page, search: key, sortColumn: column, sortOrder: order }, false, true);
         const url = `${base}${params}`;
@@ -99,9 +105,15 @@ export class PlaylistService extends BaseService {
         );
     }
 
-    get_playlist_by_dealer_id_table(page, id, key) {
+    get_playlist_by_dealer_id_table(
+        page: number,
+        id: string,
+        key: string,
+        sortColumn?: string,
+        sortOrder?: string,
+    ): Observable<{ message?: string; playlists: API_PLAYLIST[]; paging: PAGING }> {
         const base = `${this.getters.api_get_playlist_by_dealer_id_table}`;
-        const params = this.setUrlParams({ page, dealerid: id, search: key }, false, true);
+        const params = this.setUrlParams({ page, dealerid: id, search: key, sortColumn, sortOrder }, false, true);
         const url = `${base}${params}`;
         return this.getRequest(url);
     }

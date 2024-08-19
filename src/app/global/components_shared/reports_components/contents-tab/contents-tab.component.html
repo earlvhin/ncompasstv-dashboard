@@ -12,12 +12,15 @@
                     <mat-label class="md-text">Start Date</mat-label>
                     <input
                         formControlName="start_date"
-                        (dateInput)="onSelectStartDate($event.value)"
+                        (dateInput)="dateSelected($event.value, 'start')"
                         matInput
-                        [matDatepicker]="datePicker"
+                        [matDatepicker]="startDatePicker"
                         readonly />
-                    <mat-datepicker-toggle matSuffix [for]="datePicker" [disabled]="searching"></mat-datepicker-toggle>
-                    <mat-datepicker #datePicker></mat-datepicker>
+                    <mat-datepicker-toggle
+                        matSuffix
+                        [for]="startDatePicker"
+                        [disabled]="searching"></mat-datepicker-toggle>
+                    <mat-datepicker #startDatePicker></mat-datepicker>
                 </mat-form-field>
             </div>
 
@@ -26,13 +29,16 @@
                     <mat-label class="md-text">End Date</mat-label>
                     <input
                         formControlName="end_date"
-                        (dateInput)="onSelectEndDate($event.value)"
+                        (dateInput)="dateSelected($event.value, 'end')"
                         matInput
-                        [matDatepicker]="datePicker2"
+                        [matDatepicker]="endDatePicker"
                         [min]="start_date"
                         readonly />
-                    <mat-datepicker-toggle matSuffix [for]="datePicker2" [disabled]="searching"></mat-datepicker-toggle>
-                    <mat-datepicker #datePicker2></mat-datepicker>
+                    <mat-datepicker-toggle
+                        matSuffix
+                        [for]="endDatePicker"
+                        [disabled]="searching"></mat-datepicker-toggle>
+                    <mat-datepicker #endDatePicker></mat-datepicker>
                 </mat-form-field>
             </div>
         </div>

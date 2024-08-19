@@ -301,8 +301,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
             hidden: true,
             no_show: true,
         },
-        { name: 'Last Push', sortable: true, column: 'ContentsUpdated', key: 'contentsUpdated' },
-        { name: 'Last Disconnect', sortable: true, column: 'TimeOut', key: 'timeIn' },
+        { name: 'Last Update', sortable: true, column: 'ContentsUpdated', key: 'contentsUpdated' },
+        { name: 'Last Startup', sortable: true, column: 'TimeIn', key: 'timeIn' },
         { name: 'Upload Speed', sortable: true, column: 'UploadSpeed', key: 'uploadSpeed' },
         { name: 'Download Speed', sortable: true, column: 'DownloadSpeed', key: 'downloadSpeed' },
         {
@@ -1141,12 +1141,13 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                     new_tab_link: true,
                 },
                 {
-                    value: l.contentsUpdated ? l.contentsUpdated : '--',
-                    label: 'Last Push',
+                    value: this._license.setToUtcDateTimeFormat(l.contentsUpdated, 'YYYY-MM-DDThh:mm:ssTZD'),
+                    label: 'Last Update',
                     hidden: false,
                 },
                 {
-                    value: l.timeOut ? this._date.transform(l.timeOut, 'MMM dd y \n h:mm a') : '--',
+                    value: this._license.setToUtcDateTimeFormat(l.timeIn, 'MM/DD/YYYY hh:mm:ss'),
+                    label: 'Last Startup',
                     hidden: false,
                 },
                 {

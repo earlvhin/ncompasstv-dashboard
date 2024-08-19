@@ -74,7 +74,7 @@
                             <mat-card *ngIf="filtered_data.length > 0; else nodata">
                                 <app-data-table
                                     [table_data]="filtered_data"
-                                    [table_columns]="playlist_table_column"
+                                    [table_columns]="playlistTableColumn"
                                     [new_table]="true"
                                     [paging_details]="paging_data"
                                     (page_triggered)="pageRequested($event)"

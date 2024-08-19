@@ -2,6 +2,7 @@
     <app-autocomplete
         [field_data]="hostsData"
         *ngIf="hostsData && hostsData.data.length; else loading"
+        (no_data_found)="hostNotFound($event)"
         (value_selected)="setHost($event)">
     </app-autocomplete>
 

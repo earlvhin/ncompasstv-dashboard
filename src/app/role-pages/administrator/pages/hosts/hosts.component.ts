@@ -352,15 +352,22 @@ export class HostsComponent implements OnInit {
 
     hosts_mapToUIFormat(data: API_HOST[]): UI_HOST_VIEW[] {
         let count = this.paging_data_host.pageStart;
+
         return data.map((h) => {
+            const hostNameLengthLimit = 45;
+            const hostNameHasToolTip = h.hostName.length > hostNameLengthLimit;
+
             const table = new UI_HOST_VIEW(
                 { value: count++, link: null, editable: false, hidden: false },
                 { value: h.hostId, link: null, editable: false, hidden: true, key: false },
                 {
-                    value: h.hostName,
+                    value: this._helper.truncateText(h.hostName, hostNameLengthLimit),
+                    has_tool_tip: hostNameHasToolTip,
+                    tool_tip_value: h.hostName,
+                    tool_tip_position: 'below',
                     link: `/administrator/hosts/${h.hostId}`,
                     new_tab_link: true,
-                    compressed: true,
+                    compressed: false,
                     editable: false,
                     hidden: false,
                     status: true,

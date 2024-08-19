@@ -5,7 +5,7 @@
             <div class="form-header mb-4">
                 <h3 class="mb-1 mt-2">Edit {{ message }}</h3>
             </div>
-            <div class="form-body mb-3">
+            <div class="form-body mat-bl-em">
                 <mat-form-field
                     appearance="fill"
                     class="full-width"
@@ -30,8 +30,8 @@
             <mat-label>Choose a date</mat-label>
             <input
                 matInput
-                (dateInput)="onSelectDate($event.value)"
                 [matDatepicker]="picker"
+                (dateInput)="onSelectDate($event.value)"
                 [(value)]="date"
                 readonly />
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -51,23 +51,24 @@
                     <span class="sm-text text-primary">{{ status.additional_params.placername }}</span>
                 </div>
             </div>
-            <div class="form-body mb-3" *ngIf="status.label == 'Screen Type'">
+            <div class="form-body mat-bl-em" *ngIf="status.label == 'Screen Type'">
                 <ng-container *ngIf="screen_types.length > 0; else loader">
                     <app-autocomplete-field
                         [data_reference]="screen_types"
                         [primary_keyword]="'description'"
                         [key_of_value]="'screenTypeId'"
                         (data_value)="setScreenType($event)"
-                        [required]="false"
+                        [required]="true"
                         [label]="'Click to select a Screen Type'"
                         [new_value]="screen_init"
-                        [initial_value]="screen_init">
+                        [initial_value]="screen_init"
+                        (screen_type_selected)="onSearchScreenType($event)">
                     </app-autocomplete-field>
                 </ng-container>
             </div>
             <!-- Form Body: Screen -->
 
-            <div class="form-body mb-3" *ngIf="status.label == 'Hosts'">
+            <div class="form-body mat-bl-em" *ngIf="status.label == 'Hosts'">
                 <ng-container *ngIf="hosts_data; else loader">
                     <app-autocomplete
                         [field_data]="hosts_data"
@@ -82,7 +83,12 @@
                 <button mat-button mat-raised-button class="theme-btn bg-danger mr-2" mat-dialog-close>
                     Cancel <i class="fas fa-times ml-2"></i>
                 </button>
-                <button mat-button mat-raised-button class="theme-btn" (click)="updateDropdown()">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn"
+                    (click)="updateDropdown()"
+                    [disabled]="!canSaveScreenType">
                     Save <i class="fas fa-save ml-2"></i>
                 </button>
             </div>

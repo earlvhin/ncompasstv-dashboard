@@ -10,6 +10,8 @@ export class API_PLAYLIST {
     dateCreated: string;
     dateUpdated: string;
     businessName: string;
+    totalScreens: number;
+    totalContents: number;
 }
 
 export interface API_PLAYLIST_MINIFIED {

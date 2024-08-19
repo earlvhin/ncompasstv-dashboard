@@ -88,13 +88,15 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     clear_screenshots = false;
     content_per_zone: UI_CONTENT_PER_ZONE[] = [];
     content_search_control: FormControl = new FormControl(null);
-    content_time_update: string;
+    contentsUpdated: string;
     content_schedule_statuses = this._contentScheduleStatuses;
     content_filters: { type: string; name: string }[] = [];
     content_owner_types = this._contentOwnerTypes;
     content_types = this._contentTypes;
     current_operation: { day: string; period: string };
     current_zone_name_selected: string;
+    currentlyPlayingContent: string = '';
+    currentlyPlayingProgrammatic: boolean = false;
     customRoute =
         this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.roleRoute;
     dealerData: API_DEALER;
@@ -1287,6 +1289,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         this.socketOnScreenshotSuccess();
         this.socketOnContentUpdated();
         this.socketOnCecCheck();
+        this.socketOnSyncPlaying();
     }
 
     private emitInitialSocketEvents(): void {
@@ -1756,11 +1759,13 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
                     this.current_zone_name_selected = selectedZoneName;
 
-                    this.screen_zone = {
-                        playlistName: selectedZone.playlist_name,
-                        playlistId: selectedZone.playlist_id,
-                        zone: selectedZone.zone_name,
-                    };
+                    if (selectedZone) {
+                        this.screen_zone = {
+                            playlistName: selectedZone.playlist_name,
+                            playlistId: selectedZone.playlist_id,
+                            zone: selectedZone.zone_name,
+                        };
+                    }
 
                     if (!this.has_background_zone) {
                         this._template.onSelectZone.emit(selectedZoneName);
@@ -1979,14 +1984,14 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
     private setLicenseDetails(data: API_LICENSE_PROPS): void {
         this.license_key = data.licenseKey;
-        this.lastStartup = this.setDefaultDateTimeFormat(data.timeIn, 'MMMM DD, YYYY, h:mm:ss A');
-        this.lastDisconnect = this.setDefaultDateTimeFormat(data.timeOut, 'MMMM DD, YYYY, h:mm:ss A');
+        this.lastStartup = this._license.setToUtcDateTimeFormat(data.timeIn, 'MMMM DD, YYYY, h:mm:ss A');
+        this.lastDisconnect = this._license.setToUtcDateTimeFormat(data.timeOut, 'MMMM DD, YYYY, h:mm:ss A');
         this.tags = data.tags as { name: string; tagColor: string }[];
         this.display_status = data.piStatus === 1 ? data.displayStatus : 0;
         this.cec_status = data.piStatus === 1 ? data.isCecEnabled === 1 : false;
         this.pi_status = data.piStatus === 1;
         this.player_status = data.playerStatus === 1;
-        this.content_time_update = this.setDefaultDateTimeFormat(data.contentsUpdated, 'YYYY-MM-DDThh:mm:ssTZD');
+        this.contentsUpdated = this._license.setToUtcDateTimeFormat(data.contentsUpdated, 'YYYY-MM-DDThh:mm:ssTZD');
         this.screen_type = data.screenType ? data.screenType : null;
         this.apps = data.appVersion ? JSON.parse(data.appVersion) : null;
         this.anydesk_id = data.anydeskId;
@@ -2029,12 +2034,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         if (data.length > 235) result += '...';
 
         return result;
-    }
-
-    private setDefaultDateTimeFormat(dateTime: string, toParseFormat: string) {
-        if (!dateTime || dateTime.length <= 0) return 'N/A';
-        const toExpectedFormat = 'MMM DD, YYYY h:mm A';
-        return moment.utc(dateTime, toParseFormat).format(toExpectedFormat);
     }
 
     private setDealerData(data) {
@@ -2270,6 +2269,33 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         });
     }
 
+    private socketOnSyncPlaying(): void {
+        this._socket.on(
+            'currently_playing',
+            (data: { license_id: string; playlist_content_id: string; programmatic: boolean }) => {
+                // Check if triggered for license id
+                if (this.license_id !== data.license_id) return;
+
+                const ad =
+                    this.content_per_zone[this.selected_zone_index] &&
+                    this.content_per_zone[this.selected_zone_index].contents.find(
+                        (i: UI_CONTENT) => i.playlist_content_id === data.playlist_content_id,
+                    );
+
+                // Check if playlist content id is in the selected zone
+                if (ad || data.programmatic) {
+                    this.currentlyPlayingProgrammatic = data.programmatic;
+
+                    // Check if asset is programmatic
+                    if (this.currentlyPlayingProgrammatic) return;
+
+                    // Set playlist current playing content value is playlist content id is present
+                    if (data.playlist_content_id) this.currentlyPlayingContent = data.playlist_content_id;
+                }
+            },
+        );
+    }
+
     private socketOnSuccessfulSpeedTest(): void {
         this._socket.on('SS_speed_test_success', (data) => {
             const { license_id, pingLatency, downloadMbps, uploadMbps, date } = data;
@@ -2416,6 +2442,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         const description = `${currentZone} Zone: ${this.number_of_contents} items`;
         const title = ['Assets Breakdown', description];
 
+        if (!chart) return;
+
         chart.options.plugins.title = { display: true, text: title };
         chart.data.labels = [
             `Hosts: ${hosts}`,
@@ -2468,6 +2496,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         const { advertisers, feeds, fillers, hosts, others } = this.duration_breakdown;
         const description = `Total playtime: ${this.duration_breakdown_text.total}`;
         const title = ['Duration Breakdown', description];
+
+        if (!chart) return;
 
         chart.options.plugins.title = { display: true, text: title };
 

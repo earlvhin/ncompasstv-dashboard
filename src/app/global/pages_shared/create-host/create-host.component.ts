@@ -29,7 +29,6 @@ import {
     UI_ROLE_DEFINITION_TEXT,
     UI_CITY_AUTOCOMPLETE_DATA,
     UI_CITY_AUTOCOMPLETE,
-    UI_AUTOCOMPLETE_INITIAL_DATA,
     UI_HOUR,
     UI_STORE_HOURS_OPENING,
 } from 'src/app/global/models';
@@ -65,6 +64,8 @@ export class CreateHostComponent implements OnInit {
     city_loaded = false;
     city_selected: string;
     city_state: City[] = [];
+    contactTouchAndInvalid = false;
+    contactIsCleared = true;
     create_host_data: UI_AUTOCOMPLETE = { label: 'City', placeholder: 'Type anything', data: [] };
     current_host_image: string;
     dealer_name: string;
@@ -239,24 +240,6 @@ export class CreateHostComponent implements OnInit {
 
     closeGoogleDropdownList() {
         this.isListVisible = false;
-    }
-
-    getCities() {
-        this._location
-            .get_cities()
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((response) => {
-                this.citiesStateData = response.map((city) => {
-                    return new CITIES_STATE_DATA(
-                        city.id,
-                        city.city,
-                        city.abbreviation,
-                        city.state,
-                        city.region,
-                        city.country,
-                    );
-                });
-            });
     }
 
     getCitiesAndStates() {
@@ -665,33 +648,6 @@ export class CreateHostComponent implements OnInit {
         )[0];
     }
 
-    searchBoxTrigger(event: { is_search: boolean; page: number }) {
-        this.is_search = event.is_search;
-        this.getDealers(event.page);
-    }
-
-    searchDealer(keyword: string) {
-        this.loading_search = true;
-
-        this._dealer
-            .get_search_dealer(keyword)
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(
-                (data) => {
-                    if (data.paging.entities && data.paging.entities.length > 0)
-                        this.dealersData = data.paging.entities;
-                    else this.dealersData = [];
-                    this.paging = data.paging;
-                },
-                (error) => {
-                    console.error(error);
-                },
-            )
-            .add(() => {
-                this.loading_search = false;
-            });
-    }
-
     setToCategory(event: string) {
         this.no_category = true;
         this.newHostFormControls.category.setValue(this._titlecase.transform(event).replace(/_/g, ' '));
@@ -736,43 +692,6 @@ export class CreateHostComponent implements OnInit {
         return time.toLocaleString('en-US', options);
     }
 
-    private getDealers(page: number) {
-        if (page > 1) {
-            this.loading_data = true;
-
-            this._dealer
-                .get_dealers_with_page(page, '')
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    (data) => {
-                        this.dealersData = data.dealers;
-                        this.paging = data.paging;
-                        this.loading_data = false;
-                    },
-                    (error) => {
-                        console.error(error);
-                    },
-                );
-        } else {
-            if (this.is_search) this.loading_search = true;
-
-            this._dealer
-                .get_dealers_with_page(page, '')
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    (data) => {
-                        this.dealersData = data.dealers;
-                        this.paging = data.paging;
-                        this.loading_data = false;
-                        this.loading_search = false;
-                    },
-                    (error) => {
-                        console.error(error);
-                    },
-                );
-        }
-    }
-
     private initializeCreateHostForm() {
         const upperCaseAlphabets = '^[A-Z]+$';
         const numbersOnly = '^[0-9]+$';
@@ -809,7 +728,7 @@ export class CreateHostComponent implements OnInit {
             timezone: ['', Validators.required],
             zone: [''],
             contactPerson: [''],
-            contactNumber: ['', [Validators.minLength(10), Validators.maxLength(10), Validators.pattern(numbersOnly)]],
+            contactNumber: [''],
             createdBy: this._auth.current_user_value.user_id,
         });
 
@@ -1069,6 +988,28 @@ export class CreateHostComponent implements OnInit {
         });
     }
 
+    public getContactValue(value: string): void {
+        this.newHostFormControls.contactNumber.setValue(value);
+    }
+
+    public setContactNumberToInvalid(status: boolean): void {
+        this.contactTouchAndInvalid = status;
+    }
+
+    public contactCleared(status: boolean): void {
+        this.contactIsCleared = status;
+    }
+
+    public disableSaveButton(): boolean {
+        return (
+            this.newHostForm.invalid ||
+            this.is_creating_host ||
+            !this.dealerHasValue ||
+            this.contactTouchAndInvalid ||
+            !this.contactIsCleared
+        );
+    }
+
     protected get _createFormFields() {
         return [
             {
@@ -1110,6 +1051,7 @@ export class CreateHostComponent implements OnInit {
                 type: 'tel',
                 min: '0',
                 is_required: false,
+                isComponent: true,
             },
             {
                 label: 'Latitude',

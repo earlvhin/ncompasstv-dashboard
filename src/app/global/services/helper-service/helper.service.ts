@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Injectable, EventEmitter } from '@angular/core';
+import * as moment from 'moment';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 import {
     API_ADVERTISER,
@@ -51,4 +52,36 @@ export class HelperService {
     };
     singleScreenData: API_SINGLE_SCREEN;
     singleUserData: API_USER_DATA;
+    currentlySelectedDealer: { id: string; value: string } = null;
+
+    /**
+     * Use this function to retrieve the correct date computation using the mat-datepicker.
+     * This is to fix the offset made when a user is on a different timezone.
+     * @param {string} data
+     * @returns {Date}
+     */
+    parseDate(data: Date): Date {
+        return moment.utc(data).toDate();
+    }
+
+    /**
+     * Converts a date object to string for readability
+     * @param {Date} data
+     * @returns {string}
+     */
+    dateToString(data: Date): string {
+        return moment(data).format('YYYY-MM-DD');
+    }
+
+    /**
+     * Reduces the length of the string based on the given limit
+     *
+     * @param {string} data
+     * @param {number} limit
+     * @returns {string}
+     */
+    truncateText(data: string, limit: number = 250): string {
+        if (data.length > limit) return `${data.slice(0, limit)}...`;
+        return data;
+    }
 }

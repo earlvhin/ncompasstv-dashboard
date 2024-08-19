@@ -19,7 +19,9 @@ import { PAGING } from 'src/app/global/models';
 })
 export class NewSubDealerComponent implements OnInit, OnDestroy {
     back_btn: string;
+    contactTouchAndInvalid = false;
     dealers: API_DEALER[] = [];
+    dealerHasValue: boolean;
     form_fields_view: any;
     form_invalid: boolean = true;
     is_dealer: boolean = false;
@@ -37,6 +39,8 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
     password_is_valid_msg: string;
     server_error: string;
     subscription: Subscription = new Subscription();
+
+    private selectedDealerId: string;
 
     constructor(
         private _auth: AuthService,
@@ -123,6 +127,7 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
                 type: 'text',
                 placeholder: 'Ex: 1-222-456-7890',
                 width: 'col-lg-6',
+                isComponent: true,
             },
             {
                 label: 'Email Address',
@@ -191,8 +196,16 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
         return this.form.controls;
     }
 
-    dealerSelected(e): void {
-        this.f.parentId.setValue(e);
+    public dealerSelected(data: { id: string; value: string }): void {
+        if (!data) {
+            this.selectedDealerId = null;
+            this.dealerHasValue = false;
+            return;
+        }
+
+        this.selectedDealerId = data.id;
+        this.dealerHasValue = true;
+        this.f.parentId.setValue(data.id);
     }
 
     openConfirmationModal(status: string, message: string, data: any, redirect: boolean): void {
@@ -336,6 +349,14 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
                 ),
             );
         }
+    }
+
+    public getContactValue(value: string): void {
+        this.form.controls.contactNo.setValue(value);
+    }
+
+    public setContactNumberToInvalid(status: boolean): void {
+        this.contactTouchAndInvalid = status;
     }
 
     protected get roleRoute() {
