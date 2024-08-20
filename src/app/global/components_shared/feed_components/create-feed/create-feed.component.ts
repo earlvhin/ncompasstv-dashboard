@@ -84,16 +84,21 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
         this._unsubscribe.complete();
     }
 
-    dealerSelected(data: { id: string; value: string }) {
+    public dealerSelected(data: { id: string; value: string }): void {
+        if (data == null) {
+            this.clearSelectedDealer();
+            return;
+        }
+
         this.selectedDealerId = data.id;
         this.has_selected_dealer_id = true;
+        this.dealerHasValue = true;
+    }
 
+    private clearSelectedDealer(): void {
+        this.selectedDealerId = null;
+        this.has_selected_dealer_id = false;
         this.dealerHasValue = false;
-        if (data !== null) {
-            this.selectedDealerId = data.id;
-            this.has_selected_dealer_id = true;
-            this.dealerHasValue = true;
-        }
     }
 
     searchData(keyword: string) {
@@ -300,6 +305,16 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
             this.isInvalidUrl = !(await this._feed.check_url(url));
             this.isValidatingUrl = false;
         });
+    }
+
+    public isFormInvalid(): boolean {
+        return (
+            !this.new_feed_form.controls.feedTitle.value ||
+            this.isInvalidUrl ||
+            !this.feedUrlHasValue ||
+            this.isValidatingUrl ||
+            !this.dealerHasValue
+        );
     }
 
     protected get _feedTypes() {
