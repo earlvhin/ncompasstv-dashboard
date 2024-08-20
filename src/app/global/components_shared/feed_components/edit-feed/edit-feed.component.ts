@@ -3,14 +3,14 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { TitleCasePipe } from '@angular/common';
 import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/internal/operators/takeUntil';
-
+import { debounceTime, takeUntil } from 'rxjs/operators';
 import {
     API_DEALER,
     PAGING,
     UI_AUTOCOMPLETE_INITIAL_DATA,
     UI_ROLE_DEFINITION,
     UI_TABLE_FEED,
+    UI_ROLE_DEFINITION_TEXT,
 } from 'src/app/global/models';
 import { DealerService, FeedService } from 'src/app/global/services';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
@@ -200,6 +200,7 @@ export class EditFeedComponent implements OnInit, OnDestroy {
             ];
         }
     }
+
     private setDealerData() {
         this.is_dealer = true;
         this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
@@ -245,7 +246,7 @@ export class EditFeedComponent implements OnInit, OnDestroy {
         });
     }
 
-    private urlCheck(data: string) {
+    private urlCheck(data: string): boolean {
         if (typeof data === 'undefined' || !data || data.trim().length <= 0) return true;
         const protocols = ['http://', 'https://'];
         const hasProtocol = protocols.some((p) => data.includes(p));
@@ -253,7 +254,9 @@ export class EditFeedComponent implements OnInit, OnDestroy {
         return false;
     }
 
-    protected get _currentUserRole() {
+    protected get _currentUserRole(): string {
+        if (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin)
+            return UI_ROLE_DEFINITION_TEXT.administrator;
         return this._auth.current_role;
     }
 

@@ -152,7 +152,9 @@ export class NewsFormComponent implements OnInit, OnDestroy {
             this.formControls.marginLeft.setValue(this.edit_news_data.marginLeft);
             this.formControls.marginTop.setValue(this.edit_news_data.marginTop);
             this.formControls.results.setValue(this.edit_news_data.results);
-            this.formControls.rssFeedUrl.setValue(this.edit_news_data.rssFeedUrl);
+            this.formControls.rssFeedUrl.setValue(
+                this.edit_news_data.rssFeedUrl != 'null' ? this.edit_news_data.rssFeedUrl : '',
+            );
             this.formControls.time.setValue(this.edit_news_data.time);
             this.rss_url_checking = true;
             this.rss_url_valid = undefined;
