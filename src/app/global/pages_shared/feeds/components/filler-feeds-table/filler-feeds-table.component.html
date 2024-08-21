@@ -24,9 +24,13 @@
                             [new_table]="true"
                             [paging_details]="fillers_paging"
                             [has_action]="true"
+                            [active_tab]="sortColumn"
+                            [sort_column]="sortColumn"
+                            [sort_order]="sortOrder"
                             (page_triggered)="getAllFillerFeeds($event)"
                             (reload_page)="reloadPage($event)"
                             (update_info)="reloadPage($event)"
+                            (to_sort_column)="getColumnsAndOrder($event)"
                             [fillers]="true">
                         </app-data-table>
                     </mat-card>
