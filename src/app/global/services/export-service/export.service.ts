@@ -50,4 +50,9 @@ export class ExportService {
             return { header, key, width, outlineLevel, hidden, style } as Column;
         });
     }
+
+    public encodeFileNameBeforeExport(data: string): string {
+        const restrictedCharacters = /[<>:"/\\|?*]/g;
+        return data.replace(restrictedCharacters, '_');
+    }
 }
