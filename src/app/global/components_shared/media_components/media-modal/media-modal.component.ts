@@ -146,27 +146,28 @@ export class MediaModalComponent implements OnInit, OnDestroy {
     }
 
     public dealerSelected(data: { id: string; value: string }): void {
-        if (data == null) {
-            this.assignData.dealer = '';
+        this.assignData.dealer = data == null ? '' : data.id;
+
+        if (!this.isEdit) {
+            this.getAdvertiserByDealerId();
             return;
         }
         this.assignData.dealer = data.id;
 
-        if (this.isEdit) {
-            this.loading_data = false;
-            if (this.contentData.fileType != 'feed') {
-                this.assignData.host = '';
-                this.assignData.advertiser = '';
-                this.to_empty = true;
-                this.loading_form = false;
-                this.getAdvertiserByDealerId();
-            }
+        this.loading_data = false;
 
-            if (data.id != this.temp_dname) {
-                this.assignData.host = '';
-                this.assignData.advertiser = '';
-            }
-        } else this.getAdvertiserByDealerId();
+        if (this.contentData.fileType != 'feed') {
+            this.assignData.host = '';
+            this.assignData.advertiser = '';
+            this.to_empty = true;
+            this.loading_form = false;
+            this.getAdvertiserByDealerId();
+        }
+
+        if (data.id != this.temp_dname) {
+            this.assignData.host = '';
+            this.assignData.advertiser = '';
+        }
     }
 
     public hostSelected(data: { id: string; value: string }): void {
