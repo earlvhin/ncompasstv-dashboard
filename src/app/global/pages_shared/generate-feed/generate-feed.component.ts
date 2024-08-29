@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Observable, forkJoin, Subscription, Subject } from 'rxjs';
 
 import { AuthService, FeedService } from 'src/app/global/services';
@@ -21,6 +22,7 @@ import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../models/ui_rol
 import { API_FEED_TYPES } from '../../models/api_feed.model';
 import { takeUntil } from 'rxjs/operators';
 import { CanComponentDeactivate } from '../../guards';
+import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
     selector: 'app-generate-feed',
@@ -62,6 +64,7 @@ export class GenerateFeedComponent implements OnInit, CanComponentDeactivate {
         private _feed: FeedService,
         private _router: Router,
         private _route: ActivatedRoute,
+        private _dialog: MatDialog,
     ) {}
 
     ngOnInit(): void {
@@ -296,84 +299,54 @@ export class GenerateFeedComponent implements OnInit, CanComponentDeactivate {
     }
 
     /** POST Request to API with Generated Slide Feed Payload*/
-    saveGeneratedSlideFeed(): void {
+    public saveGeneratedSlideFeed(type: string): void {
         this.saving = true;
 
-        if (!this.editing) {
-            this._feed
-                .generate_feed(this.generated_slide_feed, 'slides')
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    () => this._router.navigate([`/${this.roleRoute}/feeds`]),
-                    (error) => {
-                        console.error(error);
-                    },
-                );
-        } else {
-            this._feed
-                .update_slide_feed(this.generated_slide_feed)
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    () => this._router.navigate([`/${this.roleRoute}/feeds`]),
-                    (error) => {
-                        console.error(error);
-                    },
-                );
-        }
+        const action = this.editing
+            ? this._feed.update_slide_feed(this.generated_slide_feed)
+            : this._feed.generate_feed(this.generated_slide_feed, type);
+
+        action.pipe(takeUntil(this._unsubscribe)).subscribe({
+            next: () => this.showModalResult(type, true),
+            error: (error) => {
+                console.error(error);
+                this.showModalResult(type, false);
+            },
+        });
     }
 
     /** POST Request to API with Generated Weather Feed Payload*/
-    saveGeneratedWeatherFeed(): void {
+    public saveGeneratedWeatherFeed(type: string): void {
         this.saving = true;
 
-        if (!this.editing) {
-            this._feed
-                .generate_feed(this.generated_weather_feed, 'weather')
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    () => this._router.navigate([`/${this.roleRoute}/feeds`]),
-                    (error) => {
-                        console.error(error);
-                    },
-                );
-        } else {
-            this._feed
-                .update_weather_feed(this.generated_weather_feed)
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    () => this._router.navigate([`/${this.roleRoute}/feeds`]),
-                    (error) => {
-                        console.error(error);
-                    },
-                );
-        }
+        const action = this.editing
+            ? this._feed.update_weather_feed(this.generated_weather_feed)
+            : this._feed.generate_feed(this.generated_weather_feed, type);
+
+        action.pipe(takeUntil(this._unsubscribe)).subscribe({
+            next: () => this.showModalResult(type, true),
+            error: (error) => {
+                console.error(error);
+                this.showModalResult(type, false);
+            },
+        });
     }
 
     /** POST Request to API with Generated News Feather Feed Payload*/
-    saveGeneratedNewsFeed(): void {
+    public saveGeneratedNewsFeed(type: string): void {
         this.saving = true;
 
-        if (!this.editing) {
-            this._feed
-                .generate_feed(this.generated_news_feed, 'news')
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    () => this._router.navigate([`/${this.roleRoute}/feeds`]),
-                    (error) => {
-                        console.error(error);
-                    },
-                );
-        } else {
-            this._feed
-                .update_news_feed(this.generated_news_feed)
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    () => this._router.navigate([`/${this.roleRoute}/feeds`]),
-                    (error) => {
-                        console.error(error);
-                    },
-                );
-        }
+        const action = this.editing
+            ? this._feed.update_news_feed(this.generated_news_feed)
+            : this._feed.generate_feed(this.generated_news_feed, type);
+
+        action.pipe(takeUntil(this._unsubscribe)).subscribe({
+            next: () => this.showModalResult(type, true),
+            error: (error) => {
+                console.error(error);
+                this.showModalResult(type, false);
+            },
+        });
     }
 
     /** POST Request to API with Generated News Feather Feed Payload*/
@@ -411,7 +384,25 @@ export class GenerateFeedComponent implements OnInit, CanComponentDeactivate {
         this.selected_index = e.selectedIndex;
     }
 
+    public showModalResult(type: string, status: boolean): void {
+        type = type.charAt(0).toUpperCase() + type.slice(1);
+        if (status) this.showConfirmationDialog('success', `${type} Feed Saved Successfully`, 'Click OK to continue');
+        else this.showConfirmationDialog('error', `${type} Feed saving unsuccessful`, 'Click OK to continue');
+    }
+
+    private showConfirmationDialog(status: string, message: string, data: string): void {
+        const dialogData = { status, message, data };
+        const dialogConfig = { width: '500px', height: '350px', data: dialogData };
+        this._dialog
+            .open(ConfirmationModalComponent, dialogConfig)
+            .afterClosed()
+            .subscribe((response) => {
+                this._router.navigate([`/${this.roleRoute}/feeds`]);
+            });
+    }
+
     protected get _roleRoute() {
+        if (this._auth.roleRoute === UI_ROLE_DEFINITION_TEXT.dealeradmin) return UI_ROLE_DEFINITION_TEXT.administrator;
         return this._auth.roleRoute;
     }
 }

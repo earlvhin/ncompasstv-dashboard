@@ -11,7 +11,7 @@ export interface API_FILTERS {
     dmaRank?: number;
     dmaCode?: number;
     dmaName?: string;
-    page?: number;
+    enableUpdates?: boolean;
     feedId?: string;
     fileCategory?: any;
     filter?: string;
@@ -24,8 +24,10 @@ export interface API_FILTERS {
     inactive?: any;
     installDate?: string;
     isActivated?: any;
+    keyword?: string;
     online?: any;
     ownerId?: string;
+    page?: number;
     pageSize?: any;
     pending?: any;
     piStatus?: string;

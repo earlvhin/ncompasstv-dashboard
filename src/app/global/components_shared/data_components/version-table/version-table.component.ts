@@ -77,6 +77,17 @@ export class VersionTableComponent implements OnInit, OnDestroy {
                 window.open(navigate.route, '_blank');
                 break;
 
+            case 'disable_update':
+                this.warningModal(
+                    'warning',
+                    'Disable Update',
+                    'Are you sure you want to disable update for this license?',
+                    '',
+                    'app_version_delete',
+                    id.uniqueIdentifier,
+                );
+                break;
+
             default:
                 break;
         }

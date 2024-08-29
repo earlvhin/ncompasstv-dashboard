@@ -47,7 +47,6 @@ export class FeedInfoComponent implements OnInit {
     ) {
         this.currentUser = this._auth.current_user_value;
         this.isCurrentUserDealer = this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
-        console.log(this.isCurrentUserDealer);
     }
 
     ngOnInit() {

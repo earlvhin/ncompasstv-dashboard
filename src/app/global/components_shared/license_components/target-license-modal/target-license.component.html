@@ -1,0 +1,226 @@
+<div class="target-licenses-modal p-3">
+    <div class="title-description d-flex align-items-start mb-3">
+        <div class="flex-even">
+            <h3>Add Target Release</h3>
+            <p class="sm-text">Choose which dealer, host, or license you want the new versions to take effect.</p>
+        </div>
+
+        <button class="naked-btn" mat-dialog-close>
+            <i class="fas fa-times lg-text"></i>
+        </button>
+    </div>
+
+    <ng-container *ngIf="!isLoadingHosts; else loader">
+        <div class="search-bar mb-3">
+            <!-- TODO: Convert to a component -->
+            <form [formGroup]="dealerSelection">
+                <!-- Search Input Field -->
+                <mat-form-field class="w-100">
+                    <mat-select
+                        #dealerMultiSelect
+                        formControlName="selectedDealers"
+                        [placeholder]="'Select Dealer Name(s)'"
+                        [multiple]="true"
+                        disableOptionCentering>
+                        <div class="custom-panel">
+                            <mat-option>
+                                <ngx-mat-select-search
+                                    class="target-license-mat-select-search"
+                                    noEntriesFoundLabel="No results"
+                                    [formControl]="dealerFilterControl"
+                                    [placeholderLabel]="'Search Dealer Name'"
+                                    [clearSearchInput]="false"
+                                    [searching]="isSearching">
+                                    <mat-icon class="clear" ngxMatSelectSearchClear>close</mat-icon>
+                                </ngx-mat-select-search>
+                            </mat-option>
+                            <mat-option *ngFor="let dealer of filteredDealers | async" [value]="dealer">
+                                <div class="dealer sm-text">
+                                    {{ dealer.businessName }}
+                                </div>
+                            </mat-option>
+                        </div>
+                        <footer class="selection">
+                            <button
+                                class="theme-btn _primary md-text font-weight-bold mr-3"
+                                (click)="dealerMultiSelect.close()">
+                                Apply Selection
+                            </button>
+                        </footer>
+                    </mat-select>
+                </mat-form-field>
+                <!-- Search Input Field -->
+
+                <!-- Preview Area -->
+                <div class="preview-selected mat-card">
+                    <ng-container>
+                        <div class="section-title d-flex align-items-start mb-1">
+                            <span class="sm-text font-weight-bold flex-even">Selected Dealers:</span>
+                            <div class="sm-text font-weight-bold">
+                                <button
+                                    class="naked-btn"
+                                    [ngClass]="selectedDealersControl.value.length && 'text-danger'"
+                                    (click)="selectedDealersControl.value.length && onClearSelection()">
+                                    <i class="far fa-times-circle mr-2"></i>
+                                    <span class="font-weight-bold">Clear Selection</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="selected-dealers-container">
+                            <ng-container *ngIf="selectedDealersControl.value.length">
+                                <div
+                                    *ngFor="let dealer of selectedDealersControl.value; let i = index"
+                                    class="badge badge-success bg-primary p-2 mr-2 mb-2"
+                                    [ngClass]="!isFiltered ? 'dealer' : 'disable-dealer'">
+                                    <span class="mr-2 p-2">{{ dealer.businessName }}</span>
+                                    <button class="naked-btn font-weight-bold text-danger" (click)="onRemoveDealer(i)">
+                                        <i class="far fa-times"></i>
+                                    </button>
+                                </div>
+                            </ng-container>
+
+                            <div
+                                *ngIf="!selectedDealersControl.value.length"
+                                class="badge badge-success bg-gray p-2 mr-2 mb-2"
+                                [ngClass]="!isFiltered ? 'dealer' : 'disable-dealer'">
+                                <span class="sm-text text-dark">No Dealers Selected</span>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+                <!-- Preview Area -->
+            </form>
+            <!-- TODO: Convert to a component -->
+        </div>
+        <div class="search-result mb-3" [ngClass]="!selectedDealers && 'd-flex align-items-center'">
+            <!-- TODO: Convert to a component -->
+            <mat-accordion *ngIf="selectedDealers">
+                <mat-expansion-panel
+                    class="search-result-mat-expansion-panel mb-3"
+                    *ngFor="let dealer of selectedDealers; let i = index"
+                    [expanded]="dealer.dealerId === expandedDealerId"
+                    hideToggle="true"
+                    #dealerExpansion
+                    id="outer-mat">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <div class="d-flex w-100">
+                                <div class="flex-even">
+                                    <mat-checkbox
+                                        (click)="$event.stopPropagation()"
+                                        [checked]="isDealerSelected()"
+                                        (change)="selectAllHostAndLicenses($event, dealer.dealerId)">
+                                        <h5 class="ml-2">
+                                            {{ dealer.businessName }}
+                                        </h5>
+                                    </mat-checkbox>
+                                </div>
+
+                                <div *ngIf="dealer.hosts.length > 0">
+                                    <div *ngIf="!dealerExpansion.expanded" class="ctm-accordion-icon pt-1">
+                                        <i class="fas fa-angle-down"></i>
+                                    </div>
+                                    <div *ngIf="dealerExpansion.expanded" class="ctm-accordion-icon">
+                                        <i class="fas fa-angle-up"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <div class="pt-4" *ngIf="dealer.hosts.length > 0">
+                        <mat-expansion-panel
+                            *ngFor="let host of dealer.hosts"
+                            #hostExpansion
+                            id="outer-mat"
+                            class="mb-3"
+                            hideToggle>
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    <div class="d-flex align-items-center w-100">
+                                        <div class="flex-even">
+                                            <div class="d-flex">
+                                                <mat-checkbox
+                                                    class="mr-3"
+                                                    (change)="selectHost($event, dealer.dealerId, host.hostId)"
+                                                    (click)="$event.stopPropagation()"
+                                                    [checked]="isHostSelected(host.hostId)">
+                                                </mat-checkbox>
+                                                <h5 class="ml-2">
+                                                    {{ host.name }}
+                                                </h5>
+                                            </div>
+                                        </div>
+                                        <div class="expansion-panel">
+                                            <div *ngIf="!hostExpansion.expanded" class="ctm-accordion-icon pt-1">
+                                                <i class="fas fa-angle-down"></i>
+                                            </div>
+                                            <div *ngIf="hostExpansion.expanded" class="ctm-accordion-icon">
+                                                <i class="fas fa-angle-up"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <div class="px-4 pt-2" *ngIf="!isLoadingLicenseCount; else loader_sm_no_text">
+                                <ng-container *ngIf="host.licenses.length; else no_licenses_text">
+                                    <div class="mt-2" *ngFor="let license of host.licenses">
+                                        <mat-checkbox
+                                            (change)="selectLicense($event, license.dealerId, license.licenseId)"
+                                            [checked]="isLicenseSelected(license.licenseId)">
+                                            <a class="ml-2" [routerLink]="setLink(license.licenseId)" target="_blank">
+                                                {{
+                                                    license.alias && license.alias.length > 0
+                                                        ? license.alias
+                                                        : license.licenseKey
+                                                }}
+                                            </a>
+                                        </mat-checkbox>
+                                    </div>
+                                </ng-container>
+                                <ng-template #no_licenses_text>
+                                    <p>No licenses for this host</p>
+                                </ng-template>
+                            </div>
+                        </mat-expansion-panel>
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+            <!-- TODO: Convert to a component -->
+
+            <div class="default-empty w-100 text-center" *ngIf="!selectedDealers">
+                <h3>Select a Dealer</h3>
+                <p>Setup roll out target, select a dealer to get started!</p>
+            </div>
+        </div>
+
+        <button
+            mat-button
+            mat-raised-button
+            class="theme-btn mr-2"
+            (click)="onSubmit()"
+            [disabled]="!selectedDealersControl.value.length">
+            Submit
+        </button>
+
+        <button mat-button mat-raised-button class="theme-btn" mat-dialog-close>Cancel</button>
+    </ng-container>
+
+    <ng-template #loader>
+        <div class="vh-50 d-flex align-items-center justify-content-center">
+            <app-spinner></app-spinner>
+        </div>
+    </ng-template>
+
+    <ng-template #loader_sm>
+        <div class="text-center py-4">
+            <app-spinner [diameter]="65"></app-spinner>
+            <h5 class="mt-3">Getting License Information. Please Wait.</h5>
+        </div>
+    </ng-template>
+
+    <ng-template #loader_sm_no_text>
+        <div class="loader-sm-no-text py-4">
+            <app-spinner [diameter]="65"></app-spinner>
+        </div>
+    </ng-template>
+</div>

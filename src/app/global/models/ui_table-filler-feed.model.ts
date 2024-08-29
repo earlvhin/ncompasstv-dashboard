@@ -1,5 +1,3 @@
-import { count } from 'console';
-
 export class UI_TABLE_FILLER_FEED {
     id: object;
     counter: object;

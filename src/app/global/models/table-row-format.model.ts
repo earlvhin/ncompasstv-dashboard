@@ -1,4 +1,5 @@
 export interface TABLE_ROW_FORMAT {
+    id?: string;
     anydesk?: boolean;
     compressed?: boolean;
     copy?: boolean;

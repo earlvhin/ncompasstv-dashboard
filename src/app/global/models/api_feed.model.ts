@@ -4,6 +4,7 @@ import { API_USER_DATA } from './api_user-data.model';
 export class API_FEED {
     feed: {
         feedId: string;
+        businessName?: string;
         contentId: string;
         createdBy: string;
         dateCreated: string;
@@ -14,6 +15,7 @@ export class API_FEED {
         feedUrl: string;
         fileType: string;
         thumbnail: string;
+        embeddedScript?: string;
     };
     dealer: API_DEALER;
     owner: API_USER_DATA;

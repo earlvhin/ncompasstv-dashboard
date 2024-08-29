@@ -1741,7 +1741,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     prepareForExport(tab, columns, data) {
-        const filename = this.dealerName + '-' + tab;
+        const filename = this._export.encodeFileNameBeforeExport(this.dealerName) + '-' + tab;
         let tables_to_export = columns;
         tables_to_export = tables_to_export.filter(function (column) {
             return !column.no_export;
