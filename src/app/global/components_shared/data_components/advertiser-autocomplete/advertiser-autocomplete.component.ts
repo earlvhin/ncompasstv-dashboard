@@ -50,8 +50,8 @@ export class AdvertiserAutocompleteComponent implements OnInit {
     }
 
     private getAdvertisersMinified(dealerId?: string): void {
-        this.advertisers = [];
         this.advertiserDataFetched = false;
+        this.advertiserData.data = [];
 
         this._advertiser
             .getAdvertisersUnassignedToUserMinified(dealerId)
@@ -64,11 +64,12 @@ export class AdvertiserAutocompleteComponent implements OnInit {
                             id,
                             value: name,
                         }));
-                        this.advertiserDataFetched = true;
+
                         this.advertiserData.data = this.advertisers;
                         this.setAutocomplete(this.advertiserData.data);
                     } else {
                         this.noAdvertiser = true;
+                        this.advertiserDataFetched = true;
                     }
                 },
                 error: (err) => console.error('Error fetching data:', err),
