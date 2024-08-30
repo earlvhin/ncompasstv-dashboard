@@ -4,13 +4,11 @@ import { HttpClient } from '@angular/common/http';
 
 import { BaseService } from './base.service';
 import {
-    CREATE_AND_ASSIGN_TAG,
     API_FILTERS,
-    OWNER,
     PAGING,
     TAG,
     TAG_OWNER,
-    CREATE_AND_ASSIGN_TAGS,
+    CREATE_AND_ASSIGN_TAG_V2,
     DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER,
 } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
@@ -39,7 +37,7 @@ export class TagService extends BaseService {
         return this.postRequest(endpoint, {});
     }
 
-    createAndAssignTags(body: CREATE_AND_ASSIGN_TAGS, isDealer?): Observable<{ message: string; tags: any }> {
+    createAndAssignTags(body: CREATE_AND_ASSIGN_TAG_V2, isDealer?): Observable<{ message: string; tags: any }> {
         if (isDealer) {
             let url_split = this.creators.tag_add_and_assign.split('/');
             let new_endpoint = url_split[0] + '/dealer/' + url_split[2] + '/' + url_split[3];

@@ -632,13 +632,11 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
         if (!confirmAction) return;
 
-        const ownerName = await this.getOwnerNameById(this.license_id);
-
         const deleteData: DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER = {
             TagId: data.tagId,
             OwnerId: this.license_id,
             TagName: data.name,
-            OwnerName: ownerName,
+            OwnerName: this.license_data.alias || this.license_data.licenseKey,
         };
 
         this._tag
@@ -653,24 +651,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                     console.error(error);
                 },
             );
-    }
-
-    public getOwnerNameById(ownerId: string): Promise<string> {
-        return new Promise((resolve, reject) => {
-            this._license.get_license_by_id(ownerId).subscribe(
-                (license) => {
-                    if ('dealer' in license && license.dealer && license.dealer.businessName) {
-                        resolve(license.dealer.businessName);
-                    } else {
-                        reject('Owner name not found');
-                    }
-                },
-                (error) => {
-                    console.error('Error fetching license data', error);
-                    reject('Failed to fetch license data');
-                },
-            );
-        });
     }
 
     onResetAnydeskID(): void {
@@ -742,19 +722,24 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             height: '700px',
             panelClass: 'dialog-container-position-relative',
             disableClose: true,
+            data: {
+                dealer: this.dealerData,
+            },
         };
 
         const modal: MatDialogRef<AddTagModalComponent> = this._dialog.open(AddTagModalComponent, config);
         modal.componentInstance.ownerId = this.license_data.licenseId;
-        modal.componentInstance.currentTags = this.license_data.tags as {
+        modal.componentInstance.ownerName = this.license_data.alias || this.license_data.licenseKey;
+        modal.componentInstance.currentTags = this.tags as {
             name: string;
             tagColor: string;
         }[];
 
-        modal.afterClosed().subscribe((response) => {
-            if (!response) return;
+        modal.afterClosed().subscribe((response: { currentTags: TAG[]; hasChanges: boolean }) => {
+            console.log('🚀 ~ SingleLicenseComponent ~ modal.afterClosed ~ response:', response);
+            if (!response || !response.hasChanges) return;
             this.showSuccessModal('Success!', 'Tags saved', '', false);
-            this.tags = [...(response as TAG[])];
+            this.tags = [...(response.currentTags as TAG[])];
         });
     }
 

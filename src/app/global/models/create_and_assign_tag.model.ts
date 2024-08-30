@@ -1,4 +1,3 @@
-import { TAG_OWNER } from './tag-owner.model';
 import { TAG } from './tag.model';
 
 export interface CREATE_AND_ASSIGN_TAG {
@@ -9,10 +8,10 @@ export interface CREATE_AND_ASSIGN_TAG {
     existing: string[];
 }
 
-export interface CREATE_AND_ASSIGN_TAGS {
+export interface CREATE_AND_ASSIGN_TAG_V2 {
     tagtypeid: string;
     createdBy: string;
-    owners: { id: string; name: string }[];
+    owners: TagOwner[];
     new: TAG[];
     existing: string[];
 }
@@ -22,4 +21,9 @@ export interface DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER {
     OwnerId: string;
     TagName: string;
     OwnerName: string;
+}
+
+export interface TagOwner {
+    id: string;
+    name: string;
 }

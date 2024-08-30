@@ -86,7 +86,7 @@ export class TagsTableComponent implements OnInit, OnDestroy {
             );
     }
 
-    createDeleteTagData(tag: TAG, ownerId: string, ownerName: string): DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER {
+    mapDeleteTagData(tag: TAG, ownerId: string, ownerName: string): DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER {
         return {
             TagId: tag.tagId,
             OwnerId: ownerId,
@@ -100,30 +100,19 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 
         if (!response) return;
 
-        try {
-            const deleteData: DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER = {
-                TagId: data.TagId,
-                OwnerId: data.OwnerId,
-                TagName: data.TagName,
-                OwnerName: data.OwnerName,
-            };
-
-            this._tag
-                .deleteTagByIdAndOwner(deleteData)
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    () => {
-                        this._tag.onRefreshTagOwnersTable.next();
-                        this._tag.onRefreshTagsTable.next();
-                        this._tag.onRefreshTagsCount.next();
-                    },
-                    (error) => {
-                        console.error('Error deleting tag', error);
-                    },
-                );
-        } catch (error) {
-            console.error('Failed to fetch owner name', error);
-        }
+        this._tag
+            .deleteTagByIdAndOwner(data)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe(
+                () => {
+                    this._tag.onRefreshTagOwnersTable.next();
+                    this._tag.onRefreshTagsTable.next();
+                    this._tag.onRefreshTagsCount.next();
+                },
+                (error) => {
+                    console.error('Error deleting tag', error);
+                },
+            );
     }
 
     clickedPageNumber(page: number): void {

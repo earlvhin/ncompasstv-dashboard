@@ -5,7 +5,7 @@ import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
 
 import { AuthService, ConfirmationDialogService, LicenseService, TagService } from 'src/app/global/services';
-import { CREATE_AND_ASSIGN_TAGS, DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER, TAG } from 'src/app/global/models';
+import { CREATE_AND_ASSIGN_TAG_V2, DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER, TAG } from 'src/app/global/models';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
@@ -16,6 +16,7 @@ import { ConfirmationModalComponent } from 'src/app/global/components_shared/pag
 export class AddTagModalComponent implements OnInit, OnDestroy {
     @Input() currentTags: TAG[] = [];
     @Input() ownerId: string = null;
+    @Input() ownerName: string = null;
     @ViewChild('tagMultiSelect', { static: true }) tagMultiSelect: MatSelect;
     checkNewTagsQueue: TAG[] = [];
     description = 'You may assign an existing tag or create one for this license';
@@ -25,6 +26,10 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
     isDataReady = false;
     isSearchingTags = false;
     selectedTagColor: string;
+    tagActions: {
+        currentTags: TAG[];
+        hasChanges: boolean;
+    };
     title = 'Add Tag to License';
 
     protected _unsubscribe = new Subject<void>();
@@ -112,6 +117,8 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
     }
 
     async onRemoveTag(index: number, type: string, tag?: TAG) {
+        console.log('🚀 ~ AddTagModalComponent ~ onRemoveTag ~ type:', type);
+
         let data: TAG[] = [];
 
         switch (type) {
@@ -125,13 +132,11 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
                 data = this.currentTags;
 
                 try {
-                    const ownerName = await this.getOwnerNameById(this.ownerId);
-
                     const deleteData: DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER = {
                         TagId: tag.tagId,
                         OwnerId: this.ownerId,
                         TagName: tag.name,
-                        OwnerName: ownerName,
+                        OwnerName: this.ownerName,
                     };
 
                     await this.onDeleteTagFromOwner(deleteData);
@@ -150,7 +155,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
         this._tagColorControl.setValue(value);
     }
 
-    async onSubmit() {
+    onSubmit() {
         const tagsToAdd = (this._newTagsControl.value as TAG[]).map((tag) => {
             return {
                 name: tag.name,
@@ -164,54 +169,32 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
             .concat(this.currentTags)
             .map((tag) => tag.tagId);
 
-        try {
-            const ownerName = await this.getOwnerNameById(this.ownerId);
-            const data: CREATE_AND_ASSIGN_TAGS = {
-                tagtypeid: '2',
-                createdBy: this._currentUser.user_id,
-                owners: [
-                    {
-                        id: this.ownerId,
-                        name: ownerName,
-                    },
-                ],
-                new: tagsToAdd,
-                existing: tagsToAssign,
-            };
+        const data: CREATE_AND_ASSIGN_TAG_V2 = {
+            tagtypeid: '2',
+            createdBy: this._currentUser.user_id,
+            owners: [
+                {
+                    id: this.ownerId,
+                    name: this.ownerName,
+                },
+            ],
+            new: tagsToAdd,
+            existing: tagsToAssign,
+        };
 
-            this._tag
-                .createAndAssignTags(data, this._isDealer())
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    async (response) => {
-                        const tags = response.tags[this.ownerId] as TAG[];
-                        this._currentDialog.close(tags);
-                    },
-                    (error) => {
-                        this._confirmDialog.error();
-                    },
-                );
-        } catch (error) {
-            console.error('Failed to fetch owner name', error);
-        }
-    }
-
-    public getOwnerNameById(ownerId: string): Promise<string> {
-        return new Promise((resolve, reject) => {
-            this._license.get_license_by_id(ownerId).subscribe(
-                (license) => {
-                    if ('dealer' in license && license.dealer && license.dealer.businessName) {
-                        resolve(license.dealer.businessName);
-                    } else {
-                        reject('Owner name not found');
-                    }
+        this._tag
+            .createAndAssignTags(data, this._isDealer())
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe(
+                async (response) => {
+                    const tags = response.tags[this.ownerId] as TAG[];
+                    this.tagActions = { currentTags: this.currentTags, hasChanges: true };
+                    this._currentDialog.close(this.tagActions);
                 },
                 (error) => {
-                    console.error('Error fetching license data', error);
-                    reject('Failed to fetch license data');
+                    this._confirmDialog.error();
                 },
             );
-        });
     }
 
     private getAllRecentTags() {
@@ -279,6 +262,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
                     try {
                         const fetchedData = await this._tag.getTagByOwner(this.ownerId).toPromise();
                         this.currentTags = [...fetchedData.tags];
+                        this.tagActions = { currentTags: this.currentTags, hasChanges: true };
                     } catch (error) {
                         console.error('Error fetching updated tags', error);
                     }

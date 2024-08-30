@@ -51,7 +51,7 @@
                             <div class="owner-icon">
                                 <span>{{ ownerIcons[data.tagTypeName.toLowerCase()] }}</span>
                             </div>
-                            <a [routerLink]="data.url" target="_blank">{{ data.displayName }}</a>
+                            <a [routerLink]="data.url" target="_blank">{{ data.displayName }}hhhhhhhhhhhhhhhhhhh</a>
                         </div>
                     </td>
                     <!-- TAGS -->
@@ -67,7 +67,7 @@
                                 <div
                                     class="remove-btn cursor-pointer"
                                     (click)="
-                                        onDeleteTagFromOwner(createDeleteTagData(tag, data.ownerId, data.displayName))
+                                        onDeleteTagFromOwner(mapDeleteTagData(tag, data.ownerId, data.displayName))
                                     ">
                                     <mat-icon class="no-select">close</mat-icon>
                                 </div>
