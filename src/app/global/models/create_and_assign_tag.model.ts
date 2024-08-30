@@ -12,7 +12,7 @@ export interface CREATE_AND_ASSIGN_TAG {
 export interface CREATE_AND_ASSIGN_TAGS {
     tagtypeid: string;
     createdBy: string;
-    owners: { id: string; name: string }[]; // Change to an array of objects
+    owners: { id: string; name: string }[];
     new: TAG[];
     existing: string[];
 }

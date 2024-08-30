@@ -125,16 +125,16 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
                 data = this.currentTags;
 
                 try {
-                    const ownerName = await this.getOwnerNameById(this.ownerId); // Await to get the owner name
+                    const ownerName = await this.getOwnerNameById(this.ownerId);
 
                     const deleteData: DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER = {
                         TagId: tag.tagId,
                         OwnerId: this.ownerId,
                         TagName: tag.name,
-                        OwnerName: ownerName, // Use the fetched owner name
+                        OwnerName: ownerName,
                     };
 
-                    await this.onDeleteTagFromOwner(deleteData); // Pass deleteData to the deletion method
+                    await this.onDeleteTagFromOwner(deleteData);
                 } catch (error) {
                     console.error('Failed to fetch owner name', error);
                 }
@@ -165,14 +165,14 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
             .map((tag) => tag.tagId);
 
         try {
-            const ownerName = await this.getOwnerNameById(this.ownerId); // Fetch and wait for the owner name
+            const ownerName = await this.getOwnerNameById(this.ownerId);
             const data: CREATE_AND_ASSIGN_TAGS = {
                 tagtypeid: '2',
                 createdBy: this._currentUser.user_id,
                 owners: [
                     {
                         id: this.ownerId,
-                        name: ownerName, // ownerName is now a string
+                        name: ownerName,
                     },
                 ],
                 new: tagsToAdd,

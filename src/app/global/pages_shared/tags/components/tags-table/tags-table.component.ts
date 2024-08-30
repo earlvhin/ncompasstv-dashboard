@@ -104,8 +104,8 @@ export class TagsTableComponent implements OnInit, OnDestroy {
             const deleteData: DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER = {
                 TagId: data.TagId,
                 OwnerId: data.OwnerId,
-                TagName: data.TagName, // You may fetch or pass the TagName if available
-                OwnerName: data.OwnerName, // Use the fetched owner name
+                TagName: data.TagName,
+                OwnerName: data.OwnerName,
             };
 
             this._tag
