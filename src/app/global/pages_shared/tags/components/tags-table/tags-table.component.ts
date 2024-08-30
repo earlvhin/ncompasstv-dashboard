@@ -4,7 +4,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { TAG, TAG_TYPE, TAG_OWNER, PAGING } from 'src/app/global/models';
+import { TAG, TAG_TYPE, TAG_OWNER, PAGING, DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER } from 'src/app/global/models';
 import { TagService } from 'src/app/global/services';
 import { EditTagComponent } from '../../dialogs';
 
@@ -86,24 +86,44 @@ export class TagsTableComponent implements OnInit, OnDestroy {
             );
     }
 
-    async onDeleteTagFromOwner(tagId: string, ownerId: string): Promise<void> {
+    createDeleteTagData(tag: TAG, ownerId: string, ownerName: string): DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER {
+        return {
+            TagId: tag.tagId,
+            OwnerId: ownerId,
+            TagName: tag.name,
+            OwnerName: ownerName,
+        };
+    }
+
+    public async onDeleteTagFromOwner(data: DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER): Promise<void> {
         const response = await this.openConfirmAPIRequestDialog('delete_tag_from_owner').toPromise();
 
         if (!response) return;
 
-        this._tag
-            .deleteTagByIdAndOwner(tagId, ownerId)
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(
-                () => {
-                    this._tag.onRefreshTagOwnersTable.next();
-                    this._tag.onRefreshTagsTable.next();
-                    this._tag.onRefreshTagsCount.next();
-                },
-                (error) => {
-                    console.error(error);
-                },
-            );
+        try {
+            const deleteData: DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER = {
+                TagId: data.TagId,
+                OwnerId: data.OwnerId,
+                TagName: data.TagName, // You may fetch or pass the TagName if available
+                OwnerName: data.OwnerName, // Use the fetched owner name
+            };
+
+            this._tag
+                .deleteTagByIdAndOwner(deleteData)
+                .pipe(takeUntil(this._unsubscribe))
+                .subscribe(
+                    () => {
+                        this._tag.onRefreshTagOwnersTable.next();
+                        this._tag.onRefreshTagsTable.next();
+                        this._tag.onRefreshTagsCount.next();
+                    },
+                    (error) => {
+                        console.error('Error deleting tag', error);
+                    },
+                );
+        } catch (error) {
+            console.error('Failed to fetch owner name', error);
+        }
     }
 
     clickedPageNumber(page: number): void {

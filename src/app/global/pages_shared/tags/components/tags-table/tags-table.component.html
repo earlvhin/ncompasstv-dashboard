@@ -66,7 +66,9 @@
                                 <div class="name">{{ tag.name }}</div>
                                 <div
                                     class="remove-btn cursor-pointer"
-                                    (click)="onDeleteTagFromOwner(tag.tagId, data.ownerId)">
+                                    (click)="
+                                        onDeleteTagFromOwner(createDeleteTagData(tag, data.ownerId, data.displayName))
+                                    ">
                                     <mat-icon class="no-select">close</mat-icon>
                                 </div>
                             </div>

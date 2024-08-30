@@ -2,10 +2,10 @@ import { Component, Input, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MatSelect } from '@angular/material';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
-import { ReplaySubject, Subject } from 'rxjs';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
 
-import { AuthService, ConfirmationDialogService, TagService } from 'src/app/global/services';
-import { CREATE_AND_ASSIGN_TAG, TAG } from 'src/app/global/models';
+import { AuthService, ConfirmationDialogService, LicenseService, TagService } from 'src/app/global/services';
+import { CREATE_AND_ASSIGN_TAGS, DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER, TAG } from 'src/app/global/models';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
@@ -36,6 +36,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
         private _dialog: MatDialog,
         private _formBuilder: FormBuilder,
         private _tag: TagService,
+        private _license: LicenseService,
     ) {}
 
     ngOnInit() {
@@ -122,7 +123,21 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
                 break;
             default:
                 data = this.currentTags;
-                await this.onDeleteTagFromOwner(tag.tagId, this.ownerId);
+
+                try {
+                    const ownerName = await this.getOwnerNameById(this.ownerId); // Await to get the owner name
+
+                    const deleteData: DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER = {
+                        TagId: tag.tagId,
+                        OwnerId: this.ownerId,
+                        TagName: tag.name,
+                        OwnerName: ownerName, // Use the fetched owner name
+                    };
+
+                    await this.onDeleteTagFromOwner(deleteData); // Pass deleteData to the deletion method
+                } catch (error) {
+                    console.error('Failed to fetch owner name', error);
+                }
                 return;
         }
 
@@ -135,7 +150,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
         this._tagColorControl.setValue(value);
     }
 
-    onSubmit() {
+    async onSubmit() {
         const tagsToAdd = (this._newTagsControl.value as TAG[]).map((tag) => {
             return {
                 name: tag.name,
@@ -149,27 +164,54 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
             .concat(this.currentTags)
             .map((tag) => tag.tagId);
 
-        const data: CREATE_AND_ASSIGN_TAG = {
-            tagtypeid: '2',
-            createdBy: this._currentUser.user_id,
-            owners: [this.ownerId],
-            new: tagsToAdd,
-            existing: tagsToAssign,
-        };
+        try {
+            const ownerName = await this.getOwnerNameById(this.ownerId); // Fetch and wait for the owner name
+            const data: CREATE_AND_ASSIGN_TAGS = {
+                tagtypeid: '2',
+                createdBy: this._currentUser.user_id,
+                owners: [
+                    {
+                        id: this.ownerId,
+                        name: ownerName, // ownerName is now a string
+                    },
+                ],
+                new: tagsToAdd,
+                existing: tagsToAssign,
+            };
 
-        this._tag
-            .createAndAssignTags(data, this._isDealer())
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(
-                async (response) => {
-                    // await this._confirmDialog.success({ message: 'Success!', data: 'Tags saved' }).toPromise();
-                    const tags = response.tags[this.ownerId] as TAG[];
-                    this._currentDialog.close(tags);
+            this._tag
+                .createAndAssignTags(data, this._isDealer())
+                .pipe(takeUntil(this._unsubscribe))
+                .subscribe(
+                    async (response) => {
+                        const tags = response.tags[this.ownerId] as TAG[];
+                        this._currentDialog.close(tags);
+                    },
+                    (error) => {
+                        this._confirmDialog.error();
+                    },
+                );
+        } catch (error) {
+            console.error('Failed to fetch owner name', error);
+        }
+    }
+
+    public getOwnerNameById(ownerId: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            this._license.get_license_by_id(ownerId).subscribe(
+                (license) => {
+                    if ('dealer' in license && license.dealer && license.dealer.businessName) {
+                        resolve(license.dealer.businessName);
+                    } else {
+                        reject('Owner name not found');
+                    }
                 },
                 (error) => {
-                    this._confirmDialog.error();
+                    console.error('Error fetching license data', error);
+                    reject('Failed to fetch license data');
                 },
             );
+        });
     }
 
     private getAllRecentTags() {
@@ -224,21 +266,25 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
             });
     }
 
-    private async onDeleteTagFromOwner(tagId: string, ownerId: string): Promise<void> {
+    private async onDeleteTagFromOwner(data: DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER): Promise<void> {
         const response = await this.openConfirmAPIRequestDialog('delete_tag_from_owner').toPromise();
 
         if (!response) return;
 
         this._tag
-            .deleteTagByIdAndOwner(tagId, ownerId)
+            .deleteTagByIdAndOwner(data)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 async () => {
-                    const data = await this._tag.getTagByOwner(this.ownerId).toPromise();
-                    this.currentTags = [...data.tags];
+                    try {
+                        const fetchedData = await this._tag.getTagByOwner(this.ownerId).toPromise();
+                        this.currentTags = [...fetchedData.tags];
+                    } catch (error) {
+                        console.error('Error fetching updated tags', error);
+                    }
                 },
                 (error) => {
-                    console.error(error);
+                    console.error('Error deleting tag', error);
                 },
             );
     }

@@ -55,6 +55,7 @@ import {
     API_ACTIVITY,
     UI_ROLE_DEFINITION,
     UI_ROLE_DEFINITION_TEXT,
+    DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER,
 } from 'src/app/global/models';
 import { UpdateTvBrandDialogComponent } from './components/update-tv-brand-dialog/update-tv-brand-dialog.component';
 
@@ -631,8 +632,17 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
         if (!confirmAction) return;
 
+        const ownerName = await this.getOwnerNameById(this.license_id);
+
+        const deleteData: DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER = {
+            TagId: data.tagId,
+            OwnerId: this.license_id,
+            TagName: data.name,
+            OwnerName: ownerName,
+        };
+
         this._tag
-            .deleteTagByIdAndOwner(data.tagId, this.license_data.licenseId)
+            .deleteTagByIdAndOwner(deleteData)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 () => {
@@ -643,6 +653,24 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                     console.error(error);
                 },
             );
+    }
+
+    public getOwnerNameById(ownerId: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            this._license.get_license_by_id(ownerId).subscribe(
+                (license) => {
+                    if ('dealer' in license && license.dealer && license.dealer.businessName) {
+                        resolve(license.dealer.businessName);
+                    } else {
+                        reject('Owner name not found');
+                    }
+                },
+                (error) => {
+                    console.error('Error fetching license data', error);
+                    reject('Failed to fetch license data');
+                },
+            );
+        });
     }
 
     onResetAnydeskID(): void {
