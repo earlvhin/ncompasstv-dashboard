@@ -2,7 +2,7 @@ import { Component, Input, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MatSelect } from '@angular/material';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
-import { Observable, ReplaySubject, Subject } from 'rxjs';
+import { ReplaySubject, Subject } from 'rxjs';
 
 import { AuthService, ConfirmationDialogService, LicenseService, TagService } from 'src/app/global/services';
 import { CREATE_AND_ASSIGN_TAG_V2, DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER, TAG } from 'src/app/global/models';
@@ -39,9 +39,9 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
         private _confirmDialog: ConfirmationDialogService,
         private _currentDialog: MatDialogRef<AddTagModalComponent>,
         private _dialog: MatDialog,
+        private _dialogRef: MatDialogRef<AddTagModalComponent>,
         private _formBuilder: FormBuilder,
         private _tag: TagService,
-        private _license: LicenseService,
     ) {}
 
     ngOnInit() {
@@ -117,8 +117,6 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
     }
 
     async onRemoveTag(index: number, type: string, tag?: TAG) {
-        console.log('🚀 ~ AddTagModalComponent ~ onRemoveTag ~ type:', type);
-
         let data: TAG[] = [];
 
         switch (type) {
@@ -149,6 +147,14 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
         data.splice(index, 1);
 
         if (type === 'existing') this.tagMultiSelect.compareWith = (a, b) => a && b && a.tagId === b.tagId;
+    }
+
+    public closeModal(): void {
+        this._dialogRef.close({
+            currentTags: this.currentTags,
+            hasChanges: false,
+            closed: true,
+        });
     }
 
     onSelectTagColor(value: string): void {
@@ -188,7 +194,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
             .subscribe(
                 async (response) => {
                     const tags = response.tags[this.ownerId] as TAG[];
-                    this.tagActions = { currentTags: this.currentTags, hasChanges: true };
+                    this.tagActions = { currentTags: tags, hasChanges: true };
                     this._currentDialog.close(this.tagActions);
                 },
                 (error) => {

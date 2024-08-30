@@ -719,7 +719,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     openAddTagModal() {
         const config = {
             width: '700px',
-            height: '700px',
             panelClass: 'dialog-container-position-relative',
             disableClose: true,
             data: {
@@ -735,10 +734,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             tagColor: string;
         }[];
 
-        modal.afterClosed().subscribe((response: { currentTags: TAG[]; hasChanges: boolean }) => {
-            console.log('🚀 ~ SingleLicenseComponent ~ modal.afterClosed ~ response:', response);
-            if (!response || !response.hasChanges) return;
-            this.showSuccessModal('Success!', 'Tags saved', '', false);
+        modal.afterClosed().subscribe((response: { currentTags: TAG[]; hasChanges: boolean; closed?: boolean }) => {
+            if (!response) return;
+            if (response.hasChanges && !response.closed) this.showSuccessModal('Success!', 'Tags saved', '', false);
             this.tags = [...(response.currentTags as TAG[])];
         });
     }

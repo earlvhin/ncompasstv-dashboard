@@ -1,0 +1,39 @@
+.divider {
+    align-items: center;
+    background-color: #e0e0e0;
+    display: flex;
+    height: 2px;
+    justify-content: center;
+    width: 100%;
+
+    .or-text {
+        background-color: #fff;
+        display: inline-block;
+        padding: 5px 20px;
+    }
+}
+
+.selected-tags-area {
+    background-color: #e0e0e0;
+    display: flex;
+    white-space: nowrap;
+    overflow-x: auto;
+    padding: 10px;
+}
+
+.tag-pill {
+    color: #fff;
+    display: inline-block;
+    margin-right: 5px;
+    padding-left: 10px;
+    text-shadow: 1px 1px #232323;
+
+    &__delete {
+        background-color: rgb(228, 72, 72);
+        border: 0;
+        color: #fff;
+        cursor: pointer;
+        height: 100%;
+        padding: 0px 5px;
+    }
+}
