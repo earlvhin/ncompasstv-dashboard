@@ -2,18 +2,24 @@ import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { TitleCasePipe } from '@angular/common';
-import { Observable, Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { finalize, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+
+// models
 import {
     API_DEALER,
     PAGING,
     UI_AUTOCOMPLETE_INITIAL_DATA,
-    UI_ROLE_DEFINITION,
-    UI_TABLE_FEED,
     UI_ROLE_DEFINITION_TEXT,
+    UI_TABLE_FEED,
+    UI_TABLE_FEED_DEALER,
+    UPSERT_WIDGET_FEED,
 } from 'src/app/global/models';
-import { DealerService, FeedService } from 'src/app/global/services';
-import { AuthService } from 'src/app/global/services/auth-service/auth.service';
+
+// services
+import { AuthService, DealerService, FeedService } from 'src/app/global/services';
+
+// components
 import { CreateFeedComponent } from '../create-feed/create-feed.component';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
 
@@ -24,34 +30,25 @@ import { ConfirmationModalComponent } from '../../page_components/confirmation-m
     providers: [TitleCasePipe],
 })
 export class EditFeedComponent implements OnInit, OnDestroy {
-    currentUserRole = this._currentUserRole;
-    dealer_name: string;
     dealers: API_DEALER[];
-    dealers_data: API_DEALER[] = [];
-    edit_feed_form: FormGroup;
-    filtered_options: Observable<any[]>;
+    editFeedForm: FormGroup;
     feedUrlHasValue = true;
-    hasSelectedDealerId = false;
-    isCurrentUserDealer = this.currentUserRole === 'dealer';
-    isCurrentUserDealerAdmin = this.currentUserRole === 'dealeradmin';
     isDirectTechUrl = false;
-    is_form_ready = false;
+    isFormReady = false;
     isInvalidUrl = false;
-    is_dealer = false;
-    is_search = false;
-    is_widget_feed = false;
-    is_loading_dealers = true;
+    isWidgetFeed = false;
+    isLoadingDealers = true;
     isUrlValidType: boolean;
     isValidatingUrl = false;
-    loading_search = false;
     paging: PAGING;
-    selectedDealer: UI_AUTOCOMPLETE_INITIAL_DATA[] = [];
+    selectedDealers: UI_AUTOCOMPLETE_INITIAL_DATA[] = [];
+    hasSelectedDealer = true;
 
-    private is_current_user_admin = this.currentUserRole === 'administrator';
-    protected _unsubscribe = new Subject<void>();
+    private dealerName: string;
+    protected ngUnsubscribe = new Subject<void>();
 
     constructor(
-        @Inject(MAT_DIALOG_DATA) public _dialog_data: UI_TABLE_FEED,
+        @Inject(MAT_DIALOG_DATA) public _dialog_data: UI_TABLE_FEED | UI_TABLE_FEED_DEALER,
         private _auth: AuthService,
         private _dialog: MatDialog,
         private _dialog_ref: MatDialogRef<CreateFeedComponent>,
@@ -62,161 +59,247 @@ export class EditFeedComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.initializeForm();
-        if (this.isCurrentUserDealer) this.setDealerData();
-        if (this.is_current_user_admin || this.isCurrentUserDealerAdmin) this.setAdminData();
-    }
-
-    public dealerSelected(data: UI_AUTOCOMPLETE_INITIAL_DATA | null): void {
-        const control = this.edit_feed_form.get('dealerId');
-        if (data) {
-            control.setValue(data.id, { emitEvent: false });
-            this.hasSelectedDealerId = true;
-            this.selectedDealer = [data];
-        } else {
-            control.setValue(null, { emitEvent: false });
-            this.hasSelectedDealerId = false;
-            this.selectedDealer = [];
-        }
+        this.setUserData();
     }
 
     ngOnDestroy(): void {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
-    saveFeed() {
+    /**
+     * Handles the selection of a dealer from an autocomplete input.
+     * Updates the `dealerId` form control and manages the state of selected dealers.
+     *
+     * @param {UI_AUTOCOMPLETE_INITIAL_DATA | null} data - The data object representing the selected dealer or null if no dealer is selected.
+     * @returns {void}
+     */
+    public dealerSelected(data: UI_AUTOCOMPLETE_INITIAL_DATA | null): void {
+        const control = this.editFeedForm.get('dealerId');
+        const hasNoData = typeof data === 'undefined' || !data;
+        const controlValue = hasNoData ? null : data.id;
+        control.setValue(controlValue, { emitEvent: false });
+        this.selectedDealers = hasNoData ? [] : [data];
+        this.hasSelectedDealer = !hasNoData;
+    }
+
+    /**
+     * Checks whether the changes to a non-widget feed being edited can be submitted.
+     *
+     * @returns {boolean}
+     *
+     */
+    public get invalidFeedData(): boolean {
+        return (
+            this.isInvalidUrl ||
+            !this.feedUrlHasValue ||
+            this.isValidatingUrl ||
+            this.isLoadingDealers ||
+            !this.hasSelectedDealer
+        );
+    }
+
+    /**
+     * Checks whether the changes to a widget feed being edited can be submitted.
+     *
+     * @returns {boolean}
+     *
+     */
+    public get invalidWidgetData(): boolean {
+        return this.editFeedForm.invalid || this.isLoadingDealers || !this.hasSelectedDealer;
+    }
+
+    /**
+     * Checks if the currently logged in user has the dealer role
+     *
+     * @returns {boolean}
+     */
+    public get isDealerUser(): boolean {
+        return this.currentUserRole === UI_ROLE_DEFINITION_TEXT.dealer;
+    }
+
+    /**
+     * Checks if the currently logged in user has the dealer admin role
+     *
+     * @returns {boolean}
+     */
+    private get isDealerAdminUser(): boolean {
+        return this.currentUserRole === UI_ROLE_DEFINITION_TEXT.dealeradmin;
+    }
+
+    /**
+     * Checks if the currently logged in user has the administrator role
+     *
+     * @returns {boolean}
+     */
+    private get isAdminUser(): boolean {
+        return this.currentUserRole === UI_ROLE_DEFINITION_TEXT.administrator;
+    }
+
+    /**
+     * Calls the functions that set the user data based on the role of the user currently logged in
+     *
+     * @returns {void}
+     */
+    private setUserData(): void {
+        if (this.isDealerUser) {
+            this.setDealerData();
+            return;
+        }
+
+        if (this.isAdminUser || this.isDealerAdminUser) {
+            this.setAdminData();
+            return;
+        }
+    }
+
+    /**
+     * Saves the current feed data by updating the widget feed.
+     * The data is retrieved from the form and sent to the server using the `updateWidgetFeed` method.
+     * Upon success, the dialog is closed, and a confirmation dialog is shown.
+     * In case of an error, an error dialog is displayed.
+     *
+     * @returns {void}
+     */
+    public saveFeed(): void {
+        const feedData = this.editFeedForm.value as UPSERT_WIDGET_FEED;
+
         this._feed
-            .edit_feed(this.edit_feed_form.value)
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(
-                (data) => {
-                    this._dialog_ref.close(data);
+            .updateWidgetFeed(feedData)
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe({
+                next: (res) => {
+                    this._dialog_ref.close(res);
                     this.showConfirmationDialog('success', 'Feed Saved Successfully', 'Click OK to continue');
                 },
-                (error) => {
-                    this.showConfirmationDialog('error', 'Error while saving feed', error.error.message);
+                error: (e) => {
+                    this.showConfirmationDialog('error', 'Failed to update the widget feed!', e.error.message);
                 },
-            );
-    }
-
-    searchData(keyword: string) {
-        this.loading_search = true;
-        if (!keyword || keyword.trim().length === 0) this.hasSelectedDealerId = false;
-        this.edit_feed_form.get('dealerId').setValue(null, { emitEvent: false });
-        this.dealer_name = keyword;
-
-        this._dealer
-            .get_search_dealer(keyword)
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((data) => {
-                if (data.paging.entities.length > 0) {
-                    this.dealers = data.paging.entities;
-                    this.dealers_data = data.paging.entities;
-                    this.loading_search = false;
-                } else {
-                    this.dealers_data = [];
-                    this.loading_search = false;
-                }
-
-                this.paging = data.paging;
             });
     }
 
-    private getDealers(page: number) {
-        this.is_loading_dealers = true;
+    private getDealers(page: number): void {
+        this.isLoadingDealers = true;
 
         this._dealer
             .get_dealers_with_page(page, '')
-            .pipe(takeUntil(this._unsubscribe))
+            .pipe(
+                takeUntil(this.ngUnsubscribe),
+                finalize(() => (this.isLoadingDealers = false)),
+            )
             .subscribe((response) => {
                 this.paging = response.paging;
 
                 if (page > 1) {
                     this.dealers = this.dealers.concat(response.dealers);
-                    this.is_loading_dealers = false;
                     return;
                 }
 
-                if (this.is_search) this.loading_search = true;
                 this.dealers = response.dealers;
-                this.dealers_data = response.dealers;
-                this.is_loading_dealers = false;
-                this.loading_search = false;
             });
     }
 
-    private initializeForm() {
-        const setDealerId = () => {
-            const roleId = this._auth.current_user_value.role_id;
-            const currentUserBusinessName = this._auth.current_user_value.roleInfo.businessName;
-            const businessNameData = this._dialog_data.business_name as { id: string; value: string };
-            const dealerId = roleId === UI_ROLE_DEFINITION.dealer ? currentUserBusinessName : businessNameData.id;
-            return dealerId === '--' ? null : dealerId;
-        };
-
+    /**
+     * Initializes the form for editing the feed
+     *
+     * @returns {void}
+     */
+    private initializeForm(): void {
         const feedIdData = this._dialog_data.id as { value: string };
         const feedTitleData = this._dialog_data.title as { value: string };
         const feedDescriptionData = this._dialog_data.description as { value: string };
         const feedType = this._dialog_data.classification as { value: string };
-        const dealerId = setDealerId();
+        const dealerId = this.getDealerId();
 
-        this.edit_feed_form = this._form.group({
+        // set the form
+        this.editFeedForm = this._form.group({
             contentId: [feedIdData.value, Validators.required],
             feedTitle: [feedTitleData.value, Validators.required],
             feedDescription: [feedDescriptionData.value],
-            dealerId: [{ value: dealerId, disabled: this.isCurrentUserDealer }, Validators.required],
+            dealerId: [dealerId, { disabled: true }, Validators.required],
             classification: [feedType.value.toLowerCase()],
         });
 
-        this.is_form_ready = true;
+        // informs the template that the form is ready
+        this.isFormReady = true;
 
-        this.hasSelectedDealerId = !!dealerId;
-
+        // if the feed is of type widget
+        // then handle the embedded script form control
         if (feedType.value.toLowerCase() === 'widget') {
-            this.is_widget_feed = true;
-            const embeddedScriptData = this._dialog_data.embeddedScript as { value: string };
-            const decodedScript = decodeURIComponent(embeddedScriptData.value.replace(/\+/g, ' '));
-            const embeddedScriptControl = new FormControl(decodedScript, Validators.required);
-            this.edit_feed_form.addControl('embeddedScript', embeddedScriptControl);
-            this.isInvalidUrl = false;
-            this.isUrlValidType = false;
+            this.handleEmbeddedScriptFormControl();
             return;
         }
 
         const feedUrlData = this._dialog_data.feed_url as { link: string };
         const feedUrlControl = new FormControl(feedUrlData.link, Validators.required);
-        this.edit_feed_form.addControl('feedUrl', feedUrlControl);
+        this.editFeedForm.addControl('feedUrl', feedUrlControl);
         this.isInvalidUrl = this.urlCheck(feedUrlControl.value);
         this.subscribeToFeedUrlChanges();
+    }
 
-        if (dealerId) {
-            this.selectedDealer = [
-                {
-                    id: dealerId,
-                    value: this.isCurrentUserDealer
-                        ? this._auth.current_user_value.roleInfo.businessName
-                        : (this._dialog_data.business_name as { value: string }).value,
-                },
-            ];
+    /**
+     * Retrieves the dealer id from the injected dialog data based on the currently logged in user
+     *
+     * @returns {string}
+     */
+    private getDealerId(): string {
+        if (this.isDealerUser) {
+            const dealerFeed = this._dialog_data as UI_TABLE_FEED_DEALER;
+            return dealerFeed.dealer_id.value;
+        }
+
+        const adminFeed = this._dialog_data as UI_TABLE_FEED;
+        return adminFeed.business_name.id;
+    }
+
+    /**
+     * Handles the data for the widget feed form control
+     *
+     * @returns {void}
+     */
+    private handleEmbeddedScriptFormControl(): void {
+        this.isWidgetFeed = true;
+        const embeddedScriptData = this._dialog_data.embeddedScript as { value: string };
+        const decodedScript = this.decodeWidgetScript(embeddedScriptData.value);
+        const embeddedScriptControl = new FormControl(decodedScript, Validators.required);
+        this.editFeedForm.addControl('embeddedScript', embeddedScriptControl);
+        this.isInvalidUrl = false;
+        this.isUrlValidType = false;
+    }
+
+    /**
+     * Decodes the widget script that was encoded before sending to the server
+     *
+     * @param {string} data
+     * @returns {string} Returns the decoded script if it succeeds, else it will return the unencoded script
+     */
+    private decodeWidgetScript(data: string): string {
+        try {
+            return decodeURIComponent(data.replace(/\+/g, ' '));
+        } catch (error) {
+            console.error('Error decoding widget script. Returning string as is...');
+            return data;
         }
     }
 
-    private setDealerData() {
-        this.is_dealer = true;
-        this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
-        this.is_loading_dealers = false;
+    private setDealerData(): void {
+        this.dealerName = this._auth.current_user_value.roleInfo.businessName;
+
+        // Push the value of the currently logged in dealer user on the autocomplete
+        this.selectedDealers.push({ id: this.getDealerId(), value: this.dealerName });
+
+        this.isLoadingDealers = false;
     }
 
-    private setAdminData() {
-        const businessNameData = this._dialog_data.business_name as { id: string; value: string };
-        this.dealer_name = businessNameData.value;
-        this.hasSelectedDealerId = true;
-        this.getDealers(1);
+    private setAdminData(): void {
+        const dialogData = this._dialog_data as UI_TABLE_FEED;
+        const businessNameData = dialogData.business_name as { id: string; value: string };
+        this.dealerName = businessNameData.value;
 
-        this.selectedDealer.push({
-            id: businessNameData.id,
-            value: businessNameData.value,
-        });
+        // Push the value of the currently logged in dealer user on the autocomplete
+        this.selectedDealers.push({ id: this.getDealerId(), value: this.dealerName });
+
+        this.getDealers(1);
     }
 
     private showConfirmationDialog(status: string, message: string, data: string) {
@@ -226,7 +309,7 @@ export class EditFeedComponent implements OnInit, OnDestroy {
     }
 
     private subscribeToFeedUrlChanges() {
-        const form = this.edit_feed_form;
+        const form = this.editFeedForm;
         const control = form.get('feedUrl');
 
         this.isDirectTechUrl = control.value.includes('directech');
@@ -234,8 +317,8 @@ export class EditFeedComponent implements OnInit, OnDestroy {
         const url = control.value as string;
         this.isInvalidUrl = !this._feed.check_url(url);
 
-        form.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(async (res) => {
-            if (this.is_widget_feed) return;
+        form.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(async (res) => {
+            if (this.isWidgetFeed) return;
             this.feedUrlHasValue = res.feedUrl ? true : false;
             this.isDirectTechUrl = res.feedUrl.includes('directech');
 
@@ -254,19 +337,12 @@ export class EditFeedComponent implements OnInit, OnDestroy {
         return false;
     }
 
-    protected get _currentUserRole(): string {
-        if (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin)
-            return UI_ROLE_DEFINITION_TEXT.administrator;
-        return this._auth.current_role;
-    }
-
-    public get isSubmitDisabled(): boolean {
-        return (
-            this.isInvalidUrl ||
-            !this.feedUrlHasValue ||
-            this.isValidatingUrl ||
-            !this.hasSelectedDealerId ||
-            this.edit_feed_form.invalid
-        );
+    /**
+     * Retrieves the role of the currently logged in user
+     *
+     * @returns {string}
+     */
+    protected get currentUserRole(): string {
+        return this._auth.current_role.toLowerCase();
     }
 }

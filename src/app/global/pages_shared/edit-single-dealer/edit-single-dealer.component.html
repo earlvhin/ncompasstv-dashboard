@@ -32,11 +32,11 @@
                             *ngIf="!emailNotValid && hasDuplicateEmail && field.control == 'email'">
                             This email is already taken.
                         </span>
-                        <span
+                        <mat-error
                             class="validation-message warning sm-text py-1 text-danger"
                             *ngIf="emailNotValid && field.control == 'email'">
                             The email format is invalid.
-                        </span>
+                        </mat-error>
                         <input
                             formControlName="{{ field.control }}"
                             matInput

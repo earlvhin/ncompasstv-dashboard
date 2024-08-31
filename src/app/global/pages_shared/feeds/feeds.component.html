@@ -93,7 +93,7 @@
                                             *ngIf="!initial_load"
                                             [form_title]="'Search Feed Title or Business Name'"
                                             [placeholder]="'Example: N-Compass Feed'"
-                                            [data_reference]="feed_data"
+                                            [data_reference]="feedData"
                                             [primary_keyword]="'title'"
                                             [secondary_keyword]="'business_name'"
                                             (searched)="filterData($event)"
@@ -104,12 +104,12 @@
                                 <div class="row" *ngIf="!initial_load">
                                     <div class="col-lg-12">
                                         <ng-container *ngIf="!searching; else loader">
-                                            <mat-card *ngIf="filtered_data.length > 0; else nodata">
+                                            <mat-card *ngIf="filteredData.length > 0; else nodata">
                                                 <app-data-table
-                                                    [table_data]="filtered_data"
+                                                    [table_data]="filteredData"
                                                     [table_columns]="feeds_table_column"
                                                     [new_table]="true"
-                                                    [paging_details]="paging_data"
+                                                    [paging_details]="pagingData"
                                                     [feed_controls]="true"
                                                     [feed_preview]="true"
                                                     [feed_delete]="true"

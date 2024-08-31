@@ -1,12 +1,16 @@
 import { Component, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable, Subject } from 'rxjs';
-import { startWith, map, takeUntil, distinctUntilChanged, debounceTime } from 'rxjs/operators';
-
-import { AuthService } from 'src/app/global/services/auth-service/auth.service';
-import { DealerService, FeedService } from 'src/app/global/services';
-import { API_CREATE_FEED, API_DEALER, CREATE_WIDGET_FEED, PAGING } from 'src/app/global/models';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { startWith, map, takeUntil, distinctUntilChanged } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+
+// services
+import { AuthService, DealerService, FeedService } from 'src/app/global/services';
+
+// models
+import { API_CREATE_FEED, API_DEALER, UPSERT_WIDGET_FEED, PAGING } from 'src/app/global/models';
+
+// components
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
@@ -169,17 +173,17 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
         const createdBy = this._auth.current_user_value.user_id;
         const classification = 'widget';
 
-        const body: CREATE_WIDGET_FEED = {
+        const body: UPSERT_WIDGET_FEED = {
             feedTitle,
             feedDescription,
-            embeddedscript,
+            embeddedScript: embeddedscript,
             dealerId,
             createdBy,
             classification,
         };
 
         this._feed
-            .create_widget_feed(body)
+            .createWidgetFeed(body)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (response) => {
