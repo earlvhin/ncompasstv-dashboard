@@ -28,6 +28,7 @@ import {
     UI_DEALER_ORDERS,
     UI_HOST_SUPPORT,
     UI_TABLE_FEED,
+    UI_ROLE_DEFINITION_TEXT,
 } from 'src/app/global/models';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
 import { DeletePlaylistComponent } from '../../../components_shared/playlist_components/delete-playlist/delete-playlist.component';
@@ -1066,6 +1067,7 @@ export class DataTableComponent implements OnInit {
     }
 
     protected get roleRoute() {
+        if (this._auth.roleRoute === UI_ROLE_DEFINITION_TEXT.dealeradmin) return UI_ROLE_DEFINITION_TEXT.administrator;
         return this._auth.roleRoute;
     }
 }

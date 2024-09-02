@@ -1,14 +1,25 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { DatePipe, Location } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { Router } from '@angular/router';
 
+// services
+import { AuthService, FeedService } from 'src/app/global/services';
+
+// models
+import {
+    API_FEED,
+    FEED,
+    PAGING,
+    UI_ROLE_DEFINITION_TEXT,
+    UI_TABLE_FEED,
+    UI_TABLE_FEED_DEALER,
+} from 'src/app/global/models';
+
+// components
 import { CreateFeedComponent } from '../../components_shared/feed_components/create-feed/create-feed.component';
 import { CreateFillerFeedComponent } from '../fillers/components/create-filler-feed/create-filler-feed.component';
-import { AuthService, FeedService } from 'src/app/global/services';
-import { UI_ROLE_DEFINITION_TEXT, UI_TABLE_FEED, UI_TABLE_FEED_DEALER } from 'src/app/global/models';
 
 @Component({
     selector: 'app-feeds',
@@ -17,16 +28,16 @@ import { UI_ROLE_DEFINITION_TEXT, UI_TABLE_FEED, UI_TABLE_FEED_DEALER } from 'sr
 })
 export class FeedsComponent implements OnInit, OnDestroy {
     current_user = this._auth.current_user_value;
-    feed_data: UI_TABLE_FEED[] | UI_TABLE_FEED_DEALER = [];
+    feedData: (UI_TABLE_FEED | UI_TABLE_FEED_DEALER)[] = [];
     feed_stats: any = {};
     feeds_stats: any = {};
-    filtered_data: UI_TABLE_FEED[] | UI_TABLE_FEED_DEALER[] = [];
+    filteredData: (UI_TABLE_FEED | UI_TABLE_FEED_DEALER)[] = [];
     filler_stats: any = {};
     initial_load = true;
     isActiveTab = 0;
     is_view_only = false;
     no_feeds = false;
-    paging_data: any;
+    pagingData: PAGING;
     reload_detected: boolean = false;
     reload_trigger: Subject<any> = new Subject<any>();
     search_data = '';
@@ -54,7 +65,6 @@ export class FeedsComponent implements OnInit, OnDestroy {
         private _feed: FeedService,
         private cdRef: ChangeDetectorRef,
         private _location: Location,
-        private _route: Router,
     ) {}
 
     ngOnInit() {
@@ -83,15 +93,19 @@ export class FeedsComponent implements OnInit, OnDestroy {
         this._unsubscribe.complete();
     }
 
-    get isCurrentRoleDealer() {
+    private get isCurrentRoleDealer() {
         return this.currentRole === 'dealer';
     }
 
-    get isCurrentRoleSubDealer() {
+    private get isCurrentRoleSubDealer() {
         return this.currentRole === 'sub-dealer';
     }
 
-    get isCurrentRoleDealerAdmin() {
+    private get isCurrentRoleAdmin() {
+        return this.currentRole === 'administrator';
+    }
+
+    private get isCurrentRoleDealerAdmin() {
         return this.currentRole === 'dealeradmin';
     }
 
@@ -107,30 +121,47 @@ export class FeedsComponent implements OnInit, OnDestroy {
         this.getFeeds(1);
     }
 
-    getFeeds(page: number): void {
+    public getFeeds(page: number): void {
         this.searching = true;
-        this.feed_data = [];
-        let request = this._feed.get_feeds(page, this.search_data, this.sort_column, this.sort_order);
-        if (this.isCurrentRoleDealer || this.isCurrentRoleSubDealer)
-            request = this._feed.get_feeds_by_dealer(this.current_user.roleInfo.dealerId, page, this.search_data);
+        this.feedData = [];
+
+        const getFeeds = this._feed.get_feeds(page, this.search_data, this.sort_column, this.sort_order);
+        const getDealerFeeds = this._feed.get_feeds_by_dealer(
+            this.current_user.roleInfo.dealerId,
+            page,
+            this.search_data,
+        );
+        const request = this.isCurrentRoleDealer || this.isCurrentRoleSubDealer ? getDealerFeeds : getFeeds;
 
         request
             .pipe(takeUntil(this._unsubscribe))
+            .map((res) => {
+                if (this.isCurrentRoleAdmin || this.isCurrentRoleDealerAdmin) {
+                    const feeds = res.paging.entities as FEED[];
+
+                    res.cFeeds = res.cFeeds.map((f, index) => {
+                        const businessName = feeds[index].businessName;
+                        f.feed.businessName = !businessName ? '--' : businessName;
+                        return f;
+                    });
+                }
+
+                return res;
+            })
             .subscribe(
                 (response) => {
-                    if (response.message || response.paging.entities.length === 0) {
+                    if ('message' in response) {
                         if (this.search_data == '') this.no_feeds = true;
-                        this.feed_data = [];
-                        this.filtered_data = [];
+
+                        this.feedData = [];
+                        this.filteredData = [];
                         return;
                     }
 
-                    const mappedData = this.mapToTableFormat(
-                        this.isCurrentRoleDealer ? response.cFeeds : response.paging.entities,
-                    );
-                    this.feed_data = [...mappedData];
-                    this.filtered_data = [...mappedData];
-                    this.paging_data = response.paging;
+                    this.pagingData = response.paging;
+                    const mappedData = this.mapToTableFormat(response.cFeeds);
+                    this.feedData = [...mappedData];
+                    this.filteredData = [...mappedData];
                 },
                 (error) => {
                     console.error(error);
@@ -199,14 +230,10 @@ export class FeedsComponent implements OnInit, OnDestroy {
         }
     }
 
-    private mapToTableFormat(feeds): any {
-        let count = 1;
-        const role =
-            this.currentRole === UI_ROLE_DEFINITION_TEXT.dealeradmin
-                ? UI_ROLE_DEFINITION_TEXT.administrator
-                : this.currentRole;
+    private mapToTableFormat(data: API_FEED[]): (UI_TABLE_FEED | UI_TABLE_FEED_DEALER)[] {
+        let count = this.pagingData.pageStart;
 
-        return feeds.map((f: any) => {
+        return data.map((f) => {
             if (this.isCurrentRoleDealer) {
                 return new UI_TABLE_FEED_DEALER(
                     { value: f.feed.contentId, editable: false, hidden: true },
@@ -214,7 +241,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
                     { value: count++, editable: false, hidden: false },
                     {
                         value: f.feed.feedTitle,
-                        link: `/${role}/media-library/${f.feed.contentId}`,
+                        link: `/${this.roleRoute}/media-library/${f.feed.contentId}`,
                         editable: false,
                         hidden: false,
                         new_tab_link: true,
@@ -225,7 +252,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
                         hidden: false,
                     },
                     {
-                        value: f.owner.firstName + ' ' + f.owner.lastName,
+                        value: `${f.owner.firstName} ${f.owner.lastName}`,
                         editable: false,
                         hidden: false,
                     },
@@ -241,49 +268,50 @@ export class FeedsComponent implements OnInit, OnDestroy {
                         hidden: true,
                     },
                     { value: f.feed.feedDescription, editable: false, hidden: true },
+                    { value: f.feed.dealerId, editable: false, hidden: true },
                     { value: f.feed.embeddedScript, editable: false, hidden: true },
                 );
             }
 
             return new UI_TABLE_FEED(
-                { value: f.contentId, editable: false, hidden: true },
-                { value: f.feedId, editable: false, hidden: true },
+                { value: f.feed.contentId, editable: false, hidden: true },
+                { value: f.feed.feedId, editable: false, hidden: true },
                 { value: count++, editable: false, hidden: false },
                 {
-                    value: f.title,
-                    link: `/${role}/media-library/${f.contentId}`,
+                    value: f.feed.feedTitle,
+                    link: `/${this.roleRoute}/media-library/${f.feed.contentId}`,
                     editable: false,
                     hidden: false,
                     new_tab_link: true,
                 },
                 {
-                    value: f.businessName ? f.businessName : '--',
-                    link: `/${role}/dealers/${f.dealerId}`,
-                    id: f.dealerId,
+                    value: f.feed.businessName,
+                    link: `/${this.roleRoute}/dealers/${f.feed.dealerId}`,
+                    id: f.feed.dealerId,
                     editable: false,
                     hidden: false,
                     new_tab_link: true,
                 },
                 {
-                    value: f.classification ? f.classification : '--',
+                    value: f.feed.classification ? f.feed.classification : '--',
                     editable: false,
                     hidden: false,
                 },
-                { value: f.createdByName, editable: false, hidden: false },
+                { value: `${f.owner.firstName} ${f.owner.lastName}`, editable: false, hidden: false },
                 {
-                    value: this._date.transform(f.dateCreated, 'MMMM d, y'),
+                    value: this._date.transform(f.feed.dateCreated, 'MMMM d, y'),
                     editable: false,
                     hidden: false,
                 },
-                { value: f.title, link: f.url, editable: false, hidden: true },
-                { value: f.description, editable: false, hidden: true },
-                { value: f.embeddedScript, editable: false, hidden: true },
+                { value: f.feed.feedTitle, link: f.feed.feedUrl, editable: false, hidden: true },
+                { value: f.feed.feedDescription, editable: false, hidden: true },
+                { value: f.feed.embeddedScript, editable: false, hidden: true },
             );
         });
     }
 
-    protected get currentRole() {
-        return this._auth.current_role;
+    protected get currentRole(): string {
+        return this._auth.current_role.toLowerCase();
     }
 
     createFillerFeed() {
@@ -302,7 +330,9 @@ export class FeedsComponent implements OnInit, OnDestroy {
     }
 
     protected get roleRoute() {
-        return this._auth.roleRoute;
+        let roleRoute = this._auth.roleRoute;
+        if (this.isCurrentRoleDealerAdmin) roleRoute = UI_ROLE_DEFINITION_TEXT.administrator;
+        return roleRoute;
     }
 
     private get isFillersTab(): boolean {

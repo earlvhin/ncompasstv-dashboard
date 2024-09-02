@@ -4,14 +4,7 @@ import { FormControl } from '@angular/forms';
 import { map } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import {
-    API_DEALER,
-    API_FEED,
-    API_USER_DATA,
-    CREATE_WIDGET_FEED,
-    PAGING,
-    WEATHER_FEED_STYLE_DATA,
-} from 'src/app/global/models';
+import { API_FEED, UPSERT_WIDGET_FEED, PAGING, WEATHER_FEED_STYLE_DATA } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { BaseService } from '../base.service';
 
@@ -66,12 +59,16 @@ export class FeedService extends BaseService {
         return this.postRequest(url, data);
     }
 
-    create_widget_feed(body: CREATE_WIDGET_FEED) {
-        const url = this.creators.api_new_feed;
+    createWidgetFeed(body: UPSERT_WIDGET_FEED): Observable<{ feeds: API_FEED[]; message?: string }> {
+        const endpoint = this.creators.api_new_feed;
+        body.embeddedScript = encodeURIComponent(body.embeddedScript).replace(/'/g, '%27').replace(/"/g, '%22');
+        return this.postRequest(endpoint, [body]);
+    }
 
-        body.embeddedscript = encodeURIComponent(body.embeddedscript).replace(/'/g, '%27').replace(/"/g, '%22');
-
-        return this.postRequest(url, [body]);
+    updateWidgetFeed(body: UPSERT_WIDGET_FEED): Observable<{ message: string }> {
+        const endpoint = this.updaters.api_update_feed;
+        body.embeddedScript = encodeURIComponent(body.embeddedScript).replace(/'/g, '%27').replace(/"/g, '%22');
+        return this.postRequest(endpoint, body);
     }
 
     edit_feed(data) {
@@ -95,7 +92,7 @@ export class FeedService extends BaseService {
         column?: string,
         order?: string,
     ): Observable<{
-        cFeeds: { dealer: API_DEALER; feed: API_FEED; owner: API_USER_DATA };
+        cFeeds: API_FEED[];
         paging: PAGING;
         message?: string;
     }> {
@@ -110,7 +107,7 @@ export class FeedService extends BaseService {
         page: number,
         key: string,
     ): Observable<{
-        cFeeds: { dealer: API_DEALER; feed: API_FEED; owner: API_USER_DATA };
+        cFeeds: API_FEED[];
         paging: PAGING;
         message?: string;
     }> {

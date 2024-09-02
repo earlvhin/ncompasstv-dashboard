@@ -15,3 +15,12 @@ export interface FEED {
     url: string;
     embeddedScript?: string;
 }
+
+export interface UPSERT_WIDGET_FEED {
+    feedTitle: string;
+    feedDescription?: string;
+    embeddedScript: string;
+    dealerId?: string;
+    createdBy: string;
+    classification: 'widget';
+}

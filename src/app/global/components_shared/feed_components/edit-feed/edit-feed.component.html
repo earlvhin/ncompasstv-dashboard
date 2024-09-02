@@ -1,10 +1,10 @@
 <div class="p-4 user-form position-relative">
     <h3 class="mb-4">Edit Feed</h3>
 
-    <ng-container *ngIf="is_form_ready; else loading">
+    <ng-container *ngIf="isFormReady; else loading">
         <form
             class="text-left"
-            [formGroup]="edit_feed_form"
+            [formGroup]="editFeedForm"
             (ngSubmit)="saveFeed()"
             class="text-left"
             #formDirective="ngForm">
@@ -29,30 +29,26 @@
                         placeholder="Ex: ESPN Latest News Today" />
                 </mat-form-field>
 
-                <ng-container *ngIf="!is_loading_dealers; else loadingDealers">
+                <ng-container *ngIf="!isLoadingDealers; else loadingDealers">
                     <div class="autocomplete-container full-width">
-                        <app-autocomplete-field
-                            (data_value)="dealerSelected($event)"
-                            [data_reference]="dealers_data"
-                            [key_of_value]="'dealerId'"
-                            [label]="'Choose A Dealer'"
-                            [placeholder]="'Choose A Dealer'"
-                            [primary_keyword]="'businessName'"
-                            [search_keyword]="'dealer'"
-                            [paging]="paging"
-                            (searched)="searchData($event)"
-                            [loading_data]="is_loading_dealers"
-                            [initial_value]="dealer_name"
-                            [new_value]="dealer_name"
-                            [disabled]="is_current_user_dealer"
-                            [loading_search]="loading_search"
-                            [disable_minimum_search_length]="true"
-                            [disabled]="true">
-                        </app-autocomplete-field>
+                        <app-dealer-autocomplete
+                            (dealer_selected)="dealerSelected($event)"
+                            [initial_value]="selectedDealers"
+                            [isDisabled]="isDealerUser"
+                            [active_only]="true"
+                            [field_label]="'Choose A Dealer'">
+                        </app-dealer-autocomplete>
+
+                        <ng-template #loadingDealers>
+                            <div class="spinner-container d-flex align-items-center justify-content-between">
+                                <h4>Loading dealers...</h4>
+                                <app-spinner [diameter]="35"></app-spinner>
+                            </div>
+                        </ng-template>
                     </div>
                 </ng-container>
 
-                <ng-container *ngIf="is_widget_feed; else feedUrl">
+                <ng-container *ngIf="isWidgetFeed; else feedUrl">
                     <mat-form-field class="full-width">
                         <mat-label>Widget Script</mat-label>
                         <textarea
@@ -85,10 +81,11 @@
                     </div>
                 </ng-template>
 
-                <ng-container *ngIf="!is_widget_feed">
+                <ng-container *ngIf="!isWidgetFeed">
                     <div class="alert alert-success" *ngIf="!isInvalidUrl && !isDirectTechUrl">
                         <p class="sm-text font-weight-bold">Entered Feed URL is a supported format.</p>
                     </div>
+                </ng-container>
 
                     <ng-container *ngIf="!isInvalidUrl && isDirectTechUrl">
                         <div class="alert alert-warning">
@@ -108,12 +105,9 @@
                 </ng-container>
             </div>
             <div class="d-flex flex-even align-items-center">
-                <ng-container *ngIf="!is_widget_feed; else widgetButton">
-                    <button
-                        mat-button
-                        mat-raised-button
-                        class="theme-btn mr-2"
-                        [disabled]="isInvalidUrl || !feedUrlHasValue || isValidatingUrl">
+                <ng-container *ngIf="!isWidgetFeed; else submitFeedBtn">
+                    <!-- FEED SUBMIT BTN (FOR NON-WIDGET FEEDS) -->
+                    <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="invalidFeedData">
                         Submit
                     </button>
                 </ng-container>
@@ -121,8 +115,9 @@
                     Cancel
                 </button>
 
-                <ng-template #widgetButton>
-                    <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="edit_feed_form.invalid">
+                <ng-template #submitFeedBtn>
+                    <!-- WIDGET FEED SUBMIT BTN -->
+                    <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="invalidWidgetData">
                         Submit
                     </button>
                 </ng-template>

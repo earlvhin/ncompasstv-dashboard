@@ -1,11 +1,11 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FillerService } from 'src/app/global/services';
-import { Observable, Subject } from 'rxjs';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
-
 import { takeUntil } from 'rxjs/operators';
-import { UI_TABLE_FILLER_FEED } from 'src/app/global/models/ui_table-filler-feed.model';
+import { Observable, Subject } from 'rxjs';
+
+import { UI_TABLE_FILLER_FEED, PAGING } from 'src/app/global/models';
 
 @Component({
     selector: 'app-filler-feeds-table',
@@ -18,18 +18,21 @@ export class FillerFeedsTableComponent implements OnInit {
 
     initial_load = true;
     filtered_data = [];
-    fillers_paging: any;
+    fillersPaging: PAGING;
     searching = false;
     search_data: string = '';
+    sortColumn = 'DateCreated';
+    sortOrder = 'desc';
+    pageSize: number = 15;
 
     fillers_table_column = [
         { name: '#', sortable: false },
         { name: 'Name', sortable: true, column: 'Name' },
         { name: 'Quantity', sortable: true, column: 'Quantity' },
-        { name: 'Interval (Days)', sortable: true, column: 'Interval' },
-        { name: 'Owner', sortable: true, column: 'Owner' },
-        { name: '# of Groups', sortable: true, column: 'Groups' },
-        { name: 'Created Date', sortable: true, column: 'CreatedDate' },
+        { name: 'Interval (Days)', sortable: true, column: 'IntervalInInteger' },
+        { name: 'Owner', sortable: true, column: 'CreatedByName' },
+        { name: '# of Groups', sortable: true, column: 'GroupCount' },
+        { name: 'Created Date', sortable: true, column: 'DateCreated' },
         { name: 'Action', sortable: false },
     ];
 
@@ -52,20 +55,26 @@ export class FillerFeedsTableComponent implements OnInit {
         });
     }
 
+    public getColumnsAndOrder(data: { column: string; order: string }): void {
+        this.sortColumn = data.column;
+        this.sortOrder = data.order;
+        this.getAllFillerFeeds();
+    }
+
     getAllFillerFeeds(page?) {
         this.searching = true;
         this._filler
-            .get_filler_feeds(page, this.search_data)
+            .get_filler_feeds(page, this.search_data, this.pageSize, this.sortColumn, this.sortOrder)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((response) => {
-                if (!response.message) {
+                if (response.paging && response.paging.totalEntities) {
+                    this.fillersPaging = response.paging;
                     const mappedData = this.mapToTableFormat(response.paging.entities);
                     this.filtered_data = mappedData;
-                    this.fillers_paging = response.paging;
                     return;
                 }
                 this.filtered_data = [];
-                this.fillers_paging = [];
+                this.fillersPaging = null;
             })
             .add(() => {
                 this.initial_load = false;
@@ -74,7 +83,7 @@ export class FillerFeedsTableComponent implements OnInit {
     }
 
     private mapToTableFormat(filler_feeds): UI_TABLE_FILLER_FEED[] {
-        let count = 1;
+        let count = this.fillersPaging.pageStart;
 
         return filler_feeds.map((filler) => {
             return new UI_TABLE_FILLER_FEED(

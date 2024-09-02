@@ -99,6 +99,7 @@ export interface API_LICENSE_PROPS {
     tvDisplaySettings?: number;
     fastEdgeMonitoringTool?: number;
     displayControlSettings?: number;
+    enableUpdates?: boolean;
 }
 
 interface screenInfo {
@@ -134,4 +135,11 @@ export interface API_PLAYER_BACKGROUND {
     backgroundImageUrl: string;
     licenseId: string;
     licenseKey: string;
+}
+
+export interface LicenseWithUpdatesMinified {
+    hostId: string;
+    dealerId: string;
+    licenseId: string;
+    isUpdateEnabled: boolean;
 }

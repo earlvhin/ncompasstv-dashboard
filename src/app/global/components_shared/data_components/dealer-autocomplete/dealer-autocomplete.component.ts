@@ -72,6 +72,10 @@ export class DealerAutocompleteComponent implements OnInit {
         this.dealer_selected.emit(data ? data : null);
     }
 
+    public dealerInputChangeListener(dealer: string): void {
+        if (!dealer) this.dealer_selected.emit(null);
+    }
+
     private getDealerAdminDealers(): void {
         this._dealer
             .get_dealers()

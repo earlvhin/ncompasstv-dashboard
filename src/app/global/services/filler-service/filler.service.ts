@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
+import { PAGING } from 'src/app/global/models';
 import { BaseService } from '../base.service';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
@@ -146,8 +146,29 @@ export class FillerService extends BaseService {
         return this.postRequest(url, data);
     }
 
-    get_filler_feeds(page = 1, search = '', pagesize = 15) {
-        let url = `${this.getters.api_get_filler_feeds}?page=${page}&search=${search}&pagesize=${pagesize}`;
+    public get_filler_feeds(
+        page = 1,
+        search = '',
+        pagesize = 15,
+        column?: string,
+        order?: string,
+    ): Observable<{
+        paging: PAGING;
+    }> {
+        const base = `${this.getters.api_get_filler_feeds}`;
+        const params = this.setUrlParams(
+            {
+                page,
+                search: search,
+                sortColumn: column,
+                sortOrder: order,
+                pageSize: pagesize,
+            },
+            false,
+            true,
+        );
+        const url = `${base}${params}`;
+
         return this.getRequest(url);
     }
 

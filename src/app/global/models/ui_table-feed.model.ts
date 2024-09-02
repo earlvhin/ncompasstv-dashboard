@@ -1,30 +1,43 @@
-import { create } from 'domain';
+import { TABLE_ROW_FORMAT } from './table-row-format.model';
 
-export class UI_TABLE_FEED {
-    id: object;
-    feed_id: object;
-    index: object;
-    title: object;
-    business_name: object;
-    classification: object;
-    created_by: object;
-    date_created: object;
-    feed_url: object;
-    description: object;
-    embeddedScript?: any;
+interface BaseTableFeed {
+    id: TABLE_ROW_FORMAT;
+    feed_id: TABLE_ROW_FORMAT;
+    index: TABLE_ROW_FORMAT;
+    title: TABLE_ROW_FORMAT;
+    classification: TABLE_ROW_FORMAT;
+    created_by: TABLE_ROW_FORMAT;
+    date_created: TABLE_ROW_FORMAT;
+    feed_url: TABLE_ROW_FORMAT;
+    description: TABLE_ROW_FORMAT;
+    embeddedScript?: TABLE_ROW_FORMAT;
+}
+
+export class UI_TABLE_FEED implements BaseTableFeed {
+    id: TABLE_ROW_FORMAT;
+    feed_id: TABLE_ROW_FORMAT;
+    index: TABLE_ROW_FORMAT;
+    title: TABLE_ROW_FORMAT;
+    classification: TABLE_ROW_FORMAT;
+    created_by: TABLE_ROW_FORMAT;
+    date_created: TABLE_ROW_FORMAT;
+    feed_url: TABLE_ROW_FORMAT;
+    description: TABLE_ROW_FORMAT;
+    business_name: TABLE_ROW_FORMAT;
+    embeddedScript?: TABLE_ROW_FORMAT;
 
     constructor(
-        id: object,
-        feed_id: object,
-        index: object,
-        title: object,
-        business_name: object,
-        classification: object,
-        created_by: object,
-        date_created: object,
-        feed_url: object,
-        description: object,
-        embeddedscript?: any,
+        id: TABLE_ROW_FORMAT,
+        feed_id: TABLE_ROW_FORMAT,
+        index: TABLE_ROW_FORMAT,
+        title: TABLE_ROW_FORMAT,
+        business_name: TABLE_ROW_FORMAT,
+        classification: TABLE_ROW_FORMAT,
+        created_by: TABLE_ROW_FORMAT,
+        date_created: TABLE_ROW_FORMAT,
+        feed_url: TABLE_ROW_FORMAT,
+        description: TABLE_ROW_FORMAT,
+        embeddedScript?: TABLE_ROW_FORMAT,
     ) {
         this.id = id;
         this.feed_id = feed_id;
@@ -36,33 +49,35 @@ export class UI_TABLE_FEED {
         this.date_created = date_created;
         this.feed_url = feed_url;
         this.description = description;
-        this.embeddedScript = embeddedscript;
+        this.embeddedScript = embeddedScript;
     }
 }
 
-export class UI_TABLE_FEED_DEALER {
-    id: object;
-    feed_id: object;
-    index: object;
-    title: object;
-    classification: object;
-    created_by: object;
-    date_created: object;
-    feed_url: object;
-    description: object;
-    embeddedScript?: any;
+export class UI_TABLE_FEED_DEALER implements BaseTableFeed {
+    id: TABLE_ROW_FORMAT;
+    feed_id: TABLE_ROW_FORMAT;
+    index: TABLE_ROW_FORMAT;
+    title: TABLE_ROW_FORMAT;
+    classification: TABLE_ROW_FORMAT;
+    created_by: TABLE_ROW_FORMAT;
+    date_created: TABLE_ROW_FORMAT;
+    feed_url: TABLE_ROW_FORMAT;
+    description: TABLE_ROW_FORMAT;
+    dealer_id: TABLE_ROW_FORMAT;
+    embeddedScript?: TABLE_ROW_FORMAT;
 
     constructor(
-        id: object,
-        feed_id: object,
-        index: object,
-        title: object,
-        classification: object,
-        created_by: object,
-        date_created: object,
-        feed_url: object,
-        description: object,
-        embeddedscript?: any,
+        id: TABLE_ROW_FORMAT,
+        feed_id: TABLE_ROW_FORMAT,
+        index: TABLE_ROW_FORMAT,
+        title: TABLE_ROW_FORMAT,
+        classification: TABLE_ROW_FORMAT,
+        created_by: TABLE_ROW_FORMAT,
+        date_created: TABLE_ROW_FORMAT,
+        feed_url: TABLE_ROW_FORMAT,
+        description: TABLE_ROW_FORMAT,
+        dealer_id: TABLE_ROW_FORMAT,
+        embeddedScript?: TABLE_ROW_FORMAT,
     ) {
         this.id = id;
         this.feed_id = feed_id;
@@ -73,6 +88,7 @@ export class UI_TABLE_FEED_DEALER {
         this.date_created = date_created;
         this.feed_url = feed_url;
         this.description = description;
-        this.embeddedScript = embeddedscript;
+        this.embeddedScript = embeddedScript;
+        this.dealer_id = dealer_id;
     }
 }
