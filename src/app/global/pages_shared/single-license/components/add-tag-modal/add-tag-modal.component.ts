@@ -264,6 +264,8 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
 
         if (!response) return;
 
+        this.submitting = true;
+
         this._tag
             .deleteTagByIdAndOwner(data)
             .pipe(takeUntil(this._unsubscribe))
@@ -273,8 +275,10 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
                         const fetchedData = await this._tag.getTagByOwner(this.ownerId).toPromise();
                         this.currentTags = [...fetchedData.tags];
                         this.tagActions = { currentTags: this.currentTags, hasChanges: true };
+                        this.submitting = false;
                     } catch (error) {
                         console.error('Error fetching updated tags', error);
+                        this.submitting = false;
                     }
                 },
                 (error) => {
