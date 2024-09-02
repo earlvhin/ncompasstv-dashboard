@@ -187,8 +187,13 @@
             mat-raised-button
             class="submit theme-btn _primary"
             type="submit"
-            [disabled]="cannotSubmitTags()">
-            Submit
+            [disabled]="cannotSubmitTags() || submitting">
+            <span *ngIf="!submitting; else submitting_btn">Submit</span>
+
+            <ng-template #submitting_btn>
+                <span class="mr-2">Please wait</span>
+                <i class="fas fa-spinner fa-spin"></i>
+            </ng-template>
         </button>
 
         <ng-template #no_data>

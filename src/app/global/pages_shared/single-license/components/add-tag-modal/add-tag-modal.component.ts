@@ -26,6 +26,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
     isDataReady = false;
     isSearchingTags = false;
     selectedTagColor: string;
+    submitting = false;
     tagActions: {
         currentTags: TAG[];
         hasChanges: boolean;
@@ -188,6 +189,8 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
             existing: tagsToAssign,
         };
 
+        this.submitting = true;
+
         this._tag
             .createAndAssignTags(data, this._isDealer())
             .pipe(takeUntil(this._unsubscribe))
@@ -199,6 +202,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     this._confirmDialog.error();
+                    this.submitting = false;
                 },
             );
     }
@@ -363,9 +367,9 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
             description: [null],
             exclude: [false],
             existing: [[]],
-            name: [null, Validators.required],
+            name: [null],
             new: [[]],
-            tagColor: [null, Validators.required],
+            tagColor: [null],
             tagFilter: [null],
         };
     }
