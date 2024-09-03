@@ -4,7 +4,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { TAG, TAG_TYPE, TAG_OWNER, PAGING } from 'src/app/global/models';
+import { TAG, TAG_TYPE, TAG_OWNER, PAGING, DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER } from 'src/app/global/models';
 import { TagService } from 'src/app/global/services';
 import { EditTagComponent } from '../../dialogs';
 
@@ -86,13 +86,22 @@ export class TagsTableComponent implements OnInit, OnDestroy {
             );
     }
 
-    async onDeleteTagFromOwner(tagId: string, ownerId: string): Promise<void> {
+    mapDeleteTagData(tag: TAG, ownerId: string, ownerName: string): DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER {
+        return {
+            TagId: tag.tagId,
+            OwnerId: ownerId,
+            TagName: tag.name,
+            OwnerName: ownerName,
+        };
+    }
+
+    public async onDeleteTagFromOwner(data: DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER): Promise<void> {
         const response = await this.openConfirmAPIRequestDialog('delete_tag_from_owner').toPromise();
 
         if (!response) return;
 
         this._tag
-            .deleteTagByIdAndOwner(tagId, ownerId)
+            .deleteTagByIdAndOwner(data)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 () => {
@@ -101,7 +110,7 @@ export class TagsTableComponent implements OnInit, OnDestroy {
                     this._tag.onRefreshTagsCount.next();
                 },
                 (error) => {
-                    console.error(error);
+                    console.error('Error deleting tag', error);
                 },
             );
     }
