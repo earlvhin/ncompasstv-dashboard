@@ -4,7 +4,7 @@ import { MatDialog, MatDialogRef, MatSelect } from '@angular/material';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { ReplaySubject, Subject } from 'rxjs';
 
-import { AuthService, ConfirmationDialogService, LicenseService, TagService } from 'src/app/global/services';
+import { AuthService, ConfirmationDialogService, TagService } from 'src/app/global/services';
 import { CREATE_AND_ASSIGN_TAG_V2, DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER, TAG } from 'src/app/global/models';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
@@ -371,9 +371,9 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
             description: [null],
             exclude: [false],
             existing: [[]],
-            name: [null],
+            name: [null, Validators.required],
             new: [[]],
-            tagColor: [null],
+            tagColor: [null, Validators.required],
             tagFilter: [null],
         };
     }
