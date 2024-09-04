@@ -20,7 +20,7 @@ import { AuthService, DealerService, HelperService, HostService } from 'src/app/
     styleUrls: ['./hosts.component.scss'],
 })
 export class HostsComponent implements OnInit {
-    current_status_filter = 'active';
+    current_status_filter = '';
     dealers_data: UI_TABLE_HOSTS_BY_DEALER[] = [];
     diff_hours: any;
     filtered_data: any = [];
@@ -313,28 +313,28 @@ export class HostsComponent implements OnInit {
     }
 
     getHosts(page = 1): void {
-        let status = this.current_status_filter === 'active' ? 'A' : 'I';
-        if (this.current_status_filter === 'all') status = '';
+        const status =
+            this.current_status_filter === 'active' ? 'A' : this.current_status_filter === 'inactive' ? 'I' : '';
+
         this.no_host = false;
         this.searching_hosts = true;
         this.hosts_data = [];
 
-        const filters = {
+        const filters: any = {
             page,
-            status,
             search: this.search_data_host,
             sortColumn: this.sort_column_hosts,
             sortOrder: this.sort_order_hosts,
             pageSize: 15,
+            ...(status && { status }),
         };
 
-        let request = this.has_sort ? this._host.get_host_by_page(filters) : this._host.get_host_fetch(filters);
+        const request = this.has_sort ? this._host.get_host_by_page(filters) : this._host.get_host_fetch(filters);
 
-        request
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((response) => {
+        request.pipe(takeUntil(this._unsubscribe)).subscribe({
+            next: (response) => {
                 if ('message' in response) {
-                    if (this.search_data_host == '') this.no_host = true;
+                    this.no_host = !this.search_data_host;
                     this.filtered_data_host = [];
                     return;
                 }
@@ -343,11 +343,12 @@ export class HostsComponent implements OnInit {
                 const mappedData = this.hosts_mapToUIFormat(response.paging.entities);
                 this.hosts_data = [...mappedData];
                 this.filtered_data_host = [...mappedData];
-            })
-            .add(() => {
+            },
+            complete: () => {
                 this.initial_load_hosts = false;
                 this.searching_hosts = false;
-            });
+            },
+        });
     }
 
     hosts_mapToUIFormat(data: API_HOST[]): UI_HOST_VIEW[] {
