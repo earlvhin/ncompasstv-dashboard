@@ -125,3 +125,12 @@ export interface API_HOST_MINIFIED {
     latitude: string;
     dateCreated: string;
 }
+
+export interface HOST_FILTER {
+    page: number;
+    search: string;
+    sortColumn: string;
+    sortOrder: string;
+    pageSize: number;
+    status?: string;
+}

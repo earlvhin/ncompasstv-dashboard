@@ -11,6 +11,7 @@ import {
     UI_TABLE_HOSTS_BY_DEALER,
     UI_HOST_VIEW,
     UI_ROLE_DEFINITION_TEXT,
+    HOST_FILTER,
 } from 'src/app/global/models';
 import { AuthService, DealerService, HelperService, HostService } from 'src/app/global/services';
 
@@ -313,14 +314,25 @@ export class HostsComponent implements OnInit {
     }
 
     getHosts(page = 1): void {
-        const status =
-            this.current_status_filter === 'active' ? 'A' : this.current_status_filter === 'inactive' ? 'I' : '';
+        let status: string = '';
+
+        switch (this.current_status_filter) {
+            case 'active':
+                status = 'A';
+                break;
+            case 'inactive':
+                status = 'I';
+                break;
+            default:
+                status = '';
+                break;
+        }
 
         this.no_host = false;
         this.searching_hosts = true;
         this.hosts_data = [];
 
-        const filters: any = {
+        const filters: HOST_FILTER = {
             page,
             search: this.search_data_host,
             sortColumn: this.sort_column_hosts,
