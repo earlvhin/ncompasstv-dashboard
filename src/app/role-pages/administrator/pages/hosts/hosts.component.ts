@@ -325,7 +325,6 @@ export class HostsComponent implements OnInit {
                 break;
             default:
                 status = '';
-                break;
         }
 
         this.no_host = false;
