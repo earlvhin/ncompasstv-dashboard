@@ -43,7 +43,11 @@
                             </ng-container>
 
                             <ng-template #noLink>
-                                <td>{{ d.value }}</td>
+                                <td
+                                    [matTooltip]="d.hasToolTip ? d.toolTipValue : ''"
+                                    [matTooltipPosition]="d.toolTipPosition">
+                                    {{ d.value }}
+                                </td>
                             </ng-template>
                         </ng-container>
                     </ng-container>

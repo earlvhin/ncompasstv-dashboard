@@ -34,6 +34,7 @@ import { RolesComponent } from './pages/roles/roles.component';
 import { SingleLicenseModule } from 'src/app/global/pages_shared/single-license/single-license.module';
 import { ScreensComponent } from './pages/screens/screens.component';
 import { TagsModule } from 'src/app/global/pages_shared/tags/tags.module';
+import { ProgrammaticModule } from 'src/app/global/pages_shared/programmatic/programmatic.module';
 import { TemplatesComponent } from './pages/templates/templates.component';
 import { UsersComponent } from './pages/users/users.component';
 import { UpdateComponent } from './pages/update/update.component';
@@ -88,6 +89,7 @@ import { ReleaseNotesModule } from './pages/release-notes/release-notes.module';
         InstallationsModule,
         ReleaseNotesModule,
         LicensesModule,
+        ProgrammaticModule,
         RouterModule.forChild(ADMINISTRATOR_ROUTES),
     ],
     providers: [AuthGuard],

@@ -1,0 +1,123 @@
+<div id="add_programmatic_form" class="theme-container p-4 pb-0 h-100">
+    <div class="d-flex heading">
+        <div class="title flex-even">
+            <h3 class="m-0 mb-2">{{ vendor && vendor.id ? 'Update' : 'Create' }} Programmatic</h3>
+        </div>
+        <div class="dialog-close-btn">
+            <button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
+                <span class="fas fa-times"></span>
+            </button>
+        </div>
+    </div>
+    <form [formGroup]="programmaticForm">
+        <mat-form-field class="full-width">
+            <mat-label>Name</mat-label>
+            <input formControlName="name" matInput placeholder="Name" type="text" />
+        </mat-form-field>
+        <mat-form-field class="full-width">
+            <mat-label>Description</mat-label>
+            <textarea
+                matInput
+                formControlName="description"
+                type="textarea"
+                placeholder="Details"
+                class="text-area-description">
+            </textarea>
+            <mat-hint align="end">{{ programmaticForm.controls['description'].value?.length || 0 }}/250</mat-hint>
+            <mat-error *ngIf="programmaticForm.controls['description'].hasError('maxlength')">
+                Maximum length of 250 characters exceeded!
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field class="full-width">
+            <mat-label>API URL</mat-label>
+            <input formControlName="apiUrl" matInput placeholder="https://www.vistarmedia.com/" type="text" />
+        </mat-form-field>
+
+        <h4 class="mb-1 mt-3">Key Value (key must be unique)</h4>
+        <hr />
+        <div formArrayName="vendorKeyValues" class="programmatic-key-value">
+            <div
+                class="flex"
+                *ngFor="let keyValue of vendorKeyValues.controls; let i = index; let first = first; let last = last"
+                [formGroupName]="i">
+                <div class="flex-even pr-3">
+                    <mat-form-field class="full-width">
+                        <mat-label>Key</mat-label>
+                        <input
+                            (blur)="markAsTouched(vendorKeyValues, i, 'key')"
+                            matInput
+                            type="string"
+                            formControlName="key"
+                            placeholder="Key" />
+                    </mat-form-field>
+                    <mat-error
+                        *ngIf="keyValue.hasError('keyRequired') && keyValue.get('key').touched"
+                        class="form-error-message">
+                        Key is required if Value has content.
+                    </mat-error>
+                    <mat-error
+                        *ngIf="programmaticForm.hasError('nonUniqueValues', 'vendorKeyValues')"
+                        class="form-error-message">
+                        Key must be unique
+                    </mat-error>
+                </div>
+
+                <div class="flex-even pr-3">
+                    <mat-form-field class="full-width">
+                        <mat-label>Value</mat-label>
+                        <input
+                            (blur)="markAsTouched(vendorKeyValues, i, 'value')"
+                            matInput
+                            type="string"
+                            formControlName="value"
+                            placeholder="Value" />
+                    </mat-form-field>
+                    <mat-error
+                        *ngIf="keyValue.hasError('valueRequired') && keyValue.get('value').touched"
+                        class="form-error-message">
+                        Value is required if Key has content.
+                    </mat-error>
+                </div>
+                <div class="pr-3 d-flex align-items-center gap-2">
+                    <button
+                        *ngIf="!(vendorKeyValues.controls.length == 1 && first)"
+                        type="button"
+                        (click)="removeKeyValue(i)">
+                        <span class="fas fa-minus px-2 sm-text"></span>
+                    </button>
+                    <button *ngIf="last" type="button" (click)="addKeyValue()">
+                        <span class="fas fa-plus px-2 sm-text"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <button
+            mat-button
+            mat-raised-button
+            class="theme-btn mt-4"
+            (click)="saveProgrammatic()"
+            [disabled]="invalidForm || hasClickedSubmit">
+            <span class="button-label"> Save </span>
+            <span class="fas fa-plus ml-2 sm-text"></span>
+        </button>
+
+        <button mat-button mat-raised-button class="theme-btn mt-4 _danger"></button>
+    </form>
+
+    <ng-template #loading>
+        <div class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center h-100">
+            <app-spinner></app-spinner>
+        </div>
+    </ng-template>
+
+    <ng-template #success>
+        <div class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center h-100">
+            <div>
+                <app-success-animation class="mb-2"></app-success-animation>
+                <h3 class="mb-4">License assignment succesful!</h3>
+                <button mat-button mat-raised-button mat-dialog-close class="theme-btn mr-3">OK</button>
+            </div>
+        </div>
+    </ng-template>
+</div>
