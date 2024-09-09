@@ -87,20 +87,20 @@
                     </div>
                 </ng-container>
 
-                <ng-container *ngIf="!isInvalidUrl && isDirectTechUrl">
-                    <div class="alert alert-warning">
-                        <p class="sm-text font-weight-bold">Entered Feed URL may be invalid.</p>
-                    </div>
-                </ng-container>
+                    <ng-container *ngIf="!isInvalidUrl && isDirectTechUrl">
+                        <div class="alert alert-warning">
+                            <p class="sm-text font-weight-bold">Entered Feed URL may be invalid.</p>
+                        </div>
+                    </ng-container>
 
-                <ng-container *ngIf="isInvalidUrl">
-                    <div class="alert alert-danger">
-                        <p class="sm-text font-weight-bold">Feed URL Error! Possible reasons may be:</p>
-                        <ul class="sm-text font-weight-bold pl-4">
-                            <li>Incorrect Link</li>
-                            <li>The feed URL does not start with "http" or "https"</li>
-                        </ul>
-                    </div>
+                    <ng-container *ngIf="isInvalidUrl">
+                        <div class="alert alert-danger">
+                            <p class="sm-text font-weight-bold">Feed URL Error! Possible reasons may be:</p>
+                            <ul class="sm-text font-weight-bold pl-4">
+                                <li>Incorrect Link</li>
+                                <li>The feed URL does not start with "http" or "https"</li>
+                            </ul>
+                        </div>
                 </ng-container>
             </div>
             <div class="d-flex flex-even align-items-center">

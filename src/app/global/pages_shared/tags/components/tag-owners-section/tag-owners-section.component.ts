@@ -22,6 +22,7 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
     @Input() currentUserRole: string;
     @Input() tab: string;
     @Input() tagTypes: TAG_TYPE[];
+    @Input() tagNameRoute = '';
     @Output() onRefreshTagsCount = new EventEmitter<void>();
 
     currentFilter = 'All';
@@ -59,10 +60,18 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
         const defaultType = this.tagTypes[0];
         this.currentTagType = defaultType;
         this.currentFilter = defaultType.name;
-        this.searchOwnerTags();
-        this.subscribeToRefreshTableData();
-        this.subscribeToSearch();
-        this.subscribeToTagNameClick();
+
+        if (this.tagNameRoute) {
+            this.searchFormControl.setValue(this.tagNameRoute);
+            this.searchOwnerTags(this.tagNameRoute, null, 0);
+            this.searchFormControl.disable();
+        } else {
+            this.searchOwnerTags();
+            this.subscribeToRefreshTableData();
+            this.subscribeToTagNameClick();
+            this.subscribeToSearch();
+        }
+
         if (this.currentUserRole === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
             this.currentUserRole = UI_ROLE_DEFINITION_TEXT.administrator;
         }

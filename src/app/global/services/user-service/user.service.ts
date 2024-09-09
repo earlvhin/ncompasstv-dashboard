@@ -133,7 +133,11 @@ export class UserService extends BaseService {
         sortOrder: string,
         page: number,
         pageSize: number,
-    ): Observable<{ paging: PAGING; message?: string }> {
+    ): Observable<{
+        nonExistentTargetIds: string[];
+        paging: PAGING;
+        message?: string;
+    }> {
         const base = `${this.getters.api_get_activities_by_current_user}`;
         const params = this.setUrlParams({ sortColumn, sortOrder, page, pageSize }, false, true);
         const url = `${base}${params}`;

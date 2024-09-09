@@ -142,13 +142,17 @@ export class DataTableComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.table_data.map((data) => {
-            Object.keys(data).forEach((key) => {
-                if (data[key].table) {
-                    this.active_table = data[key].table;
-                }
+        if (this.table_data) {
+            this.table_data.map((data) => {
+                if (!data) return;
+
+                Object.keys(data).forEach((key) => {
+                    if (data[key].table) {
+                        this.active_table = data[key].table;
+                    }
+                });
             });
-        });
+        }
 
         this.subscribeToEmailNotificationToggleResult();
     }

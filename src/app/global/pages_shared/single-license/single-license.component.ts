@@ -625,7 +625,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         this.additional_license_settings_form.get(controlName).setValue(null);
     }
 
-    async onRemoveTag(index: number, data: TAG) {
+    public async onRemoveTag(index: number, data: TAG, ownerName: string): Promise<void> {
         const confirmAction = await this._confirmDialog
             .warning({ message: 'Remove Tag?', data: 'This will remove the tag from this license' })
             .toPromise();

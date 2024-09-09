@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { map, takeUntil } from 'rxjs/operators';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { filter, map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { TAG_OWNER, TAG_TYPE } from 'src/app/global/models';
@@ -20,10 +21,11 @@ export class TagsComponent implements OnInit, OnDestroy {
     owners: TAG_OWNER[] = [];
     ownersTabTagId = null;
     searchForm: FormGroup;
+    tagId = '';
+    tagNameRoute = '';
     tagTypes: TAG_TYPE[] = [];
     tagTypesMutated: TAG_TYPE[] = [];
     title = 'Tags';
-
     tagsTableSettings = { columns: this.getColumns() };
     tagOwnersTableSettings = { columns: this.getColumns('tag-owners') };
 
@@ -32,17 +34,42 @@ export class TagsComponent implements OnInit, OnDestroy {
     constructor(
         private _auth: AuthService,
         private _tag: TagService,
+        private _route: ActivatedRoute,
+        private _router: Router,
     ) {}
 
     ngOnInit() {
-        this.getAllTagTypes().add(() => (this.isContentReady = true));
-        this.getTagsCount();
-        this.subscribeToTagsCountRefresh();
+        // Initial route check and tagname availability
+        this.assignActiveTag();
+
+        // Route change watcher
+        this._router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
+            this.assignActiveTag();
+        });
     }
 
     ngOnDestroy() {
         this._unsubscribe.next();
         this._unsubscribe.complete();
+    }
+
+    private assignActiveTag(): void {
+        const childRoute = this._route.firstChild;
+
+        if (childRoute) {
+            childRoute.paramMap.subscribe((params) => {
+                this.tagId = params.get('data');
+            });
+
+            this.getTagById(this.tagId);
+        } else {
+            this.tagId = null;
+            this.tagNameRoute = null;
+            this.isContentReady = false;
+            this.getAllTagTypes().add(() => (this.isContentReady = true));
+            this.getTagsCount();
+            this.subscribeToTagsCountRefresh();
+        }
     }
 
     clickedTagName(event: { tag: string }): void {
@@ -60,6 +87,20 @@ export class TagsComponent implements OnInit, OnDestroy {
     _isDealer() {
         const DEALER_ROLES = ['dealer', 'sub-dealer'];
         return DEALER_ROLES.includes(this._auth.current_role);
+    }
+
+    private getTagById(tagId: string): void {
+        this._tag.getTag(tagId).subscribe({
+            next: (response) => {
+                this.tagNameRoute = response.name;
+                this.getAllTagTypes().add(() => (this.isContentReady = true));
+                this.getTagsCount();
+                this.subscribeToTagsCountRefresh();
+            },
+            error: (error) => {
+                console.error(error);
+            },
+        });
     }
 
     private getAllTagTypes() {
@@ -90,12 +131,9 @@ export class TagsComponent implements OnInit, OnDestroy {
         switch (table) {
             case 'tag-owners':
                 columns.push({ name: 'Assignee', class: 'p-3' }, { name: 'Tags', class: 'p-3' });
-
                 break;
-
             default:
                 columns.push({ name: 'Name', class: 'p-3' }, { name: 'Total', class: 'p-3' });
-
                 break;
         }
 
@@ -122,6 +160,10 @@ export class TagsComponent implements OnInit, OnDestroy {
                 },
             )
             .add(() => (this.isLoadingCount = false));
+    }
+
+    public navigateToTags(): void {
+        this._router.navigate(['../tags'], { relativeTo: this._route });
     }
 
     private subscribeToTagsCountRefresh() {
