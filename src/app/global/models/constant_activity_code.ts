@@ -56,7 +56,7 @@ export const ACTIVITY_URLS = [
     },
     {
         activityCodePrefix: 'license',
-        activityURL: 'dealers',
+        activityURL: 'licenses',
     },
     {
         activityCodePrefix: 'feedfiller',
