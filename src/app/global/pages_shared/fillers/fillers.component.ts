@@ -26,6 +26,7 @@ export class FillersComponent implements OnInit {
     is_dealer = this._isDealer;
     is_dealer_admin = this._isDealerAdmin;
     is_loading: boolean;
+    notOwner = false;
     no_search_result = false;
     selectedDealerId: string = '';
 
@@ -56,20 +57,22 @@ export class FillersComponent implements OnInit {
         this.current_tab = e.index;
         this.filler_group_cache = [];
         this.filler_group = [];
+        this.notOwner = false;
         switch (e.index) {
             case 0:
                 if (this.is_dealer_admin) this.getDealerAdminsDealerFillers(1, '', '', '', 'dealeradmin');
                 else this.getAllFillers(1, '');
                 break;
             case 1:
+                this.notOwner = true;
                 if (this.is_dealer) {
                     this.current_role = 1;
                     this.getFillersOtherRole(this.current_role, 1, '');
                 } else if (this.is_dealer_admin) this.getAllFillers(1, '');
                 else this.getDealerAdminsDealerFillers(1, '', '', '', 'dealeradmin');
-
                 break;
             case 2:
+                this.notOwner = true;
                 if (this.is_dealer_admin) this.getDealerAdminsDealerFillers(1, '', '', '', 'dealer');
                 else if (this.is_dealer) this.getDealerAdminsDealerFillers(1, '', '', '', 'dealeradmin');
                 else this.getDealerFillersAdminView(1, '', '');
@@ -113,7 +116,7 @@ export class FillersComponent implements OnInit {
     getFillersOtherRole(role, page?, keyword?, sort_col?, sort_ord?) {
         this.is_loading = page === 1;
         this._filler
-            .get_filler_group_of_other_roles(role, page, keyword, 11, sort_col, sort_ord)
+            .get_filler_group_of_other_roles(role, page, keyword, 11, sort_col, sort_ord, this.notOwner)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data: any) => {
                 if (!data.message) {
@@ -133,7 +136,9 @@ export class FillersComponent implements OnInit {
         const { page = 1, keyword = '', sort_col = '', sort_ord = '' } = event;
         switch (this.current_tab) {
             case 0:
-                this.getAllFillers(page, keyword, sort_col, sort_ord);
+                if (this.is_dealer_admin)
+                    this.getDealerAdminsDealerFillers(page, keyword, sort_col, sort_ord, 'dealeradmin');
+                else this.getAllFillers(page, keyword, sort_col, sort_ord);
                 break;
             case 1:
                 if (this.is_dealer) this.getFillersOtherRole(this.current_role, page, keyword, sort_col, sort_ord);
@@ -153,7 +158,7 @@ export class FillersComponent implements OnInit {
     getAllFillers(page, keyword?, sort_col?, sort_ord?) {
         if (page == 1) this.is_loading = true;
         this._filler
-            .get_filler_groups(page, keyword, 11, sort_col, sort_ord, this.is_dealer)
+            .get_filler_groups(page, keyword, 11, sort_col, sort_ord, this.is_dealer, this.notOwner)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data: any) => {
                 if (!data.message) {
@@ -181,7 +186,7 @@ export class FillersComponent implements OnInit {
     getDealerAdminsDealerFillers(page, keyword?, sort_col?, sort_ord?, user?) {
         if (page == 1) this.is_loading = true;
         this._filler
-            .get_filler_group_dealer_admin_view('', page, keyword, 11, sort_col, sort_ord, user)
+            .get_filler_group_dealer_admin_view('', page, keyword, 11, sort_col, sort_ord, user, this.notOwner)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data: any) => {
                 if (!data.message) {
@@ -209,7 +214,16 @@ export class FillersComponent implements OnInit {
     getDealerFillersAdminView(page, keyword?, sort_col?, sort_ord?) {
         this.is_loading = page === 1;
         this._filler
-            .get_filler_group_dealer_admin_view(this.selectedDealerId, page, keyword, 11, sort_col, sort_ord)
+            .get_filler_group_dealer_admin_view(
+                this.selectedDealerId,
+                page,
+                keyword,
+                11,
+                sort_col,
+                sort_ord,
+                '',
+                this.notOwner,
+            )
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data: any) => {
                 this.no_search_result = data.message && keyword != '' ? true : false;
