@@ -101,8 +101,8 @@
                         </div>
                     </mat-tab>
 
-                    <!-- Programmatic Tab -->
-                    <mat-tab label="Programmatic" *ngIf="is_admin">
+                    <!-- Programmatic Tab -- Revove false statement to show tab -->
+                    <mat-tab label="Programmatic" *ngIf="is_admin && false">
                         <div class="flex pb-4">
                             <div class="full-width">
                                 <app-host-programmatic-tab [hostId]="hostId"> </app-host-programmatic-tab>
