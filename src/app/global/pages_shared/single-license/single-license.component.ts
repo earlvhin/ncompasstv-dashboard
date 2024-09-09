@@ -55,6 +55,7 @@ import {
     API_ACTIVITY,
     UI_ROLE_DEFINITION,
     UI_ROLE_DEFINITION_TEXT,
+    DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER,
 } from 'src/app/global/models';
 import { UpdateTvBrandDialogComponent } from './components/update-tv-brand-dialog/update-tv-brand-dialog.component';
 
@@ -631,8 +632,15 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
         if (!confirmAction) return;
 
+        const deleteData: DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER = {
+            TagId: data.tagId,
+            OwnerId: this.license_id,
+            TagName: data.name,
+            OwnerName: this.license_data.alias || this.license_data.licenseKey,
+        };
+
         this._tag
-            .deleteTagByIdAndOwner(data.tagId, data.name, this.license_data.licenseId, ownerName)
+            .deleteTagByIdAndOwner(deleteData)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 () => {
@@ -711,23 +719,25 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     openAddTagModal() {
         const config = {
             width: '700px',
-            height: '700px',
             panelClass: 'dialog-container-position-relative',
             disableClose: true,
+            data: {
+                dealer: this.dealerData,
+            },
         };
 
         const modal: MatDialogRef<AddTagModalComponent> = this._dialog.open(AddTagModalComponent, config);
         modal.componentInstance.ownerId = this.license_data.licenseId;
-        modal.componentInstance.owner_name = this.license_data.alias;
+        modal.componentInstance.ownerName = this.license_data.alias || this.license_data.licenseKey;
         modal.componentInstance.currentTags = this.tags as {
             name: string;
             tagColor: string;
         }[];
 
-        modal.afterClosed().subscribe((response) => {
+        modal.afterClosed().subscribe((response: { currentTags: TAG[]; hasChanges: boolean; closed?: boolean }) => {
             if (!response) return;
-            this.showSuccessModal('Success!', 'Tags saved', '', false);
-            this.tags = [...(response as TAG[])];
+            if (response.hasChanges && !response.closed) this.showSuccessModal('Success!', 'Tags saved', '', false);
+            this.tags = [...(response.currentTags as TAG[])];
         });
     }
 

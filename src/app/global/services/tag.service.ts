@@ -5,14 +5,14 @@ import { HttpClient } from '@angular/common/http';
 
 import { BaseService } from './base.service';
 import {
-    API_TAG,
-    CREATE_AND_ASSIGN_TAG,
     API_FILTERS,
-    ADD_OWNER_RESPONSE,
-    REMOVE_TAG_BY_ID_AND_OWNER_RESPONSE,
     PAGING,
     TAG,
     TAG_OWNER,
+    CREATE_AND_ASSIGN_TAG_V2,
+    DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER,
+    ADD_OWNER_RESPONSE,
+    API_TAG,
 } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
@@ -43,7 +43,7 @@ export class TagService extends BaseService {
         return this.postRequest(endpoint, {});
     }
 
-    createAndAssignTags(body: CREATE_AND_ASSIGN_TAG, isDealer?): Observable<{ message: string; tags: any }> {
+    createAndAssignTags(body: CREATE_AND_ASSIGN_TAG_V2, isDealer?): Observable<{ message: string; tags: any }> {
         if (isDealer) {
             let url_split = this.creators.tag_add_and_assign.split('/');
             let new_endpoint = url_split[0] + '/dealer/' + url_split[2] + '/' + url_split[3];
@@ -89,14 +89,9 @@ export class TagService extends BaseService {
         return this.postRequest(this.deleters.tag, body);
     }
 
-    deleteTagByIdAndOwner(
-        tagId: string,
-        tagName: string,
-        ownerId: string,
-        ownerName: string,
-    ): Observable<REMOVE_TAG_BY_ID_AND_OWNER_RESPONSE> {
-        const body = { tagId, tagName, ownerId, ownerName };
-        return this.postRequest(this.deleters.tag_by_id_and_owner, body);
+    deleteTagByIdAndOwner(data: DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER) {
+        const url = this.deleters.tag_by_id_and_owner;
+        return this.postRequest(url, data);
     }
 
     getAllTags(filters: API_FILTERS, isDealer) {
