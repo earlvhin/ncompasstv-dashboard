@@ -13,6 +13,7 @@ import {
     DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER,
     ADD_OWNER_RESPONSE,
     API_TAG,
+    TAG_CREATORS,
 } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
@@ -79,7 +80,7 @@ export class TagService extends BaseService {
         return this.postRequest(this.creators.tag_type, body);
     }
 
-    deleteAllTagsFromOwner(id: string, displayName: string): Observable<any> {
+    public deleteAllTagsFromOwner(id: string, displayName: string): Observable<TAG_CREATORS> {
         const body = { id, displayName };
         return this.postRequest(this.deleters.tag_by_owner_id, body);
     }

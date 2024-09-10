@@ -159,7 +159,7 @@ export class ProfileSettingComponent implements OnInit {
 
                     this.getUserByIds(res.paging.entities.map((a) => a.initiatedBy)).subscribe((responses) => {
                         this.activity_created_by = responses;
-                        const mappedData = this.activity_mapToUI(res.paging.entities);
+                        const mappedData = this.activityMapToUI(res.paging.entities);
                         this.pagingActivityData = res.paging;
                         this.activity_data = [...mappedData];
                         this.reload_data = true;
@@ -180,7 +180,7 @@ export class ProfileSettingComponent implements OnInit {
         return forkJoin(userObservables);
     }
 
-    activity_mapToUI(activity): any {
+    activityMapToUI(activity): any {
         let count = 1;
 
         return activity.map((a: any) => {
@@ -257,14 +257,14 @@ export class ProfileSettingComponent implements OnInit {
             .getActivitiesByCurrentUser(this.sortActivityColumn, this.sortActivityOrder, page, 15)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((response) => {
-                const mappedData = this.new_activity_mapToUI(response.paging.entities, response.nonExistentTargetIds);
+                const mappedData = this.newActivityMapToUI(response.paging.entities, response.nonExistentTargetIds);
                 this.pagingActivityData = response.paging;
                 this.activityData = [...mappedData];
                 this.activityDataLoaded = true;
             });
     }
 
-    public new_activity_mapToUI(activity: USER_ACTIVITY[], nonExistentTargetIds: string[]): any {
+    public newActivityMapToUI(activity: USER_ACTIVITY[], nonExistentTargetIds: string[]): any {
         let count = 1;
         const noBreadcrumEntities = ['tag'];
 
@@ -274,11 +274,9 @@ export class ProfileSettingComponent implements OnInit {
             const activityCodePrefix = a.activityCode.split('_')[0];
             const activitytUrl = ACTIVITY_URLS.find((ac) => ac.activityCodePrefix === activityCodePrefix);
 
-            if (nonExistentTargetIds && nonExistentTargetIds.includes(a.targetId)) {
-                targetLink = '';
-            } else {
-                targetLink = `/${this.currentRole}/${activitytUrl.activityURL}/${a.targetId}`;
-            }
+            const isExcluded = nonExistentTargetIds && nonExistentTargetIds.includes(a.targetId);
+            const url = `/${this.currentRole}/${activitytUrl.activityURL}/${a.targetId}`;
+            targetLink = isExcluded ? '' : url;
 
             return new USER_ACTIVITY(
                 { value: count++, editable: false },

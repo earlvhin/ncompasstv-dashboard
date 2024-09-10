@@ -653,7 +653,7 @@ export class HostsComponent implements OnInit {
         }
 
         //To Overwrite Dwell Time and Foot Traffic to available months only
-        if(!this.isDealerAdmin) {
+        if (!this.isDealerAdmin) {
             data.placerDump.map((dump) => {
                 let dissected_month = dump.month.split(' ');
                 let month_index = moment().month(dissected_month[0]).format('M');
@@ -663,7 +663,6 @@ export class HostsComponent implements OnInit {
                 data[foot_traffic_with_index] = dump.footTraffic;
             });
         }
-        
 
         if (data.tags && data.tags.length > 0) data.tagsToString = data.tags.join(',');
     }

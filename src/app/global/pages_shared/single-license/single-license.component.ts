@@ -1636,7 +1636,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 (response) => {
                     //this.activities = response.paging.entities as API_ACTIVITY[];
 
-                    const mappedData = this.activity_mapToUI(response.paging.entities);
+                    const mappedData = this.activityMapToUI(response.paging.entities);
                     this.paging_data_activity = response.paging;
                     this.activities = [...mappedData];
                 },
@@ -1646,7 +1646,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             );
     }
 
-    activity_mapToUI(activity): any {
+    activityMapToUI(activity): any {
         let count = 1;
 
         return activity.map((a: any) => {

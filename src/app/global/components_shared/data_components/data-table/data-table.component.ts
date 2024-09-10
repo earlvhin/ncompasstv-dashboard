@@ -1006,6 +1006,14 @@ export class DataTableComponent implements OnInit {
         this.shipping.emit(filter);
     }
 
+    getExportClass(allowExport: boolean): string {
+        return allowExport ? 'text-primary cursor-pointer' : 'text-gray cursor-void';
+    }
+
+    getStatusClass(status: { value: string } | undefined): string {
+        return status && status.value === 'A' ? 'text-primary' : 'text-gray';
+    }
+
     private deleteUser(userId: string): void {
         this._user
             .deleteUser(userId)

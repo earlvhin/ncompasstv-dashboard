@@ -710,7 +710,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                     }
                     this.getUserById(res.paging.entities.map((a) => a.initiatedBy)).subscribe((responses) => {
                         this.created_by = responses;
-                        const mappedData = this.activity_mapToUI(res.paging.entities);
+                        const mappedData = this.activityMapToUI(res.paging.entities);
                         this.paging_data = res.paging;
                         this.activity_data = [...mappedData];
                         this.reload_data = true;
@@ -730,7 +730,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         if (e) this.ngOnInit();
     }
 
-    activity_mapToUI(activity): any {
+    activityMapToUI(activity): any {
         let count = 1;
 
         return activity.map((a: any) => {

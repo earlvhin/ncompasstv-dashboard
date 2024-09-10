@@ -582,13 +582,13 @@ export class SingleUserComponent implements OnInit, OnDestroy {
                 .toPromise();
         }
 
-        const mappedData = this.activity_mapToUI(response.paging.entities, response.nonExistentTargetIds);
+        const mappedData = this.activityMapToUI(response.paging.entities, response.nonExistentTargetIds);
         this.pagingActivityData = response.paging;
         this.activityData = [...mappedData];
         this.activityLoaded = true;
     }
 
-    public activity_mapToUI(activity: USER_ACTIVITY[], nonExistentTargetIds: string[]): USER_ACTIVITY[] {
+    public activityMapToUI(activity: USER_ACTIVITY[], nonExistentTargetIds: string[]): USER_ACTIVITY[] {
         let count = 1;
         const noBreadcrumEntities = ['tag'];
 

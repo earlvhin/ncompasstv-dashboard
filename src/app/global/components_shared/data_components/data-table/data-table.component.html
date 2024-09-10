@@ -26,7 +26,7 @@
                         </i>
                     </th>
                     <ng-template #checkbox>
-                        <span *ngIf="multiple_delete" class="text-right p3">
+                        <span *ngIf="multiple_delete" class="text-right p-3">
                             <mat-checkbox
                                 class="example-margin"
                                 (change)="updateCheck()"
@@ -375,9 +375,7 @@
                                     <span
                                         class="fas fa-clock cursor-pointer text-gray-with-hover"
                                         placement="right"
-                                        [ngClass]="
-                                            data.status && data.status.value === 'A' ? 'text-primary' : 'text-gray'
-                                        "
+                                        [ngClass]="getStatusClass(data.status)"
                                         [ngbTooltip]="businessHoursTooltip">
                                     </span>
                                 </span>
@@ -765,9 +763,7 @@
                             (click)="deletePlaylist(data.playlist_id.value)"></i>
                         <i
                             class="fas fa-file-excel cursor-pointer"
-                            [ngClass]="
-                                data.allow_export.value ? 'text-primary cursor-pointer' : 'text-gray cursor-void'
-                            "
+                            [ngClass]="getExportClass(data.allow_export.value)"
                             title="{{
                                 data.allow_export.value
                                     ? 'Export contents to CSV'
