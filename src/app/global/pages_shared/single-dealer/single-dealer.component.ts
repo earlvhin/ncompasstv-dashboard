@@ -2,14 +2,15 @@ import { DatePipe, Location, TitleCasePipe } from '@angular/common';
 import { Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { takeUntil } from 'rxjs/operators';
 import { Observable, Subject, Subscription, forkJoin } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
-import { saveAs } from 'file-saver';
-import { Workbook } from 'exceljs';
 import * as moment from 'moment';
 import * as io from 'socket.io-client';
 
 import { environment } from 'src/environments/environment';
+import { SubstringPipe } from '../../pipes/substring.pipe';
+
+// Services
 import {
     AuthService,
     AdvertiserService,
@@ -20,9 +21,12 @@ import {
     UserService,
     ExportService,
 } from 'src/app/global/services';
+
+// Components
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { SubstringPipe } from '../../pipes/substring.pipe';
 import { UserSortModalComponent } from '../../components_shared/media_components/user-sort-modal/user-sort-modal.component';
+
+// Buttons
 import { BUTTONS_FUNCTIONS, BUTTONS_DISABLED } from '../../constants/buttons';
 
 import {
@@ -35,12 +39,12 @@ import {
     UI_DEALER_LICENSE,
     UI_DEALER_LICENSE_ZONE,
     UI_ROLE_DEFINITION_TEXT,
-    UI_ROLE_DEFINITION,
     ACTIVITY_LOGS,
     UI_ACTIVITY_LOGS,
     API_ADVERTISER,
     UI_ADVERTISER,
     WORKSHEET,
+    USER_ACTIVITY,
 } from 'src/app/global/models';
 import { MatSnackBar } from '@angular/material';
 
@@ -730,13 +734,13 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         if (e) this.ngOnInit();
     }
 
-    activityMapToUI(activity): any {
+    private activityMapToUI(activity: USER_ACTIVITY[]): UI_ACTIVITY_LOGS[] {
         let count = 1;
 
-        return activity.map((a: any) => {
+        return activity.map((a) => {
             const activityCode = a.activityCode;
             let activityMessage = 'Other activitiy detected';
-            let createdBy;
+            let createdBy: { firstName: string; lastName: string };
 
             this.created_by.map((c) => {
                 if (c.userId === a.initiatedBy) createdBy = c;
@@ -786,7 +790,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                     activityMessage = `${createdBy.firstName} ${createdBy.lastName} updated their card details`;
                     break;
                 default:
-                    return activityMessage;
+                // do nothing but still add this as it is recommended by code standard
             }
 
             return new UI_ACTIVITY_LOGS(

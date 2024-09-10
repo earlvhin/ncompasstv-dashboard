@@ -241,6 +241,7 @@ export class ProfileSettingComponent implements OnInit {
                     activityMessage = `${createdBy.firstName} ${createdBy.lastName} (You) updated card details`;
                     break;
                 default:
+                // do nothing but still add this as it is recommended by code standard
             }
 
             return new UI_ACTIVITY_LOGS(
