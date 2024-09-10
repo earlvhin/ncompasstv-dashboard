@@ -16,7 +16,7 @@ import * as filestack from 'filestack-js';
 import { environment } from 'src/environments/environment';
 
 import { UI_PLACER_DATA, WORKSHEET } from 'src/app/global/models';
-import { PlacerService, HostService, ExportService } from 'src/app/global/services';
+import { PlacerService, HostService, ExportService, AuthService } from 'src/app/global/services';
 import { API_PLACER } from '../../models/api_placer.model';
 
 import { Router, NavigationStart } from '@angular/router';
@@ -153,6 +153,7 @@ export class PlacerComponent implements OnInit {
         private _dialog: MatDialog,
         private _host: HostService,
         private _export: ExportService,
+        private _auth: AuthService,
         private router: Router,
     ) {}
 
@@ -553,6 +554,21 @@ export class PlacerComponent implements OnInit {
                     'Placer File Uploaded',
                     'Extraction of data will be done on the background, new data entries will soon be available. Click OK to continue',
                 );
+
+                const file = response.filesUploaded[0];
+                const targetName = file.filename;
+
+                console.log(file);
+                this._placer
+                    .uploadPlacerData(
+                        this._auth.current_user_value.user_id,
+                        'host_upload_placer_data',
+                        null,
+                        targetName,
+                    )
+                    .pipe(takeUntil(this._unsubscribe))
+                    .subscribe(() => console.log('UPLOAD SUCCESS'));
+
                 this.uploadInProgress = false;
                 this.ngOnInit();
             },

@@ -282,6 +282,7 @@ export const API_ENDPOINTS = {
         api_new_content_history_log: 'playlists/logcontenthistory',
         api_fieldgroup_value_create: 'fieldgroupdvalue/create',
         api_save_activity: 'activity/log',
+        api_upload_placer: 'activity/userlog',
         content_schedule: 'playlistcontentsschedule/create',
         dealer_tag: 'tag/dealer/create',
         host_s3_files: 'host/saveS3Files',
