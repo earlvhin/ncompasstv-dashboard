@@ -13,7 +13,6 @@ import {
 } from 'src/app/global/services';
 import {
     ACTIVITY_URLS,
-    API_ACTIVITY,
     API_DEALER,
     API_USER_DATA,
     PAGING,
@@ -31,8 +30,8 @@ import { environment } from 'src/environments/environment';
 })
 export class ProfileSettingComponent implements OnInit {
     activity_created_by: any;
-    activity_data: UI_ACTIVITY_LOGS[] = [];
-    activityData: API_ACTIVITY[] = [];
+    dealerActivityData: UI_ACTIVITY_LOGS[] = [];
+    activityData: USER_ACTIVITY[] = [];
     activityDataLoaded = false;
     advertiser_data: any;
     advertiser_details: any = {};
@@ -144,7 +143,7 @@ export class ProfileSettingComponent implements OnInit {
     }
 
     getDealerActivity(page: number) {
-        this.activity_data = [];
+        this.dealerActivityData = [];
 
         this._dealer
             .get_dealer_activity(this.dealer_id, this.sortActivityColumn, this.sortActivityOrder, page)
@@ -153,7 +152,7 @@ export class ProfileSettingComponent implements OnInit {
                 (res) => {
                     if (res.paging.entities.length === 0) {
                         this.no_activity_data = true;
-                        this.activity_data = [];
+                        this.dealerActivityData = [];
                         return;
                     }
 
@@ -161,7 +160,7 @@ export class ProfileSettingComponent implements OnInit {
                         this.activity_created_by = responses;
                         const mappedData = this.activityMapToUI(res.paging.entities);
                         this.pagingActivityData = res.paging;
-                        this.activity_data = [...mappedData];
+                        this.dealerActivityData = [...mappedData];
                         this.reload_data = true;
                     });
                 },
@@ -264,7 +263,7 @@ export class ProfileSettingComponent implements OnInit {
             });
     }
 
-    public newActivityMapToUI(activity: USER_ACTIVITY[], nonExistentTargetIds: string[]): any {
+    public newActivityMapToUI(activity: USER_ACTIVITY[], nonExistentTargetIds: string[]): USER_ACTIVITY[] {
         let count = 1;
         const noBreadcrumEntities = ['tag'];
 

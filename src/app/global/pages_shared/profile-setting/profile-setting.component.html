@@ -154,8 +154,8 @@
                             <ng-container *ngIf="isDealer; else adminActivity">
                                 <div class="col-lg-12" *ngIf="!initial_load_activity; else loadingContents">
                                     <app-single-activity-tab
-                                        *ngIf="activity_data.length; else loadingContents"
-                                        [activity_data]="activity_data"
+                                        *ngIf="dealerActivityData.length; else loadingContents"
+                                        [activity_data]="dealerActivityData"
                                         [activity_table]="activity_table"
                                         [paging_data]="pagingActivityData"
                                         [sort_column]="sortActivityColumn"
