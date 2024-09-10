@@ -528,7 +528,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
         this.city_selected = data.city;
     }
 
-    public setInitialCity(isLoaded: boolean): void {
+    public setInitialCity(): void {
         this.city_selected = this.page_data.host.city;
 
         //Set value to initial city

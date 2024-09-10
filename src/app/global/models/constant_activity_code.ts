@@ -26,4 +26,48 @@ export const ACTIVITY_URLS = [
         activityCodePrefix: 'dealer',
         activityURL: 'dealers',
     },
+    {
+        activityCodePrefix: 'host',
+        activityURL: 'hosts',
+    },
+    {
+        activityCodePrefix: 'filler',
+        activityURL: 'fillers/view-fillers-group',
+    },
+    {
+        activityCodePrefix: 'media',
+        activityURL: 'media-library',
+    },
+    {
+        activityCodePrefix: 'feed',
+        activityURL: 'media-library',
+    },
+    {
+        activityCodePrefix: 'user',
+        activityURL: 'users',
+    },
+    {
+        activityCodePrefix: 'advertiser',
+        activityURL: 'advertisers',
+    },
+    {
+        activityCodePrefix: 'tag',
+        activityURL: 'tags',
+    },
+    {
+        activityCodePrefix: 'license',
+        activityURL: 'licenses',
+    },
+    {
+        activityCodePrefix: 'feedfiller',
+        activityURL: 'feeds',
+    },
+    {
+        activityCodePrefix: 'feed',
+        activityURL: 'feeds',
+    },
+    {
+        activityCodePrefix: 'tag',
+        activityURL: 'tags',
+    },
 ];

@@ -292,7 +292,7 @@
                     </div>
                 </mat-tab>
                 <mat-tab label="Activity" *ngIf="isAdmin">
-                    <ng-container *ngIf="activityData; else loader">
+                    <ng-container *ngIf="activityLoaded; else loader">
                         <app-single-activity-tab
                             *ngIf="activityData && activityData.length; else noActivity"
                             [activity_data]="activityData"

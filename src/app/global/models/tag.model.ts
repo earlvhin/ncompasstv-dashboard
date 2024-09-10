@@ -23,3 +23,19 @@ export interface TAG {
     tagTypeId?: number; // dealer: 1 | license: 2 | host: 3 | advertiser: 4
     updatedBy?: string;
 }
+
+export interface ADD_OWNER_RESPONSE {
+    message: string;
+    tags: {
+        owners: {
+            ownerId: string;
+            tagTypeId: string;
+            displayName: string;
+        }[];
+        tagIds: { tagId: string; name: string }[];
+    };
+}
+export interface REMOVE_TAG_BY_ID_AND_OWNER_RESPONSE {
+    message: string;
+    tag: string;
+}

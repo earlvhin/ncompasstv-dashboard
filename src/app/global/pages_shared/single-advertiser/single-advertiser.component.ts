@@ -115,7 +115,7 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
                     this.getUserByIds(res.paging.entities.map((a) => a.initiatedBy)).subscribe((responses) => {
                         this.created_by = responses;
 
-                        const mappedData = this.activity_mapToUI(res.paging.entities);
+                        const mappedData = this.activityMapToUI(res.paging.entities);
                         this.paging_data_activity = res.paging;
                         this.activity_data = [...mappedData];
                         this.reload_data = true;
@@ -137,7 +137,7 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
         return forkJoin(userObservables);
     }
 
-    activity_mapToUI(activity): any {
+    activityMapToUI(activity): any {
         let count = 1;
 
         return activity.map((a: any) => {

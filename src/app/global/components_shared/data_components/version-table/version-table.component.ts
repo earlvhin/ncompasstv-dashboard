@@ -20,6 +20,7 @@ export class VersionTableComponent implements OnInit, OnDestroy {
     };
     @Input() query_params: string;
     @Output() on_delete = new EventEmitter<any>();
+    @Output() on_edit = new EventEmitter<any>();
 
     currentAppId: string;
     protected unSubscribe = new Subject<void>();
@@ -67,6 +68,10 @@ export class VersionTableComponent implements OnInit, OnDestroy {
                     'app_version_delete',
                     id.uniqueIdentifier,
                 );
+                break;
+
+            case 'edit_app':
+                this.on_edit.emit(id.uniqueIdentifier);
                 break;
 
             case 'download_version':

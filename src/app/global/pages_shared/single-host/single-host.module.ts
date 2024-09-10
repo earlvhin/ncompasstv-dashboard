@@ -13,6 +13,7 @@ import { UploadImageDialogComponent } from './components/upload-image-dialog/upl
 import { UploadDocumentDialogComponent } from './components/upload-document-dialog/upload-document-dialog.component';
 import { SupportTabComponent } from './components/support-tab/support-tab.component';
 import { ActivityTabComponent } from './components/activity-tab/activity-tab.component';
+import { ProgrammaticTabComponent } from './components/programmatic-tab/programmatic-tab.component';
 
 const DIALOGS = [UploadImageDialogComponent, UploadDocumentDialogComponent];
 @NgModule({
@@ -26,6 +27,7 @@ const DIALOGS = [UploadImageDialogComponent, UploadDocumentDialogComponent];
         DIALOGS,
         SupportTabComponent,
         ActivityTabComponent,
+        ProgrammaticTabComponent,
     ],
     entryComponents: [DIALOGS],
     imports: [CommonModule, GlobalModule, RouterModule],

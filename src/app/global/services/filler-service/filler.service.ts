@@ -36,8 +36,19 @@ export class FillerService extends BaseService {
         return this.postRequest(url, data);
     }
 
-    get_filler_groups(page: number, key: string, pageSize, column = '', order = '', dealer?: boolean) {
+    get_filler_groups(
+        page: number,
+        key: string,
+        pageSize,
+        column = '',
+        order = '',
+        dealer?: boolean,
+        notOwner?: boolean,
+    ): Observable<{
+        paging: PAGING;
+    }> {
         let url = '';
+        if (notOwner) pageSize = 12;
         if (dealer)
             url = `${this.getters.api_get_dealer_filler_groups}?page=${page}&pageSize=${pageSize}&sortColumn=${column}&sortOrder=${order}`;
         else
@@ -73,9 +84,11 @@ export class FillerService extends BaseService {
         pageSize = 11,
         column = '',
         order = '',
-        userview?,
+        userview?: string,
+        notOwner?: boolean,
     ) {
         let url = '';
+        if (notOwner) pageSize = 12;
         if (userview == 'dealeradmin')
             url = `${this.getters.api_get_dealeradmin_filler_groups_view}?page=${page}&pageSize=${pageSize}&sortColumn=${column}&sortOrder=${order}`;
         else
@@ -88,7 +101,18 @@ export class FillerService extends BaseService {
         return this.getRequest(url);
     }
 
-    get_filler_group_of_other_roles(role: string, page: number, key: string, pageSize = 11, column = '', order = '') {
+    get_filler_group_of_other_roles(
+        role: string,
+        page: number,
+        key: string,
+        pageSize = 11,
+        column = '',
+        order = '',
+        notOwner?: boolean,
+    ): Observable<{
+        paging: PAGING;
+    }> {
+        if (notOwner) pageSize = 12;
         let url = `${this.getters.api_get_dealer_filler_groups_other_roles}?role=${role}&page=${page}&pageSize=${pageSize}&sortColumn=${column}&sortOrder=${order}`;
         if (key && key.trim().length > 0) {
             const search = encodeURIComponent(key);

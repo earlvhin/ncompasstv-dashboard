@@ -1,0 +1,37 @@
+<div class="pt-4">
+    <div class="row">
+        <div class="col-lg-12">
+            <ng-container *ngIf="allProgrammaticVendors && allProgrammaticVendors.length; else loading">
+                <div class="row mt-4">
+                    <div class="col-lg-5">
+                        <mat-card *ngFor="let vendor of allProgrammaticVendors" class="p-4 mb-3">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-even">
+                                    <h4>{{ vendor.name }}</h4>
+                                </div>
+                                <div class="ml-5 text-right">
+                                    <mat-slide-toggle
+                                        (change)="onToggleHostProgrammatic($event, vendor.id)"
+                                        [checked]="isVendorEnabled(vendor.id)">
+                                    </mat-slide-toggle>
+                                </div>
+                            </div>
+                        </mat-card>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</div>
+
+<ng-template #loading>
+    <ng-container *ngIf="!hasNoData; else no_data">
+        <div class="loading-wrapper">
+            <app-spinner></app-spinner>
+        </div>
+    </ng-container>
+</ng-template>
+
+<ng-template #no_data>
+    <app-error-message></app-error-message>
+</ng-template>
