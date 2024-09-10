@@ -165,9 +165,7 @@
                                             <app-city-autocomplete
                                                 (city_selected)="setCity($event)"
                                                 [selected_city_from_google]="city_selected"
-                                                (city_autocomplete_ready)="
-                                                    setInitialCity($event)
-                                                "></app-city-autocomplete>
+                                                (city_autocomplete_ready)="setInitialCity()"></app-city-autocomplete>
                                         </ng-container>
                                     </div>
                                     <div class="state-container">

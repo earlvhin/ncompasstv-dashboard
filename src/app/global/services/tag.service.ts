@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 
 import { BaseService } from './base.service';
@@ -10,6 +11,9 @@ import {
     TAG_OWNER,
     CREATE_AND_ASSIGN_TAG_V2,
     DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER,
+    ADD_OWNER_RESPONSE,
+    API_TAG,
+    TAG_CREATORS,
 } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
@@ -27,7 +31,10 @@ export class TagService extends BaseService {
         super(_auth, _http);
     }
 
-    assignTags(owners: { ownerId: string; tagTypeId: string }[], tagIds: string[], isDealer) {
+    assignTags(
+        owners: { ownerId: string; tagTypeId: string; displayName: string }[],
+        tagIds: { tagId: string; name: string }[],
+    ): Observable<ADD_OWNER_RESPONSE> {
         const body = { owners, tagIds };
         return this.postRequest(this.creators.tag_owners, body);
     }
@@ -73,9 +80,9 @@ export class TagService extends BaseService {
         return this.postRequest(this.creators.tag_type, body);
     }
 
-    deleteAllTagsFromOwner(id: string) {
-        const body = {};
-        return this.postRequest(`${this.deleters.tag_by_owner_id}${id}`, body);
+    public deleteAllTagsFromOwner(id: string, displayName: string): Observable<TAG_CREATORS> {
+        const body = { id, displayName };
+        return this.postRequest(this.deleters.tag_by_owner_id, body);
     }
 
     deleteTag(ids: string[]) {
@@ -129,8 +136,10 @@ export class TagService extends BaseService {
         return this.getRequest(!isDealer ? this.getters.tags_count : new_url);
     }
 
-    getTag(tagId: number) {
-        return this.getRequest(`${this.getters.tags_by_id}${tagId}`);
+    public getTag(tagId: string): Observable<API_TAG> {
+        return this.getRequest(`${this.getters.tags_by_id}${tagId}`).pipe(
+            map((data: { tags: API_TAG[] }) => data.tags[0]),
+        );
     }
 
     getTagByOwner(ownerId: string): Observable<{ tags: TAG[] }> {

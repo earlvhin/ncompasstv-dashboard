@@ -253,7 +253,6 @@ import {
     MatTooltipModule,
     MatIconModule,
     MatButtonToggleModule,
-    MatSnackBar,
     MatSnackBarModule,
 } from '@angular/material';
 

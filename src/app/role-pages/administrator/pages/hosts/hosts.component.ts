@@ -653,14 +653,16 @@ export class HostsComponent implements OnInit {
         }
 
         //To Overwrite Dwell Time and Foot Traffic to available months only
-        data.placerDump.map((dump) => {
-            let dissected_month = dump.month.split(' ');
-            let month_index = moment().month(dissected_month[0]).format('M');
-            var average_dwell_time_with_index = 'averageDwellTime-' + month_index[0];
-            var foot_traffic_with_index = 'footTraffic-' + month_index[0];
-            data[average_dwell_time_with_index] = dump.averageDwellTime;
-            data[foot_traffic_with_index] = dump.footTraffic;
-        });
+        if (!this.isDealerAdmin) {
+            data.placerDump.map((dump) => {
+                let dissected_month = dump.month.split(' ');
+                let month_index = moment().month(dissected_month[0]).format('M');
+                var average_dwell_time_with_index = 'averageDwellTime-' + month_index[0];
+                var foot_traffic_with_index = 'footTraffic-' + month_index[0];
+                data[average_dwell_time_with_index] = dump.averageDwellTime;
+                data[foot_traffic_with_index] = dump.footTraffic;
+            });
+        }
 
         if (data.tags && data.tags.length > 0) data.tagsToString = data.tags.join(',');
     }

@@ -21,7 +21,7 @@
                     *ngIf="tabGroup.selectedIndex === 0"
                     class="theme-btn pi-control sm-text _primary mr-2"
                     (click)="exportTable()"
-                    [disabled]="workbook_generation"
+                    [disabled]="workbook_generation || no_hosts"
                     title="Export to CSV">
                     <span
                         class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner' }}"

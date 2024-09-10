@@ -75,7 +75,9 @@
                         </div>
                     </td>
                     <td class="p-3 action-buttons">
-                        <mat-icon class="no-select text-danger" (click)="onDeleteAllTagsFromOwner(data.ownerId)"
+                        <mat-icon
+                            class="no-select text-danger"
+                            (click)="onDeleteAllTagsFromOwner(data.ownerId, data.displayName)"
                             >delete</mat-icon
                         >
                     </td>

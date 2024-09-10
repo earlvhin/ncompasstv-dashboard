@@ -27,6 +27,7 @@ import { MediaLibraryComponent } from '../../global/pages_shared/media-library/m
 import { NotificationsComponent } from '../../global/pages_shared/notifications/notifications.component';
 import { PlaylistsComponent } from './pages/playlists/playlists.component';
 import { ProfileSettingComponent } from '../../global/pages_shared/profile-setting/profile-setting.component';
+import { ProgrammaticComponent } from '../../global/pages_shared/programmatic/programmatic.component';
 import { ReleaseNotesComponent } from './pages/release-notes/release-notes.component';
 import { ReleaseNotesViewComponent } from './pages/release-notes/components/release-notes-view/release-notes-view.component';
 import { ReportsComponent } from './pages/reports/reports.component';
@@ -178,6 +179,10 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                             breadcrumb: 'View Filler Group Contents',
                         },
                     },
+                    {
+                        path: 'view-fillers-group/:data/:breadcrumb',
+                        component: ViewFillersGroupComponent,
+                    },
                 ],
             },
             {
@@ -282,6 +287,13 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                 },
             },
             {
+                path: 'programmatic',
+                component: ProgrammaticComponent,
+                data: {
+                    breadcrumb: 'Programmatic',
+                },
+            },
+            {
                 path: 'playlists',
                 data: {
                     breadcrumb: 'Playlists',
@@ -361,6 +373,12 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                 data: {
                     breadcrumb: 'Tags',
                 },
+                children: [
+                    {
+                        path: ':data',
+                        component: TagsComponent,
+                    },
+                ],
             },
             {
                 path: 'templates',
