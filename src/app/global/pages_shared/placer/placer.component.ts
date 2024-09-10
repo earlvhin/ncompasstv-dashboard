@@ -558,7 +558,6 @@ export class PlacerComponent implements OnInit {
                 const file = response.filesUploaded[0];
                 const targetName = file.filename;
 
-                console.log(file);
                 this._placer
                     .uploadPlacerData(
                         this._auth.current_user_value.user_id,
@@ -567,7 +566,7 @@ export class PlacerComponent implements OnInit {
                         targetName,
                     )
                     .pipe(takeUntil(this._unsubscribe))
-                    .subscribe(() => console.log('UPLOAD SUCCESS'));
+                    .subscribe();
 
                 this.uploadInProgress = false;
                 this.ngOnInit();
