@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, Subscription, forkJoin } from 'rxjs';
-import { DatePipe } from '@angular/common';
+
+// Services
 import {
     AuthService,
     AdvertiserService,
@@ -11,6 +13,8 @@ import {
     DealerService,
     UserService,
 } from 'src/app/global/services';
+
+// Models
 import {
     ACTIVITY_URLS,
     API_DEALER,
@@ -21,6 +25,7 @@ import {
     UI_ROLE_DEFINITION,
     USER_ACTIVITY,
 } from 'src/app/global/models';
+
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -174,18 +179,19 @@ export class ProfileSettingComponent implements OnInit {
     reload_page(e: boolean): void {
         if (e) this.ngOnInit();
     }
-    getUserByIds(ids: any[]) {
+
+    private getUserByIds(ids: string[]) {
         const userObservables = ids.map((id) => this._user.get_user_by_id(id).pipe(takeUntil(this._unsubscribe)));
         return forkJoin(userObservables);
     }
 
-    activityMapToUI(activity): any {
+    private activityMapToUI(activity: USER_ACTIVITY[]): UI_ACTIVITY_LOGS[] {
         let count = 1;
 
-        return activity.map((a: any) => {
+        return activity.map((a) => {
             const activityCode = a.activityCode;
             let activityMessage = 'Other Activity Detected';
-            let createdBy;
+            let createdBy: { firstName: string; lastName: string };
 
             this.activity_created_by.map((c) => {
                 if (c.userId === a.initiatedBy) createdBy = c;
@@ -235,7 +241,6 @@ export class ProfileSettingComponent implements OnInit {
                     activityMessage = `${createdBy.firstName} ${createdBy.lastName} (You) updated card details`;
                     break;
                 default:
-                    return activityMessage;
             }
 
             return new UI_ACTIVITY_LOGS(

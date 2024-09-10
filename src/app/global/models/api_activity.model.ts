@@ -38,6 +38,7 @@ export class USER_ACTIVITY {
     activityLogId: any;
     activityDescription: any;
     dateCreated: any;
+    dateUpdated?: any;
     initiatedBy: any;
     initiatedById: any;
     owner: any;
