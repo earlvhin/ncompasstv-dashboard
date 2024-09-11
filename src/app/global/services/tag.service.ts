@@ -6,14 +6,14 @@ import { HttpClient } from '@angular/common/http';
 import { BaseService } from './base.service';
 import {
     API_FILTERS,
-    PAGING,
-    TAG,
-    TAG_OWNER,
+    API_TAG,
+    ASSIGN_TAG,
     CREATE_AND_ASSIGN_TAG_V2,
     DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER,
-    ADD_OWNER_RESPONSE,
-    API_TAG,
+    PAGING,
+    TAG,
     TAG_CREATORS,
+    TAG_OWNER,
 } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
@@ -31,11 +31,14 @@ export class TagService extends BaseService {
         super(_auth, _http);
     }
 
-    assignTags(
-        owners: { ownerId: string; tagTypeId: string; displayName: string }[],
-        tagIds: { tagId: string; name: string }[],
-    ): Observable<ADD_OWNER_RESPONSE> {
-        const body = { owners, tagIds };
+    /**
+     * Assigns tags to the provided owners by sending a POST request with the specified data.
+     *
+     * @param {ASSIGN_TAG} data - An object containing the owners and tag IDs to be assigned.
+     * @returns {Observable<{ message: string; tags: ASSIGN_TAG[] }>} - An observable that emits the server response, including a message and the list of assigned tags.
+     */
+    assignTags(data: ASSIGN_TAG): Observable<{ message: string; tags: ASSIGN_TAG[] }> {
+        const body = { owners: data.owners, tagIds: data.tagIds };
         return this.postRequest(this.creators.tag_owners, body);
     }
 
