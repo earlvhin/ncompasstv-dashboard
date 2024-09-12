@@ -37,7 +37,7 @@ export class TagService extends BaseService {
      * @param {ASSIGN_TAG} data - An object containing the owners and tag IDs to be assigned.
      * @returns {Observable<{ message: string; tags: ASSIGN_TAG[] }>} - An observable that emits the server response, including a message and the list of assigned tags.
      */
-    assignTags(data: ASSIGN_TAG): Observable<{ message: string; tags: ASSIGN_TAG[] }> {
+    public assignTags(data: ASSIGN_TAG): Observable<{ message: string; tags: ASSIGN_TAG[] }> {
         const body = { owners: data.owners, tagIds: data.tagIds };
         return this.postRequest(this.creators.tag_owners, body);
     }
