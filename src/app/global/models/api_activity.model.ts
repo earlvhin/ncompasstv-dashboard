@@ -38,6 +38,7 @@ export class USER_ACTIVITY {
     activityLogId: any;
     activityDescription: any;
     dateCreated: any;
+    dateUpdated?: any;
     initiatedBy: any;
     initiatedById: any;
     owner: any;
@@ -49,6 +50,7 @@ export class USER_ACTIVITY {
         index: any,
         activityCode: any,
         activityLogId: any,
+        targetName: any,
         activityDescription: any,
         dateCreated: any,
         initiatedBy: any,
@@ -56,11 +58,11 @@ export class USER_ACTIVITY {
         owner: any,
         ownerId: any,
         targetId: any,
-        targetName: any,
     ) {
         this.index = index;
         this.activityCode = activityCode;
         this.activityLogId = activityLogId;
+        this.targetName = targetName;
         this.activityDescription = activityDescription;
         this.dateCreated = dateCreated;
         this.initiatedBy = initiatedBy;
@@ -68,6 +70,5 @@ export class USER_ACTIVITY {
         this.owner = owner;
         this.ownerId = ownerId;
         this.targetId = targetId;
-        this.targetName = targetName;
     }
 }

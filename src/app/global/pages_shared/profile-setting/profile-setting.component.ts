@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { MatTab } from '@angular/material';
+import { DatePipe } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, Subscription, forkJoin } from 'rxjs';
+
+// Services
 import {
     AuthService,
     AdvertiserService,
@@ -11,9 +13,10 @@ import {
     DealerService,
     UserService,
 } from 'src/app/global/services';
+
+// Models
 import {
     ACTIVITY_URLS,
-    API_ACTIVITY,
     API_DEALER,
     API_USER_DATA,
     PAGING,
@@ -22,8 +25,8 @@ import {
     UI_ROLE_DEFINITION,
     USER_ACTIVITY,
 } from 'src/app/global/models';
+
 import { environment } from 'src/environments/environment';
-import { DatePipe } from '@angular/common';
 
 @Component({
     selector: 'app-profile-setting',
@@ -32,8 +35,9 @@ import { DatePipe } from '@angular/common';
 })
 export class ProfileSettingComponent implements OnInit {
     activity_created_by: any;
-    activity_data: UI_ACTIVITY_LOGS[] = [];
-    activityData: API_ACTIVITY[] = [];
+    dealerActivityData: UI_ACTIVITY_LOGS[] = [];
+    activityData: USER_ACTIVITY[] = [];
+    activityDataLoaded = false;
     advertiser_data: any;
     advertiser_details: any = {};
     content_details: any = {};
@@ -47,7 +51,9 @@ export class ProfileSettingComponent implements OnInit {
     host_details: any = {};
     initial_load_activity = true;
     isDealer: boolean = false;
-    is_prod: boolean = false;
+    isDealerAdmin: boolean = false;
+    isSubDealer: boolean = false;
+    isProd: boolean = false;
     license_details: any = {};
     loading_advertiser: boolean = true;
     loading_content: boolean = true;
@@ -62,9 +68,7 @@ export class ProfileSettingComponent implements OnInit {
     sortActivityColumn = 'DateCreated';
     sortActivityOrder = 'desc';
     subscription: Subscription = new Subscription();
-    tab_selected: string = 'Dealer';
     user: API_USER_DATA;
-
     userActivityTable = [
         { name: '#', sortable: false },
         { name: 'Activity Target', column: 'targetName', sortable: false },
@@ -92,27 +96,39 @@ export class ProfileSettingComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        if (!environment.production) {
-            this.is_prod = false;
-        } else {
-            this.is_prod = true;
-        }
-        if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
-            this.isDealer = true;
-            this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
-            this.current_user = this._auth.current_user_value;
-            this.getTotalLicenses(this._auth.current_user_value.roleInfo.dealerId);
-            this.getTotalAdvertisers(this._auth.current_user_value.roleInfo.dealerId);
-            this.getTotalHosts(this._auth.current_user_value.roleInfo.dealerId);
-            this.getTotalContents(this._auth.current_user_value.roleInfo.dealerId);
-            this.getDealerValuesById(this._auth.current_user_value.roleInfo.dealerId);
-            // this.getCreditCardsId(this._auth.current_user_value.roleInfo.dealerId);
-            this.checkIfEnableShop();
-            this.getDealerActivity(1);
-            this.getDealer();
-        } else {
-            this.isDealer = false;
-            this.getUserActivityData(1);
+        this.isProd = !environment.production;
+
+        const userRole = this._auth.current_user_value.role_id;
+        const roleInfo = this._auth.current_user_value.roleInfo;
+        const dealerId = roleInfo ? roleInfo.dealerId : undefined;
+
+        switch (userRole) {
+            case UI_ROLE_DEFINITION.dealer:
+                this.isDealer = true;
+                this.dealer_id = dealerId;
+                this.current_user = this._auth.current_user_value;
+                this.getTotalLicenses(dealerId);
+                this.getTotalAdvertisers(dealerId);
+                this.getTotalHosts(dealerId);
+                this.getTotalContents(dealerId);
+                this.getDealerValuesById(dealerId);
+                this.checkIfEnableShop();
+                this.getDealerActivity(1);
+                this.getDealer();
+                break;
+
+            case UI_ROLE_DEFINITION['sub-dealer']:
+                this.isSubDealer = true;
+                break;
+
+            case UI_ROLE_DEFINITION['dealeradmin']:
+                this.isDealerAdmin = true;
+                break;
+
+            default:
+                this.isDealer = false;
+                this.getUserActivityData(1);
+                break;
         }
     }
 
@@ -132,7 +148,7 @@ export class ProfileSettingComponent implements OnInit {
     }
 
     getDealerActivity(page: number) {
-        this.activity_data = [];
+        this.dealerActivityData = [];
 
         this._dealer
             .get_dealer_activity(this.dealer_id, this.sortActivityColumn, this.sortActivityOrder, page)
@@ -141,16 +157,15 @@ export class ProfileSettingComponent implements OnInit {
                 (res) => {
                     if (res.paging.entities.length === 0) {
                         this.no_activity_data = true;
-                        this.activity_data = [];
+                        this.dealerActivityData = [];
                         return;
                     }
 
                     this.getUserByIds(res.paging.entities.map((a) => a.initiatedBy)).subscribe((responses) => {
                         this.activity_created_by = responses;
-
-                        const mappedData = this.activity_mapToUI(res.paging.entities);
+                        const mappedData = this.activityMapToUI(res.paging.entities);
                         this.pagingActivityData = res.paging;
-                        this.activity_data = [...mappedData];
+                        this.dealerActivityData = [...mappedData];
                         this.reload_data = true;
                     });
                 },
@@ -164,19 +179,19 @@ export class ProfileSettingComponent implements OnInit {
     reload_page(e: boolean): void {
         if (e) this.ngOnInit();
     }
-    getUserByIds(ids: any[]) {
-        const userObservables = ids.map((id) => this._user.get_user_by_id(id).pipe(takeUntil(this._unsubscribe)));
 
+    private getUserByIds(ids: string[]) {
+        const userObservables = ids.map((id) => this._user.get_user_by_id(id).pipe(takeUntil(this._unsubscribe)));
         return forkJoin(userObservables);
     }
 
-    activity_mapToUI(activity): any {
+    private activityMapToUI(activity: USER_ACTIVITY[]): UI_ACTIVITY_LOGS[] {
         let count = 1;
 
-        return activity.map((a: any) => {
+        return activity.map((a) => {
             const activityCode = a.activityCode;
             let activityMessage = 'Other Activity Detected';
-            let createdBy;
+            let createdBy: { firstName: string; lastName: string };
 
             this.activity_created_by.map((c) => {
                 if (c.userId === a.initiatedBy) createdBy = c;
@@ -226,7 +241,7 @@ export class ProfileSettingComponent implements OnInit {
                     activityMessage = `${createdBy.firstName} ${createdBy.lastName} (You) updated card details`;
                     break;
                 default:
-                    return activityMessage;
+                // do nothing but still add this as it is recommended by code standard
             }
 
             return new UI_ACTIVITY_LOGS(
@@ -242,39 +257,49 @@ export class ProfileSettingComponent implements OnInit {
     }
 
     public getUserActivityData(page: number): void {
+        this.activityDataLoaded = false;
         this._user
             .getActivitiesByCurrentUser(this.sortActivityColumn, this.sortActivityOrder, page, 15)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((response) => {
-                const mappedData = this.new_activity_mapToUI(response.paging.entities);
+                const mappedData = this.newActivityMapToUI(response.paging.entities, response.nonExistentTargetIds);
                 this.pagingActivityData = response.paging;
                 this.activityData = [...mappedData];
+                this.activityDataLoaded = true;
             });
     }
 
-    public new_activity_mapToUI(activity: USER_ACTIVITY[]): any {
+    public newActivityMapToUI(activity: USER_ACTIVITY[], nonExistentTargetIds: string[]): USER_ACTIVITY[] {
         let count = 1;
+        const noBreadcrumEntities = ['tag'];
 
         return activity.map((a) => {
+            let targetLink = '';
+            let targetName = a.targetName ? a.targetName : '--';
             const activityCodePrefix = a.activityCode.split('_')[0];
             const activitytUrl = ACTIVITY_URLS.find((ac) => ac.activityCodePrefix === activityCodePrefix);
 
-            const targetName = a.targetName ? a.targetName : '--';
-            const targetLink = a.activityCode.includes('delete')
-                ? ''
-                : `/${this.currentRole}/${activitytUrl.activityURL}/${a.targetId}`;
+            const isExcluded = nonExistentTargetIds && nonExistentTargetIds.includes(a.targetId);
+            const url = `/${this.currentRole}/${activitytUrl.activityURL}/${a.targetId}`;
+            targetLink = isExcluded ? '' : url;
 
             return new USER_ACTIVITY(
                 { value: count++, editable: false },
                 { value: a.activityCode, hidden: true },
                 { value: a.activityLogId, hidden: true },
-                { value: a.initiatedBy, hidden: true },
-                { value: targetName, link: targetLink, new_tab_link: true, hidden: false },
                 {
-                    value: `You ${a.activityDescription} for ${a.owner}`,
+                    value: targetName,
+                    link: targetLink,
+                    new_tab_link: true,
+                    hidden: false,
+                    noBreadcrumb: noBreadcrumEntities.includes(activityCodePrefix),
+                },
+                {
+                    value: `You ${a.activityDescription} ${a.ownerId === a.initiatedById ? '' : `for ${a.owner}`}`,
                     hidden: false,
                 },
                 { value: this._date.transform(a.dateCreated, "MMMM d, y, 'at' h:mm a"), hidden: false },
+                { value: a.initiatedBy, hidden: true },
                 { value: a.initiatedById, hidden: true },
                 { value: a.owner, hidden: true },
                 { value: a.ownerId, hidden: true },
@@ -312,21 +337,6 @@ export class ProfileSettingComponent implements OnInit {
                 }),
         );
     }
-
-    // getCreditCardsId(id) {
-    // 	this.subscription.add(
-    //         this._dealer.get_credit_cards(id).pipe(takeUntil(this._unsubscribe)).subscribe(
-    // 			(response:any) => {
-    //                 if(!response.message) {
-    //                     this.no_credit_card = false;
-    //                     this.dealer_email = response.email;
-    //                 } else {
-    //                     this.no_credit_card = true;
-    //                 }
-    //             }
-    //         )
-    //     )
-    // };
 
     getTotalLicenses(id) {
         this._license
@@ -391,18 +401,10 @@ export class ProfileSettingComponent implements OnInit {
             );
     }
 
-    tabSelected(event: { index: number }) {
-        this.getDealerActivity(1);
-        this.getUserActivityData(1);
-
-        return event;
-    }
-
-    goToUrl(): void {
-        if (this.is_prod) {
-            window.open('https://shop.n-compass.online', '_blank');
-        } else {
-            window.open('http://dev.shop.n-compass.online', '_blank');
-        }
+    public goToUrl(): void {
+        const prodShopUrl = 'https://shop.n-compass.online';
+        const devShopUrl = 'http://dev.shop.n-compass.online';
+        const url = this.isProd ? prodShopUrl : devShopUrl;
+        window.open(url, '_blank');
     }
 }

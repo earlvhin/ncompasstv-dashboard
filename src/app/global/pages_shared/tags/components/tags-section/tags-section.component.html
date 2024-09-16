@@ -1,30 +1,32 @@
-<div class="bg-dark text-white text-center font-500 pt-1 pb-1 normal-text">
-    <h4>{{ title | uppercase }}</h4>
-</div>
-
-<mat-card>
-    <ng-container *ngIf="!isLoading; else loading">
-        <app-tags-table
-            *ngIf="tags.length > 0; else noResults"
-            [currentTagType]="currentTagType"
-            [currentUserId]="currentUserId"
-            [currentUserRole]="currentUserRole"
-            [isLoading]="isLoading"
-            [paging]="pagingData"
-            [tab]="tab"
-            [tableColumns]="columns"
-            [tableData]="tags"
-            (onClickPageNumber)="clickedPageNumber($event)">
-        </app-tags-table>
-    </ng-container>
-</mat-card>
-
-<ng-template #loading>
-    <div class="py-4">
-        <app-spinner [diameter]="60"></app-spinner>
+<div class="tags-section">
+    <div class="bg-dark text-white text-center font-500 pt-1 pb-1 normal-text">
+        <h4>{{ title | uppercase }}</h4>
     </div>
-</ng-template>
 
-<ng-template #noResults>
-    <p>No results found</p>
-</ng-template>
+    <mat-card>
+        <ng-container *ngIf="!isLoading; else loading">
+            <app-tags-table
+                *ngIf="tags.length > 0; else noResults"
+                [currentTagType]="currentTagType"
+                [currentUserId]="currentUserId"
+                [currentUserRole]="currentUserRole"
+                [isLoading]="isLoading"
+                [paging]="pagingData"
+                [tab]="tab"
+                [tableColumns]="columns"
+                [tableData]="tags"
+                (onClickPageNumber)="clickedPageNumber($event)">
+            </app-tags-table>
+        </ng-container>
+    </mat-card>
+
+    <ng-template #loading>
+        <div class="py-4">
+            <app-spinner [diameter]="60"></app-spinner>
+        </div>
+    </ng-template>
+
+    <ng-template #noResults>
+        <p>No results found</p>
+    </ng-template>
+</div>

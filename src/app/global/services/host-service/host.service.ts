@@ -14,6 +14,9 @@ import {
     PAGING,
     TAG,
     UI_ROLE_DEFINITION,
+    GetHostDisabledProgrammatics,
+    ToggleProgrammaticVendor,
+    ToggleProgrammaticVendorResponse,
 } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { environment } from 'src/environments/environment';
@@ -341,6 +344,18 @@ export class HostService extends BaseService {
     get_field_by_id(id: string) {
         const url = `${this.getters.api_get_host_field_by_id}${id}`;
         return this.getRequest(url);
+    }
+
+    getDisabledProgramamtics(hostId: string): Observable<GetHostDisabledProgrammatics> {
+        return this.getRequest(`${this.getters.host_disabled_programmatics}${hostId}`);
+    }
+
+    enableProgrammaticVendor(body: ToggleProgrammaticVendor): Observable<ToggleProgrammaticVendorResponse> {
+        return this.postRequest(this.updaters.host_enable_programmatic_vender, body);
+    }
+
+    disableProgrammaticVendor(body: ToggleProgrammaticVendor): Observable<ToggleProgrammaticVendorResponse> {
+        return this.postRequest(this.updaters.host_disable_programmatic_vender, body);
     }
 
     update_file_alias(id: string, alias: string) {

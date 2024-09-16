@@ -142,13 +142,17 @@ export class DataTableComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.table_data.map((data) => {
-            Object.keys(data).forEach((key) => {
-                if (data[key].table) {
-                    this.active_table = data[key].table;
-                }
+        if (this.table_data) {
+            this.table_data.map((data) => {
+                if (!data) return;
+
+                Object.keys(data).forEach((key) => {
+                    if (data[key].table) {
+                        this.active_table = data[key].table;
+                    }
+                });
             });
-        });
+        }
 
         this.subscribeToEmailNotificationToggleResult();
     }
@@ -1000,6 +1004,14 @@ export class DataTableComponent implements OnInit {
         };
 
         this.shipping.emit(filter);
+    }
+
+    getExportClass(allowExport: boolean): string {
+        return allowExport ? 'text-primary cursor-pointer' : 'text-gray cursor-void';
+    }
+
+    getStatusClass(status: { value: string } | undefined): string {
+        return status && status.value === 'A' ? 'text-primary' : 'text-gray';
     }
 
     private deleteUser(userId: string): void {

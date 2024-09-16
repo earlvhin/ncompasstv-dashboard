@@ -129,7 +129,7 @@ export class NewDealerComponent implements OnInit, OnDestroy {
             })
             .afterClosed()
             .subscribe((response) => {
-                if (redirect || response == 'no_upload') {
+                if (redirect || !response || response == 'no_upload') {
                     this.is_submitted = false;
                     this.form_invalid = false;
                     this.new_dealer_form.reset();
@@ -147,6 +147,7 @@ export class NewDealerComponent implements OnInit, OnDestroy {
 
     protected get filestackOptions(): filestack.PickerOptions {
         let folder = 'dev';
+        let uploadCompleted = false;
         if (environment.production) folder = 'prod';
         else if (environment.base_uri.includes('stg')) folder = 'stg';
         return {
@@ -170,6 +171,14 @@ export class NewDealerComponent implements OnInit, OnDestroy {
                 this._dealer.update_dealer_logo(dealer_info).subscribe(() => {
                     this.openConfirmationModal('success', 'Success!', 'Profile picture successfully updated.', true);
                 });
+                uploadCompleted = true;
+            },
+            onClose: () => {
+                setTimeout(() => {
+                    if (!uploadCompleted)
+                        this.openConfirmationModal('success', 'Cancelled!', 'Profile picture upload cancelled', true);
+                    uploadCompleted = false; // Reset the flag after checking
+                }, 500); // Delay to ensure upload status is finalized
             },
         };
     }

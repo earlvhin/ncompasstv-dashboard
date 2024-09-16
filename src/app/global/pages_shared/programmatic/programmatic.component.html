@@ -1,0 +1,65 @@
+<div class="theme-container">
+    <div class="title-section">
+        <h1 class="page-title">{{ title }}</h1>
+        <p class="sm-text">This is a danger zone, actions done in this page may result to breaking changes.</p>
+        <hr class="mt-4 mb-0" />
+    </div>
+
+    <mat-tab-group dynamicHeight>
+        <!-- TAB - GLOBAL SETTINGS -->
+        <mat-tab label="Global Settings">
+            <div class="row">
+                <div class="col-lg-5">
+                    <mat-card class="p-5 mt-5">
+                        <h3>Set Global Settings</h3>
+                        <p class="sm-text mb-4">
+                            Global settings are configuration fetched and applied by all players.
+                        </p>
+                        <form [formGroup]="globalSettingsForm">
+                            <mat-form-field class="mb-3 full-width" appearance="fill">
+                                <mat-label>Vistar Network ID</mat-label>
+                                <input
+                                    type="text"
+                                    matInput
+                                    formControlName="vistarNetworkId"
+                                    placeholder="Enter Vistar Network ID" />
+                            </mat-form-field>
+
+                            <mat-form-field class="mb-3 full-width" appearance="fill">
+                                <mat-label>Vistar API Key</mat-label>
+                                <input
+                                    type="text"
+                                    matInput
+                                    formControlName="vistarApiKey"
+                                    placeholder="Enter API Key" />
+                            </mat-form-field>
+
+                            <button
+                                mat-button
+                                mat-raised-button
+                                class="theme-btn"
+                                [disabled]="!globalSettingsForm.valid">
+                                Save
+                            </button>
+                        </form>
+                    </mat-card>
+                </div>
+            </div>
+        </mat-tab>
+
+        <!-- TAB - PROGRAMMATIC VENDORS -->
+        <mat-tab label="Vendors">
+            <ng-container *ngIf="vendorsLoaded; else loader">
+                <app-programmatic-vendors
+                    [vendors_list]="programmaticVendors"
+                    (on_refresh_vendors)="refreshVendorsList()"></app-programmatic-vendors>
+            </ng-container>
+        </mat-tab>
+    </mat-tab-group>
+
+    <ng-template #loader>
+        <div class="w-100 vh-50 d-flex align-items-center justify-content-center">
+            <app-spinner></app-spinner>
+        </div>
+    </ng-template>
+</div>

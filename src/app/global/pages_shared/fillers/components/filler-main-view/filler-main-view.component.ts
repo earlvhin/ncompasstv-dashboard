@@ -100,7 +100,11 @@ export class FillerMainViewComponent implements OnInit {
     }
 
     callNextPage(page) {
-        this.get_fillers.emit({ page: page });
+        this.get_fillers.emit({
+            page: page,
+            sort_col: this.sorting_column,
+            sort_ord: this.sorting_order,
+        });
     }
 
     clearFilter() {

@@ -3,8 +3,8 @@ import { Component, OnInit, EventEmitter, OnDestroy, HostListener } from '@angul
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MatSlideToggleChange, MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, forkJoin } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
+import { Subject, forkJoin } from 'rxjs';
 import Chart from 'chart.js/auto';
 import * as io from 'socket.io-client';
 import * as moment from 'moment-timezone';
@@ -35,6 +35,7 @@ import {
     API_CONTENT,
     API_HOST,
     API_LICENSE_PROPS,
+    API_LICENSE_ACTIVITY_LOG,
     API_TEMPLATE,
     API_SINGLE_SCREEN,
     API_SCREEN_ZONE_PLAYLISTS_CONTENTS,
@@ -57,6 +58,7 @@ import {
     UI_ROLE_DEFINITION_TEXT,
     DELETE_TAG_BY_OWNER_ID_AND_TAG_WRAPPER,
 } from 'src/app/global/models';
+
 import { UpdateTvBrandDialogComponent } from './components/update-tv-brand-dialog/update-tv-brand-dialog.component';
 
 @Component({
@@ -625,7 +627,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         this.additional_license_settings_form.get(controlName).setValue(null);
     }
 
-    async onRemoveTag(index: number, data: TAG) {
+    public async onRemoveTag(index: number, data: TAG, ownerName: string): Promise<void> {
         const confirmAction = await this._confirmDialog
             .warning({ message: 'Remove Tag?', data: 'This will remove the tag from this license' })
             .toPromise();
@@ -1634,9 +1636,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (response) => {
-                    //this.activities = response.paging.entities as API_ACTIVITY[];
-
-                    const mappedData = this.activity_mapToUI(response.paging.entities);
+                    const mappedData = this.activityMapToUI(response.paging.entities);
                     this.paging_data_activity = response.paging;
                     this.activities = [...mappedData];
                 },
@@ -1646,10 +1646,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             );
     }
 
-    activity_mapToUI(activity): any {
+    private activityMapToUI(activity: API_LICENSE_ACTIVITY_LOG[]): API_ACTIVITY[] {
         let count = 1;
 
-        return activity.map((a: any) => {
+        return activity.map((a) => {
             return new API_ACTIVITY(
                 { value: count++, editable: false },
                 { value: a.activityCode, hidden: true },
@@ -1735,7 +1735,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                     }, 2000);
                 },
                 (error) => {
-                    console.error(error);
+                    console.error('No screenshots available', error);
                 },
             );
     }

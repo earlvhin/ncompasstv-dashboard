@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 import { AuthService } from '../auth-service/auth.service';
 import { environment } from 'src/environments/environment';
-import { Observable } from 'rxjs';
-import { API_XML_DATA, API_XML_SETTINGS } from 'src/app/global/models';
+import { API_XML_DATA, API_XML_SETTINGS, GLOBAL_SETTINGS } from 'src/app/global/models';
 
 @Injectable({
     providedIn: 'root',
@@ -74,8 +74,8 @@ export class ToolsService {
         return this._http.get(`${environment.base_uri}${environment.getters.api_get_activities}`, this.httpOptions);
     }
 
-    getGlobalSettings() {
-        return this._http.get(
+    getGlobalSettings(): Observable<{ globalSettings: GLOBAL_SETTINGS[] }> {
+        return this._http.get<{ globalSettings: GLOBAL_SETTINGS[] }>(
             `${environment.base_uri}${environment.getters.api_get_global_settings}`,
             this.httpOptions,
         );
