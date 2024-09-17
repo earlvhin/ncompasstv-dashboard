@@ -7,6 +7,7 @@ import { takeUntil } from 'rxjs/operators';
 import { DEALER_UI_TABLE_ADVERTISERS, UI_DEALER_ADVERTISERS } from 'src/app/global/models';
 import { AdvertiserService, AuthService, DealerService, ExportService, HelperService } from 'src/app/global/services';
 import { API_EXPORT_ADVERTISER } from 'src/app/global/models/api_export-advertiser.model';
+import { UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 
 @Component({
     selector: 'app-advertisers',
@@ -59,6 +60,8 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
         { name: 'Contents', key: 'contentsFormatted' },
     ];
 
+    public isDealerAdmin: boolean = false;
+
     protected _unsubscribe = new Subject<void>();
 
     constructor(
@@ -75,6 +78,7 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
         this.subscribeToStatusFilterClick();
 
         this.userIsAdmin = this._auth.current_role === 'administrator';
+        this.isDealerAdmin = this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin;
     }
 
     ngOnDestroy(): void {
