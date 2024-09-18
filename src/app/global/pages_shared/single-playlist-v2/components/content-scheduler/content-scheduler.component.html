@@ -1,0 +1,33 @@
+<div class="content-scheduler">
+    <mat-button-toggle-group class="w-100" [value]="selectedContentSchedule.value">
+        <mat-button-toggle
+            *ngFor="let type of scheduleTypes"
+            class="flex-even"
+            [value]="type.value"
+            (click)="onSelectContentScheduleType(type)">
+            <i class="mr-2 {{ type.icon }}"></i> <strong class="sm-text">{{ type.label }}</strong>
+        </mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <div class="mt-3">
+        <ng-container *ngIf="selectedContentSchedule.value === 1">
+            <div class="bg-gray text-center p-4">
+                <i class="{{ selectedContentSchedule.icon }} mb-3"></i>
+                <h3 class="font-weight-bold">Default Play</h3>
+                <p>This content will play during business hours</p>
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="selectedContentSchedule?.value === 2">
+            <div class="bg-gray text-center p-4">
+                <i class="{{ selectedContentSchedule.icon }} mb-3"></i>
+                <h3 class="font-weight-bold">Do Not Play</h3>
+                <p>This content will not play at all.</p>
+            </div>
+        </ng-container>
+
+        <div class="d-none" [ngClass]="selectedContentSchedule?.value === 3 && 'd-block'">
+            <app-content-scheduler-form [contents]="contents"></app-content-scheduler-form>
+        </div>
+    </div>
+</div>

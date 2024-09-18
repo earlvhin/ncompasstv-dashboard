@@ -60,6 +60,10 @@ export class ConfirmationModalComponent implements OnInit {
         this.dialogRef.close('rename');
     }
 
+    public continueAction(): void {
+        this.dialogRef.close(true);
+    }
+
     continueUpload() {
         this.dialogRef.close('upload');
     }

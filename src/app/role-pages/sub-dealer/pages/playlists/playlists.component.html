@@ -12,10 +12,10 @@
                         mat-button
                         mat-raised-button
                         class="theme-btn mr-2"
-                        [routerLink]="['create-playlist']"
+                        (click)="showCreatePlaylistDialog()"
                         [disabled]="is_view_only">
                         <span class="button-label">Create Playlist</span>
-                        <span class="fas fa-play ml-2 sm-text"></span>
+                        <span class="fas fa-plus ml-2 sm-text"></span>
                     </button>
                 </div>
             </div>
@@ -78,6 +78,7 @@
                     <ng-container *ngIf="!searching; else loader">
                         <mat-card *ngIf="filtered_data.length > 0; else nodata">
                             <app-data-table
+                                [page]="'playlists'"
                                 [table_data]="filtered_data"
                                 [table_columns]="playlist_table_column"
                                 [new_table]="true"
@@ -104,9 +105,9 @@
                 mat-button
                 mat-raised-button
                 class="theme-btn mr-2"
-                [routerLink]="['/sub-dealer/playlists/create-playlist']"
+                (click)="showCreatePlaylistDialog()"
                 [disabled]="is_view_only">
-                Add Playlist<span class="fas fa-plus ml-2 sm-text"></span>
+                Create Playlist<span class="fas fa-plus ml-2 sm-text"></span>
             </button>
         </mat-card>
     </ng-template>

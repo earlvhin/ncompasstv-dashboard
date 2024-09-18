@@ -1,0 +1,30 @@
+<div class="play-location p-2 bg-light">
+    <mat-accordion>
+        <mat-expansion-panel hideToggle *ngFor="let hl of host_licenses">
+            <mat-expansion-panel-header>
+                <mat-slide-toggle
+                    (click)="$event.stopPropagation()"
+                    [checked]="
+                        isHostSelected(hl.host.hostId) ||
+                        isHostWhiteListed(hl.host.hostId) ||
+                        hasSelectedAllHostLicenses(hl)
+                    "
+                    (change)="toggleHost($event, hl)">
+                    <h5 class="mb-0 ml-2 md-text">{{ hl.host.name }}</h5>
+                </mat-slide-toggle>
+            </mat-expansion-panel-header>
+
+            <div class="location-license-list border-top pt-3 w-100">
+                <div class="toggle-wrapper mb-2" *ngFor="let l of hl.licenses">
+                    <mat-slide-toggle
+                        [checked]="
+                            selectedLicenseIds.includes(l.licenseId) || whitelisted_licenses.includes(l.licenseId)
+                        "
+                        (change)="toggleLicense($event, hl, l.licenseId)">
+                        <h5 class="ml-2 md-text">{{ l.alias || l.licenseKey }}</h5>
+                    </mat-slide-toggle>
+                </div>
+            </div>
+        </mat-expansion-panel>
+    </mat-accordion>
+</div>

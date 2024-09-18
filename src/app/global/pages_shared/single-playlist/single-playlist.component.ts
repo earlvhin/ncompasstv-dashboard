@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { map, takeUntil } from 'rxjs/operators';
 import { forkJoin, Observable, Subject, Subscription } from 'rxjs';
@@ -39,6 +39,7 @@ export class SinglePlaylistComponent implements OnInit {
     isPlaylistEmpty = true;
     license_to_update = [];
     license_url: string;
+    migrationProgress = false;
     playlist: {
         licenses: API_LICENSE_PROPS[];
         playlist: API_SINGLE_PLAYLIST;
@@ -64,6 +65,7 @@ export class SinglePlaylistComponent implements OnInit {
         private _helper: HelperService,
         private _params: ActivatedRoute,
         private _playlist: PlaylistService,
+        private _router: Router,
     ) {}
 
     ngOnInit() {
@@ -215,6 +217,8 @@ export class SinglePlaylistComponent implements OnInit {
         }
     }
 
+    handleMigrationStatus = (status: boolean) => (this.migrationProgress = status);
+
     reloadPlaylist(dataOnly: boolean = false) {
         // if set to true, then it will only call the swapped content
         if (dataOnly) return this.getPlaylistDataAndScreens(this._params.snapshot.params.data);
@@ -295,6 +299,11 @@ export class SinglePlaylistComponent implements OnInit {
                     this.setpageData(playlistData);
                     this.playlistScreens = screenData.screens;
                     this.screensMapToTable(this.playlistScreens);
+
+                    playlistData.playlist.isMigrated === 1 &&
+                        this._router.navigate([
+                            `/${this.currentRole}/playlists/v2/${playlistData.playlist.playlistId}`,
+                        ]);
                 },
                 error: (e) => {
                     console.error('Error retrieving playlist data and screen data', e);
@@ -346,7 +355,7 @@ export class SinglePlaylistComponent implements OnInit {
     }
 
     protected get currentRole() {
-        return this._auth.current_role;
+        return this._auth.current_role === 'dealeradmin' ? 'administrator' : this._auth.current_role;
     }
 
     protected get isAdmin() {

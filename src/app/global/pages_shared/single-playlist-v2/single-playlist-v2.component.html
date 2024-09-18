@@ -1,0 +1,312 @@
+<div class="theme-container single-playlist">
+    <ng-container *ngIf="playlist; else playlistNotFound">
+        <div class="view">
+            <section class="title-section mb-4">
+                <div class="d-flex align-items-center">
+                    <div class="flex-even">
+                        <h1 class="page-title">{{ playlistName }}</h1>
+                        <p class="sm-text mb-0">{{ playlistDescription }}</p>
+                    </div>
+                    <div class="playlist-settings d-flex gap-md">
+                        <button
+                            *ngFor="let p of playlistSettings"
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn"
+                            (click)="playlistSettingClicked(p.action)">
+                            <span class="d-flex align-items-center gap-sm">
+                                <i class="{{ p.icon }} text-green"></i>
+                                <small class="font-weight-bold">{{ p.label }}</small>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="playlist-workbench">
+                <mat-tab-group>
+                    <mat-tab label="Content Management">
+                        <div class="playlist-content-management-wrapper">
+                            <section class="playlist-content-management-controls d-flex justify-content-between my-3">
+                                <div class="playlist-stats d-flex gap-lg">
+                                    <div
+                                        class="breakdown-item"
+                                        *ngFor="let p of playlistContentBreakdown; let i = index">
+                                        <h4 class="font-weight-bold m-0 text-green">
+                                            {{ p.total }}
+                                        </h4>
+                                        <p class="xsm-text font-weight-bold font-italic m-0">
+                                            {{ p.label }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-md">
+                                    <ng-container *ngFor="let c of playlistControls; let i = index">
+                                        <button
+                                            mat-button
+                                            mat-raised-button
+                                            class="theme-btn {{ c.className || '' }}"
+                                            [ngClass]="{ '': i < playlistControls.length - 1 }"
+                                            [disabled]="c.disabled"
+                                            (click)="playlistControlClicked(c)">
+                                            <span class="d-flex align-items-center gap-sm">
+                                                <i class="{{ c.icon }}"></i>
+                                                <small class="font-weight-bold">{{ c.label }}</small>
+                                            </span>
+                                        </button>
+                                    </ng-container>
+                                </div>
+                            </section>
+
+                            <section class="bg-white box-shadow p-4 playlist-content-management rounded">
+                                <div class="filter-controls">
+                                    <div class="d-flex">
+                                        <div class="flex-even">
+                                            <div class="d-flex gap-md">
+                                                <!-- Filters -->
+                                                <div class="filters-and-search">
+                                                    <div
+                                                        class="d-flex align-items-center filters-wrapper border rounded">
+                                                        <h6 class="floating-title">FILTERS</h6>
+                                                        <div class="d-flex gap-md">
+                                                            <div
+                                                                class="content-filters d-flex"
+                                                                *ngFor="let p of playlistFilters; let i = index">
+                                                                <button
+                                                                    mat-button
+                                                                    mat-raised-button
+                                                                    class="theme-btn"
+                                                                    [matMenuTriggerFor]="menu">
+                                                                    <span class="d-flex gap-md align-items-center">
+                                                                        <i class="{{ p.icon }} text-green"></i>
+                                                                        <small class="font-weight-bold">
+                                                                            {{ p.label }}
+
+                                                                            <ng-container
+                                                                                *ngIf="
+                                                                                    p.label ===
+                                                                                        playlistFilterLabels.contentTypeLabel &&
+                                                                                    currentFilters.type
+                                                                                ">
+                                                                                :
+                                                                                {{ currentFilters.type | titlecase }}
+                                                                            </ng-container>
+
+                                                                            <ng-container
+                                                                                *ngIf="
+                                                                                    p.label ===
+                                                                                        playlistFilterLabels.contentStatusLabel &&
+                                                                                    currentFilters.status
+                                                                                ">
+                                                                                :
+                                                                                {{ currentFilters.status | titlecase }}
+                                                                            </ng-container>
+                                                                        </small>
+                                                                        <i class="fas fa-caret-down"></i>
+                                                                    </span>
+                                                                </button>
+                                                                <mat-menu #menu="matMenu">
+                                                                    <button
+                                                                        mat-menu-item
+                                                                        *ngFor="let i of p.items"
+                                                                        (click)="filterContent(p.action, i.action)">
+                                                                        {{ i.label }}
+                                                                    </button>
+                                                                </mat-menu>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- View Options -->
+                                                <div class="other-options">
+                                                    <div
+                                                        class="d-flex align-items-center filters-wrapper border rounded">
+                                                        <h6 class="floating-title">VIEWS</h6>
+                                                        <div class="d-flex gap-md">
+                                                            <button
+                                                                mat-button
+                                                                mat-raised-button
+                                                                class="theme-btn"
+                                                                *ngFor="let p of playlistViews"
+                                                                (click)="viewButtonClicked(p.action)"
+                                                                [class.selected]="p.is_selected">
+                                                                <span class="d-flex align-items-center gap-sm">
+                                                                    <i class="{{ p.icon }} text-green"></i>
+                                                                    <small class="font-weight-bold">{{
+                                                                        p.label
+                                                                    }}</small></span
+                                                                >
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="search-form-wrapper">
+                                            <form class="search-form">
+                                                <mat-form-field class="full-width">
+                                                    <mat-label>Search Playlist Content</mat-label>
+                                                    <input
+                                                        matInput
+                                                        placeholder="Example: Pizza Ad"
+                                                        type="text"
+                                                        [formControl]="searchForm" />
+                                                </mat-form-field>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-gray box-shadow p-3 playlist-contents vh-64 rounded overflow-y-scroll">
+                                    <div
+                                        class="row no-gutters"
+                                        #draggables
+                                        id="draggables"
+                                        *ngIf="!savingPlaylist && playlist as p; else spinner">
+                                        <div
+                                            id="{{ 'drg_' + c.playlistContentId }}"
+                                            [ngClass]="detailedViewMode ? 'col-lg-4' : 'col-lg-1-5'"
+                                            *ngFor="let c of playlistContents; let i = index"
+                                            [attr.data-id]="c.playlistContentId">
+                                            <div class="m-1">
+                                                <app-content
+                                                    [content]="c"
+                                                    [enabled_controls]="
+                                                        c.classification !== 'filler-v2'
+                                                            ? enabledPlaylistContentControls
+                                                            : ['remove', 'edit']
+                                                    "
+                                                    [detailed_view_mode]="detailedViewMode"
+                                                    [index]="c.seq"
+                                                    [move_enabled]="sortablejsTriggered"
+                                                    [saving]="playlistContentsToSave.includes(c.playlistContentId)"
+                                                    [selected]="selectedPlaylistContents.includes(c.playlistContentId)"
+                                                    (control_click)="contentControlClicked($event, i)"
+                                                    (content_selected)="playlistContentSelected(c.playlistContentId)">
+                                                </app-content>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="h-100 d-flex align-items-center justify-content-center w-100"
+                                        *ngIf="!playlistContents.length">
+                                        <div class="text-center">
+                                            <h3 class="mb-2">
+                                                Welcome to your new playlist! Add contents to get started.
+                                            </h3>
+                                            <p class="sm-text">
+                                                <ng-container
+                                                    *ngIf="
+                                                        assets.length > 0 && floatingAssets.length > 0;
+                                                        else noAssetAvailable
+                                                    ">
+                                                    Click on the Add Content button above to start adding contents.
+                                                </ng-container>
+                                                <ng-template #noAssetAvailable>
+                                                    Upload your contents in the Media Library before adding them here
+                                                </ng-template>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </mat-tab>
+                    <mat-tab label="Screens">
+                        <mat-card class="mt-3" *ngIf="playlistScreens && playlistScreens.length">
+                            <app-data-table
+                                [table_columns]="screenTableColumns"
+                                [table_data]="playlistScreenTable"
+                                [new_table]="true">
+                            </app-data-table>
+                        </mat-card>
+                    </mat-tab>
+                    <mat-tab label="Host & Licenses">
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn mr-2 mt-3"
+                            (click)="pushUpdateToSelectedLicenses()"
+                            [disabled]="licensesToUpdate.length == 0">
+                            Push Updates to Selected Licenses
+                        </button>
+
+                        <div class="row no-gutters">
+                            <div class="col-lg-6">
+                                <div class="mt-3">
+                                    <ng-container>
+                                        <mat-accordion>
+                                            <mat-expansion-panel
+                                                hideToggle
+                                                [expanded]="false"
+                                                *ngFor="let hostLicense of playlistHostLicenses">
+                                                <mat-expansion-panel-header>
+                                                    <div class="d-flex w-100">
+                                                        <div>
+                                                            <a
+                                                                [routerLink]="[hostURL, hostLicense.host.hostId]"
+                                                                target="_blank">
+                                                                <h5 class="sm-text font-weight-bold mb-0">
+                                                                    {{ hostLicense.host.name }}
+                                                                </h5>
+                                                            </a>
+                                                        </div>
+                                                        <div class="flex-even text-right sm-text">
+                                                            {{ hostLicense.licenses.length }}
+                                                            License
+                                                            <span *ngIf="hostLicense.licenses.length > 1">s</span>
+                                                            <span class="fas fa-arrow-down ml-2"></span>
+                                                        </div>
+                                                    </div>
+                                                </mat-expansion-panel-header>
+
+                                                <div class="px-3 py-3 border-top w-100">
+                                                    <div
+                                                        *ngFor="let license of hostLicense.licenses"
+                                                        class="option-license-list w-100 mb-1">
+                                                        <mat-checkbox
+                                                            class="sm-text"
+                                                            (change)="addToLicenseToPush($event, license.licenseId)">
+                                                            <a
+                                                                [routerLink]="[licenseURL, license.licenseId]"
+                                                                target="_blank">
+                                                                <h5 class="sm-text font-weight-bold mb-0">
+                                                                    {{ license.alias || license.licenseKey }}
+                                                                </h5>
+                                                            </a>
+                                                        </mat-checkbox>
+                                                    </div>
+                                                </div>
+                                            </mat-expansion-panel>
+                                        </mat-accordion>
+                                    </ng-container>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-tab>
+                </mat-tab-group>
+            </section>
+        </div>
+    </ng-container>
+
+    <ng-template #playlistNotFound>
+        <div class="loader text-center py-5 d-flex align-items-center vh-50" *ngIf="playlistDataNotFound; else spinner">
+            <div class="w-100">
+                <h3 class="mt-4 mb-2">Playlist Not Found</h3>
+                <p class="sm-text">The playlist you are trying to access does not exist</p>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template #spinner>
+        <div class="vh-60">
+            <app-spinner
+                [message]="
+                    (savingPlaylist && 'Saving playlist, Please wait ...') || 'Getting Playlist, Please wait ...'
+                "></app-spinner>
+        </div>
+    </ng-template>
+</div>

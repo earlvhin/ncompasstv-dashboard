@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, Input } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -16,6 +16,7 @@ import { AuthService } from 'src/app/global/services/auth-service/auth.service';
     styleUrls: ['./clone-playlist.component.scss'],
 })
 export class ClonePlaylistComponent implements OnInit {
+    @Input() playlistVersion: 1 | 2 = 1;
     clone_playlist_form: FormGroup;
     clone_success: boolean = false;
     cloned_playlist: any;
@@ -92,11 +93,16 @@ export class ClonePlaylistComponent implements OnInit {
     }
 
     redirectToClonedPlaylist(id: string) {
-        const route = `/${this.roleRoute}/playlists/${id}`;
+        let route = `/${this.roleRoute}/playlists`;
+        if (this.playlistVersion === 2) route += `/v2/${id}`;
+        else route += `/${id}`;
         this._router.navigate([route]);
     }
 
     protected get roleRoute() {
-        return this._auth.roleRoute;
+        let role = this._auth.roleRoute;
+        // Manual override role definition if user is dealeradmin
+        if (role === 'dealeradmin') role = 'administrator';
+        return role;
     }
 }

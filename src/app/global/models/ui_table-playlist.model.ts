@@ -25,5 +25,6 @@ export class UI_TABLE_PLAYLIST {
         this.author = author;
         this.total_contents = total_contents;
         this.allow_export = allow_export;
+        this.total_contents = total_contents;
     }
 }
