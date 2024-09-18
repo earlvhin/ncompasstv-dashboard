@@ -17,6 +17,7 @@ import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 })
 export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
     @Input() contents: API_CONTENT_V2[] = [];
+    @Input() bulkEdit = false;
 
     alternateWeek = 0;
     days = DAYS;
@@ -117,6 +118,7 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
     }
 
     public getPlaylistContentSchedule(): void {
+        // Making sure get schedule happens only on single edits
         if (!this.contents.length) return;
 
         this._playlist.getPlaylistScehduleByContentId(this.contents[0].playlistContentId).subscribe({
@@ -199,9 +201,10 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
     private setDefaultFormValues() {
         const defaultStartDate = moment(new Date()).format();
         const defaultEndDate = moment(new Date()).add(5, 'years').format();
+        const emitEvent = (this.selectedScheduleType && this.selectedScheduleType.type == 3) || false;
 
-        this.startDateCtrl.setValue(defaultStartDate, { emitEvent: false });
-        this.endDateCtrl.setValue(defaultEndDate, { emitEvent: false });
+        this.startDateCtrl.setValue(defaultStartDate, { emitEvent });
+        this.endDateCtrl.setValue(defaultEndDate, { emitEvent });
         this.daysCtrl.setValue(this.days, { emitEvent: false });
         this.startTimeCtrl.setValue({ hour: 0, minute: 0, second: 0 }, { emitEvent: false });
         this.endTimeCtrl.setValue({ hour: 23, minute: 59, second: 59 }, { emitEvent: false });
@@ -265,7 +268,10 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
     private validateRequiredFormData(): void {
         const errorCodes: string[] = [];
         const result = { isInvalid: true, errors: errorCodes };
-        const currentDaysValue = this.daysCtrl.value as { dayId: string; day: string; checked: boolean }[];
+        const currentDaysValue =
+            this.daysCtrl.value == ''
+                ? []
+                : (this.daysCtrl.value as { dayId: string; day: string; checked: boolean }[]);
 
         const validators = [
             {

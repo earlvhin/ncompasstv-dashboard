@@ -83,6 +83,7 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
         this.hasImageAndFeed = this.contentData.playlistContents.filter((p) => p.fileType !== 'webm').length > 0;
         this.subscribeToContentSchedulerFormChanges();
         this.subscribeToContentSchedulerFormValidity();
+        this.resetChangeIndicators();
         /** Set initial state of prev and next buttons */
         if (this.contentData.index === 0) this.prevDisabled = true;
         if (this.contentData.index > this.contentData.allContents.length - 1) this.nextDisabled = true;
@@ -113,13 +114,13 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
         this.ngUnsubscribe.complete();
     }
 
-    public resetChangeIndicators(): void {
+    private resetChangeIndicators(): void {
         this.hasPlayLocationChanges = false;
         this.hasSchedulerFormChanges = false;
     }
 
     public savePlaylistChanges(): void {
-        this.resetChangeIndicators();
+        this.playlistContent.hasSchedulerFormChanges = this.hasSchedulerFormChanges;
         this._dialogRef.close(this.playlistContent);
     }
 
@@ -328,6 +329,7 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
     private subscribeToContentSchedulerFormChanges() {
         this._playlist.schedulerFormUpdated.pipe(takeUntil(this.ngUnsubscribe)).subscribe({
             next: (response) => {
+                this.contentSchedulerTabSelected = response && response.type == 3;
                 this.hasSchedulerFormChanges = true;
                 this.playlistContent.contentUpdates = this.playlistContent.contentUpdates.map((contentUpdate) => {
                     contentUpdate.schedule = this._playlist.mapScheduleFromUiContent(

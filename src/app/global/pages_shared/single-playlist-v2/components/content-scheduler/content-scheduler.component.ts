@@ -17,6 +17,7 @@ export class ContentSchedulerComponent implements OnInit, OnDestroy, AfterViewIn
     @Input() hasExistingSchedule = false;
     @Input() page = '';
     @Input() scheduleType: 1 | 2 | 3 = 1; // 1 - Default, 2 - Do Not Play, 3 - Custom Scheduled
+    @Input() bulkEdit = false;
 
     scheduleTypes = CONTENT_SCHEDULE;
     selectedContentSchedule: ButtonGroup = this.scheduleTypes[0];
@@ -88,7 +89,7 @@ export class ContentSchedulerComponent implements OnInit, OnDestroy, AfterViewIn
         }
 
         // Setting "Default Play" as initial button schedule active
-        this._playlist.scheduleTypeSelected.emit({
+        this._playlist.schedulerFormUpdated.emit({
             type: 1,
             hasExistingSchedule: this.hasExistingSchedule,
         });

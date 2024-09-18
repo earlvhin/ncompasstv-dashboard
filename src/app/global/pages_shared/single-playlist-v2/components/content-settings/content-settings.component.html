@@ -18,7 +18,7 @@
                 </button>
             </ng-container>
 
-            <button class="modal-btn" [mat-dialog-close]="resetChangeIndicators()">
+            <button class="modal-btn" [mat-dialog-close]>
                 <span class="fas fa-times text-danger"></span>
             </button>
         </div>
@@ -113,7 +113,7 @@
             <!-- Play Where/Content Schedule -->
             <div class="col-lg-6">
                 <ng-container *ngIf="content.frequency !== 2 && content.frequency !== 3; else childSchedule">
-                    <mat-tab-group mat-stretch-tabs (selectedTabChange)="tabChanged($event)">
+                    <mat-tab-group mat-stretch-tabs>
                         <mat-tab label="Play Where">
                             <ng-container *ngIf="!loadingWhitelistedLicenses; else loading">
                                 <ng-container *ngIf="contentData.hostLicenses.length; else noLicenses">
@@ -161,6 +161,7 @@
                             <ng-template #bulkScheduleSet>
                                 <app-content-scheduler
                                     *ngIf="allowBulkScheduleSet; else bulkScheduleSetGate"
+                                    [bulkEdit]="true"
                                     [contents]="contentData.playlistContents"
                                     [hasExistingSchedule]="contentData.hasExistingSchedule"
                                     [scheduleType]="contentData.scheduleType">
@@ -274,11 +275,7 @@
                 </button>
             </ng-container>
 
-            <button
-                mat-button
-                mat-raised-button
-                class="theme-btn bg-danger"
-                [mat-dialog-close]="resetChangeIndicators()">
+            <button mat-button mat-raised-button [mat-dialog-close] class="theme-btn bg-danger">
                 <i class="fas fa-times mr-3"></i>
                 <small class="font-weight-bold">Close</small>
             </button>

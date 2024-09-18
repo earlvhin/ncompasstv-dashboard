@@ -129,8 +129,6 @@ export class AddContentComponent implements OnInit, OnDestroy {
 
                     this.playlistHostLicenses = res;
                     this.noHostData = false;
-
-                    console.log(this.playlistHostLicenses, this.noHostData);
                 },
             });
         }

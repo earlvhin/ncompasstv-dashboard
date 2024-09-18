@@ -27,7 +27,7 @@
         </ng-container>
 
         <div class="d-none" [ngClass]="selectedContentSchedule?.value === 3 && 'd-block'">
-            <app-content-scheduler-form [contents]="contents"></app-content-scheduler-form>
+            <app-content-scheduler-form [contents]="contents" [bulkEdit]="bulkEdit"></app-content-scheduler-form>
         </div>
     </div>
 </div>

@@ -6,6 +6,7 @@ export interface UI_CONTENT_SCHEDULE {
     endDate?: string;
     days?: { dayId: number; day: 'Sun|Mon|Tue|Wed|Thu|Fri|Sat'; checked: boolean }[];
     type?: number;
+    hasExistingSchedule?: boolean;
     playlistContentsScheduleId?: string;
     playTimeStartData?: NgbTimeStruct;
     playTimeEndData?: NgbTimeStruct;
