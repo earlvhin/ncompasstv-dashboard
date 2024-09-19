@@ -559,7 +559,7 @@ export class PlacerComponent implements OnInit {
                 const targetName = file.filename;
 
                 this._placer
-                    .uploadPlacerData(
+                    .logPlacerDataUploadActivity(
                         this._auth.current_user_value.user_id,
                         'host_upload_placer_data',
                         null,
