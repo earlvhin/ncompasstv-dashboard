@@ -15,7 +15,6 @@ import {
     API_LICENSE_PROPS,
     API_HOST,
     UI_ROLE_DEFINITION,
-    UI_ROLE_DEFINITION_TEXT,
 } from 'src/app/global/models';
 
 @Component({
@@ -40,14 +39,13 @@ export class SingleHostComponent implements OnInit {
     isViewOnly = this.currentUser.roleInfo.permission === 'V';
     singleHostData: { dealer_id: string; host_id: string };
     lat: number;
-    licenses: any[];
     long: number;
 
+    private hostLicenses: API_LICENSE_PROPS[] = [];
     private isInitialLoad = true;
     private marginMore = false;
     private marginNotes = false;
-
-    protected _unsubscribe = new Subject<void>();
+    protected ngUnsubscribe = new Subject<void>();
 
     constructor(
         private _auth: AuthService,
@@ -62,7 +60,7 @@ export class SingleHostComponent implements OnInit {
     ngOnInit() {
         this.initializeSocket();
 
-        this._activatedRoute.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+        this._activatedRoute.paramMap.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
             this.hostId = this._activatedRoute.snapshot.params.data;
             this.getHostById();
             this.subscribeToBusinessHoursUpdate();
@@ -70,8 +68,8 @@ export class SingleHostComponent implements OnInit {
     }
 
     ngOnDestroy() {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
         if (this._socket) this._socket.disconnect();
     }
 
@@ -95,30 +93,50 @@ export class SingleHostComponent implements OnInit {
         });
     }
 
-    getHostLicenses() {
+    /**
+     * Fetches the host licenses associated with the current host by calling the `getLicensesByHostId` method.
+     * Once the licenses are retrieved, it stores them in `hostLicenses` and triggers a socket resynchronization.
+     * If the request fails or no licenses are found, the `hostLicenses` array is cleared and an error is logged.
+     * The subscription is automatically unsubscribed when the component is destroyed by utilizing
+     * the `takeUntil` operator with `this._unsubscribe`.
+     *
+     * @private
+     * @returns {void}
+     */
+    private getHostLicenses(): void {
         this._license
             .getLicensesByHostId(this.singleHostData.host_id)
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((res) => {
-                if ('message' in res) return;
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe({
+                next: (res) => {
+                    if ('message' in res) return;
 
-                this.setHostAllLicenses(res);
+                    this.hostLicenses = res;
+                    this.resyncSocketConnection();
+                },
+                error: (err) => {
+                    this.hostLicenses = [];
+                    console.error('Failed to retrieve host licenses', err);
+                },
             });
     }
 
-    setHostAllLicenses(data) {
-        this.licenses = data;
-        if (this.licenses) this.resyncSocketConnection();
-    }
-
-    resyncSocketConnection() {
-        this.licenses.forEach((i) => {
+    /**
+     * Resynchronizes the socket connection by emitting the 'D_is_electron_running' signal
+     * for each host license stored in `hostLicenses`. This ensures the server is aware
+     * of the current running state of the Electron application for each license.
+     *
+     * @private
+     * @returns {void}
+     */
+    private resyncSocketConnection(): void {
+        this.hostLicenses.forEach((i) => {
             this._socket.emit('D_is_electron_running', i.licenseId);
         });
     }
 
     runTerminalScript(script: string) {
-        this.licenses.forEach((i) => {
+        this.hostLicenses.forEach((i) => {
             this._socket.emit('D_run_terminal', {
                 license_id: i.licenseId,
                 script: script,
@@ -144,7 +162,7 @@ export class SingleHostComponent implements OnInit {
 
         this._license
             .api_get_licenses_total_by_host_dealer(dealerId, hostId)
-            .pipe(takeUntil(this._unsubscribe))
+            .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(
                 (response) => {
                     if (!response) return;
@@ -197,7 +215,7 @@ export class SingleHostComponent implements OnInit {
 
         this._host
             .get_host_by_id(this.hostId)
-            .pipe(takeUntil(this._unsubscribe))
+            .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(
                 (response) => {
                     if (response.message) return;
@@ -243,22 +261,23 @@ export class SingleHostComponent implements OnInit {
         this.getHostLicenses();
     }
 
+    /**
+     * Subscribes to updates on business hours for the host, and upon receiving a valid response,
+     * emits a signal to update player status for each host license.
+     * The subscription automatically unsubscribes when the component is destroyed by utilizing
+     * the `takeUntil` operator with `this._unsubscribe`.
+     *
+     * @private
+     * @returns {void}
+     */
     private subscribeToBusinessHoursUpdate(): void {
-        this._host.onUpdateBusinessHours.pipe(takeUntil(this._unsubscribe)).subscribe((response: boolean) => {
+        this._host.onUpdateBusinessHours.pipe(takeUntil(this.ngUnsubscribe)).subscribe((response: boolean) => {
             if (!response) return;
 
-            this._license
-                .getLicensesByHostId(this.hostId)
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe((response) => {
-                    if (!Array.isArray(response)) return;
-
-                    const licenses = response as API_LICENSE_PROPS[];
-
-                    licenses.forEach((license) => {
-                        this._socket.emit('D_update_player', license.licenseId);
-                    });
-                });
+            // Loop through each host license and emit the socket signal
+            this.hostLicenses.forEach(({ licenseId }) => {
+                this._socket.emit('D_update_player', licenseId);
+            });
         });
     }
 
