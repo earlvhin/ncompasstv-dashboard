@@ -416,7 +416,18 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
         data.periods.push(hours);
     }
 
-    async saveHostData() {
+    /**
+     * Saves the host data by first validating the business hours and then constructing an API payload.
+     * A confirmation dialog is displayed before proceeding with the update, and additional details
+     * such as status, notes, and other relevant fields are updated. After the confirmation, the host data
+     * is sent to the server and, if successful, a success dialog is shown, and the dialog is closed.
+     * An activity log is also emitted after the update is processed.
+     *
+     * @async
+     * @public
+     * @returns {Promise<void>} - A promise that resolves once the host data has been saved or the process is canceled.
+     */
+    public async saveHostData(): Promise<void> {
         this.checkBusinessHoursFields();
 
         let message = 'Are you sure you want to proceed?';
@@ -444,24 +455,20 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
             status: status,
         });
 
-        const newHostActivityLog = new HOST_ACTIVITY_LOGS(
-            this.host.hostId,
-            'modify_host',
-            this._auth.current_user_value.user_id,
-        );
-
         const { notes, others } = this._formControls;
 
         if (notes.value && notes.value.trim().length > 0) newHostPlace.notes = notes.value;
 
         if (others.value && others.value.trim().length > 0) newHostPlace.others = others.value;
 
-        if (this.hasUpdatedBusinessHours) this._host.onUpdateBusinessHours.next(true);
+        if (this.host.status !== status) {
+            const modify = `${status === 'A'} ? 'activate' : 'deactivate'`;
+            message += ` This will ${modify} the host.`;
+        }
 
-        if (this.host.status !== status)
-            message += ` This will ${status === 'A' ? 'activate' : 'deactivate'} the host.`;
-
-        const confirmUpdate = await this._confirmationDialog.warning({ message: title, data: message }).toPromise();
+        const confirmUpdate = await this._confirmationDialog
+            .warning({ action: 'update_host', message: title, data: message })
+            .toPromise();
 
         if (!confirmUpdate) return;
 
@@ -475,26 +482,21 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
                         data: 'Your changes have been saved',
                     };
 
+                    this._host.onUpdateBusinessHours.next(this.hasUpdatedBusinessHours);
                     await this._confirmationDialog.success(dialogData).toPromise();
                     this._dialogRef.close(true);
+
+                    // What is this for? There is already an API request to log this activity
+                    // Retaining this for now
                     this._host.emitActivity();
                 },
-                (error) => {
+                (err) => {
+                    console.error('Failed to update the host data', err);
                     this._confirmationDialog.error();
                 },
             );
 
-        this._host
-            .create_host_activity_logs(newHostActivityLog)
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(
-                (data) => {
-                    return data;
-                },
-                (error) => {
-                    console.error(error);
-                },
-            );
+        this.logHostModifyActivity();
     }
 
     searchDealer(keyword: string): void {
@@ -811,6 +813,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
         const control = this._formControls.region;
 
         control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(300)).subscribe((response: string) => {
+            if (typeof response === 'undefined') return;
             control.patchValue(response.substring(0, 2));
         });
     }
@@ -819,6 +822,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
         const control = this._formControls.region;
 
         control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(300)).subscribe((response: string) => {
+            if (typeof response === 'undefined') return;
             control.patchValue(response.substring(0, 2));
         });
     }
@@ -865,6 +869,26 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
             this.contactTouchAndInvalid ||
             !this.contactIsCleared
         );
+    }
+
+    private logHostModifyActivity(): void {
+        const newHostActivityLog = new HOST_ACTIVITY_LOGS(
+            this.host.hostId,
+            'modify_host',
+            this._auth.current_user_value.user_id,
+        );
+
+        this._host
+            .create_host_activity_logs(newHostActivityLog)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe(
+                (data) => {
+                    return data;
+                },
+                (error) => {
+                    console.error(error);
+                },
+            );
     }
 
     protected get _businessHours(): UI_OPERATION_DAYS[] {
