@@ -134,3 +134,14 @@ export interface HOST_FILTER {
     pageSize: number;
     status?: string;
 }
+
+export interface HOST_LABEL_DATA {
+    storeHours: string | null;
+    address: string;
+}
+
+export interface HOST_LABEL {
+    date: string;
+    address: string;
+    schedule: string;
+}

@@ -12,6 +12,8 @@ import {
     UI_HOST_VIEW,
     UI_ROLE_DEFINITION_TEXT,
     HOST_FILTER,
+    HOST_LABEL_DATA,
+    HOST_LABEL,
 } from 'src/app/global/models';
 import { AuthService, DealerService, HelperService, HostService } from 'src/app/global/services';
 
@@ -352,7 +354,12 @@ export class HostsComponent implements OnInit {
 
                 this.paging_data_host = response.paging;
                 const mappedData = this.hosts_mapToUIFormat(response.paging.entities);
-                this.hosts_data = [...mappedData];
+                this.hosts_data = mappedData.sort((a, b) =>
+                    (a.name as { value: string }).value
+                        .trim()
+                        .toLowerCase()
+                        .localeCompare((b.name as { value: string }).value.trim().toLowerCase()),
+                );
                 this.filtered_data_host = [...mappedData];
             },
             complete: () => {
@@ -426,26 +433,40 @@ export class HostsComponent implements OnInit {
         });
     }
 
-    getLabel(data) {
+    /**
+     * Returns the formatted label information for a host, including the date, address, and business hours schedule.
+     *
+     * @param data - An object containing storeHours as a JSON string and address of the host.
+     * @returns An object containing the formatted date, address, and schedule for the host.
+     */
+    private getLabel(data: HOST_LABEL_DATA): HOST_LABEL {
         this.now = moment().format('d');
-        this.now = this.now;
-        let storehours = JSON.parse(data.storeHours);
-        storehours = storehours.sort((a, b) => {
-            return a.id - b.id;
-        });
-        let modified_label = {
+        let storehours = data.storeHours ? JSON.parse(data.storeHours) : [];
+
+        if (!storehours[this.now] || !storehours[this.now].status || !storehours[this.now].periods) {
+            return {
+                date: moment().format('LL'),
+                address: data.address,
+                schedule: 'Closed',
+            };
+        }
+
+        let periods = storehours[this.now].periods;
+        if (periods.length === 0 || periods[0].open === '' || periods[0].close === '') {
+            return {
+                date: moment().format('LL'),
+                address: data.address,
+                schedule: 'Open 24 Hours',
+            };
+        }
+
+        let schedule = periods.map((i) => i.open + ' - ' + i.close).join(', ');
+
+        return {
             date: moment().format('LL'),
             address: data.address,
-            schedule:
-                storehours[this.now] && storehours[this.now].status
-                    ? storehours[this.now].periods[0].open == '' && storehours[this.now].periods[0].close == ''
-                        ? 'Open 24 Hours'
-                        : storehours[this.now].periods.map((i) => {
-                              return i.open + ' - ' + i.close;
-                          })
-                    : 'Closed',
+            schedule: schedule,
         };
-        return modified_label;
     }
 
     getStoreHourseParse(data) {
