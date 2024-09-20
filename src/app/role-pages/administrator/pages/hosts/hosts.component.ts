@@ -23,7 +23,7 @@ import { AuthService, DealerService, HelperService, HostService } from 'src/app/
     styleUrls: ['./hosts.component.scss'],
 })
 export class HostsComponent implements OnInit {
-    current_status_filter = '';
+    currentStatusFilter = '';
     dealers_data: UI_TABLE_HOSTS_BY_DEALER[] = [];
     diff_hours: any;
     filtered_data: any = [];
@@ -135,8 +135,8 @@ export class HostsComponent implements OnInit {
     }
 
     filterHostsByStatus(status: string) {
-        if (status === this.current_status_filter) return;
-        this.current_status_filter = status;
+        if (status === this.currentStatusFilter) return;
+        this.currentStatusFilter = status;
         this.getHosts(1);
     }
 
@@ -318,7 +318,7 @@ export class HostsComponent implements OnInit {
     getHosts(page = 1): void {
         let status: string = '';
 
-        switch (this.current_status_filter) {
+        switch (this.currentStatusFilter) {
             case 'active':
                 status = 'A';
                 break;
@@ -551,8 +551,8 @@ export class HostsComponent implements OnInit {
 
         switch (tab) {
             case 'hosts':
-                let status = this.current_status_filter === 'active' ? 'A' : 'I';
-                if (this.current_status_filter === 'all') status = '';
+                let status = this.currentStatusFilter === 'active' ? 'A' : 'I';
+                if (this.currentStatusFilter === 'all') status = '';
 
                 const filters = {
                     page: 1,
@@ -701,7 +701,7 @@ export class HostsComponent implements OnInit {
     private subscribeToStatusFilterClick() {
         this._helper.onClickCardByStatus.pipe(takeUntil(this._unsubscribe)).subscribe((response) => {
             if (response.page !== 'hosts') return;
-            this.current_status_filter = response.value;
+            this.currentStatusFilter = response.value;
             this.getHosts(1);
         });
     }
