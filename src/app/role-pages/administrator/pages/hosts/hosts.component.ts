@@ -354,12 +354,7 @@ export class HostsComponent implements OnInit {
 
                 this.paging_data_host = response.paging;
                 const mappedData = this.hosts_mapToUIFormat(response.paging.entities);
-                this.hosts_data = mappedData.sort((a, b) =>
-                    (a.name as { value: string }).value
-                        .trim()
-                        .toLowerCase()
-                        .localeCompare((b.name as { value: string }).value.trim().toLowerCase()),
-                );
+                this.hosts_data = [...mappedData];
                 this.filtered_data_host = [...mappedData];
             },
             complete: () => {
