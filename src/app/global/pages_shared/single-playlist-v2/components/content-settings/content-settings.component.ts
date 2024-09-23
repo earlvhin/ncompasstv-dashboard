@@ -27,7 +27,7 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
     hasWhitelistedAllHostLicenses = false;
     isFormInvalid = false;
     isChildFrequency = this.content.frequency === 0 || this.content.frequency === 22 || this.content.frequency === 33;
-    toggleAll = new Subject<void>();
+    toggleAll = new Subject<{ checked: boolean }>();
     loadingWhitelistedLicenses = true;
     noData = false;
     nextDisabled = false;
@@ -42,7 +42,6 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 
     private hasSchedulerFormChanges = false;
     private hasPlayLocationChanges = false;
-
     private playlistContent: SavePlaylistContentUpdate = {
         hasSchedulerFormChanges: this.hasSchedulerFormChanges,
         hasPlayLocationChanges: this.hasPlayLocationChanges,
@@ -121,6 +120,7 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 
     public savePlaylistChanges(): void {
         this.playlistContent.hasSchedulerFormChanges = this.hasSchedulerFormChanges;
+        this.playlistContent.hasPlayLocationChanges = this.hasPlayLocationChanges;
         this._dialogRef.close(this.playlistContent);
     }
 
@@ -189,6 +189,13 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
         this.hasWhitelistedAllHostLicenses = false;
 
         /** Bulk Modify */
+        if (licenseIds.length) {
+            this.playlistContent.contentUpdates.forEach((item) => {
+                if (!item.licenseIds) return;
+                item.licenseIds = item.licenseIds.filter((license) => !licenseIds.includes(license));
+            });
+        }
+
         if (this.contentData.bulkSet) {
             this.playlistContent.blacklistUpdates = this.contentData.playlistContents.map((c) => {
                 return {
@@ -225,11 +232,18 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
             return;
         }
 
-        /** Multiple Playlist Content Edit, Duration applies to non video filetype only */
+        /** Bulk Edit, Duration applies to non video filetype only */
         const contentData: any = this.playlistContent.contentUpdates.length
             ? this.playlistContent.contentUpdates
             : this.contentData.playlistContents;
-        this.playlistContent.blacklistUpdates = [];
+
+        /** Remove whitelisted licenses to blacklist updates */
+        if (licenseIds.length) {
+            this.playlistContent.blacklistUpdates.forEach((item) => {
+                item.licenses = [...item.licenses.filter((license) => !licenseIds.includes(license))];
+            });
+        }
+
         this.playlistContent.contentUpdates = contentData.map((p) => {
             return {
                 ...p,

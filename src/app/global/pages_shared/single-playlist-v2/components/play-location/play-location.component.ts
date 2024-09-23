@@ -14,6 +14,7 @@ interface HostLicenses {
     styleUrls: ['./play-location.component.scss'],
 })
 export class PlayLocationComponent implements OnInit {
+    @Input() bulk_modify: boolean = false;
     @Input() host_licenses: HostLicenses[];
     @Input() toggle_all: Observable<MatSlideToggleChange>;
     @Input() toggle_all_add_content: Observable<MatSlideToggleChange>;
@@ -32,6 +33,9 @@ export class PlayLocationComponent implements OnInit {
     ngOnInit() {
         this.host_licenses.sort((a, b) => a.host.name.localeCompare(b.host.name));
         this.setInitiallyWhitelisted();
+
+        /** Initial value for bulk blacklist/whitelist */
+        if (this.bulk_modify) this.toggleAllHostAndLicenses(false);
 
         /** Yes I had them separated instead of just one observable instance */
         if (this.toggle_all) this.toggle_all.subscribe((e) => this.toggleAllHostAndLicenses(e.checked));
