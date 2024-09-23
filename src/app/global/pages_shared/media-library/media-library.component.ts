@@ -177,7 +177,6 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
             onFileSelected: (e) => {
                 this.data_to_upload = [];
                 return new Promise((resolve, reject) => {
-                    // Do something async
                     this.all_media.map((med) => {
                         if (med.title != null && !this.removed_index) {
                             med.fileName = med.title;
@@ -190,7 +189,7 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
                         }
                     });
 
-                    //Additional Checking for video conversion duplicate
+                    // Additional checking for video conversion duplicates
                     if (e.originalFile.type.includes('video') && !convert_to_webm) {
                         var temp = e.originalFile.name.substr(0, e.originalFile.name.lastIndexOf('.'));
                         temp = temp + '.webm';
@@ -219,16 +218,28 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
                             '',
                             'rename',
                         ).then((result) => {
-                            if (result === 'upload') {
-                                this.postContentInfo(this.duplicate_files, this.data_to_upload, false);
-                                resolve({ filename: this.modified_data[0].filename });
-                                //temporarily add recently uploaded to array
-                                this.all_media.push({ fileName: this.modified_data[0].filename });
-                            } else {
-                                this.renameModal().then((name) => {
-                                    var temp = this.data_to_upload[0].mimetype.split('/');
-                                    resolve({ filename: name + '.' + temp[temp.length - 1] });
-                                });
+                            switch (result) {
+                                case 'upload':
+                                    this.postContentInfo(this.duplicate_files, this.data_to_upload, false);
+                                    resolve({ filename: this.modified_data[0].filename });
+                                    // Temporarily add recently uploaded to array
+                                    this.all_media.push({ fileName: this.modified_data[0].filename });
+                                    break;
+                                case 'rename':
+                                    // Rename the file
+                                    this.renameModal(e.originalFile.name).then((name) => {
+                                        if (name) {
+                                            const temp = this.data_to_upload[0].mimetype.split('/');
+                                            resolve({ filename: `${name}.${temp[temp.length - 1]}` });
+                                        } else {
+                                            // Rename dialog was canceled, reject the promise
+                                            reject('Rename canceled');
+                                        }
+                                    });
+                                    break;
+                                default:
+                                    reject('Upload canceled');
+                                    return;
                             }
                         });
                     } else {
@@ -244,7 +255,7 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
                 this.reload = true;
                 this.processUploadedFiles(this.uploaded_files, this.assigned_users);
             },
-            onClose: (respond) => {
+            onClose: () => {
                 this.loading_overlay = false;
             },
         };
@@ -283,19 +294,24 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
         });
     }
 
-    renameModal(): Promise<void> {
-        return new Promise((resolve) => {
-            this._dialog.closeAll();
-
-            const dialogRef = this._dialog.open(RenameModalComponent, {
+    /**
+     * Opens a rename modal dialog to rename a file.
+     * @param {string} originalFilename - The original filename of the file to rename.
+     * @returns {Promise<string | undefined>} - A promise that resolves with the new filename or undefined if the modal was closed.
+     */
+    public renameModal(originalFilename: string): Promise<string | undefined> {
+        return this._dialog
+            .open(RenameModalComponent, {
                 width: '500px',
                 height: '450px',
                 panelClass: 'app-media-modal',
-                disableClose: true,
-            });
-
-            dialogRef.afterClosed().subscribe((r) => resolve(r));
-        });
+                data: {
+                    originalFilename,
+                    existingFilenames: this.all_media.map((media) => media.title),
+                },
+            })
+            .afterClosed()
+            .toPromise();
     }
 
     async processUploadedFiles(data, users): Promise<void> {

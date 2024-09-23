@@ -166,6 +166,12 @@
     }
 }
 
+.rename-error {
+    .mat-form-field-infix {
+        width: auto;
+    }
+}
+
 breadcrumb {
     .container-fluid {
         background: none;
