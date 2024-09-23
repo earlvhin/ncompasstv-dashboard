@@ -98,33 +98,12 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-lg-10">
-                            <app-autocomplete-field
-                                (data_value)="setFillerGroup($event)"
-                                (searched)="getAllFillers($event)"
-                                [data_reference]="fillerGroups"
-                                [primary_keyword]="'name'"
-                                [key_of_value]="'fillerGroupId'"
-                                [required]="true"
-                                [display_role]="true"
-                                [role]="'role'"
-                                [label]="'Select Filler Group'"
-                                [initial_value]="fillerName"
-                                [new_value]="fillerName"
-                                [disabled]="disableSelectionField()">
-                            </app-autocomplete-field>
-                        </div>
-                        <div class="col-lg-2 text-right">
-                            <button
-                                mat-button
-                                mat-raised-button
-                                class="mt-2 theme-btn _cool"
-                                type="button"
-                                (click)="addToSelectedFillerGroup()"
-                                title="Add Selected Filler Group"
-                                [disabled]="!enable_add_button">
-                                <i class="fas fa-plus"></i>
-                            </button>
+                        <div class="col-lg-12">
+                            <app-autocomplete
+                                [field_data]="fillerGroupsForAutoComplete"
+                                (value_selected)="setFillerGroup($event)"
+                                [remove_selection]="clearSelection">
+                            </app-autocomplete>
                         </div>
                     </div>
 

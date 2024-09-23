@@ -32,6 +32,7 @@ export class AutocompleteComponent implements OnInit, OnDestroy, OnChanges {
         unselect: false,
     };
     @Input() trigger_input_update = new Observable<UI_AUTOCOMPLETE_DATA | string>();
+    @Input() remove_selection: boolean = false;
 
     @Output() value_selected: EventEmitter<{ id: string; value: string }> = new EventEmitter();
     @Output() input_changed = new EventEmitter<string>();
@@ -69,6 +70,10 @@ export class AutocompleteComponent implements OnInit, OnDestroy, OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
         this.onAutocompleteChanges(changes);
+        if (this.remove_selection) {
+            this.autoCompleteInputField.nativeElement.blur();
+            this.removeSelection();
+        }
     }
 
     setupAutocompleteField() {
@@ -143,8 +148,11 @@ export class AutocompleteComponent implements OnInit, OnDestroy, OnChanges {
             this.field_data.initialValue = [{ id: currentValue.id, value: currentValue.city }];
             this.setupAutocompleteField();
         }
+        if (changes.field_data) {
+            this.field_data.data = changes.field_data.currentValue.data;
+            this.setupAutocompleteField();
+        } else this.field_data.data = this.field_data.data;
 
-        this.field_data.data = this.field_data.data;
         this.setupDefaults();
     }
 
