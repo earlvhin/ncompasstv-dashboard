@@ -1,14 +1,17 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subject } from 'rxjs';
 import { DatePipe, TitleCasePipe } from '@angular/common';
+import { MatDialog, MatDialogConfig } from '@angular/material';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver';
-import { environment } from 'src/environments/environment';
-import { finalize, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import * as io from 'socket.io-client';
 
-import { PlaylistService } from 'src/app/global/services';
-import { API_PLAYLIST, DataTableColumn, UI_TABLE_PLAYLIST } from 'src/app/global/models';
+import { environment } from 'src/environments/environment';
+import { AuthService, PlaylistService } from 'src/app/global/services';
+import { API_PLAYLIST, CREATE_PLAYLIST, UI_TABLE_PLAYLIST } from 'src/app/global/models';
+import { CreatePlaylistDialogComponent } from 'src/app/global/components_shared/playlist_components/create-playlist-dialog/create-playlist-dialog.component';
+import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
     selector: 'app-playlists',
@@ -32,22 +35,24 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
     workbook: any;
     workbook_generation = false;
     worksheet: any;
-    playlistTableColumn = this._playlistColumns;
+    playlist_table_column = this._playlistTableColumns;
+    playlist_table_column_for_export = this._playlistExportColumns;
 
-    private playlistExportColumns = this._playlistExportColumns;
     protected _socket: any;
     protected _unsubscribe = new Subject<void>();
 
     constructor(
+        private _auth: AuthService,
         private _playlist: PlaylistService,
         private _date: DatePipe,
+        private _dialog: MatDialog,
         private _titlecase: TitleCasePipe,
     ) {}
 
     ngOnInit() {
         this.initializeSocketConnection();
         this.getTotalPlaylist();
-        this.pageRequested(1);
+        this.getPlaylists(1);
     }
 
     ngOnDestroy(): void {
@@ -55,85 +60,149 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
         this._unsubscribe.complete();
     }
 
+    exportPlaylist(data: any) {
+        const header = [];
+        this.workbook_generation = true;
+        this.workbook = new Workbook();
+        this.workbook.creator = 'NCompass TV';
+        this.workbook.useStyles = true;
+        this.workbook.created = new Date();
+        this.worksheet = this.workbook.addWorksheet('Dealers');
+
+        Object.keys(this.playlist_table_column_for_export).forEach((key) => {
+            if (
+                this.playlist_table_column_for_export[key].name &&
+                !this.playlist_table_column_for_export[key].no_export
+            ) {
+                header.push({
+                    header: this.playlist_table_column_for_export[key].name,
+                    key: this.playlist_table_column_for_export[key].key,
+                    width: 50,
+                    style: { font: { name: 'Arial', bold: true } },
+                });
+            }
+        });
+
+        this.worksheet.columns = header;
+        this.getDataForExport(data);
+    }
+
+    filterData(keyword = '') {
+        this.search_data = keyword;
+        this.getPlaylists(1);
+    }
+
     fromDelete() {
-        // this.searching = true;
         this.ngOnInit();
     }
 
-    /**
-     * Retrieves playlist data per page
-     *
-     * @param {number} page - The page number to request.
-     */
-    public pageRequested(page: number): void {
+    getPlaylists(page: number) {
         this.searching = true;
         this.playlist_data = [];
 
         this._playlist
             .get_all_playlists(page, this.search_data, this.sort_column, this.sort_order)
-            .pipe(
-                takeUntil(this._unsubscribe),
-                finalize(() => {
-                    this.initial_load = false;
-                    this.searching = false;
-                }),
-            )
-            .subscribe(
-                (res) => {
-                    this.initial_load = false;
-                    this.paging_data = res.paging;
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((data) => {
+                this.initial_load = false;
+                this.searching = false;
+                this.paging_data = data.paging;
 
-                    // if no results
-                    if ('message' in res) {
-                        // if no results and has search keyword
-                        if (this.search_data.length) {
-                            this.filtered_data = [];
-                            this.no_playlist = false;
-                            return;
-                        }
-
+                if (data.paging.entities.length <= 0) {
+                    if (this.search_data.length <= 0) {
                         this.no_playlist = true;
                         return;
                     }
 
-                    // map playlists to table ui
-                    const mappedPlaylists = this.mapToTableData(res.paging.entities);
-                    this.playlist_data = [...mappedPlaylists];
-                    this.filtered_data = [...mappedPlaylists];
-                },
-                (e) => console.error('Failed to retrieve playlists', e),
-            );
+                    this.filtered_data = [];
+                    this.no_playlist = false;
+                    return;
+                }
+
+                const getPlaylistResult = this.mapToPlaylistTable(data.paging.entities);
+                this.playlist_data = [...getPlaylistResult];
+                this.filtered_data = [...getPlaylistResult];
+            });
     }
 
-    getColumnsAndOrder(data) {
+    getColumnsAndOrder(data: { column: string; order: string }) {
         this.sort_column = data.column;
         this.sort_order = data.order;
-        this.pageRequested(1);
+        this.getPlaylists(1);
     }
 
     getTotalPlaylist() {
         this._playlist
             .get_playlists_total()
             .pipe(takeUntil(this._unsubscribe))
-            .subscribe((data: any) => {
-                this.playlists_details = {
-                    basis: data.total,
-                    basis_label: 'Playlist(s)',
-                    good_value: data.totalActive,
-                    good_value_label: 'Active',
-                    bad_value: data.totalInActive,
-                    bad_value_label: 'Inactive',
-                    new_this_week_value: data.newPlaylistsThisWeek,
-                    new_this_week_value_label: 'Playlist(s)',
-                    new_this_week_value_description: 'New this week',
-                    new_last_week_value: data.newPlaylistsLastWeek,
-                    new_last_week_value_label: 'Playlist(s)',
-                    new_last_week_value_description: 'New last week',
-                };
+            .subscribe({
+                next: (data) => {
+                    this.playlists_details = {
+                        basis: data.total,
+                        basis_label: 'Playlist(s)',
+                        good_value: data.totalActive,
+                        good_value_label: 'Active',
+                        bad_value: data.totalInActive,
+                        bad_value_label: 'Inactive',
+                        new_this_week_value: data.newPlaylistsThisWeek,
+                        new_this_week_value_label: 'Playlist(s)',
+                        new_this_week_value_description: 'New this week',
+                        new_last_week_value: data.newPlaylistsLastWeek,
+                        new_last_week_value_label: 'Playlist(s)',
+                        new_last_week_value_description: 'New last week',
+                    };
+                },
             });
     }
 
-    private mapToTableData(data: API_PLAYLIST[]): UI_TABLE_PLAYLIST[] {
+    getDataForExport(data: { id: string; name: string }): void {
+        this._playlist
+            .export_playlist(data.id)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe({
+                next: (response) => {
+                    if ('message' in response) {
+                        this.showResponseDialog(
+                            'error',
+                            'Export Failed',
+                            'Could not retreive data, please contact customer support',
+                        );
+                        return;
+                    }
+
+                    const EXCEL_TYPE =
+                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+                    this.playlist_to_export = response.playlistContents;
+
+                    this.playlist_to_export.forEach((item, i) => {
+                        this.modifyItem(item);
+                        this.worksheet.addRow(item).font = {
+                            bold: false,
+                        };
+                    });
+
+                    let rowIndex = 1;
+
+                    for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
+                        this.worksheet.getRow(rowIndex).alignment = {
+                            vertical: 'middle',
+                            horizontal: 'center',
+                            wrapText: true,
+                        };
+                    }
+
+                    this.workbook.xlsx.writeBuffer().then((file: any) => {
+                        const blob = new Blob([file], { type: EXCEL_TYPE });
+                        const filename = data.name + '.xlsx';
+                        saveAs(blob, filename);
+                    });
+
+                    this.workbook_generation = false;
+                },
+            });
+    }
+
+    mapToPlaylistTable(data: API_PLAYLIST[]) {
         let count = this.paging_data.pageStart;
         return data.map((p) => {
             return new UI_TABLE_PLAYLIST(
@@ -141,7 +210,11 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
                 { value: count++, link: null, editable: false, hidden: false },
                 {
                     value: p.name,
-                    link: `/administrator/playlists/${p.playlistId}`,
+                    data_label: 'playlist_name',
+                    is_migrated: p.isMigrated,
+                    link: p.isMigrated
+                        ? `/administrator/playlists/v2/${p.playlistId}`
+                        : `/administrator/playlists/${p.playlistId}`,
                     editable: false,
                     hidden: false,
                     new_tab_link: true,
@@ -159,55 +232,16 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
                     hidden: false,
                     new_tab_link: true,
                 },
-                { value: p.totalContents, hidden: false },
-                { value: p.totalScreens > 0, link: null, hidden: true },
+                { value: p.totalScreens > 0 ? true : false, link: null, hidden: true },
+                {
+                    value: p.totalContents,
+                    data_label: 'total_content',
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                },
             );
         });
-    }
-
-    filterData(data) {
-        if (data) {
-            this.search_data = data;
-            this.pageRequested(1);
-        } else {
-            this.search_data = '';
-            this.pageRequested(1);
-        }
-    }
-
-    getDataForExport(data): void {
-        let filter = data;
-
-        this._playlist
-            .export_playlist(filter.id)
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((data) => {
-                if (!data.message) {
-                    const EXCEL_TYPE =
-                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-                    this.playlist_to_export = data.playlistContents;
-                    this.playlist_to_export.forEach((item, i) => {
-                        this.modifyItem(item);
-                        this.worksheet.addRow(item).font = {
-                            bold: false,
-                        };
-                    });
-                    let rowIndex = 1;
-                    for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
-                        this.worksheet.getRow(rowIndex).alignment = {
-                            vertical: 'middle',
-                            horizontal: 'center',
-                            wrapText: true,
-                        };
-                    }
-                    this.workbook.xlsx.writeBuffer().then((file: any) => {
-                        const blob = new Blob([file], { type: EXCEL_TYPE });
-                        const filename = filter.name + '.xlsx';
-                        saveAs(blob, filename);
-                    });
-                    this.workbook_generation = false;
-                }
-            });
     }
 
     modifyItem(item) {
@@ -215,30 +249,42 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
         item.fileType = this._titlecase.transform(item.fileType);
     }
 
-    exportPlaylist(data) {
-        this.workbook_generation = true;
-        const header = [];
-        this.workbook = new Workbook();
-        this.workbook.creator = 'NCompass TV';
-        this.workbook.useStyles = true;
-        this.workbook.created = new Date();
-        this.worksheet = this.workbook.addWorksheet('Dealers');
-        Object.keys(this.playlistExportColumns).forEach((key) => {
-            if (this.playlistExportColumns[key].name && !this.playlistExportColumns[key].no_export) {
-                header.push({
-                    header: this.playlistExportColumns[key].name,
-                    key: this.playlistExportColumns[key].key,
-                    width: 50,
-                    style: { font: { name: 'Arial', bold: true } },
-                });
-            }
-        });
-        this.worksheet.columns = header;
-        this.getDataForExport(data);
-    }
-
     onPushAllLicenseUpdates(licenseIds: string[]): void {
         licenseIds.forEach((id) => this._socket.emit('D_update_player', id));
+    }
+
+    showCreatePlaylistDialog() {
+        const width = '576px';
+        const configs: MatDialogConfig = { width, disableClose: true };
+        this._dialog
+            .open(CreatePlaylistDialogComponent, configs)
+            .afterClosed()
+            .subscribe({
+                next: (response) => {
+                    if (!response || response === 'close') return;
+                    this.createPlaylist(response);
+                },
+            });
+    }
+
+    private async createPlaylist(data: CREATE_PLAYLIST) {
+        try {
+            const playlist = await this._playlist.create_playlist(data).pipe(takeUntil(this._unsubscribe)).toPromise();
+
+            await this.showResponseDialog('success', 'Success', 'Your changes have been saved');
+
+            const newPlaylistUrl = `/${this.roleRoute}/playlists/v2/${playlist.playlist.playlistId}`;
+            window.open(newPlaylistUrl, '_blank');
+            this.getTotalPlaylist();
+            this.getPlaylists(1);
+        } catch (error) {
+            console.error('Error creating playlist', error);
+            await this.showResponseDialog(
+                'error',
+                'Error Saving Playlist',
+                'Something went wrong, please contact customer support',
+            );
+        }
     }
 
     private initializeSocketConnection(): void {
@@ -248,17 +294,17 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
         });
     }
 
-    protected get _playlistColumns(): DataTableColumn[] {
-        return [
-            { name: '#', sortable: false, no_export: true },
-            { name: 'Playlist Name', sortable: true, column: 'Name' },
-            { name: 'Publish Date', sortable: true, column: 'DateCreated' },
-            { name: 'Assigned To', sortable: true, column: 'BusinessName' },
-            { name: 'Total Contents', sortable: true, column: 'TotalContents' },
-        ];
+    private showResponseDialog(type: string, title = '', message = '') {
+        let data = { status: type, message: title, data: message };
+        const config = { disableClose: true, width: '500px', data };
+        return this._dialog.open(ConfirmationModalComponent, config).afterClosed();
     }
 
-    protected get _playlistExportColumns(): DataTableColumn[] {
+    protected get roleRoute() {
+        return this._auth.roleRoute == 'dealeradmin' ? 'administrator' : this._auth.roleRoute;
+    }
+
+    protected get _playlistExportColumns() {
         return [
             { name: 'Host Name', key: 'hostName' },
             { name: 'Content Title', key: 'title' },
@@ -267,6 +313,16 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
             { name: 'Zone', key: 'zoneName' },
             { name: 'Duration', key: 'duration' },
             { name: 'File Type', key: 'fileType' },
+        ];
+    }
+
+    protected get _playlistTableColumns() {
+        return [
+            { name: '#', sortable: false, no_export: true },
+            { name: 'Playlist Name', sortable: true, column: 'Name' },
+            { name: 'Publish Date', sortable: true, column: 'DateCreated' },
+            { name: 'Assigned To', sortable: true, column: 'BusinessName' },
+            { name: 'Total Content', sortable: true, column: 'TotalContents' },
         ];
     }
 }

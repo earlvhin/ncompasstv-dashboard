@@ -1,0 +1,306 @@
+<div class="content-settings">
+    <div class="row align-items-start mb-3">
+        <div class="col-lg-6">
+            <h3 class="m-0 font-weight-bold">Playlist Content Option</h3>
+            <p class="sm-text m-0">Set duration, whitelisting, and display mode</p>
+        </div>
+        <div class="col-lg-2">
+            <h3 class="m-0 font-weight-bold">{{ currentIndex + 1 }}</h3>
+        </div>
+        <div class="col-lg-4 text-right">
+            <ng-container *ngIf="!contentData.bulkSet">
+                <button class="modal-btn mr-2" (click)="prev()" [disabled]="prevDisabled">
+                    <span class="fas fa-arrow-left text-primary"></span>
+                </button>
+
+                <button class="modal-btn mr-2" (click)="next()" [disabled]="nextDisabled">
+                    <span class="fas fa-arrow-right text-primary"></span>
+                </button>
+            </ng-container>
+
+            <button class="modal-btn" [mat-dialog-close]>
+                <span class="fas fa-times text-danger"></span>
+            </button>
+        </div>
+    </div>
+
+    <div class="row mb-4 content-settings-min-height">
+        <ng-container *ngIf="!updatingView; else loading">
+            <!-- Info/Fullscreen/Duration/Frequency -->
+            <div class="col-lg-6">
+                <div class="playlist-content-preview mb-3" *ngIf="!contentData.bulkSet; else selected">
+                    <img
+                        *ngIf="contentData.playlistContents[0].fileType | isimage; else video"
+                        class="thumbnail-preview-100 border"
+                        [src]="
+                            !isFillerContent(contentData.playlistContents[0])
+                                ? (contentData.playlistContents[0].thumbnail | sanitize)
+                                : contentData.playlistContents[0].url
+                        "
+                        [alt]="contentData.playlistContents[0].fileName || contentData.playlistContents[0].title" />
+
+                    <ng-template #video>
+                        <video
+                            class="thumbnail-preview-100 border"
+                            [src]="contentData.playlistContents[0].url + contentData.playlistContents[0].fileName"
+                            controls
+                            muted></video>
+                    </ng-template>
+                </div>
+
+                <ng-template #selected>
+                    <div class="playlist-content-preview scroll bg-gray p-2 w-100 mb-3">
+                        <div class="row no-gutters mb-1">
+                            <div class="col-lg-3" *ngFor="let c of contentData.playlistContents; let i = index">
+                                <div class="m-1">
+                                    <app-content
+                                        [content]="c"
+                                        [controls]="true"
+                                        [enabled_controls]="['remove']"
+                                        [index]="i + 1"
+                                        [selectable]="false">
+                                    </app-content>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+
+                <!-- Playlist Content Basic Info -- Frequency/Fullscreen/Duration -->
+                <div class="d-flex mb-3" *ngIf="!contentData.bulkSet">
+                    <!-- Playlist Content Basic Info -->
+                    <div class="flex-even">
+                        <div class="playlist-content-basic-info d-flex flex-column">
+                            <div class="d-flex">
+                                <h5 class="m-0 font-weight-bold">
+                                    {{ content.fileName || content.title | nohandle | slice: 0 : 50 }}
+                                </h5>
+                                <ng-container *ngIf="content.frequency > 0">
+                                    <i
+                                        class="frequency-icon text-warning ml-2 fas"
+                                        [ngClass]="setFrequencyIcon(content.frequency)"></i>
+                                </ng-container>
+                            </div>
+                            <div class="upload-details">
+                                <p class="xsm-text">
+                                    Uploaded by {{ content.createdByName }} on
+                                    {{ content.dateCreated | date: 'MMM d, y h:mm a' }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span
+                            class="text-primary fas mr-1"
+                            [ngClass]="{
+                                'fa-image': content.fileType | isimage,
+                                'fa-video': content.fileType | isvideo,
+                                'fa-rss': content.fileType | isFeed
+                            }">
+                        </span>
+                    </div>
+                </div>
+
+                <app-basic-settings
+                    [bulk_setting]="contentData.bulkSet"
+                    [has_image_and_feed]="hasImageAndFeed"
+                    [playlist_content]="contentData.playlistContents"
+                    [playlist_content_length]="contentData.playlistContentLength"
+                    (changed)="playlistContentModified($event)"></app-basic-settings>
+            </div>
+            <!-- Info/Fullscreen/Duration/Frequency -->
+
+            <!-- Play Where/Content Schedule -->
+            <div class="col-lg-6">
+                <ng-container *ngIf="content.frequency !== 2 && content.frequency !== 3; else childSchedule">
+                    <mat-tab-group mat-stretch-tabs>
+                        <mat-tab label="Play Where">
+                            <ng-container *ngIf="!loadingWhitelistedLicenses; else loading">
+                                <ng-container *ngIf="contentData.hostLicenses.length; else noLicenses">
+                                    <div class="play-where-wrapper">
+                                        <div class="d-flex align-items-center pt-3">
+                                            <div class="flex-even">
+                                                <h4>Whitelist Host and Licenses</h4>
+                                                <p class="sm-text m-0">
+                                                    Select host and licenses you want
+                                                    {{ contentData.bulkSet ? 'these contents' : 'this content' }}
+                                                    to play or toggle all.
+                                                </p>
+                                            </div>
+                                            <div class="toggle-wrapper pt-1 pr-2">
+                                                <mat-slide-toggle
+                                                    [checked]="hasWhitelistedAllHostLicenses"
+                                                    (change)="toggleAll.next($event)"></mat-slide-toggle>
+                                            </div>
+                                        </div>
+
+                                        <div class="play-location-wrapper mt-3">
+                                            <app-play-location
+                                                [bulk_modify]="contentData.bulkSet"
+                                                [host_licenses]="contentData.hostLicenses"
+                                                [whitelisted_hosts]="whitelistedHosts"
+                                                [whitelisted_licenses]="whitelistedLicenses"
+                                                [toggle_all]="toggleAll.asObservable()"
+                                                (to_blacklist)="licensesToBlacklist($event)"
+                                                (to_whitelist)="licensesToWhiteList($event)"
+                                                (license_toggled)="checkIfAllHostLicensesWhitelisted($event)">
+                                            </app-play-location>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+                        </mat-tab>
+                        <mat-tab label="Content Schedule" *ngIf="!isFillerContent(content)">
+                            <div class="mt-3 pb-2" *ngIf="!contentData.bulkSet; else bulkScheduleSet">
+                                <app-content-scheduler
+                                    [contents]="contentData.playlistContents"
+                                    [hasExistingSchedule]="contentData.hasExistingSchedule"
+                                    [scheduleType]="contentData.scheduleType">
+                                </app-content-scheduler>
+                            </div>
+
+                            <ng-template #bulkScheduleSet>
+                                <app-content-scheduler
+                                    *ngIf="allowBulkScheduleSet; else bulkScheduleSetGate"
+                                    [bulkEdit]="true"
+                                    [contents]="contentData.playlistContents"
+                                    [hasExistingSchedule]="contentData.hasExistingSchedule"
+                                    [scheduleType]="contentData.scheduleType">
+                                </app-content-scheduler>
+
+                                <ng-template #bulkScheduleSetGate>
+                                    <div class="bulk-schedule-set-gate p-5 text-center">
+                                        <h3 class="mb-1">Set Bulk Schedule</h3>
+                                        <p class="mb-4 sm-text">
+                                            This will overwrite the schedule of your selected playlist contents
+                                        </p>
+                                        <button
+                                            mat-button
+                                            mat-raised-button
+                                            class="theme-btn"
+                                            (click)="bulkScheduleSetAllow()">
+                                            <i class="fas fa-clock mr-3"></i>
+                                            <small class="font-weight-bold">Set Schedule</small>
+                                        </button>
+                                    </div>
+                                </ng-template>
+                            </ng-template>
+                        </mat-tab>
+                    </mat-tab-group>
+                </ng-container>
+
+                <ng-template #childSchedule>
+                    <ng-container [ngSwitch]="content.type">
+                        <ng-container *ngSwitchCase="3">
+                            <div class="playlist-content-schedule">
+                                <div class="bg-gray text-center pt-4">
+                                    <h3 class="font-weight-bold">Play Schedule</h3>
+                                    <div
+                                        class="playlist-content-schedule__date-range flex-even p-4"
+                                        *ngIf="content.from && content.to">
+                                        <span class="fas fa-calendar mr-2"></span>
+                                        <span>Date Range</span>
+                                        <br />
+                                        <span class="sm-text">
+                                            {{
+                                                content.from && content.to
+                                                    ? (content.from | date: 'longDate') +
+                                                      ' - ' +
+                                                      (content.to | date: 'longDate')
+                                                    : '--'
+                                            }}
+                                        </span>
+                                    </div>
+                                    <div class="playlist-content-schedule__days flex-even p-4" *ngIf="content.days">
+                                        <span class="fas fa-calendar-check mr-2"></span>
+                                        <span>Days</span>
+                                        <br />
+                                        <span class="sm-text">
+                                            {{ content.days ? convertDayFormat(content.days) : '--' }}
+                                        </span>
+                                    </div>
+                                    <div
+                                        class="playlist-content-schedule__time-range flex-even p-4"
+                                        *ngIf="content.playTimeStart && content.playTimeEnd">
+                                        <span class="fas fa-clock mr-2"></span>
+                                        <span>Time Range</span>
+                                        <br />
+                                        <span class="sm-text">
+                                            {{ getPlayTimesText(content.playTimeStart, content.playTimeEnd) }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="2">
+                            <div class="bg-gray text-center p-4">
+                                <i class="fas fa-ban mb-3"></i>
+                                <h3 class="font-weight-bold">Do Not Play</h3>
+                                <p>This content will not play at all.</p>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngSwitchDefault>
+                            <div class="bg-gray text-center p-4">
+                                <i class="fas fa-clock mb-3"></i>
+                                <h3 class="font-weight-bold">Default Play</h3>
+                                <p>This content will play during business hours</p>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                </ng-template>
+
+                <!-- Error Messages -->
+                <ng-container *ngIf="contentSchedulerTabSelected && errorCodes && errorCodes.length">
+                    <div class="content-scheduler-form-errors alert alert-danger">
+                        <span class="sm-text font-weight-bold"> Error: {{ errorMessage }} </span>
+                    </div>
+                </ng-container>
+                <!-- Error Messages -->
+            </div>
+            <!-- Play Where/Content Schedule -->
+        </ng-container>
+    </div>
+
+    <div class="bottom-section-wrapper">
+        <!-- Save/Cancel Button -->
+        <div class="save-cancel-button-wrapper">
+            <ng-container *ngIf="content.frequency === 0 || content.frequency === 22 || content.frequency === 33">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn mr-2"
+                    [disabled]="updatingView || isFormInvalid"
+                    (click)="savePlaylistChanges()">
+                    <i class="fas fa-save mr-3 text-green"></i>
+                    <small class="font-weight-bold">Save</small>
+                </button>
+            </ng-container>
+
+            <button mat-button mat-raised-button [mat-dialog-close] class="theme-btn bg-danger">
+                <i class="fas fa-times mr-3"></i>
+                <small class="font-weight-bold">Close</small>
+            </button>
+        </div>
+        <!-- Save/Cancel Button -->
+    </div>
+
+    <ng-template #loading>
+        <ng-container *ngIf="noData; else spin">
+            <div class="py-5 text-center">
+                <h4>No Licenses Available</h4>
+            </div>
+        </ng-container>
+
+        <ng-template #spin>
+            <div class="content-settings-spinner-min-height d-flex justify-content-center w-100">
+                <app-spinner></app-spinner>
+            </div>
+        </ng-template>
+    </ng-template>
+
+    <ng-template #noLicenses>
+        <div class="py-5 text-center">
+            <h4>No Licenses Available</h4>
+        </div>
+    </ng-template>
+</div>

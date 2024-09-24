@@ -1,0 +1,51 @@
+<div class="quick-move" *ngIf="playlistContent">
+    <div class="row align-items-start mb-3">
+        <div class="col-lg-12">
+            <h3 class="m-0 font-weight-bold">Quick Move Playlist Content</h3>
+            <p class="sm-text">
+                Moving position for
+                <strong>{{ playlistContent.title || playlistContent.fileName }}</strong
+                >, current position is: <strong>{{ playlistContent.seq }}</strong>
+            </p>
+        </div>
+    </div>
+    <!-- Title -->
+
+    <div class="row">
+        <div class="col-lg-12">
+            <form [formGroup]="quickMoveForm">
+                <mat-form-field class="full-width" appearance="fill">
+                    <mat-label>Set Position #</mat-label>
+                    <input name="sequence" formControlName="seq" matInput placeholder="Example: 4" type="number" />
+                </mat-form-field>
+                <div class="d-flex form-desc">
+                    <p class="flex-even sm-text">
+                        Position limit is <strong>{{ data.playlistContentCount }}</strong>
+                    </p>
+                    <p
+                        class="sm-text text-danger"
+                        *ngIf="quickMoveForm.get('seq').invalid && quickMoveForm.get('seq').errors?.numberRange">
+                        Please enter a number between 1 and {{ playlistCount }}.
+                    </p>
+                </div>
+
+                <div class="save-cancel-button-wrapper mt-3">
+                    <button
+                        mat-button
+                        mat-raised-button
+                        class="theme-btn mr-2"
+                        [disabled]="!quickMoveForm.valid"
+                        [mat-dialog-close]="{ seq: quickMoveForm.value['seq'] }">
+                        <i class="fas fa-save mr-3 text-green"></i>
+                        <small class="font-weight-bold">Save</small>
+                    </button>
+                    <button mat-button mat-raised-button class="theme-btn" mat-dialog-close>
+                        <i class="fas fa-times mr-3 text-danger"></i>
+                        <small class="font-weight-bold">Cancel</small>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Position Field -->
+</div>

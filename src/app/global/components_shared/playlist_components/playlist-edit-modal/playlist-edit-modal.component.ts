@@ -5,6 +5,7 @@ import { MAT_DIALOG_DATA } from '@angular/material';
 import { PlaylistService } from '../../../services/playlist-service/playlist.service';
 import { UI_SINGLE_PLAYLIST } from '../../../../global/models/ui_single-playlist.model';
 import { API_SINGLE_PLAYLIST } from 'src/app/global/models/api_single-playlist.model';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-playlist-edit-modal',
@@ -17,11 +18,14 @@ export class PlaylistEditModalComponent implements OnInit {
     disable_btn: boolean = true;
     is_submitted: boolean = false;
     is_saved: boolean = false;
+    isLoading: boolean = false;
+    errorMessage = '';
 
     constructor(
         private _playlist: PlaylistService,
         private _form: FormBuilder,
         @Inject(MAT_DIALOG_DATA) public _playlist_data: API_SINGLE_PLAYLIST,
+        private dialogRef: MatDialogRef<PlaylistEditModalComponent>,
     ) {}
 
     ngOnInit() {
@@ -63,13 +67,42 @@ export class PlaylistEditModalComponent implements OnInit {
             return;
         }
 
-        this._playlist.update_playlist_info(this.edit_form.value).subscribe(
+        this.isLoading = true;
+
+        // Create a copy of the form's value
+        const formValue = this.edit_form.value;
+
+        this.edit_form.controls['playlistName'].disable();
+        this.edit_form.controls['playlistDescription'].disable();
+
+        // Use the copied form value when calling update_playlist_info
+        this._playlist.update_playlist_info(formValue).subscribe(
             (data) => {
                 this.is_saved = true;
+                this.closeModalAfterDelay();
             },
             (error) => {
                 this.is_submitted = false;
+                this.isLoading = false;
+
+                // Set the error message
+                if (error.status === 0) {
+                    // Network error
+                    this.errorMessage = 'Network connection problem. Please check your network and try again.';
+                } else {
+                    // Other error
+                    this.errorMessage = error.message;
+                }
+
+                this.edit_form.controls['playlistName'].enable();
+                this.edit_form.controls['playlistDescription'].enable();
             },
         );
+    }
+
+    closeModalAfterDelay() {
+        setTimeout(() => {
+            this.dialogRef.close();
+        }, 1500); // Close the modal after 1.5 seconds (1500 milliseconds)
     }
 }

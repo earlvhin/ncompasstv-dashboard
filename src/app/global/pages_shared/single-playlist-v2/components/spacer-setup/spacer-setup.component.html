@@ -1,0 +1,143 @@
+<div id="new-spacer" class="new-spacer-dialog">
+    <mat-horizontal-stepper #stepper>
+        <!-- Begin: Step 1 -->
+        <mat-step>
+            <ng-template matStepLabel>Info</ng-template>
+            <div class="step-1 spacer-basic-info pt-3">
+                <div class="step-header d-flex mb-3">
+                    <div class="title-desc">
+                        <h3 class="m-0">Spacer Info</h3>
+                        <p class="sm-text">Name your spacer and set its rules</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="spacer-setup-form mb-3">
+                <form [formGroup]="spacerInfo">
+                    <!-- Spacer Name -->
+                    <div class="spacer-name-field-wrapper">
+                        <mat-form-field class="full-width" appearance="fill">
+                            <mat-label>Spacer Name</mat-label>
+                            <input
+                                name="spacerName"
+                                formControlName="spacerName"
+                                matInput
+                                placeholder="Example: Host Sort"
+                                type="text" />
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Spacer Description -->
+                    <div class="spacer-description-field-wrapper pb-2 border-bottom">
+                        <mat-form-field class="full-width" appearance="fill">
+                            <mat-label>Spacer Description</mat-label>
+                            <input
+                                name="spacerDescription"
+                                formControlName="spacerDescription"
+                                matInput
+                                placeholder="Example: Host Concentrated Sort"
+                                type="text" />
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Spacer Rules -->
+                    <div class="step-header d-flex mb-3 pt-3">
+                        <div class="title-desc">
+                            <h3 class="m-0">Spacer Rules</h3>
+                            <p class="sm-text">
+                                Playlist Content Category Summary:
+                                <span
+                                    class="font-weight-bold"
+                                    *ngFor="let ac of availableContentCategories; let i = index">
+                                    {{ ac.count }}
+                                    {{ ac.categoryName | titlecase
+                                    }}<ng-container *ngIf="i < availableContentCategories.length - 1">,</ng-container>
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="spacer-algo-fields pt-2" formArrayName="spacerAlgoFields">
+                        <div class="row">
+                            <div class="col-lg-6" *ngFor="let field of dynamicSpacerAlgoFields.controls; let i = index">
+                                <div [formGroup]="field" *ngIf="field.value | keyvalue as f">
+                                    <p
+                                        class="m-0 sm-text font-italic"
+                                        *ngIf="!field.get(f[0].key).hasError('numberRange'); else shortDesc">
+                                        minimum 0, maximum
+                                        {{ getCategoryInfoByName(f[0].key).count || 0 }}.
+                                    </p>
+                                    <mat-form-field class="full-width" appearance="fill">
+                                        <mat-label>{{ f[0].key | titlecase }}</mat-label>
+                                        <input
+                                            name="field.key"
+                                            formControlName="{{ f[0].key }}"
+                                            matInput
+                                            placeholder="{{ getCategoryInfoByName(f[0].key).count }} available"
+                                            type="number" />
+                                    </mat-form-field>
+                                    <ng-template #shortDesc>
+                                        <p class="m-0 sm-text sm-text text-danger font-italic">
+                                            Not enough
+                                            {{ getCategoryInfoByName(f[0].key).categoryName }}
+                                            content:
+                                            {{ getCategoryInfoByName(f[0].key).count }}
+                                        </p>
+                                    </ng-template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="!spacerInfo.valid" matStepperNext>
+                <i class="fas fa-long-arrow-alt-right mr-3 text-green"></i>
+                <small class="font-weight-bold">Next</small>
+            </button>
+
+            <button mat-button mat-raised-button class="theme-btn bg-danger" [mat-dialog-close]>
+                <i class="fas fa-times mr-3"></i>
+                <small class="font-weight-bold">Cancel</small>
+            </button>
+        </mat-step>
+        <!-- End: Step 1 -->
+
+        <!-- Begin: Step 2 -->
+        <mat-step>
+            <ng-template matStepLabel>Assign</ng-template>
+            <div class="step-2 spacer-assign pt-3 mb-4">
+                <div class="step-header d-flex align-items-center mb-3">
+                    <div class="title-desc flex-even">
+                        <h3 class="m-0">Assign Spacer</h3>
+                        <p class="sm-text">Choose which host or licenses you wish to assign this spacer</p>
+                    </div>
+
+                    <div class="toggle-wrapper pt-1 pr-2">
+                        <mat-slide-toggle (change)="toggleAll.next($event)"></mat-slide-toggle>
+                    </div>
+                </div>
+
+                <div class="play-location-wrapper" *ngIf="playlistHostLicenses.length">
+                    <app-play-location
+                        [host_licenses]="playlistHostLicenses"
+                        [toggle_all_spacer]="toggleAll.asObservable()"
+                        (to_whitelist)="licenseIdToggled($event)"></app-play-location>
+                </div>
+            </div>
+
+            <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="!spacerInfo.valid">
+                <i class="fas fa-save mr-3 text-green"></i>
+                <small class="font-weight-bold">Save</small>
+            </button>
+
+            <button mat-button mat-raised-button class="theme-btn bg-danger" [mat-dialog-close]>
+                <i class="fas fa-times mr-3"></i>
+                <small class="font-weight-bold">Cancel</small>
+            </button>
+        </mat-step>
+        <!-- End: Step 2 -->
+    </mat-horizontal-stepper>
+</div>
+
+<ng-container #loading></ng-container>

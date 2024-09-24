@@ -145,6 +145,18 @@
                                                                 {{ data[d].value }}
                                                             </div>
                                                             <ng-container
+                                                                *ngIf="
+                                                                    page === 'playlists' &&
+                                                                    data[d].data_label === 'playlist_name' &&
+                                                                    data[d].is_migrated
+                                                                ">
+                                                                <span
+                                                                    class="badge _primary"
+                                                                    [matTooltip]="'Migrated to V2'">
+                                                                    V2
+                                                                </span>
+                                                            </ng-container>
+                                                            <ng-container
                                                                 *ngIf="pagesWithStatusIndicator.includes(page)">
                                                                 <span>
                                                                     <i

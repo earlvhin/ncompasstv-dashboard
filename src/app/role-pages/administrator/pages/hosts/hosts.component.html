@@ -211,6 +211,7 @@
                 <h3>What the!?</h3>
                 <p class="sm-text mb-3">There are no available dealers and hosts at the moment.</p>
                 <button
+                    *ngIf="!isDealerAdmin"
                     mat-button
                     mat-raised-button
                     class="theme-btn mr-2"

@@ -1,0 +1,64 @@
+<div class="content-basic-settings">
+    <form [formGroup]="basicSettings" *ngIf="formReady">
+        <div class="d-flex">
+            <div
+                class="flex-even"
+                *ngIf="has_image_and_feed || (!bulk_setting && !(playlist_content[0]?.fileType | isvideo))">
+                <!-- Settings: Duration -->
+                <div class="duration-form-wrapper pb-2 border-bottom">
+                    <mat-form-field class="full-width" appearance="fill">
+                        <mat-label>Duration, default is 20</mat-label>
+                        <input
+                            name="duration"
+                            formControlName="duration"
+                            matInput
+                            placeholder="Example: 20"
+                            type="number" />
+                    </mat-form-field>
+                    <p class="xsm-text form-desc" *ngIf="!isContentAFiller">Applies to non video assets</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings: Frequency -->
+        <div
+            class="frequency-set-wrapper border-bottom py-25 d-flex align-items-center"
+            *ngIf="!bulk_setting && !isContentAFiller">
+            <div class="flex-even">
+                <strong class="sm-text">Set Frequency</strong>
+            </div>
+            <div
+                class="frequency-radio-btn"
+                *ngIf="playlist_content_length >= frequencyMinCount; else frequencyDisabled">
+                <mat-radio-group formControlName="frequency" aria-label="Select an option">
+                    <ng-container *ngIf="isParentFrequency">
+                        <mat-radio-button class="mr-3" value="1">
+                            <strong class="sm-text">1x</strong>
+                        </mat-radio-button>
+                    </ng-container>
+
+                    <mat-radio-button class="mr-3" value="2"><strong class="sm-text">2x</strong></mat-radio-button>
+                    <mat-radio-button value="3"><strong class="sm-text">3x</strong></mat-radio-button>
+                </mat-radio-group>
+            </div>
+
+            <ng-template #frequencyDisabled>
+                <div class="frequency-disabled-message">
+                    <h6 class="m-0 font-italic text-gray">
+                        Playlist content did not meet minimum count ({{ frequencyMinCount }}).
+                    </h6>
+                </div>
+            </ng-template>
+        </div>
+
+        <!-- Settings: Fullscreen -->
+        <div class="fullscreen-toggle-wrapper border-bottom py-25 d-flex" *ngIf="!isContentAFiller">
+            <div class="flex-even">
+                <strong class="sm-text">Set to Fullscreen</strong>
+            </div>
+            <div class="fullscreen-toggle" [ngClass]="bulk_setting && 'pr-2'">
+                <mat-slide-toggle formControlName="isFullScreen"></mat-slide-toggle>
+            </div>
+        </div>
+    </form>
+</div>

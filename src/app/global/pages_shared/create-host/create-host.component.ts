@@ -96,6 +96,7 @@ export class CreateHostComponent implements OnInit {
     no_category = false;
     no_category2 = false;
     no_result = false;
+    notFromGoogle = true;
     operation_days: UI_STORE_HOUR[];
     paging: PAGING;
     place_id: string;
@@ -173,6 +174,7 @@ export class CreateHostComponent implements OnInit {
 
     addHours(data: UI_OPERATION_DAYS) {
         this.hasInvalidTime = true;
+        this.notFromGoogle = true;
 
         const hours = {
             id: uuid.v4(),
@@ -309,6 +311,7 @@ export class CreateHostComponent implements OnInit {
             .subscribe((data) => {
                 if (!data.result.opening_hours) return;
                 location_selected.opening_hours = data.result.opening_hours;
+                this.notFromGoogle = false;
                 this.mapOperationHours(location_selected.opening_hours.periods);
             });
     }
@@ -508,6 +511,7 @@ export class CreateHostComponent implements OnInit {
 
         data.status = !data.status;
         data.periods.push(hours);
+        this.notFromGoogle = true;
     }
 
     openWarningModal(status: string, message: string, data: string, return_msg: string, action: string): void {
@@ -853,14 +857,39 @@ export class CreateHostComponent implements OnInit {
                 id: h.id,
                 label: h.label,
                 day: h.day,
-                periods: this.operation_hours.filter(
-                    (t) => t.day_id == h.id || (t.open === '12:00 AM' && t.close === '11:59 PM'),
-                ),
-                status:
-                    this.operation_hours.filter(
-                        (t) => (t.open === '12:00 AM' && t.close === '11:59 PM') || t.day_id == h.id,
-                    ).length !== 0,
+                periods: this.operation_hours.filter((t) => t.day_id == h.id),
+                status: this.operation_hours.filter((t) => t.day_id == h.id).length !== 0,
             };
+        });
+
+        //map to set status of days to open if all days are open
+        if (data.length == 1 && data[0].open.day == 0) {
+            this.operation_days.forEach((days) => {
+                if (days.id != 0) days.status = !this.notFromGoogle;
+            });
+        }
+
+        //map to have unique id and day id per periods if all week is 24hrs open
+        //Fix for NSP-496
+        this.operation_days.map((days) => {
+            if (days.status && days.periods.length == 0) {
+                days.periods.push({
+                    id: uuid.v4(),
+                    day_id: days.id,
+                    open: '12:00 AM',
+                    close: '11:59 PM',
+                    openingHourData: {
+                        hour: 0,
+                        minute: 0,
+                        second: 0,
+                    },
+                    closingHourData: {
+                        hour: 23,
+                        minute: 59,
+                        second: 0,
+                    },
+                });
+            }
         });
     }
 

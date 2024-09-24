@@ -20,6 +20,7 @@ import {
     AuthService,
     ConfirmationDialogService,
     ContentService,
+    DealerService,
     HelperService,
     HostService,
     LicenseService,
@@ -243,6 +244,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         private _content: ContentService,
         private _dialog: MatDialog,
         private _date: DatePipe,
+        private _dealer: DealerService,
         private _form: FormBuilder,
         private _helper: HelperService,
         private _host: HostService,
@@ -1112,9 +1114,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
         this.title = licenseData.license.alias;
         this.license_data = licenseData.license;
-        this.host_id = licenseData.host.hostId;
+        if (licenseData.host) this.host_id = licenseData.host.hostId;
         this.initializeLicenseSettingsForm(licenseData.license);
         this.initializeFastEdgeSettingsForm();
+        this.getDealerById(licenseData.license.dealerId);
 
         // if no host data
         if (!licenseData.host) {
@@ -1697,7 +1700,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                         return;
                     }
 
-                    this.setDealerData(response);
                     this.screen = this.mapScreenToUI(response);
                     this.screen_route = `/${this.customRoute}/screens/${id}`;
                     this.getTemplateData(response.template.templateId);
@@ -2048,8 +2050,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     }
 
     private setDealerData(data) {
-        const dealerId = data.dealer ? data.dealer.dealerId : data.host.dealerId;
-        this.businessName = data.dealer ? data.dealer.businessName : data.host.businessName;
+        const dealerId = data.dealerId;
+        this.businessName = data.businessName;
         this.dealer_route = `/${this.customRoute}/dealers/${dealerId}/`;
     }
 
@@ -2642,6 +2644,20 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         this.content_search_control.enable({ emitEvent: false });
         this.has_playlist = true;
         this.filterActiveContentsPlayingToday();
+    }
+
+    private getDealerById(id: string): void {
+        this._dealer
+            .get_dealer_by_id(id)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe(
+                (response) => {
+                    this.setDealerData(response);
+                },
+                (error) => {
+                    console.error(error);
+                },
+            );
     }
 
     protected get _additionalLicenseSettingsFormFields() {

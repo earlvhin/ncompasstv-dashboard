@@ -26,6 +26,7 @@ import { SingleContentComponent } from '../../global/pages_shared/single-content
 import { SingleHostComponent } from '../../global/pages_shared/single-host/single-host.component';
 import { SingleLicenseComponent } from '../../global/pages_shared/single-license/single-license.component';
 import { SinglePlaylistComponent } from '../../global/pages_shared/single-playlist/single-playlist.component';
+import { SinglePlaylistV2Component } from 'src/app/global/pages_shared/single-playlist-v2/single-playlist-v2.component';
 import { SingleScreenComponent } from '../../global/pages_shared/single-screen/single-screen.component';
 import { SingleUserComponent } from '../../global/pages_shared/single-user/single-user.component';
 import { TagsComponent } from 'src/app/global/pages_shared/tags/tags.component';
@@ -257,6 +258,17 @@ export const DEALER_ROUTES: Routes = [
                     {
                         path: '',
                         component: PlaylistsComponent,
+                    },
+                    {
+                        path: 'v2/:data',
+                        component: SinglePlaylistV2Component,
+                        data: {
+                            breadcrumb: 'Single Playlist',
+                        },
+                    },
+                    {
+                        path: 'v2/:data/:breadcrumb',
+                        component: SinglePlaylistV2Component,
                     },
                     {
                         path: 'create-playlist',

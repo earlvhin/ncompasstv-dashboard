@@ -53,6 +53,7 @@
                                 [playlist_id]="playlist.playlist.playlistId"
                                 [playlist_contents]="playlist_content_and_blacklist"
                                 [playlist_host_license]="playlist.hostLicenses"
+                                (migrate_playlist)="handleMigrationStatus($event)"
                                 (playlist_changes_saved)="reloadPlaylist()"
                                 (reload_playlist)="reloadPlaylist()"
                                 (reload_demo)="reloadDemo()"
@@ -160,3 +161,6 @@
         </div>
     </ng-template>
 </ng-container>
+
+<app-migrate-overlay *ngIf="migrationProgress" [title]="'Migrating playlist...'" [subtitle]="'Please wait...'">
+</app-migrate-overlay>

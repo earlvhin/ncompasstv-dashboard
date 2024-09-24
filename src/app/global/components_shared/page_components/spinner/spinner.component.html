@@ -1,3 +1,6 @@
 <div class="d-flex justify-content-center align-items-center h-100">
-    <mat-spinner [diameter]="diameter || 100"></mat-spinner>
+    <div class="wrap">
+        <mat-spinner [diameter]="diameter || 100"></mat-spinner>
+        <h4 *ngIf="message" class="mt-3">{{ message }}</h4>
+    </div>
 </div>
