@@ -92,8 +92,20 @@ export class DealerService extends BaseService {
         return this.getRequest(url);
     }
 
-    get_dealers() {
-        return this.getRequest(`${this.getters.api_get_dealers}`).map((data) => data.dealers);
+    /**
+     * Retrieves a list of dealers from the API and returns it as an observable.
+     * This method sends a GET request to fetch dealer data, including pagination information,
+     * and maps the response to extract only the list of dealers.
+     *
+     * @returns {Observable<API_DEALER[]>} - An observable that emits an array of dealers.
+     * @endpoint /dealer/getall
+     */
+    public get_dealers(): Observable<API_DEALER[]> {
+        const request: Observable<{ paging: PAGING; dealers: API_DEALER[] }> = this.getRequest(
+            `${this.getters.api_get_dealers}`,
+        );
+
+        return request.map((data) => data.dealers);
     }
 
     get_dealers_directory(page: number, key: string, searchKey: string) {
@@ -164,8 +176,11 @@ export class DealerService extends BaseService {
         return this.getRequest(url);
     }
 
-    get_dealers_with_page_minified(page: number, key: string, pageSize = 15, isActive = false) {
-        const url = `${this.getters.api_get_dealers_minified}?page=${page}&search=${key}&pageSize=${pageSize}&active=${isActive}`;
+    public getMinifiedDealerData(filters: API_FILTERS): Observable<{ paging: PAGING }> {
+        const { isActive, keyword, page, pageSize } = filters;
+        const endpoint = this.getters.api_get_dealers_minified;
+        const urlParams = `page=${page}&search=${keyword}&pageSize=${pageSize}&active=${isActive}`;
+        const url = `${endpoint}?${urlParams}`;
         return this.getRequest(url);
     }
 

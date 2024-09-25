@@ -23,12 +23,13 @@ export interface API_FILTERS {
     hostId?: string;
     inactive?: any;
     installDate?: string;
+    isActive?: boolean;
     isActivated?: any;
     keyword?: string;
     online?: any;
     ownerId?: string;
     page?: number;
-    pageSize?: any;
+    pageSize?: number;
     pending?: any;
     piStatus?: string;
     role?: number;

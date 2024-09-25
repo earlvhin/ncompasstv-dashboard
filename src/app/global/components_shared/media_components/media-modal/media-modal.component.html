@@ -4,13 +4,13 @@
             <span class="fas fa-times"></span>
         </button>
         <ng-container *ngIf="initialLoad; else loading">
-            <h3 *ngIf="!isEdit; else title_edit">You are uploading content for:</h3>
+            <h3 *ngIf="!isReassigningContent; else title_edit">You are uploading content for:</h3>
             <ng-template #title_edit>
                 <h3>You are editing content for:</h3>
             </ng-template>
             <p class="sm-text mb-4">Select a Dealer to get his/her Hosts and Advertiser.</p>
 
-            <div class="text-left control-toggle mb-3" *ngIf="isEdit">
+            <div class="text-left control-toggle mb-3" *ngIf="isReassigningContent">
                 <mat-slide-toggle
                     class="mr-3"
                     (change)="onToggleFloatingContent($event)"
@@ -23,14 +23,15 @@
                 (dealer_selected)="dealerSelected($event)"
                 [active_only]="true"
                 [initial_value]="dealerOwner"
-                [isDisabled]="isDealer ? true : false">
+                [isDisabled]="isDealer"
+                [isDealerAdmin]="isUserDealerAdmin">
             </app-dealer-autocomplete>
 
             <!-- Host -->
             <div class="position-relative">
                 <app-host-autocomplete
-                    *ngIf="assignData.dealer; else no_dealer_host"
-                    [dealer_id]="assignData.dealer || null"
+                    *ngIf="assignData.dealerId; else no_dealer_host"
+                    [dealer_id]="assignData.dealerId || null"
                     (host_selected)="hostSelected($event)"
                     [initial_value]="hostOwner">
                 </app-host-autocomplete>
@@ -42,7 +43,8 @@
             <!-- Advertiser -->
             <div class="position-relative">
                 <app-advertiser-autocomplete
-                    *ngIf="assignData.dealer; else no_dealer_adv"
+                    *ngIf="assignData.dealerId; else no_dealer_adv"
+                    [dealer_id]="assignData.dealerId || null"
                     (advertiser_selected)="advertiserSelected($event)">
                 </app-advertiser-autocomplete>
                 <ng-template #no_dealer_adv>
@@ -50,7 +52,7 @@
                 </ng-template>
             </div>
 
-            <div *ngIf="!isEdit; else edit_button">
+            <div *ngIf="!isReassigningContent; else edit_button">
                 <div class="d-flex justify-content-between align-items-end">
                     <div>
                         <button
@@ -58,10 +60,15 @@
                             mat-raised-button
                             class="theme-btn mt-4 mr-2"
                             [mat-dialog-close]="assignData"
-                            [disabled]="!assignData.dealer">
+                            [disabled]="!assignData.dealerId">
                             Done
                         </button>
-                        <button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="assignData">
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn mt-4"
+                            (click)="resetOwnerData()"
+                            [mat-dialog-close]="assignData">
                             Skip
                         </button>
                     </div>
@@ -69,7 +76,7 @@
                     <div>
                         <mat-slide-toggle
                             (change)="setOptimizedVideoUploadValue($event)"
-                            [(ngModel)]="optimize_video_upload">
+                            [(ngModel)]="optimizeVideoUpload">
                             <small class="ml-2">Optimize video upload (Recommended)</small>
                         </mat-slide-toggle>
                     </div>
@@ -82,7 +89,7 @@
                     mat-raised-button
                     class="theme-btn mt-4 mr-2"
                     (click)="updateData()"
-                    [disabled]="!assignData.dealer && !is_floating">
+                    [disabled]="!assignData.dealerId && !is_floating">
                     Update
                 </button>
                 <button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="false">Cancel</button>

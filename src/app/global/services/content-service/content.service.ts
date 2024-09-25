@@ -5,6 +5,7 @@ import 'rxjs/add/operator/map';
 
 import {
     API_CONTENT,
+    API_MINIFIED_CONTENT,
     CREDITS_TO_SUBMIT,
     LICENSE_PLAYING_WHERE,
     PAGING,
@@ -110,8 +111,17 @@ export class ContentService extends BaseService {
         return this.getRequest(`${this.getters.api_get_content_total}`);
     }
 
-    get_contents_summary() {
-        return this.getRequest(`${this.getters.api_get_content_summary}`);
+    /**
+     * Retrieves a summary of minified contents from the API.
+     *
+     * @returns {Observable<{ contents: API_MINIFIED_CONTENT[]; message?: string }>}
+     * An observable that emits an object containing an array of minified content (`contents`)
+     * and an optional `message` property.
+     *
+     * @endpoint /content/getalllimitedfields
+     */
+    public getMinifiedContents(): Observable<{ contents: API_MINIFIED_CONTENT[]; message?: string }> {
+        return this.getRequest(this.getters.api_get_content_summary);
     }
 
     get_contents_total_by_dealer(id) {

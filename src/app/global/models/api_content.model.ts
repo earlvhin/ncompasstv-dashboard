@@ -82,3 +82,10 @@ export class API_CONTENT_DATA {
         this.contentId = contentId;
     }
 }
+
+export interface API_MINIFIED_CONTENT {
+    contentId: string;
+    fileName: string;
+    fileType: string;
+    title: string;
+}

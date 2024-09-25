@@ -5,7 +5,7 @@ import { debounceTime, map, startWith, takeUntil } from 'rxjs/internal/operators
 import { forkJoin, Observable, Subject } from 'rxjs';
 
 import { AuthService, DealerService } from 'src/app/global/services';
-import { API_DEALER, PAGING } from 'src/app/global/models';
+import { API_DEALER, API_FILTERS, PAGING } from 'src/app/global/models';
 
 @Component({
     selector: 'app-create-playlist-dialog',
@@ -71,17 +71,13 @@ export class CreatePlaylistDialogComponent implements OnInit, OnDestroy {
     private getDealers(page = 1) {
         this.isLoadingDealers = true;
         const pageSize = 50;
+        const filters: API_FILTERS = { page, keyword: '', pageSize, isActive: true };
 
         this._dealer
-            .get_dealers_with_page_minified(page, '', pageSize)
+            .getMinifiedDealerData(filters)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe({
                 next: (response) => {
-                    if (response.message) {
-                        this.isLoadingDealers = false;
-                        return;
-                    }
-
                     this.dealers = [...(response.paging.entities as API_DEALER[])];
                     let remainingRequests: Observable<{ paging?: PAGING; message?: string }>[] = [];
                     const { page, pages } = response.paging;
@@ -95,9 +91,9 @@ export class CreatePlaylistDialogComponent implements OnInit, OnDestroy {
                     }
 
                     // else loop through the remaining requests
-
                     for (let i = currentPage; i < lastPage; i++) {
-                        remainingRequests.push(this._dealer.get_dealers_with_page_minified(i + 1, '', pageSize));
+                        filters.page = i + 1;
+                        remainingRequests.push(this._dealer.getMinifiedDealerData(filters));
                     }
 
                     forkJoin(remainingRequests)
@@ -113,6 +109,7 @@ export class CreatePlaylistDialogComponent implements OnInit, OnDestroy {
                         });
                 },
                 error: (e) => {
+                    this.isLoadingDealers = false;
                     console.error('Could not load dealers', e);
                 },
             });
