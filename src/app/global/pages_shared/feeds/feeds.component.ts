@@ -297,7 +297,11 @@ export class FeedsComponent implements OnInit, OnDestroy {
                     editable: false,
                     hidden: false,
                 },
-                { value: `${f.owner.firstName} ${f.owner.lastName}`, editable: false, hidden: false },
+                {
+                    value: (f.owner && `${f.owner.firstName} ${f.owner.lastName}`) || '--',
+                    editable: false,
+                    hidden: false,
+                },
                 {
                     value: this._date.transform(f.feed.dateCreated, 'MMMM d, y'),
                     editable: false,

@@ -115,9 +115,9 @@
     }
 
     .mat-dialog-container {
-        overflow: initial !important;
-        max-height: 800px !important;
+        max-height: unset;
     }
+
     .timepicker-overlay {
         z-index: 1100 !important;
     }
@@ -163,6 +163,12 @@
 
     .mat-tab-list {
         padding-bottom: 10px;
+    }
+}
+
+.rename-error {
+    .mat-form-field-infix {
+        width: auto;
     }
 }
 
@@ -403,6 +409,19 @@ breadcrumb {
     .mat-tab-body.mat-tab-body-active {
         overflow-y: hidden !important;
     }
+}
+
+/** 100/10 = 10 **/
+.col-lg-1-5 {
+    flex: 0 0 10%;
+    max-width: 10%;
+    position: relative;
+    width: 100%;
+}
+
+.py-25 {
+    padding-top: 0.8rem !important;
+    padding-bottom: 0.8rem !important;
 }
 
 #clone-modal {

@@ -1,33 +1,49 @@
 <div class="p-4">
     <ng-container *ngIf="!is_saved; else success">
         <h3 class="font-weight-medium">Playlist Edit Info</h3>
-        <p class="md-text mb-5">Edit playlist name and playlist description</p>
+        <p class="md-text mb-3">Edit playlist name and playlist description</p>
+
+        <div *ngIf="errorMessage" class="alert alert-danger">
+            {{ errorMessage }}
+        </div>
         <form [formGroup]="edit_form" (ngSubmit)="updatePlaylistInfo()">
             <mat-form-field class="full-width">
                 <mat-label>Playlist Name (Max Characters: 50)</mat-label>
-                <input formControlName="playlistName" matInput type="text" placeholder="Playlist Name" maxlength="50" />
-            </mat-form-field>
-
-            <mat-form-field class="full-width mb-3">
-                <mat-label>Playlist Description (Max Characters: 100)</mat-label>
                 <input
-                    formControlName="playlistDescription"
+                    formControlName="playlistName"
                     matInput
                     type="text"
-                    placeholder="Playlist Description"
-                    maxlength="100" />
+                    placeholder="Playlist Name"
+                    maxlength="50"
+                    [disabled]="isLoading" />
             </mat-form-field>
-
-            <button mat-button mat-raised-button class="theme-btn" [disabled]="disable_btn">Edit Playlist</button>
+            <mat-form-field class="full-width">
+                <mat-label>Playlist Description (Max Characters: 100)</mat-label>
+                <textarea
+                    formControlName="playlistDescription"
+                    matInput
+                    placeholder="Playlist Description"
+                    maxlength="100"
+                    rows="2"
+                    [disabled]="isLoading"></textarea>
+            </mat-form-field>
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn mr-2 text-white"
+                [disabled]="disable_btn || isLoading"
+                color="primary">
+                <span *ngIf="!isLoading">Confirm</span>
+                <span *ngIf="isLoading">Loading...</span>
+            </button>
+            <button mat-button mat-raised-button mat-dialog-close class="theme-btn">Cancel</button>
         </form>
     </ng-container>
-
     <ng-template #success>
-        <div class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center h-100">
+        <div class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center">
             <div>
                 <app-success-animation class="mb-2"></app-success-animation>
                 <h3 class="mb-4">Playlist Info Updated</h3>
-                <button mat-button mat-raised-button mat-dialog-close class="theme-btn">OK</button>
             </div>
         </div>
     </ng-template>

@@ -1,5 +1,5 @@
 <div class="single-license-page">
-    <div class="theme-container" *ngIf="host && timezone && businessName; else loaderMain">
+    <div class="theme-container">
         <div class="popup" *ngIf="show_popup" [ngClass]="setPopupBackground()">
             {{ popup_message }} <span class="fas fa-times" (click)="dismissPopup()"></span>
         </div>
@@ -72,7 +72,7 @@
                         </div>
 
                         <!-- Hostname -->
-                        <div class="d-flex hostname">
+                        <div class="d-flex hostname" *ngIf="host">
                             <span class="sm-text mr-2"> Hostname: </span>
                             <h5 class="mb-0 sm-text">
                                 <a [routerLink]="host_route" target="_blank">{{ host.name }}</a>
@@ -82,7 +82,7 @@
 
                     <div class="d-flex flex-column">
                         <!-- Timezone -->
-                        <div class="d-flex timezone">
+                        <div class="d-flex timezone" *ngIf="host">
                             <span class="sm-text mr-2"> Timezone: </span>
                             <h5 class="sm-text">
                                 {{ timezone.name }} -
@@ -104,7 +104,7 @@
                         </div>
 
                         <!-- Business Hours -->
-                        <div class="d-flex business-hours">
+                        <div class="d-flex business-hours" *ngIf="host">
                             <span class="sm-text mr-2">Business Hours:</span>
                             <h5 (click)="onShowHours()" class="hoverable sm-text">
                                 {{ current_operation.day }}: {{ current_operation.period }}

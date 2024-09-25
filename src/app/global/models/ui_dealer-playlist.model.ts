@@ -8,6 +8,7 @@ export class UI_DEALER_PLAYLIST {
     date_created: object;
     total_contents: TABLE_ROW_FORMAT;
     allow_export: object;
+    total_content: object;
 
     constructor(
         playlistId: object,
@@ -25,5 +26,6 @@ export class UI_DEALER_PLAYLIST {
         this.date_created = dateCreated;
         this.total_contents = totalContents;
         this.allow_export = allow_export;
+        this.total_content = totalContents;
     }
 }

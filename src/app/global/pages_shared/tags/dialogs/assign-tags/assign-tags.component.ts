@@ -5,7 +5,7 @@ import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { ReplaySubject, Subject } from 'rxjs';
 
 import { TagService, AuthService } from 'src/app/global/services';
-import { CREATE_AND_ASSIGN_TAG, OWNER, TAG, TAG_OWNER } from 'src/app/global/models';
+import { OWNER, TAG, TAG_OWNER } from 'src/app/global/models';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
@@ -51,29 +51,32 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
         this._unsubscribe.complete();
     }
 
-    onSubmit() {
+    /**
+     * Handles the submission of selected owners and tags by mapping them to the required format and sending them
+     * to the tag assignment service. It subscribes to the tag assignment process and handles success or error responses.
+     *
+     * @returns {void}
+     */
+    public onSubmit(): void {
         const owners = this.selectedOwnersControl.value as TAG_OWNER[];
         const tags = this.selectedTagsControl.value as TAG[];
 
-        const ownersToSubmit = owners.map((owner) => {
-            const { ownerId, tagTypeId, displayName } = owner;
-            return { ownerId, tagTypeId, displayName };
-        });
+        // Prepare payload for owners data
+        const ownersToSubmit = owners.map(({ ownerId, tagTypeId }) => ({ ownerId, tagTypeId }));
 
-        const tagsToSubmit = tags.map((tag) => {
-            const { tagId, name } = tag;
-            return { tagId, name };
-        });
+        // Prepare payload for tags data
+        const tagsToSubmit = tags.map(({ tagId, name }) => ({ tagId, name }));
 
+        // Send the request to assign tags
         this._tag
-            .assignTags(ownersToSubmit, tagsToSubmit)
+            .assignTags({ owners: ownersToSubmit, tagIds: tagsToSubmit })
             .pipe(takeUntil(this._unsubscribe))
-            .subscribe(
-                () => this.showSuccessModal(),
-                (error) => {
-                    console.error(error);
+            .subscribe({
+                next: () => this.showSuccessModal(),
+                error: (e) => {
+                    console.error('Failed to assign tag(s)', e);
                 },
-            );
+            });
     }
 
     _isDealer() {

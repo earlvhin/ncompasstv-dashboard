@@ -1,0 +1,33 @@
+.original-filename {
+    color: red;
+    font-weight: bold;
+}
+
+.filename-error {
+    text-wrap: balance;
+    font-size: 12px;
+
+    &--icon {
+        font-size: 16px;
+    }
+}
+
+.rename-error--icon {
+    animation: nudge 0.3s ease-in-out;
+}
+
+@keyframes nudge {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-2px);
+    }
+    50% {
+        transform: translateX(2px);
+    }
+    75% {
+        transform: translateX(-2px);
+    }
+}

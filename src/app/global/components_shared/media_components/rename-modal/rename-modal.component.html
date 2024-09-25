@@ -1,17 +1,35 @@
-<div class="confirmation-modal h-100 d-flex align-items-center justify-content-center">
+<div class="confirmation-modal modal-spacing-fix h-100 d-flex align-items-center justify-content-center">
     <div class="text-center">
         <app-warning-animation></app-warning-animation>
         <h3 class="mb-1 mt-2">RENAME FILE</h3>
         <p class="mb-4 sm-text font-weight-md text-warning">
-            You are about to rename the file. <br />Please ensure that you will pick a unique name.
+            You are about to rename <span class="original-filename">"{{ originalFilename }}"</span> <br />
+            Please ensure that you will pick a unique name.
         </p>
         <form [formGroup]="update_file">
-            <mat-form-field class="col-lg-12 p-0">
+            <mat-form-field class="rename-error">
                 <mat-label>File Name</mat-label>
-                <input matInput formControlName="filename" [placeholder]="'Ex. drinking_energy'" />
+                <div class="d-flex">
+                    <input matInput formControlName="filename" [placeholder]="'Ex. drinking_energy'" />
+                    <div *ngIf="filenameError$ | async" class="rename-error--icon">⚠️</div>
+                </div>
             </mat-form-field>
-            <div>
-                <button mat-button mat-raised-button (click)="updateFile()" class="theme-btn mt-4 mr-3">Update</button>
+
+            <!-- Error message for same filename -->
+            <div *ngIf="filenameError$ | async" class="text-danger mt-2 filename-error">
+                <p>{{ filenameError$ | async }}</p>
+            </div>
+
+            <div class="d-flex justify-content-center mt-4">
+                <button
+                    mat-button
+                    mat-raised-button
+                    (click)="updateFile()"
+                    class="theme-btn mr-3"
+                    [disabled]="isUpdateButtonDisabled()">
+                    Update
+                </button>
+                <button mat-button mat-raised-button (click)="cancel()" class="theme-btn-cancel">Cancel</button>
             </div>
         </form>
     </div>

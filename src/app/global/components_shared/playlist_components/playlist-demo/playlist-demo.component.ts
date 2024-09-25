@@ -47,7 +47,7 @@ export class PlaylistDemoComponent implements OnInit {
     ngOnInit() {
         if (this._dialog_data) {
             this.in_modal = true;
-            this.playlist_id = this._dialog_data;
+            this.playlist_id = this._dialog_data.playlistId;
 
             this.getPlaylistById();
         } else {
@@ -64,54 +64,40 @@ export class PlaylistDemoComponent implements OnInit {
         this.checkFileType(this.count++);
     }
 
-    checkFileType(i) {
-        if (this.playlist_content[i]) {
-            const filetype = this.playlist_content[i].file_type;
-            const fileurl = `${this.playlist_content[i].file_url}${this.playlist_content[i].file_name}`;
+    private checkFileType(index: number): void {
+        const content = this.playlist_content[index];
+        if (!content) return;
 
-            if (filetype == 'webm') {
-                this.playVideo(filetype, i);
-            } else if (filetype == 'feed') {
-                const duration = this.playlist_content[i].duration;
-                this.displayFeed(this.playlist_content[i].file_url, filetype, duration);
-                if (this.isFullscreen(i) == 1) {
-                    this.is_fullscreen.emit(true);
-                } else {
-                    this.is_fullscreen.emit(false);
-                }
-            } else {
-                const duration = this.playlist_content[i].duration;
-                this.displayImage(fileurl, filetype, duration);
-                if (this.isFullscreen(i) == 1) {
-                    this.is_fullscreen.emit(true);
-                } else {
-                    this.is_fullscreen.emit(false);
-                }
-            }
-        }
+        const { file_type: filetype, classification, file_url: url, file_name: name, duration } = content;
+        const fileurl = classification === 'filler-v2' ? url : `${url}${name}`;
+
+        if (filetype === 'webm') this.playVideo(filetype, index, classification);
+        else if (filetype === 'feed') this.displayFeed(url, filetype, duration);
+        else this.displayImage(fileurl, filetype, duration);
+
+        this.is_fullscreen.emit(this.isFullscreen(index) === 1);
     }
 
-    playVideo(filetype, i) {
+    private playVideo(filetype: string, index: number, classification: string): void {
         this.current_filetype = filetype;
 
-        if (i > 0) {
-            if (this.playlist_content[i].file_name == this.playlist_content[i - 1].file_name && this.videoplayer) {
-                this.videoplayer.nativeElement.play();
-            }
-        }
+        if (
+            index > 0 &&
+            this.playlist_content[index].file_name === this.playlist_content[index - 1].file_name &&
+            this.videoplayer
+        )
+            this.videoplayer.nativeElement.play();
 
         this.current_content = of(
-            `${this.playlist_content[this.count].file_url}${this.playlist_content[this.count].file_name}`,
+            classification === 'filler-v2'
+                ? `${this.playlist_content[this.count].file_url}`
+                : `${this.playlist_content[this.count].file_url}${this.playlist_content[this.count].file_name}`,
         );
 
-        if (this.isFullscreen(i) == 1) {
-            this.is_fullscreen.emit(true);
-        } else {
-            this.is_fullscreen.emit(false);
-        }
+        this.is_fullscreen.emit(this.isFullscreen(index) === 1);
     }
 
-    getPlaylistById() {
+    public getPlaylistById(): void {
         this.subscription.add(
             this._playlist.get_playlist_by_id(this.playlist_id).subscribe((data) => {
                 this.playlist_content = this.playlist_mapToUI(data.playlistContents);
@@ -120,60 +106,39 @@ export class PlaylistDemoComponent implements OnInit {
         );
     }
 
-    displayFeed(file, filetype, duration) {
+    private displayFeed(file: any, filetype: string, duration: number): void {
         this.current_filetype = filetype;
         this.current_content = file;
-
-        if (duration == 0) {
-            duration = 20;
-        }
+        duration = duration || 20;
 
         setTimeout(() => {
-            if (this.count < this.playlist_content.length - 1) {
-                this.count++;
-            } else {
-                this.count = 0;
-            }
+            this.count = this.count < this.playlist_content.length - 1 ? this.count + 1 : 0;
             this.checkFileType(this.count);
         }, duration * 1000);
     }
 
-    videoEnded() {
+    public videoEnded(): void {
         this.current_filetype = null;
         this.current_content = null;
 
-        if (this.playlist_content.length > 1) {
-            if (this.count++ != this.playlist_content.length - 1) {
-                setTimeout(() => {
-                    this.checkFileType(this.count);
-                }, 1000);
-            } else {
-                this.count = 0;
-                setTimeout(() => {
-                    this.checkFileType(this.count);
-                }, 1000);
-            }
-        } else {
-            setTimeout(() => {
-                this.checkFileType(0);
-            }, 0);
-        }
+        if (this.playlist_content.length > 1) this.count = (this.count + 1) % this.playlist_content.length;
+        else this.count = 0;
+
+        setTimeout(
+            () => {
+                this.checkFileType(this.count);
+            },
+            this.playlist_content.length > 1 ? 1000 : 0,
+        );
     }
 
-    displayImage(file, filetype, duration) {
+    private displayImage(file: any, filetype: string, duration: number): void {
         this.current_filetype = filetype;
         this.current_content = of(file);
-
-        if (duration == 0) {
-            duration = 20;
-        }
+        duration = duration || 20;
 
         setTimeout(() => {
-            if (this.count < this.playlist_content.length - 1) {
-                this.count++;
-            } else {
-                this.count = 0;
-            }
+            this.count = (this.count + 1) % this.playlist_content.length;
             this.checkFileType(this.count);
         }, duration * 1000);
     }
@@ -206,6 +171,12 @@ export class PlaylistDemoComponent implements OnInit {
                     p.isConverted,
                     p.isProtected,
                     p.uuid,
+                    p.title,
+                    p.playlistContentsSchedule,
+                    p.createdBy,
+                    p.ownerRoleId,
+                    p.classification,
+                    p.seq,
                 );
             });
         }

@@ -1,4 +1,10 @@
 <mat-card class="p-4 position-relative">
+    <div class="d-flex align-items-end flex-column" *ngIf="isAuthorized">
+        <button mat-button mat-raised-button class="theme-btn flex-even mx-1" (click)="onSwitchPlaylist()">
+            Switch to Playlist V2
+            <span class="fas fa-photo-video ml-2 sm-text"></span>
+        </button>
+    </div>
     <div class="title-section d-flex align-items-center mb-3">
         <div class="flex-even">
             <h3>Playlist Content</h3>

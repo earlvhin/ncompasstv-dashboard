@@ -20,6 +20,7 @@ import { SingleContentComponent } from 'src/app/global/pages_shared/single-conte
 import { SingleHostComponent } from 'src/app/global/pages_shared/single-host/single-host.component';
 import { SingleLicenseComponent } from 'src/app/global/pages_shared/single-license/single-license.component';
 import { SinglePlaylistComponent } from 'src/app/global/pages_shared/single-playlist/single-playlist.component';
+import { SinglePlaylistV2Component } from 'src/app/global/pages_shared/single-playlist-v2/single-playlist-v2.component';
 import { SingleScreenComponent } from 'src/app/global/pages_shared/single-screen/single-screen.component';
 import { SubDealerLayoutComponent } from './sub-dealer-layout/sub-dealer-layout.component';
 
@@ -203,6 +204,17 @@ export const SUB_DEALER_ROUTES: Routes = [
                     {
                         path: '',
                         component: PlaylistsComponent,
+                    },
+                    {
+                        path: 'v2/:data',
+                        component: SinglePlaylistV2Component,
+                        data: {
+                            breadcrumb: 'Single Playlist',
+                        },
+                    },
+                    {
+                        path: 'v2/:data/:breadcrumb',
+                        component: SinglePlaylistV2Component,
                     },
                     {
                         path: 'create-playlist',

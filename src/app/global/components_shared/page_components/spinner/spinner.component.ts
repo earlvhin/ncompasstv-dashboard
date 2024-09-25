@@ -12,6 +12,7 @@ export class SpinnerComponent implements OnInit {
     mode: ProgressSpinnerMode = 'determinate';
     value: number = 40;
     @Input() diameter: number;
+    @Input() message: string;
 
     constructor() {}
 

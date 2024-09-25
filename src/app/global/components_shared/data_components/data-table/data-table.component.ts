@@ -113,6 +113,7 @@ export class DataTableComponent implements OnInit {
 
     active_table: string;
     in_progress = false;
+    isClicked = false;
     note_value: string;
     selected_array: any = [];
     pagination: number;
@@ -429,7 +430,10 @@ export class DataTableComponent implements OnInit {
         );
     }
 
-    deletePlaylist(id): void {
+    public deletePlaylist(id: string): void {
+        if (this.isClicked) return;
+        this.isClicked = true;
+
         this._playlist.get_playlist_by_id(id).subscribe(
             (data) => {
                 if (data.screens.length == 0)
@@ -502,6 +506,7 @@ export class DataTableComponent implements OnInit {
             })
             .afterClosed()
             .subscribe((result) => {
+                this.isClicked = false;
                 switch (result) {
                     case 'screen_delete':
                         var array_to_delete = [];
@@ -633,6 +638,7 @@ export class DataTableComponent implements OnInit {
                 (data) => {
                     if (!data.screens) this.update_info.emit(true);
                     else this.deletePlaylistModal({ screens: data.screens, playlist_id: id });
+                    this.isClicked = false;
                 },
                 (error) => {
                     console.error(error);
