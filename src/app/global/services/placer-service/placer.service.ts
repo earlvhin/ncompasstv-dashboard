@@ -53,6 +53,12 @@ export class PlacerService extends BaseService {
         return this.postRequest(url, body);
     }
 
+    public logPlacerDataUploadActivity(ownerid: string, activityCode: string, targetId: string, targetName: string) {
+        const url = this.creators.log_user_activity;
+        const body = { ownerid, activityCode, targetId, targetName };
+        return this.postRequest(url, body);
+    }
+
     upload_placer(filename: string) {
         const url = this.creators.placer_upload;
         const body = { filename };

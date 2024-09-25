@@ -43,3 +43,10 @@ export class API_DEALER {
     totalLicenseCount?: number;
     userId: string;
 }
+
+export interface API_DEALER_MINIFIED {
+    dealerId: string;
+    businessName: string;
+    dealerIdAlias: string;
+    status: string;
+}

@@ -2,7 +2,7 @@
     <app-autocomplete
         [field_data]="advertiserData"
         *ngIf="advertiserData && advertiserData.data.length; else loading"
-        (no_data_found)="advertiserNotFound($event)"
+        (no_data_found)="advertiserNotFound()"
         (value_selected)="setAdvertiser($event)">
     </app-autocomplete>
 

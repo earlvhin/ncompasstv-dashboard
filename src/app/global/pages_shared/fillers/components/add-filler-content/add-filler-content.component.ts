@@ -127,9 +127,9 @@ export class AddFillerContentComponent implements OnInit {
         else if (environment.base_uri.includes('stg')) folder = 'staging';
         else folder = 'dev';
 
-        file_data = await this._filestack.process_uploaded_files(
+        file_data = await this._filestack.processUploadedFiles(
             data,
-            '',
+            null,
             true,
             this.selected_group.fillerGroupId,
             folder,

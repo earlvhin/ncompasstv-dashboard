@@ -13,6 +13,7 @@ export class API_SINGLE_PLAYLIST {
     playlistId?: string;
     contents?: API_CONTENT[];
     playlistName: string;
+    isMigrated?: number;
     playlistDescription?: string;
     dealerId?: string;
 }

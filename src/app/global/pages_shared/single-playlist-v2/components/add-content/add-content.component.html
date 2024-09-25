@@ -1,0 +1,330 @@
+<div class="add-content-setup-wrapper">
+    <mat-horizontal-stepper #stepper (selectionChange)="onStepChange($event)">
+        <!-- Begin: Step 1 -->
+        <mat-step>
+            <ng-template matStepLabel>Select Assets</ng-template>
+            <div class="step-1 select-assets pt-3">
+                <div class="row align-items-start">
+                    <div [ngClass]="fillerTabActive ? 'col-lg-4' : 'col-lg-7'">
+                        <h3 class="m-0">Media Library</h3>
+                        <p class="sm-text">Select assets you wish to {{ mode }} to your playlist</p>
+                    </div>
+
+                    <div class="col-lg-3" *ngIf="fillerTabActive">
+                        <mat-label class="font-weight-bold sm-text text-dark mb-2"> Select Filler Owner: </mat-label>
+                        <mat-select [(value)]="activeFiller" (valueChange)="getAllFillerGroups($event, '')">
+                            <mat-option [value]="1"> Admin Fillers </mat-option>
+                            <mat-option [value]="3"> Dealer Admin Fillers </mat-option>
+                            <mat-option [value]="2">
+                                {{ _dialog_data.isDealer ? 'My Fillers' : 'Dealer Fillers' }}
+                            </mat-option>
+                        </mat-select>
+                    </div>
+
+                    <div class="col-lg-5" [class.!fillerTabActive]="'offset-lg-3'">
+                        <mat-form-field class="full-width" appearance="fill">
+                            <mat-label>Search Asset</mat-label>
+                            <input
+                                name="searchInput"
+                                [formControl]="searchInput"
+                                matInput
+                                placeholder="Example: Pizza.png"
+                                type="text" />
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <!-- Button group for content type switch -->
+                <mat-button-toggle-group class="mb-2 w-100" [value]="selectedContentType.value">
+                    <ng-container *ngFor="let type of contentTypesBtnGroup">
+                        <ng-container *ngIf="(type.slug !== 'filler-contents' && mode == 'swap') || mode == 'add'">
+                            <mat-button-toggle
+                                *ngIf="type.show"
+                                class="flex-even"
+                                [value]="type.value"
+                                (click)="onSelectContentType(type)">
+                                <i class="mr-2 {{ type.icon }}"></i>
+                                <strong class="sm-text">{{ type.label }}</strong>
+                            </mat-button-toggle>
+                        </ng-container>
+                    </ng-container>
+                </mat-button-toggle-group>
+                <!-- Button group for content type switch -->
+
+                <ng-container *ngIf="!searching; else loading">
+                    <div
+                        class="media-library-browser-wrapper bg-gray rounded p-2 mb-4"
+                        *ngIf="assets.length; else loading"
+                        (scroll)="onScroll($event)">
+                        <ng-container *ngFor="let c of assets; let i = index">
+                            <!-- Allows devs to define desired number of columns per row via gridCount -->
+                            <div class="row no-gutters mb-1" *ngIf="i % gridCount == 0">
+                                <div class="col-lg" *ngFor="let col of [].constructor(gridCount); let count = index">
+                                    <div class="m-1">
+                                        <app-content
+                                            *ngIf="_dialog_data && !_dialog_data.playlistContentId; else swapping"
+                                            [content]="assets[count + i]"
+                                            [controls]="false"
+                                            [selected]="
+                                                selectedContents.includes(assets[count + i]) ||
+                                                checkIfSelectedFiller(assets[count + i])
+                                            "
+                                            [default_width]="false"
+                                            [is_frequency_enabled]="false"
+                                            (content_selected)="contentSelected(assets[count + i], $event)">
+                                        </app-content>
+
+                                        <!-- This is due to checkbox not working when wrapped within .mark-content-wrapper -->
+                                        <ng-template #swapping>
+                                            <div
+                                                class="mark-content-wrapper"
+                                                (click)="
+                                                    _dialog_data &&
+                                                        _dialog_data.playlistContentId &&
+                                                        markContent(assets[count + i])
+                                                "
+                                                [ngClass]="{
+                                                    'cursor-pointer': _dialog_data.playlistContentId,
+                                                    marked:
+                                                        assets[count + i] &&
+                                                        markedContent &&
+                                                        markedContent.contentId == assets[count + i].contentId
+                                                }">
+                                                <app-content
+                                                    [content]="assets[count + i]"
+                                                    [controls]="false"
+                                                    [default_width]="false"
+                                                    [selectable]="_dialog_data && !_dialog_data.playlistContentId"
+                                                    [swapping]="_dialog_data.playlistContentId"
+                                                    (content_selected)="contentSelected(assets[count + i], $event)">
+                                                </app-content>
+                                            </div>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+
+                        <ng-container *ngIf="paginating">
+                            <div class="d-flex py-5 justify-content-center">
+                                <mat-spinner [diameter]="100"></mat-spinner>
+                            </div>
+                        </ng-container>
+                    </div>
+                </ng-container>
+
+                <div class="add-content-controls">
+                    <ng-container *ngIf="!_dialog_data.playlistContentId; else doSwap">
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn mr-2"
+                            [disabled]="!selectedContents.length"
+                            matStepperNext>
+                            <i class="fas fa-long-arrow-alt-right mr-3 text-green"></i>
+                            <small class="font-weight-bold">Next</small>
+                        </button>
+
+                        <button mat-button mat-raised-button class="theme-btn bg-danger" [mat-dialog-close]>
+                            <i class="fas fa-times mr-3"></i>
+                            <small class="font-weight-bold">Cancel</small>
+                        </button>
+                    </ng-container>
+
+                    <ng-template #doSwap>
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn mr-2"
+                            [disabled]="!markedContent"
+                            matStepperNext
+                            [mat-dialog-close]="markedContent">
+                            <i class="fas fa-exchange-alt mr-3 text-green"></i>
+                            <small class="font-weight-bold">Swap</small>
+                        </button>
+
+                        <button mat-button mat-raised-button class="theme-btn bg-danger" [mat-dialog-close]>
+                            <i class="fas fa-times mr-3"></i>
+                            <small class="font-weight-bold">Cancel</small>
+                        </button>
+                    </ng-template>
+                </div>
+            </div>
+        </mat-step>
+        <!-- End: Step 1 -->
+
+        <!-- Begin: Step 2 -->
+        <mat-step *ngIf="!_dialog_data.playlistContentId">
+            <ng-template matStepLabel>Settings</ng-template>
+            <div class="step-2 playlist-content-settings">
+                <div class="step-header d-flex mb-3">
+                    <div class="title-desc">
+                        <h3 class="m-0">Content Settings</h3>
+                        <p class="sm-text">Settings will apply to all selected assets, except Fillers</p>
+                    </div>
+                </div>
+
+                <div class="row mb-4" *ngIf="selectedContents.length; else no_selected">
+                    <div class="col-lg-6">
+                        <div class="selected-content-controls border shadow p-2 d-flex align-items-center">
+                            <div class="selected-content-count flex-even">
+                                <strong class="sm-text">
+                                    Count: <span class="ml-1">{{ selectedContents.length }}</span>
+                                </strong>
+                            </div>
+
+                            <div *ngIf="excludedFillers.length">
+                                <span class="sm-text text-danger">
+                                    Grayed assets are restricted and will not be added.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="media-files-wrapper bg-gray p-2 selected-contents">
+                            <div class="row no-gutters">
+                                <div class="col-lg-3" *ngFor="let c of selectedContents; let i = index">
+                                    <div
+                                        class="m-1"
+                                        [ngClass]="
+                                            excludedFillers.includes(c.fillerPlaylistId) ? 'excluded-filler' : ''
+                                        ">
+                                        <app-content
+                                            (control_click)="contentControlClicked($event)"
+                                            [content]="c"
+                                            [controls]="true"
+                                            [enabled_controls]="!c.fillerPlaylistContentId ? ['remove'] : ['ban']"
+                                            [index]="i + 1"
+                                            [is_frequency_enabled]="false"
+                                            [selectable]="false">
+                                        </app-content>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="overlay-spinner" *ngIf="validatingFillers">
+                                <div class="text-center">
+                                    <app-spinner [diameter]="75"></app-spinner>
+                                    <h4 class="mt-3">Preparing playlist contents</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <mat-tab-group mat-stretch-tabs (selectedTabChange)="tabChanged($event)">
+                            <mat-tab label="Basics" *ngIf="!isAllFillers">
+                                <div class="mt-3">
+                                    <!-- Need a checker if selected content for setup includes images/feeds -->
+                                    <app-basic-settings
+                                        [can_set_frequency]="false"
+                                        [sequence_setting]="false"
+                                        [bulk_setting]="true"
+                                        [has_image_and_feed]="hasImageAndFeed"
+                                        (changed)="applyContentSettings($event)">
+                                    </app-basic-settings>
+                                </div>
+                            </mat-tab>
+                            <mat-tab label="Play Where">
+                                <ng-container *ngIf="!noHostData; else loadingHost">
+                                    <div class="mt-3">
+                                        <div class="d-flex align-items-center pt-3 mb-3">
+                                            <div class="flex-even">
+                                                <h4>Whitelist Host and Licenses</h4>
+                                                <p class="sm-text m-0">
+                                                    Select host and licenses you want your contents to play.
+                                                </p>
+                                            </div>
+                                            <div class="toggle-wrapper pt-1 pr-2">
+                                                <mat-slide-toggle
+                                                    [checked]="hasSelectedAllHostLicenses"
+                                                    (change)="toggleAll.next($event)"></mat-slide-toggle>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="play-location-wrapper"
+                                            *ngIf="playlistHostLicenses.length; else loading">
+                                            <app-play-location
+                                                [host_licenses]="playlistHostLicenses"
+                                                [toggle_all_add_content]="toggleAll.asObservable()"
+                                                (to_whitelist)="licenseIdToggled($event)"
+                                                (to_blacklist)="licenseDeselected($event)">
+                                            </app-play-location>
+                                        </div>
+                                    </div>
+                                </ng-container>
+
+                                <ng-template #loadingHost>
+                                    <ng-container *ngIf="noHostData; else spin">
+                                        <div class="py-5 text-center">
+                                            <h4>No Licenses Available</h4>
+                                        </div>
+                                    </ng-container>
+
+                                    <ng-template #spin>
+                                        <div
+                                            class="loadng-height d-flex align-items-center justify-content-center py-5">
+                                            <app-spinner></app-spinner>
+                                        </div>
+                                    </ng-template>
+                                </ng-template>
+                            </mat-tab>
+                            <mat-tab label="Content Schedule" *ngIf="!isAllFillers">
+                                <div class="mt-3">
+                                    <app-content-scheduler [page]="'add-content'"></app-content-scheduler>
+                                </div>
+                            </mat-tab>
+                        </mat-tab-group>
+                    </div>
+                </div>
+
+                <div class="controls-wrapper">
+                    <div class="add-content-controls">
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn mr-2"
+                            [disabled]="isFormInvalid || noContentToAdd"
+                            [mat-dialog-close]="newContent">
+                            <i class="fas fa-save mr-3 text-green"></i>
+                            <small class="font-weight-bold">Save</small>
+                        </button>
+
+                        <button mat-button mat-raised-button class="theme-btn bg-danger" [mat-dialog-close]>
+                            <i class="fas fa-times mr-3"></i>
+                            <small class="font-weight-bold">Cancel</small>
+                        </button>
+                    </div>
+
+                    <!-- Error Messages -->
+                    <ng-container *ngIf="contentSchedulerTabSelected && errorCodes && errorCodes.length">
+                        <div class="content-scheduler-form-errors alert alert-danger m-0">
+                            <span class="sm-text font-weight-bold"> Error: {{ errorMessage }} </span>
+                        </div>
+                    </ng-container>
+                    <!-- Error messages -->
+                </div>
+
+                <ng-template #no_selected>
+                    <div class="no-selected-content bg-gray text-center p-5 mb-4">
+                        <h3 class="font-weight-bold">Content Settings</h3>
+                        <p>Select content from previous step to get started.</p>
+                    </div>
+                </ng-template>
+            </div>
+        </mat-step>
+        <!-- End: Step 2 -->
+    </mat-horizontal-stepper>
+
+    <ng-template #loading>
+        <ng-container *ngIf="noData; else spin">
+            <div class="d-flex align-items-center text-center bg-gray media-files-wrapper w-100 mb-4">
+                <h2 class="flex-even">Sorry! No data found.</h2>
+            </div>
+        </ng-container>
+
+        <ng-template #spin>
+            <div class="media-library-browser-wrapper bg-gray rounded p-2 mb-4">
+                <app-spinner></app-spinner>
+            </div>
+        </ng-template>
+    </ng-template>
+</div>

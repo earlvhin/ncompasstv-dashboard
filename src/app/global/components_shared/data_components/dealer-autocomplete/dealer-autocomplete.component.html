@@ -3,7 +3,7 @@
         <app-autocomplete
             [field_data]="dealers_data"
             *ngIf="dealers_data && dealers_data.data.length"
-            (no_data_found)="dealerNotFound($event)"
+            (no_data_found)="dealerNotFound()"
             (value_selected)="setDealer($event)"
             (input_changed)="dealerInputChangeListener($event)">
         </app-autocomplete>

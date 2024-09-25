@@ -1,0 +1,99 @@
+<div class="content-scheduler-form">
+    <form [formGroup]="schedulerForm">
+        <div class="mb-2">
+            <strong class="sm-text">Set Date Range</strong>
+        </div>
+        <div class="d-flex">
+            <div class="flex-even mr-2">
+                <mat-form-field class="full-width" appearance="fill" appDefaultDateFormat>
+                    <mat-label class="md-text">Start Date</mat-label>
+                    <input matInput formControlName="startDate" [matDatepicker]="datePickerStart" />
+                    <mat-datepicker-toggle matSuffix [for]="datePickerStart"></mat-datepicker-toggle>
+                    <mat-datepicker #datePickerStart></mat-datepicker>
+                </mat-form-field>
+            </div>
+
+            <div class="flex-even">
+                <mat-form-field class="full-width" appearance="fill" appDefaultDateFormat>
+                    <mat-label class="md-text">End Date</mat-label>
+                    <input matInput formControlName="endDate" [matDatepicker]="datePickerEnd" />
+                    <mat-datepicker-toggle matSuffix [for]="datePickerEnd"></mat-datepicker-toggle>
+                    <mat-datepicker #datePickerEnd></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </div>
+        <!-- Date Range -->
+
+        <div class="day-list-wrapper border-top border-bottom d-flex flex-column pt-3">
+            <div class="d-flex align-items-center">
+                <div class="flex-even day-checkboxes">
+                    <strong class="sm-text mb-1">Select Days</strong>
+
+                    <ul class="day-list d-flex">
+                        <li class="mr-3" *ngFor="let d of days">
+                            <mat-checkbox
+                                formArrayName="days"
+                                [value]="d"
+                                [checked]="d.checked"
+                                (change)="onCheckboxChange($event)">
+                                <strong class="xsm-text">{{ d.day }}</strong>
+                            </mat-checkbox>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="select-all-days-toggle">
+                    <mat-slide-toggle [checked]="hasCheckedAllDays" (change)="onToggleAllDays()">
+                        <strong class="ml-2 xsm-text">All days</strong>
+                    </mat-slide-toggle>
+                </div>
+            </div>
+        </div>
+        <!-- Day Selection -->
+
+        <div class="alternate-week-wrapper d-flex border-bottom pt-3 pb-3">
+            <div class="flex-even">
+                <strong class="sm-text">Alternate Weeks</strong>
+            </div>
+            <mat-slide-toggle [checked]="hasAlternateWeekSet" (change)="selectAlternatingWeek()">
+                <strong class="ml-2 xsm-text">Every other ({{ alternateWeek }}) week</strong>
+            </mat-slide-toggle>
+        </div>
+
+        <div class="d-flex align-items-center pt-3">
+            <div class="flex-even mr-2">
+                <div class="start-time">
+                    <div class="mb-2">
+                        <strong class="sm-text mb-2">Start Time</strong>
+                    </div>
+                    <ngb-timepicker
+                        [spinners]="false"
+                        [meridian]="true"
+                        formControlName="playTimeStartData"></ngb-timepicker>
+                </div>
+            </div>
+            <div class="flex-even mr-2">
+                <div class="end-time">
+                    <div class="mb-2">
+                        <strong class="sm-text">End Time</strong>
+                    </div>
+                    <ngb-timepicker
+                        [spinners]="false"
+                        [meridian]="true"
+                        formControlName="playTimeEndData"></ngb-timepicker>
+                </div>
+            </div>
+
+            <div class="play-24-hrs-toggle">
+                <mat-slide-toggle
+                    [checked]="isCheckedToPlayAllDay"
+                    (change)="onSelectToPlayAllDay($event)"></mat-slide-toggle>
+                <h6 class="xsm-text pr-3 font-weight-bold">
+                    24 hours <br />
+                    play
+                </h6>
+            </div>
+        </div>
+        <!-- Start/End Time Range -->
+    </form>
+</div>

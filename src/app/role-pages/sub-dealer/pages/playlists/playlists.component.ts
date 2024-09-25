@@ -1,12 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DatePipe, TitleCasePipe } from '@angular/common';
+import { MatDialog, MatDialogConfig } from '@angular/material';
 import { Subject } from 'rxjs';
-import { environment } from 'src/environments/environment';
 import { takeUntil } from 'rxjs/operators';
-import * as io from 'socket.io-client';
 
 import { AuthService, PlaylistService } from 'src/app/global/services';
-import { UI_DEALER_PLAYLIST } from 'src/app/global/models';
+import { API_PLAYLIST, UI_DEALER_PLAYLIST, CREATE_PLAYLIST, UI_COUNT_DETAILS } from 'src/app/global/models';
+import { CreatePlaylistDialogComponent } from 'src/app/global/components_shared/playlist_components/create-playlist-dialog/create-playlist-dialog.component';
+import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
     selector: 'app-playlists',
@@ -15,27 +16,28 @@ import { UI_DEALER_PLAYLIST } from 'src/app/global/models';
     providers: [DatePipe, TitleCasePipe],
 })
 export class PlaylistsComponent implements OnInit, OnDestroy {
-    playlist_details: any;
-    dealers_info;
+    playlist_details: UI_COUNT_DETAILS;
     dealer_id: string;
-    initial_load: boolean = true;
-    is_view_only = false;
+    initial_load = true;
+    is_view_only = this.currentUser.roleInfo.permission === 'V';
     playlist_data: UI_DEALER_PLAYLIST[] = [];
-    filtered_data: any = [];
-    no_playlist: boolean = false;
+    playlists_details: any;
+    filtered_data: UI_DEALER_PLAYLIST[] = [];
+    no_playlist = false;
     paging_data: any;
-    search_data: string = '';
-    searching: boolean = false;
+    search_data = '';
+    searching = false;
 
-    playlist_table_column = ['#', 'Name', 'Description', 'Creation Date'];
+    playlist_table_column = ['#', 'Name', 'Description', 'Creation Date', 'Total Content'];
 
     protected _socket: any;
-    protected _unsubscribe: Subject<void> = new Subject<void>();
+    protected _unsubscribe = new Subject<void>();
 
     constructor(
-        private _playlist: PlaylistService,
         private _auth: AuthService,
         private _date: DatePipe,
+        private _dialog: MatDialog,
+        private _playlist: PlaylistService,
         private _title: TitleCasePipe,
     ) {}
 
@@ -43,8 +45,6 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
         this.dealer_id = this.currentUser.roleInfo.dealerId;
         this.getPlaylist(1);
         this.getTotalCount(this.dealer_id);
-        this.dealers_info = this.currentUser.roleInfo.businessName;
-        this.is_view_only = this.currentUser.roleInfo.permission === 'V';
     }
 
     ngOnDestroy() {
@@ -57,7 +57,7 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
             .get_playlists_total_by_dealer(id)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
-                (response: any) => {
+                (response) => {
                     this.playlist_details = {
                         basis: response.total,
                         basis_label: 'Playlist(s)',
@@ -73,9 +73,7 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
                         new_last_week_description: 'New last week',
                     };
                 },
-                (error) => {
-                    console.error(error);
-                },
+                (err) => console.error(err, 'Error retrieving playlist count details', err),
             );
     }
 
@@ -90,84 +88,150 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
                 (response) => {
                     this.initial_load = false;
                     this.paging_data = response.paging;
+                    const allPlaylists = [...response.playlists.map((p) => p.playlist)];
 
-                    if (response.playlists.length > 0) {
-                        this.playlist_data = this.mapPlaylistToUI(response.playlists);
-                        this.filtered_data = this.mapPlaylistToUI(response.playlists);
-                    } else {
-                        if (this.search_data.length > 0) {
-                            this.filtered_data = [];
-                            this.no_playlist = false;
-                        } else {
-                            this.no_playlist = true;
-                        }
+                    if (allPlaylists.length <= 0) {
+                        this.filtered_data = this.search_data.length > 0 ? [] : this.filtered_data;
+                        this.no_playlist = !this.filtered_data;
+                        return;
                     }
 
-                    this.searching = false;
+                    const mapped = this.mapPlaylistToUI(allPlaylists);
+                    this.playlist_data = [...mapped];
+                    this.filtered_data = [...mapped];
                 },
-                (error) => {
-                    console.error(error);
-                },
-            );
+                (e) => console.error('Error retrieving dealer playlist', e),
+            )
+            .add(() => (this.searching = false));
     }
 
-    filterData(data) {
-        if (data) {
-            this.search_data = data;
-            this.getPlaylist(1);
-        } else {
-            this.search_data = '';
-            this.getPlaylist(1);
-        }
+    filterData(keyword: string) {
+        this.search_data = keyword;
+        this.getPlaylist(1);
     }
 
     fromDelete() {
-        // this.searching = true;
         this.ngOnInit();
-    }
-
-    private get currentUser() {
-        return this._auth.current_user_value;
-    }
-
-    private mapPlaylistToUI(data): UI_DEALER_PLAYLIST[] {
-        let count = this.paging_data.pageStart;
-
-        return data.map(({ playlist }) => {
-            return new UI_DEALER_PLAYLIST(
-                { value: playlist.playlistId, link: null, editable: false, hidden: true },
-                { value: count++, link: null, editable: false, hidden: false },
-                {
-                    value: playlist ? playlist.playlistName : '',
-                    link: '/sub-dealer/playlists/' + playlist.playlistId,
-                    editable: false,
-                    hidden: false,
-                },
-                {
-                    value: this._title.transform(playlist.playlistDescription),
-                    link: null,
-                    editable: false,
-                    hidden: false,
-                },
-                {
-                    value: this._date.transform(playlist.dateCreated, 'MMM d, y, h:mm a'),
-                    link: null,
-                    editable: false,
-                    hidden: false,
-                },
-                { value: playlist.totalScreens > 0 ? true : false, link: null, hidden: true },
-            );
-        });
     }
 
     onPushAllLicenseUpdates(licenseIds: string[]): void {
         licenseIds.forEach((id) => this._socket.emit('D_update_player', id));
     }
 
-    private initializeSocketConnection(): void {
-        this._socket = io(environment.socket_server, {
-            transports: ['websocket'],
-            query: 'client=Dashboard__PlaylistsPage',
+    getTotalPlaylist() {
+        this._playlist
+            .get_playlists_total()
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe({
+                next: (data) => {
+                    this.playlists_details = {
+                        basis: data.total,
+                        basis_label: 'Playlist(s)',
+                        good_value: data.totalActive,
+                        good_value_label: 'Active',
+                        bad_value: data.totalInActive,
+                        bad_value_label: 'Inactive',
+                        new_this_week_value: data.newPlaylistsThisWeek,
+                        new_this_week_value_label: 'Playlist(s)',
+                        new_this_week_value_description: 'New this week',
+                        new_last_week_value: data.newPlaylistsLastWeek,
+                        new_last_week_value_label: 'Playlist(s)',
+                        new_last_week_value_description: 'New last week',
+                    };
+                },
+            });
+    }
+
+    showCreatePlaylistDialog() {
+        const width = '576px';
+        const configs: MatDialogConfig = { width, disableClose: true, data: { dealerId: this.dealer_id } };
+        this._dialog
+            .open(CreatePlaylistDialogComponent, configs)
+            .afterClosed()
+            .subscribe({
+                next: (response) => {
+                    if (!response || response === 'close') return;
+                    this.createPlaylist(response);
+                },
+            });
+    }
+
+    private get currentUser() {
+        return this._auth.current_user_value;
+    }
+
+    private mapPlaylistToUI(data: any[]) {
+        let count = this.paging_data.pageStart;
+
+        return data.map((playlist) => {
+            let playlistUrl = '/sub-dealer/playlists';
+            const {
+                playlistId,
+                playlistName,
+                dateCreated,
+                playlistDescription,
+                isMigrated,
+                totalContents,
+                totalScreens,
+            } = playlist;
+            const parsedDateCreated = this._date.transform(dateCreated, 'MMM d, y, h:mm a');
+            const parsedDescription = this._title.transform(playlistDescription);
+            playlistUrl += isMigrated ? `/v2/${playlistId}` : `/${playlistId}`;
+
+            return new UI_DEALER_PLAYLIST(
+                { value: playlistId, link: null, editable: false, hidden: true },
+                { value: count++, link: null, editable: false, hidden: false },
+                {
+                    value: playlist ? playlistName : '',
+                    data_label: 'playlist_name',
+                    is_migrated: isMigrated,
+                    link: playlistUrl,
+                    editable: false,
+                    hidden: false,
+                },
+                {
+                    value: parsedDescription,
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                },
+                {
+                    value: parsedDateCreated,
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                },
+                { value: totalScreens > 0, link: null, hidden: true },
+                { value: totalContents, data_label: 'total_content', link: null, editable: false, hidden: false },
+            );
         });
+    }
+
+    private async createPlaylist(data: CREATE_PLAYLIST) {
+        try {
+            const playlist = await this._playlist.create_playlist(data).pipe(takeUntil(this._unsubscribe)).toPromise();
+            const newPlaylistUrl = `/${this.roleRoute}/playlists/v2/${playlist.playlist.playlistId}`;
+            this.showResponseDialog('success', 'Success', 'Your changes have been saved');
+            window.open(newPlaylistUrl, '_blank');
+            this.getTotalPlaylist();
+            this.getPlaylist(1);
+        } catch (error) {
+            console.error('Error creating playlist', error);
+            this.showResponseDialog(
+                'error',
+                'Error Saving Playlist',
+                'Something went wrong, please contact customer support',
+            );
+        }
+    }
+
+    private showResponseDialog(type: string, title = '', message = '') {
+        let data = { status: type, message: title, data: message };
+        const config = { disableClose: true, width: '500px', data };
+        return this._dialog.open(ConfirmationModalComponent, config).afterClosed();
+    }
+
+    protected get roleRoute() {
+        return this._auth.roleRoute;
     }
 }
