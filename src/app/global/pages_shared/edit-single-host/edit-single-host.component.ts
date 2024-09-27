@@ -835,7 +835,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
             const zip = data.replace(/\s/g, '');
 
             if (zip && zip.length === 6) {
-                const clean = data.substring(0, 6);
+                const clean = zip.substring(0, 6);
                 const left = clean.substring(0, 3);
                 const right = clean.substring(3, 6);
                 return `${left} ${right}`;
