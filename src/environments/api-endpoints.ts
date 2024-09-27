@@ -273,7 +273,8 @@ export const API_ENDPOINTS = {
         api_new_host: 'host/create',
         api_new_host_place: 'host/createhost',
         api_new_license: 'license/create?',
-        api_new_playlist: 'playlistsv2',
+        // api_new_playlist: 'playlistsv2', disable for now v2.
+        api_new_playlist: 'playlists/create',
         api_clone_playlist: 'playlists/clone',
         api_create_field_group: 'fieldgroup/create',
         api_new_screen: 'screen/create',
