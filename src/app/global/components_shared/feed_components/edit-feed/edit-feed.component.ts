@@ -313,18 +313,17 @@ export class EditFeedComponent implements OnInit, OnDestroy {
         const control = form.get('feedUrl');
 
         this.isDirectTechUrl = control.value.includes('directech');
-
         const url = control.value as string;
-        this.isInvalidUrl = !this._feed.check_url(url);
+        this.isInvalidUrl = !this._feed.canAccessUrl(url);
 
-        form.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe(async (res) => {
+        form.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
             if (this.isWidgetFeed) return;
             this.feedUrlHasValue = res.feedUrl ? true : false;
             this.isDirectTechUrl = res.feedUrl.includes('directech');
 
             this.isValidatingUrl = true;
             const url = control.value as string;
-            this.isInvalidUrl = !(await this._feed.check_url(url));
+            this.isInvalidUrl = !this._feed.canAccessUrl(url);
             this.isValidatingUrl = false;
         });
     }

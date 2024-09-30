@@ -1,5 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ThemePalette } from '@angular/material/core';
 import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
 
 @Component({
@@ -8,13 +7,16 @@ import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
     styleUrls: ['./spinner.component.scss'],
 })
 export class SpinnerComponent implements OnInit {
-    // Spinner Config
-    mode: ProgressSpinnerMode = 'determinate';
-    value: number = 40;
+    public mode: ProgressSpinnerMode = 'determinate';
+    public value: number = 40;
     @Input() diameter: number;
-    @Input() message: string;
+    @Input() message: string = '';
 
     constructor() {}
 
     ngOnInit() {}
+
+    public get hasMessage(): boolean {
+        return this.message.trim().length > 0 && this.message !== null;
+    }
 }
