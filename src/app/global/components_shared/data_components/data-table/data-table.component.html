@@ -144,7 +144,9 @@
                                                                 [matTooltipPosition]="data[d].tool_tip_position">
                                                                 {{ data[d].value }}
                                                             </div>
-                                                            <ng-container
+
+                                                            <!-- DISABLED FOR NOW -->
+                                                            <!-- <ng-container
                                                                 *ngIf="
                                                                     page === 'playlists' &&
                                                                     data[d].data_label === 'playlist_name' &&
@@ -155,7 +157,8 @@
                                                                     [matTooltip]="'Migrated to V2'">
                                                                     V2
                                                                 </span>
-                                                            </ng-container>
+                                                            </ng-container> -->
+
                                                             <ng-container
                                                                 *ngIf="pagesWithStatusIndicator.includes(page)">
                                                                 <span>
