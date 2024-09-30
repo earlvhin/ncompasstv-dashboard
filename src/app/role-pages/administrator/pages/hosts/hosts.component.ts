@@ -11,6 +11,9 @@ import {
     UI_TABLE_HOSTS_BY_DEALER,
     UI_HOST_VIEW,
     UI_ROLE_DEFINITION_TEXT,
+    HOST_FILTER,
+    HOST_LABEL_DATA,
+    HOST_LABEL,
 } from 'src/app/global/models';
 import { AuthService, DealerService, HelperService, HostService } from 'src/app/global/services';
 
@@ -20,7 +23,7 @@ import { AuthService, DealerService, HelperService, HostService } from 'src/app/
     styleUrls: ['./hosts.component.scss'],
 })
 export class HostsComponent implements OnInit {
-    current_status_filter = 'active';
+    currentStatusFilter = '';
     dealers_data: UI_TABLE_HOSTS_BY_DEALER[] = [];
     diff_hours: any;
     filtered_data: any = [];
@@ -132,8 +135,8 @@ export class HostsComponent implements OnInit {
     }
 
     filterHostsByStatus(status: string) {
-        if (status === this.current_status_filter) return;
-        this.current_status_filter = status;
+        if (status === this.currentStatusFilter) return;
+        this.currentStatusFilter = status;
         this.getHosts(1);
     }
 
@@ -313,28 +316,38 @@ export class HostsComponent implements OnInit {
     }
 
     getHosts(page = 1): void {
-        let status = this.current_status_filter === 'active' ? 'A' : 'I';
-        if (this.current_status_filter === 'all') status = '';
+        let status: string = '';
+
+        switch (this.currentStatusFilter) {
+            case 'active':
+                status = 'A';
+                break;
+            case 'inactive':
+                status = 'I';
+                break;
+            default:
+                status = '';
+        }
+
         this.no_host = false;
         this.searching_hosts = true;
         this.hosts_data = [];
 
-        const filters = {
+        const filters: HOST_FILTER = {
             page,
-            status,
             search: this.search_data_host,
             sortColumn: this.sort_column_hosts,
             sortOrder: this.sort_order_hosts,
             pageSize: 15,
+            ...(status && { status }),
         };
 
-        let request = this.has_sort ? this._host.get_host_by_page(filters) : this._host.get_host_fetch(filters);
+        const request = this.has_sort ? this._host.get_host_by_page(filters) : this._host.get_host_fetch(filters);
 
-        request
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((response) => {
+        request.pipe(takeUntil(this._unsubscribe)).subscribe({
+            next: (response) => {
                 if ('message' in response) {
-                    if (this.search_data_host == '') this.no_host = true;
+                    this.no_host = !this.search_data_host;
                     this.filtered_data_host = [];
                     return;
                 }
@@ -343,11 +356,12 @@ export class HostsComponent implements OnInit {
                 const mappedData = this.hosts_mapToUIFormat(response.paging.entities);
                 this.hosts_data = [...mappedData];
                 this.filtered_data_host = [...mappedData];
-            })
-            .add(() => {
+            },
+            complete: () => {
                 this.initial_load_hosts = false;
                 this.searching_hosts = false;
-            });
+            },
+        });
     }
 
     hosts_mapToUIFormat(data: API_HOST[]): UI_HOST_VIEW[] {
@@ -414,26 +428,40 @@ export class HostsComponent implements OnInit {
         });
     }
 
-    getLabel(data) {
+    /**
+     * Returns the formatted label information for a host, including the date, address, and business hours schedule.
+     *
+     * @param data - An object containing storeHours as a JSON string and address of the host.
+     * @returns An object containing the formatted date, address, and schedule for the host.
+     */
+    private getLabel(data: HOST_LABEL_DATA): HOST_LABEL {
         this.now = moment().format('d');
-        this.now = this.now;
-        let storehours = JSON.parse(data.storeHours);
-        storehours = storehours.sort((a, b) => {
-            return a.id - b.id;
-        });
-        let modified_label = {
+        let storehours = data.storeHours ? JSON.parse(data.storeHours) : [];
+
+        if (!storehours[this.now] || !storehours[this.now].status || !storehours[this.now].periods) {
+            return {
+                date: moment().format('LL'),
+                address: data.address,
+                schedule: 'Closed',
+            };
+        }
+
+        let periods = storehours[this.now].periods;
+        if (periods.length === 0 || periods[0].open === '' || periods[0].close === '') {
+            return {
+                date: moment().format('LL'),
+                address: data.address,
+                schedule: 'Open 24 Hours',
+            };
+        }
+
+        let schedule = periods.map((i) => i.open + ' - ' + i.close).join(', ');
+
+        return {
             date: moment().format('LL'),
             address: data.address,
-            schedule:
-                storehours[this.now] && storehours[this.now].status
-                    ? storehours[this.now].periods[0].open == '' && storehours[this.now].periods[0].close == ''
-                        ? 'Open 24 Hours'
-                        : storehours[this.now].periods.map((i) => {
-                              return i.open + ' - ' + i.close;
-                          })
-                    : 'Closed',
+            schedule: schedule,
         };
-        return modified_label;
     }
 
     getStoreHourseParse(data) {
@@ -518,8 +546,8 @@ export class HostsComponent implements OnInit {
 
         switch (tab) {
             case 'hosts':
-                let status = this.current_status_filter === 'active' ? 'A' : 'I';
-                if (this.current_status_filter === 'all') status = '';
+                let status = this.currentStatusFilter === 'active' ? 'A' : 'I';
+                if (this.currentStatusFilter === 'all') status = '';
 
                 const filters = {
                     page: 1,
@@ -670,7 +698,7 @@ export class HostsComponent implements OnInit {
     private subscribeToStatusFilterClick() {
         this._helper.onClickCardByStatus.pipe(takeUntil(this._unsubscribe)).subscribe((response) => {
             if (response.page !== 'hosts') return;
-            this.current_status_filter = response.value;
+            this.currentStatusFilter = response.value;
             this.getHosts(1);
         });
     }
