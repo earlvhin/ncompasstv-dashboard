@@ -2,10 +2,17 @@ export class API_NEW_SCREEN {
     screen: SCREEN_INFO;
     screenZonePlaylists: SCREEN_ZONE_PLAYLIST[];
     licenses: SCREEN_LICENSE[];
-    constructor(screen: SCREEN_INFO, zone_playlist: SCREEN_ZONE_PLAYLIST[], license: SCREEN_LICENSE[]) {
+    cloned?: boolean = false;
+    constructor(
+        screen: SCREEN_INFO,
+        zone_playlist: SCREEN_ZONE_PLAYLIST[],
+        license: SCREEN_LICENSE[],
+        cloned: boolean = false,
+    ) {
         this.screen = screen;
         this.screenZonePlaylists = zone_playlist;
         this.licenses = license;
+        this.cloned = cloned;
     }
 }
 

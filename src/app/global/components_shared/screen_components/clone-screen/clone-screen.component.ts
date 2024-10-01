@@ -112,6 +112,7 @@ export class CloneScreenComponent implements OnInit {
             ),
             this.zonePlaylist_mapToUI(),
             [],
+            true,
         );
 
         this.form_submitted = false;
