@@ -302,7 +302,8 @@ export class SinglePlaylistComponent implements OnInit {
 
                     playlistData.playlist.isMigrated === 1 &&
                         this._router.navigate([
-                            `/${this.currentRole}/playlists/v2/${playlistData.playlist.playlistId}`,
+                            // `/${this.currentRole}/playlists/v2/${playlistData.playlist.playlistId}`, //DISABLED FOR NOW
+                            `/${this.currentRole}/playlists/${playlistData.playlist.playlistId}`,
                         ]);
                 },
                 error: (e) => {

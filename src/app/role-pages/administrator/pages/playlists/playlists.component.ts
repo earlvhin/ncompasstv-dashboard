@@ -212,9 +212,10 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
                     value: p.name,
                     data_label: 'playlist_name',
                     is_migrated: p.isMigrated,
-                    link: p.isMigrated
-                        ? `/administrator/playlists/v2/${p.playlistId}`
-                        : `/administrator/playlists/${p.playlistId}`,
+                    // link: p.isMigrated
+                    //     ? `/administrator/playlists/v2/${p.playlistId}`  //DISABLED FOR NOW
+                    //     : `/administrator/playlists/${p.playlistId}`,
+                    link: `/administrator/playlists/${p.playlistId}`,
                     editable: false,
                     hidden: false,
                     new_tab_link: true,
