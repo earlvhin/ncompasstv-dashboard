@@ -294,6 +294,50 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                     breadcrumb: 'Programmatic',
                 },
             },
+
+            // DISABLED FOR NOW
+            // {
+            //     path: 'playlists',
+            //     data: {
+            //         breadcrumb: 'Playlists',
+            //     },
+            //     children: [
+            //         {
+            //             path: '',
+            //             component: PlaylistsComponent,
+            //         },
+            //         {
+            //             path: 'v2/:data',
+            //             component: SinglePlaylistV2Component,
+            //             data: {
+            //                 breadcrumb: 'Single Playlist',
+            //             },
+            //         },
+            //         {
+            //             path: 'v2/:data/:breadcrumb',
+            //             component: SinglePlaylistV2Component,
+            //         },
+            //         {
+            //             path: 'create-playlist',
+            //             component: CreatePlaylistComponent,
+            //             data: {
+            //                 breadcrumb: 'Create Playlist',
+            //             },
+            //         },
+            //         {
+            //             path: ':data',
+            //             component: SinglePlaylistComponent,
+            //             data: {
+            //                 breadcrumb: 'Single Playlist',
+            //             },
+            //         },
+            //         {
+            //             path: ':data/:breadcrumb',
+            //             component: SinglePlaylistComponent,
+            //         },
+            //     ],
+            // },
+
             {
                 path: 'playlists',
                 data: {
@@ -304,23 +348,16 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                         path: '',
                         component: PlaylistsComponent,
                     },
+                    // Redirect from /v2/:data to /:data
                     {
                         path: 'v2/:data',
-                        component: SinglePlaylistV2Component,
-                        data: {
-                            breadcrumb: 'Single Playlist',
-                        },
+                        redirectTo: ':data',
+                        pathMatch: 'full',
                     },
                     {
                         path: 'v2/:data/:breadcrumb',
-                        component: SinglePlaylistV2Component,
-                    },
-                    {
-                        path: 'create-playlist',
-                        component: CreatePlaylistComponent,
-                        data: {
-                            breadcrumb: 'Create Playlist',
-                        },
+                        redirectTo: ':data/:breadcrumb',
+                        pathMatch: 'full',
                     },
                     {
                         path: ':data',
@@ -333,8 +370,16 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                         path: ':data/:breadcrumb',
                         component: SinglePlaylistComponent,
                     },
+                    {
+                        path: 'create-playlist',
+                        component: CreatePlaylistComponent,
+                        data: {
+                            breadcrumb: 'Create Playlist',
+                        },
+                    },
                 ],
             },
+
             {
                 path: 'reports',
                 component: ReportsComponent,
