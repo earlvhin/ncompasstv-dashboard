@@ -348,7 +348,6 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                         path: '',
                         component: PlaylistsComponent,
                     },
-                    // Redirect from /v2/:data to /:data
                     {
                         path: 'v2/:data',
                         redirectTo: ':data',
@@ -360,6 +359,13 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                         pathMatch: 'full',
                     },
                     {
+                        path: 'create-playlist',
+                        component: CreatePlaylistComponent,
+                        data: {
+                            breadcrumb: 'Create Playlist',
+                        },
+                    },
+                    {
                         path: ':data',
                         component: SinglePlaylistComponent,
                         data: {
@@ -369,13 +375,6 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                     {
                         path: ':data/:breadcrumb',
                         component: SinglePlaylistComponent,
-                    },
-                    {
-                        path: 'create-playlist',
-                        component: CreatePlaylistComponent,
-                        data: {
-                            breadcrumb: 'Create Playlist',
-                        },
                     },
                 ],
             },
