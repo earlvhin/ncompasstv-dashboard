@@ -311,6 +311,8 @@ export class FillerMainViewComponent implements OnInit {
             });
     }
 
+    public formatText = (text: string): string => text.replace(/([a-z])([A-Z])/g, '$1 $2');
+
     sortByUser(): void {
         this._dialog
             .open(UserSortModalComponent, {

@@ -1,14 +1,13 @@
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material';
+import { MatSelect, MatDialog, MAT_DIALOG_DATA } from '@angular/material';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { takeUntil } from 'rxjs/operators';
 import { Subject, Subscription } from 'rxjs';
-import { MatSelect, MatDialog } from '@angular/material';
-import { debounceTime, map, takeUntil } from 'rxjs/operators';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import * as filestack from 'filestack-js';
-import { environment } from 'src/environments/environment';
 
+import { environment } from 'src/environments/environment';
 import { DealerService, DealerAdminService, FillerService, AuthService } from 'src/app/global/services';
-import { API_UPDATE_FILLER_GROUP } from 'src/app/global/models/api_update-filler-groups';
+import { API_FILTERS, API_UPDATE_FILLER_GROUP } from 'src/app/global/models';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
@@ -83,10 +82,10 @@ export class EditFillerGroupComponent implements OnInit {
     }
 
     getDealers() {
+        const filters: API_FILTERS = { page: 1, keyword: '', pageSize: 0, isActive: true };
+
         this.subscription.add(
-            this._dealer
-                .get_dealers_with_page_minified(1, '', 0)
-                .subscribe((data) => (this.dealers_list = data.paging.entities)),
+            this._dealer.getMinifiedDealerData(filters).subscribe((data) => (this.dealers_list = data.paging.entities)),
         );
     }
 

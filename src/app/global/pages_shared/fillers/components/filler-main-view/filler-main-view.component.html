@@ -99,11 +99,12 @@
     <div class="col-lg-11">
         <div class="filter-pills pt-1">
             <div class="filetype-pill pill" *ngIf="sorting_order != ''">
-                Sorted by {{ sorting_column }} :
+                Sorted by {{ formatText(sorting_column) }} :
                 <strong *ngIf="sorting_column == 'DateCreated'; else nameFilter">{{
                     sorting_order == 'asc' ? 'Oldest' : 'Newest'
                 }}</strong>
             </div>
+
             <ng-template #nameFilter>
                 <strong>{{ sorting_order == 'asc' ? 'Ascending' : 'Descending' }}</strong>
             </ng-template>

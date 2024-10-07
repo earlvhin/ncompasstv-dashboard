@@ -162,7 +162,16 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
         this._tagColorControl.setValue(value);
     }
 
-    onSubmit() {
+    /**
+     * Handles the form submission to create and assign tags.
+     * It processes new and existing tags, formats the data, and sends a request to create and assign the tags to the specified owner.
+     *
+     * @returns {void}
+     */
+    public onSubmit(): void {
+        this.submitting = true;
+
+        // Process the tags data to be added/created
         const tagsToAdd = (this._newTagsControl.value as TAG[]).map((tag) => {
             return {
                 name: tag.name,
@@ -172,10 +181,12 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
             };
         });
 
+        // Combine existing tags with current tags and map to tag IDs
         const tagsToAssign = (this._existingTagsControl.value as TAG[])
             .concat(this.currentTags)
             .map((tag) => tag.tagId);
 
+        // Prepare the payload for tag creation and assignment
         const data: CREATE_AND_ASSIGN_TAG_V2 = {
             tagtypeid: '2',
             createdBy: this._currentUser.user_id,
@@ -189,8 +200,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
             existing: tagsToAssign,
         };
 
-        this.submitting = true;
-
+        // Send the request to create and assign tags
         this._tag
             .createAndAssignTags(data, this._isDealer())
             .pipe(takeUntil(this._unsubscribe))
@@ -200,7 +210,8 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
                     this.tagActions = { currentTags: tags, hasChanges: true };
                     this._currentDialog.close(this.tagActions);
                 },
-                (error) => {
+                (e) => {
+                    console.error('Failed creating/assigning tags', e);
                     this._confirmDialog.error();
                     this.submitting = false;
                 },

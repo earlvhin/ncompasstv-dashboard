@@ -5,7 +5,12 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { FillerService, AuthService } from 'src/app/global/services';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { UI_ROLE_DEFINITION_TEXT, API_FILLER_GROUP } from 'src/app/global/models';
+import {
+    UI_ROLE_DEFINITION_TEXT,
+    API_FILLER_GROUP,
+    UI_AUTOCOMPLETE,
+    UI_AUTOCOMPLETE_DATA,
+} from 'src/app/global/models';
 
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
@@ -17,6 +22,7 @@ import { ConfirmationModalComponent } from 'src/app/global/components_shared/pag
 export class CreateFillerFeedComponent implements OnInit {
     active_btn_filter: string = 'ALL';
     assignee_loaded: boolean = false;
+    clearSelection: boolean = false;
     enable_add_button: boolean = false;
     existing_data: any;
     dealerHasValue: boolean;
@@ -24,6 +30,7 @@ export class CreateFillerFeedComponent implements OnInit {
     form: FormGroup;
     fillerName: string = '';
     fillerGroups: API_FILLER_GROUP[];
+    fillerGroupsForAutoComplete: UI_AUTOCOMPLETE;
     fillerGroupsOriginal: API_FILLER_GROUP[];
     filters = ['ALL', 'ADMIN', 'DEALER ADMIN', 'DEALER'];
     formLoaded = false;
@@ -31,6 +38,7 @@ export class CreateFillerFeedComponent implements OnInit {
     groupsToRemove = [];
     is_current_user_admin = this._isAdmin;
     isCurrentUserDealerAdmin = this.isDealerAdmin;
+    modifiedFillerGroups: UI_AUTOCOMPLETE_DATA[] = [];
     selected_assignee: any = [];
     selectedGroup: any = this.page_data.group;
     selectedGroups: API_FILLER_GROUP[] = [];
@@ -169,6 +177,7 @@ export class CreateFillerFeedComponent implements OnInit {
                     this.setFillerGroup(this.selectedGroup.fillerGroupId);
                     this.addToSelectedFillerGroup();
                 }
+                this.setFillersAutocomplete();
             });
     }
 
@@ -188,6 +197,8 @@ export class CreateFillerFeedComponent implements OnInit {
                 break;
             default:
         }
+
+        this.setFillersAutocomplete();
     }
 
     onSubmit(data) {
@@ -230,9 +241,10 @@ export class CreateFillerFeedComponent implements OnInit {
             });
     }
 
-    setFillerGroup(id: string) {
-        this._formControls.fillerGroupId.setValue(id);
-        this.enable_add_button = true;
+    public setFillerGroup(value: UI_AUTOCOMPLETE_DATA): void {
+        if (!value) return;
+        this._formControls.fillerGroupId.setValue(value.id);
+        this.addToSelectedFillerGroup();
     }
 
     public addToSelectedFillerGroup(): void {
@@ -246,6 +258,8 @@ export class CreateFillerFeedComponent implements OnInit {
             this.fillerGroupsOriginal = this.fillerGroupsOriginal.filter(
                 (groups) => groups.fillerGroupId !== selectedId,
             );
+            this.setFillersAutocomplete();
+            this.clearSelection = true;
         }
 
         this.enable_add_button = false;
@@ -260,7 +274,7 @@ export class CreateFillerFeedComponent implements OnInit {
         this.fillerGroupsOriginal.push(group);
 
         this.selectedGroups = this.selectedGroups.filter((groups) => groups.fillerGroupId !== fillerGroupId);
-
+        this.setFillersAutocomplete();
         this.countTotalQuantity();
     }
 
@@ -374,6 +388,42 @@ export class CreateFillerFeedComponent implements OnInit {
 
     protected get roleRoute() {
         return this._auth.roleRoute;
+    }
+
+    /**
+     * Populate Filler group autocomplete data
+     * returns a data patterned to autocomplete structure
+     */
+    public setFillersAutocomplete(): void {
+        this.modifiedFillerGroups = [];
+        this.fillerGroups.forEach((group) => {
+            this.modifiedFillerGroups.push({
+                id: group.fillerGroupId,
+                value: this.getGroup(group.role) + '-' + group.name,
+            });
+        });
+        this.fillerGroupsForAutoComplete = {
+            label: 'Select Filler Group',
+            placeholder: 'Ex. NCompassTV Trivia',
+            data: this.modifiedFillerGroups,
+            unselect: true,
+        };
+    }
+
+    /**
+     *
+     * @param group rolenumber (1 admin, 2 Dealer, 3 Dealer Admin)
+     * @returns a string initial of what type of user is the owner
+     */
+    private getGroup(group: number): string {
+        switch (group) {
+            case 1:
+                return 'A';
+            case 2:
+                return 'D';
+            default:
+                return 'DA';
+        }
     }
 
     protected get _isAdmin() {

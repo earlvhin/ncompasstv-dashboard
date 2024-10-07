@@ -8,9 +8,9 @@
             </div>
             <div class="col-lg-2">
                 <div class="flex-even text-right">
-                    <button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['create-playlist']">
+                    <button mat-button mat-raised-button class="theme-btn mr-2" (click)="showCreatePlaylistDialog()">
                         <span class="button-label"> Create Playlist </span>
-                        <span class="fas fa-play ml-2 sm-text"></span>
+                        <span class="fas fa-plus ml-2 sm-text"></span>
                     </button>
                 </div>
             </div>
@@ -73,20 +73,17 @@
                     <ng-container *ngIf="!searching; else loader">
                         <mat-card *ngIf="filtered_data.length > 0; else nodata">
                             <app-data-table
+                                [page]="'playlists'"
                                 [table_data]="filtered_data"
-                                [table_columns]="playlistTableColumns"
+                                [table_columns]="playlist_table_column"
                                 [new_table]="true"
                                 [paging_details]="paging_data"
-                                [playlist_delete]="true"
-                                [is_dealer]="true"
                                 (page_triggered)="getPlaylist($event)"
+                                [playlist_delete]="true"
                                 (update_info)="fromDelete()"
+                                [is_dealer]="true"
                                 (export_playlist)="exportPlaylist($event)"
-                                (push_license_updates)="onPushAllLicenseUpdates($event)"
-                                (to_sort_column)="getColumnsAndOrder($event)"
-                                [active_tab]="sortColumn"
-                                [sort_column]="sortColumn"
-                                [sort_order]="sortOrder">
+                                (push_license_updates)="onPushAllLicenseUpdates($event)">
                             </app-data-table>
                         </mat-card>
                     </ng-container>
@@ -99,12 +96,8 @@
         <mat-card class="p-5">
             <h3>What the!?</h3>
             <p class="sm-text mb-3">There are no playlists at the moment.</p>
-            <button
-                mat-button
-                mat-raised-button
-                class="theme-btn mr-2"
-                [routerLink]="['/dealer/playlists/create-playlist']">
-                Add Playlist
+            <button mat-button mat-raised-button class="theme-btn mr-2" (click)="showCreatePlaylistDialog()">
+                Create Playlist
                 <span class="fas fa-plus ml-2 sm-text"></span>
             </button>
         </mat-card>

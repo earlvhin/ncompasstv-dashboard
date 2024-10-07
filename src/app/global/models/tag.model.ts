@@ -24,18 +24,7 @@ export interface TAG {
     updatedBy?: string;
 }
 
-export interface ADD_OWNER_RESPONSE {
-    message: string;
-    tags: {
-        owners: {
-            ownerId: string;
-            tagTypeId: string;
-            displayName: string;
-        }[];
-        tagIds: { tagId: string; name: string }[];
-    };
-}
-export interface REMOVE_TAG_BY_ID_AND_OWNER_RESPONSE {
-    message: string;
-    tag: string;
+export interface ASSIGN_TAG {
+    owners: { ownerId: string; tagTypeId: string }[];
+    tagIds: { tagId: string; name: string }[];
 }

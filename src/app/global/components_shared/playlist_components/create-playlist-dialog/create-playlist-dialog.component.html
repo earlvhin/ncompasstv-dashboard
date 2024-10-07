@@ -1,0 +1,90 @@
+<div id="createPlaylistDialog" class="user-form postion-relative p-3">
+    <div class="heading d-flex">
+        <div class="flex-even">
+            <h3 class="mb-4">{{ title }}</h3>
+        </div>
+        <div>
+            <button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
+                <span class="fas fa-times"></span>
+            </button>
+        </div>
+    </div>
+
+    <div class="form-container">
+        <ng-container *ngIf="isFormReady">
+            <form class="text-left" [formGroup]="createPlaylistForm" (ngSubmit)="createPlaylist()" #formDirective>
+                <div class="d-flex flex-column mb-4">
+                    <ng-container *ngFor="let field of formFields">
+                        <ng-container [ngSwitch]="field.type">
+                            <mat-form-field class="full-width">
+                                <!-- AUTOCOMPLETE FIELD -->
+                                <ng-container *ngSwitchCase="'autocomplete'">
+                                    <div class="d-flex">
+                                        <input
+                                            matInput
+                                            aria-label="Dealer"
+                                            [placeholder]="field.label"
+                                            [matAutocomplete]="dealerAutocomplete"
+                                            [formControl]="dealerSearchControl" />
+                                        <ng-container *ngIf="hasSelectedDealer">
+                                            <button
+                                                *ngIf="dealerSearchControl.value"
+                                                matSuffix
+                                                mat-button
+                                                mat-icon-button
+                                                aria-label="Clear"
+                                                class="autocomplete-clear-btn"
+                                                (click)="clearDealerSelection()">
+                                                <mat-icon>close</mat-icon>
+                                            </button>
+                                        </ng-container>
+                                    </div>
+                                    <mat-autocomplete #dealerAutocomplete="matAutocomplete">
+                                        <mat-option
+                                            *ngFor="let dealer of filteredDealers | async"
+                                            [value]="dealer.businessName"
+                                            (click)="dealerSelected(dealer.dealerId)">
+                                            <span>{{ dealer.businessName }}</span>
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                </ng-container>
+
+                                <!-- DEFAULT INPUT FIELD I.E. TEXT / NUMBER -->
+                                <ng-container *ngSwitchDefault>
+                                    <input
+                                        matInput
+                                        type="field.type"
+                                        [placeholder]="field.label"
+                                        [formControlName]="field.name" />
+                                </ng-container>
+                            </mat-form-field>
+                        </ng-container>
+                    </ng-container>
+                </div>
+                <!-- SUBMIT BUTTON -->
+                <div mat-dialog-actions class="actions-container">
+                    <div class="d-flex flex-even align-items-center">
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn submit _primary"
+                            type="submit"
+                            [disabled]="createPlaylistForm.invalid">
+                            Submit
+                        </button>
+                        <button mat-button mat-raised-button class="theme-btn btn-danger" [mat-dialog-close]="'close'">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </ng-container>
+    </div>
+</div>
+
+<ng-template #loadingDealers>
+    <div class="spinner-container d-flex align-items-center justify-content-between">
+        <h4>Loading dealers...</h4>
+        <app-spinner [diameter]="35"></app-spinner>
+    </div>
+</ng-template>

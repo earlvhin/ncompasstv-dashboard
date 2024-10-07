@@ -2,6 +2,7 @@ import { Component, OnInit, Output, EventEmitter, Input, OnChanges, SimpleChange
 import { AuthService, HelperService, HostService } from 'src/app/global/services';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+
 import { UI_AUTOCOMPLETE, UI_AUTOCOMPLETE_DATA } from 'src/app/global/models';
 
 @Component({
@@ -37,15 +38,24 @@ export class HostAutocompleteComponent implements OnInit, OnChanges {
         this.getHostsMinified(this.isDealer ? this._auth.current_user_value.roleInfo.dealerId : '');
     }
 
-    //Detect change on the create screen component
     ngOnChanges(changes: SimpleChanges) {
         if (changes['dealer_id']) this.onDealerSelected();
     }
 
-    getHostsMinified(dealerId?: string) {
+    /**
+     * Fetches a list of hosts in a minified format (host ID, name, dealer ID) for the specified dealer.
+     * The function first resets the current host data and then makes an API call to retrieve hosts.
+     * If the dealer ID is provided, it fetches the hosts for that specific dealer; otherwise, it uses the current dealer.
+     * Upon success, it maps the host data and updates the autocomplete options.
+     *
+     * @param {string} [dealerId] - (Optional) The ID of the dealer to fetch hosts for. If not provided, the current dealer ID is used.
+     * @public
+     * @returns {void}
+     */
+    public getHostsMinified(dealerId?: string): void {
+        // Reset host data
         this.hostDataFetched = false;
-        // this.useWarning = false; // hide warning message
-        this.hostsData.data = []; // reset host data
+        this.hostsData.data = [];
 
         if (dealerId) this.dealerId = dealerId;
 
@@ -71,12 +81,18 @@ export class HostAutocompleteComponent implements OnInit, OnChanges {
             })
             .add(() => {
                 return this.setAutocomplete(this.hosts);
-                this.hostsData.data = []; // reset host data
-                this.onDealerSelected();
             });
     }
 
-    setAutocomplete(hosts: UI_AUTOCOMPLETE_DATA[]) {
+    /**
+     * Sets the autocomplete configuration for the host selection field.
+     * This includes the label, placeholder, available hosts data, and options like unselectability.
+     *
+     * @param {UI_AUTOCOMPLETE_DATA[]} hosts - An array of hosts to be displayed in the autocomplete field.
+     * @private
+     * @returns {void}
+     */
+    private setAutocomplete(hosts: UI_AUTOCOMPLETE_DATA[]): void {
         this.hostsData = {
             label: 'Select Host Name',
             placeholder: 'Ex. NCompass Host',
@@ -86,16 +102,38 @@ export class HostAutocompleteComponent implements OnInit, OnChanges {
         };
     }
 
-    setHost(data: { id: string; value: string; dealerId?: string }) {
+    /**
+     * Emits the selected host data to the parent component.
+     * The emitted data contains the host ID, name, and optional dealer ID.
+     *
+     * @param {{ id: string; value: string; dealerId?: string }} data - The selected host's data.
+     * @public
+     * @returns {void}
+     */
+    public setHost(data: { id: string; value: string; dealerId?: string }): void {
         this.host_selected.emit(data || null);
     }
 
-    public hostNotFound(keyword: string): void {
+    /**
+     * Updates the autocomplete to indicate that no hosts were found and emits a `null` value for the host.
+     *
+     * @public
+     * @returns {void}
+     */
+    public hostNotFound(): void {
         this.hostsData.noData = 'Host Not Found';
         this.host_selected.emit(null);
     }
 
-    onDealerSelected() {
+    /**
+     * Fetches the hosts for the selected dealer.
+     * If a `dealer_id` is available, it immediately fetches the minified host data for that dealer.
+     * Otherwise, it subscribes to the `onDealerSelected$` observable to get the selected dealer and fetch the hosts.
+     *
+     * @private
+     * @returns {void}
+     */
+    private onDealerSelected(): void {
         if (this.dealer_id) {
             this.getHostsMinified(this.dealer_id);
             return;
@@ -106,7 +144,14 @@ export class HostAutocompleteComponent implements OnInit, OnChanges {
         });
     }
 
-    protected get isDealer() {
+    /**
+     * Checks if the current user's role is either "dealer" or "sub-dealer".
+     * This helps determine if the user has dealer-specific permissions.
+     *
+     * @protected
+     * @returns {boolean} - Returns `true` if the user is a dealer or sub-dealer, otherwise `false`.
+     */
+    protected get isDealer(): boolean {
         const DEALER_ROLES = ['dealer', 'sub-dealer'];
         return DEALER_ROLES.includes(this._auth.current_role);
     }

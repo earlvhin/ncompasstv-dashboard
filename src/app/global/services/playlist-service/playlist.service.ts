@@ -15,6 +15,7 @@ import {
     UI_ROLE_DEFINITION,
     API_PLAYLIST,
     PAGING,
+    API_PLAYLIST_PAGINATED,
 } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { BaseService } from '../base.service';
@@ -109,11 +110,9 @@ export class PlaylistService extends BaseService {
         page: number,
         id: string,
         key: string,
-        sortColumn?: string,
-        sortOrder?: string,
-    ): Observable<{ message?: string; playlists: API_PLAYLIST[]; paging: PAGING }> {
+    ): Observable<{ message?: string; playlists: API_PLAYLIST_PAGINATED[]; paging: PAGING }> {
         const base = `${this.getters.api_get_playlist_by_dealer_id_table}`;
-        const params = this.setUrlParams({ page, dealerid: id, search: key, sortColumn, sortOrder }, false, true);
+        const params = this.setUrlParams({ page, dealerid: id, search: key }, false, true);
         const url = `${base}${params}`;
         return this.getRequest(url);
     }
@@ -142,6 +141,10 @@ export class PlaylistService extends BaseService {
 
     clone_playlist(data) {
         return this.postRequest(this.creators.api_clone_playlist, data);
+    }
+
+    create_playlist_whitelist_migration(id) {
+        return this.postRequest(`${this.creators.api_playlist_whitelist_migration}?playlistId=${id}`, id);
     }
 
     bulk_whitelist(data) {

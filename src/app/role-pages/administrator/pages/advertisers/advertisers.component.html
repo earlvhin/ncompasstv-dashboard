@@ -5,7 +5,10 @@
                 <h1 class="page-title">{{ title }}</h1>
             </div>
             <div class="flex-even text-right">
-                <a [routerLink]="['/administrator/users/create-user/advertiser']" target="_blank">
+                <a
+                    [routerLink]="['/administrator/users/create-user/advertiser']"
+                    target="_blank"
+                    *ngIf="!isDealerAdmin">
                     <button
                         mat-button
                         mat-raised-button

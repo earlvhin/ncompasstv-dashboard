@@ -1,0 +1,56 @@
+.content-settings {
+    height: 100%;
+    position: relative;
+
+    .playlist-content-preview {
+        height: 320px;
+
+        &.scroll {
+            position: relative;
+            overflow-y: scroll;
+        }
+
+        .thumbnail-preview-100 {
+            background-color: #000;
+            height: 100%;
+            object-fit: contain;
+            width: 100%;
+        }
+    }
+
+    .modal-btn {
+        border-radius: 999px;
+        border: 0;
+        height: 40px;
+        width: 40px;
+        font-size: 13px;
+
+        &:hover {
+            background-color: #d0d0d0;
+        }
+    }
+}
+
+.content-settings-min-height {
+    min-height: 600px;
+}
+
+.content-settings-spinner-min-height {
+    height: 400px;
+}
+
+.play-location-wrapper {
+    border-top: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f0f0f0;
+    height: 474px;
+    overflow-y: scroll;
+}
+
+.bottom-section-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.content-scheduler-form-errors {
+    margin-top: 15px;
+}

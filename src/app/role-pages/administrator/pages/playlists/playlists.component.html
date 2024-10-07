@@ -5,6 +5,11 @@
                 <h1 class="page-title">{{ title }}</h1>
             </div>
             <div class="flex-even text-right">
+                <!-- For PV2, Disabled for now -->
+                <!-- <button mat-button mat-raised-button class="theme-btn" (click)="showCreatePlaylistDialog()">
+                    <span class="button-label">Create Playlist</span>
+                    <i class="fas fa-plus ml-2 sm-text"></i>
+                </button> -->
                 <a [routerLink]="['create-playlist']" target="_blank">
                     <button mat-button mat-raised-button class="theme-btn">
                         <span class="button-label"> New Playlist </span>
@@ -16,7 +21,7 @@
         <hr class="mat-bl-em" />
     </div>
 
-    <div *ngIf="!no_playlist; else no_data">
+    <div class="content-section" *ngIf="!no_playlist; else no_data">
         <div class="row">
             <div class="col-12 col-lg">
                 <mat-card class="h-100">
@@ -73,11 +78,12 @@
                         <ng-container *ngIf="!searching; else loader">
                             <mat-card *ngIf="filtered_data.length > 0; else nodata">
                                 <app-data-table
+                                    [page]="'playlists'"
                                     [table_data]="filtered_data"
-                                    [table_columns]="playlistTableColumn"
+                                    [table_columns]="playlist_table_column"
                                     [new_table]="true"
                                     [paging_details]="paging_data"
-                                    (page_triggered)="pageRequested($event)"
+                                    (page_triggered)="getPlaylists($event)"
                                     [playlist_delete]="true"
                                     (update_info)="fromDelete()"
                                     (export_playlist)="exportPlaylist($event)"
