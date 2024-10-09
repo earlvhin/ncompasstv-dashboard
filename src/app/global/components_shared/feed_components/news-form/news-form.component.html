@@ -1,12 +1,12 @@
 <div id="news-form" class="news-form">
-    <form [formGroup]="news_form">
+    <form [formGroup]="newsForm">
         <div class="row mb-2">
-            <div *ngFor="let n of news_form_fields" class="{{ n.width }}">
+            <div *ngFor="let n of newsFormFields" class="{{ n.width }}">
                 <mat-form-field class="full-width mb-2" appearance="fill" *ngIf="!n.viewType">
                     <mat-label>{{ n.label }}</mat-label>
                     <input
                         matInput
-                        formControlName="{{ n.form_control_name }}"
+                        formControlName="{{ n.formControlName }}"
                         [type]="n.type"
                         [required]="n.required"
                         autocomplete="off" />
@@ -24,12 +24,12 @@
                     <button
                         *ngIf="n.fileName"
                         class="remove-button"
-                        (click)="$event.preventDefault(); removeSelectedMedia(n.form_control_name)">
+                        (click)="$event.preventDefault(); removeSelectedMedia(n.formControlName)">
                         <span class="fas fa-times"></span>
                     </button>
                     <button
                         class="upload-button"
-                        (click)="$event.preventDefault(); openMediaLibraryModal(n.form_control_name)">
+                        (click)="$event.preventDefault(); openMediaLibraryModal(n.formControlName)">
                         <span class="fas fa-camera"></span>
                     </button>
                 </div>
@@ -39,7 +39,7 @@
                     appearance="fill"
                     *ngIf="n.viewType == 'select'">
                     <mat-label>{{ n.label }}</mat-label>
-                    <mat-select formControlName="{{ n.form_control_name }}" [disabled]="is_marking">
+                    <mat-select formControlName="{{ n.formControlName }}" [disabled]="isMarking">
                         <mat-option *ngFor="let filter of n.options" [value]="filter.label">
                             {{ filter.label }}
                         </mat-option>
@@ -55,10 +55,10 @@
                     <input
                         matInput
                         autocomplete="off"
-                        formControlName="{{ n.form_control_name }}"
+                        formControlName="{{ n.formControlName }}"
                         [type]="n.type"
                         [(colorPicker)]="n.colorValue"
-                        (colorPickerChange)="colorPicker(n.colorValue, n.form_control_name)"
+                        (colorPickerChange)="setColor(n.colorValue, n.formControlName)"
                         [cpAlphaChannel]="'enabled'"
                         [cpDisableInput]="true"
                         [value]="n.colorValue || ''" />
@@ -72,33 +72,38 @@
             </div>
         </div>
 
-        <div *ngIf="is_validating_url" class="spinner-container d-flex justify-content-between mb-2">
-            <app-spinner [diameter]="35"></app-spinner>
-        </div>
-
-        <ng-container *ngIf="feedUrlHasValue && !is_validating_url">
-            <div class="alert alert-success" *ngIf="!isInvalidUrl && !isDirectTechUrl">
-                <p class="sm-text font-weight-bold">Entered Feed URL is a supported format.</p>
+        <!-- LOADER/SPINNER FOR FEED URL CHANGES -->
+        <ng-container *ngIf="isCheckingUrl; else showUrlCheckResults">
+            <div class="spinner-container d-flex justify-content-between mb-2">
+                <app-spinner [diameter]="35" [message]="checkFeedUrlText"></app-spinner>
             </div>
-
-            <ng-container *ngIf="!isInvalidUrl && isDirectTechUrl">
-                <div class="alert alert-warning">
-                    <p class="sm-text font-weight-bold">Entered Feed URL may be invalid.</p>
-                </div>
-            </ng-container>
-
-            <ng-container *ngIf="isInvalidUrl">
-                <div class="alert alert-danger">
-                    <p class="sm-text font-weight-bold">Feed URL Error! Possible reasons may be;</p>
-                    <ul class="sm-text font-weight-bold pl-4">
-                        <li>Incorrect Link</li>
-                        <li>The feed URL does not start with "http" or "https"</li>
-                    </ul>
-                </div>
-            </ng-container>
         </ng-container>
 
-        <button mat-button mat-raised-button matStepperNext class="theme-btn" (click)="generateNewsFeed()">
+        <!-- FEED URL CHECKING RESULTS -->
+        <ng-template #showUrlCheckResults>
+            <ng-container *ngIf="!isInitialUrlCheck">
+                <div class="alert" [ngClass]="getAlertClass()">
+                    <p class="sm-text font-weight-bold">
+                        <ng-container *ngIf="!feedUrlHasValue">URL is required!</ng-container>
+                        <ng-container *ngIf="feedUrlHasValue && !hasValidUrlFormat">
+                            Invalid format. Please check the URL provided.
+                        </ng-container>
+                        <ng-container *ngIf="validUrlNoAccess">
+                            The URL may not be accessible. Please ensure that it can be accessed via the browser.
+                        </ng-container>
+                        <ng-container *ngIf="validUrl"> URL is valid </ng-container>
+                    </p>
+                </div>
+            </ng-container>
+        </ng-template>
+
+        <button
+            mat-button
+            mat-raised-button
+            matStepperNext
+            class="theme-btn"
+            (click)="generateNewsFeed()"
+            [disabled]="isFormInvalid">
             Next <span class="fas fa-long-arrow-right"></span>
         </button>
     </form>

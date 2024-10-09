@@ -142,6 +142,7 @@ export type API_GENERATED_FEED = {
 };
 
 export type WEATHER_FEED_STYLE_DATA = {
+    apiReferenceKey: string;
     backgroundContentId: string;
     backgroundContents: API_CONTENT;
     bannerContentId: string;

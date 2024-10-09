@@ -51,11 +51,6 @@
                             type="text"
                             placeholder="URL needs to be working" />
                     </mat-form-field>
-                    <div
-                        *ngIf="isValidatingUrl"
-                        class="spinner-container d-flex align-items-center justify-content-between position-absolute top-0 right-0">
-                        <app-spinner [diameter]="35"></app-spinner>
-                    </div>
                 </div>
             </ng-container>
 
@@ -73,27 +68,29 @@
             </ng-template>
         </div>
 
-        <ng-container *ngIf="!has_selected_widget_feed_type && feedUrlHasValue && !isValidatingUrl">
-            <div class="alert alert-success" *ngIf="!isInvalidUrl && !isDirectTechUrl">
-                <p class="sm-text font-weight-bold">Entered Feed URL is a supported format.</p>
+        <!-- LOADER/SPINNER FOR FEED URL CHANGES -->
+        <ng-container *ngIf="isCheckingUrl; else showUrlCheckResults">
+            <div class="spinner-container d-flex justify-content-between mb-2">
+                <app-spinner [diameter]="35" [message]="checkFeedUrlText"></app-spinner>
             </div>
-
-            <ng-container *ngIf="!isInvalidUrl && isDirectTechUrl">
-                <div class="alert alert-warning">
-                    <p class="sm-text font-weight-bold">Entered Feed URL may be invalid.</p>
-                </div>
-            </ng-container>
-
-            <ng-container *ngIf="isInvalidUrl">
-                <div class="alert alert-danger">
-                    <p class="sm-text font-weight-bold">Feed URL Error! Possible reasons may be;</p>
-                    <ul class="sm-text font-weight-bold pl-4">
-                        <li>Incorrect Link</li>
-                        <li>The feed URL does not start with "http" or "https"</li>
-                    </ul>
-                </div>
-            </ng-container>
         </ng-container>
+
+        <ng-template #showUrlCheckResults>
+            <ng-container *ngIf="!isInitialUrlCheck">
+                <div class="alert" [ngClass]="getAlertClass()">
+                    <p class="sm-text font-weight-bold">
+                        <ng-container *ngIf="!feedUrlHasValue">URL is required!</ng-container>
+                        <ng-container *ngIf="feedUrlHasValue && !hasValidUrlFormat">
+                            Invalid format. Please check the URL provided.
+                        </ng-container>
+                        <ng-container *ngIf="validUrlNoAccess">
+                            The URL may not be accessible. Please ensure that it can be accessed via the browser.
+                        </ng-container>
+                        <ng-container *ngIf="validUrl"> URL is valid </ng-container>
+                    </p>
+                </div>
+            </ng-container>
+        </ng-template>
 
         <div class="d-flex flex-even align-items-center">
             <ng-container *ngIf="!has_selected_widget_feed_type; else widgetButton">
