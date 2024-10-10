@@ -92,6 +92,7 @@ export class DealersTableComponent implements OnInit {
             else this.tooltip = `Filtered by ${min} and above`;
         }
         if (min == 0 && max == '') this.active_filter_tab = '';
+        this.ongoing_filter = true;
         this.pageRequested(1);
     }
 
