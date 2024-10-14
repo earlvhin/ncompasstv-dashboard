@@ -3,7 +3,7 @@ import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { API_CONTENT, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { API_CONTENT, FILE_TYPE, FILE_TYPES, UI_ROLE_DEFINITION } from 'src/app/global/models';
 import { AuthService, ContentService, FillerService, PlaylistService } from 'src/app/global/services';
 import { MediaPlaywhereComponent } from '../media-playwhere/media-playwhere.component';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
@@ -39,6 +39,8 @@ export class PlaylistMediaComponent implements OnInit {
     current_content: any = [];
     in_progress_saving_fillers: boolean = false;
     has_fillers: boolean = false;
+
+    private fileTypes: FILE_TYPE = FILE_TYPES;
 
     protected _unsubscribe = new Subject<void>();
 
@@ -162,6 +164,15 @@ export class PlaylistMediaComponent implements OnInit {
                 });
             }
         }
+    }
+
+    /**
+     * Counts the number of selected files based on type.
+     * @param type Type of files to count ('image', 'video', 'feed')
+     * @returns The number of selected files of the given type.
+     */
+    public countByFileType(type: string): number {
+        return this.selected_contents.filter((content) => this.fileTypes[type].includes(content.fileType)).length;
     }
 
     playWhere() {
