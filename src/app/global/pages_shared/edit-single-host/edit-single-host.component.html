@@ -140,16 +140,6 @@
                                 </div>
 
                                 <div class="flex">
-                                    <mat-checkbox
-                                        [(ngModel)]="canada_selected"
-                                        [ngModelOptions]="{ standalone: true }"
-                                        (change)="getCanadaAddress($event)"
-                                        class="sm-text">
-                                        Canada Address
-                                    </mat-checkbox>
-                                </div>
-
-                                <div class="flex">
                                     <div class="flex-even pr-3">
                                         <mat-form-field class="full-width">
                                             <mat-label>Address</mat-label>
@@ -161,7 +151,7 @@
                                         </mat-form-field>
                                     </div>
                                     <div class="flex-even pr-3">
-                                        <ng-container *ngIf="cities_loaded; else loadingCities">
+                                        <ng-container>
                                             <app-city-autocomplete
                                                 (city_selected)="setCity($event)"
                                                 [selected_city_from_google]="city_selected"
