@@ -95,9 +95,9 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.dealers_list = [];
-        this.getDealers();
         this.getUserData();
         this.subscribeToDealerSearch();
+        if (this.currentRole === 'dealeradmin') this.getDealers();
     }
 
     private getUserData() {

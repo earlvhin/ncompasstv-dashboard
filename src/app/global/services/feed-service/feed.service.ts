@@ -29,23 +29,15 @@ export class FeedService extends BaseService {
     }
 
     /**
-     * Use this function to check if a feed URL is well-formed and is existing.
-     * Returns true if the URL is acceptable, otherwise false
+     * Checks via API if the feed url is accessible.
+     * Returns true if the URL returns a response, otherwise false.
      * @param data
      * @returns boolean
+     * @endpoint feed/validate/url
      */
-    async check_url(data: string, checkIfRssFeed = false) {
-        if (typeof data === 'undefined' || !data) return false;
-
-        if (checkIfRssFeed && !this.is_rss_feed(data)) return false;
-
-        if (!this.is_proper_feed_url(data)) return false;
-
-        try {
-            return await this.validate_feed_url(data).toPromise();
-        } catch (error) {
-            return false;
-        }
+    public canAccessUrl(data: string): Observable<boolean> {
+        const body = { url: data };
+        return this.postRequest(this.getters.validate_feed_url, body);
     }
 
     clone_feed(contentId: string, title: string, createdBy: string) {
@@ -209,21 +201,13 @@ export class FeedService extends BaseService {
         return { invalidColor: true };
     }
 
-    private is_rss_feed(data: string) {
-        const RSS_URL_EXTENSIONS = ['.rss', '.xml'];
-        return RSS_URL_EXTENSIONS.some((r) => data.includes(r));
-    }
-
     /**
      * Checks if the feed url is well-formed
      * @param data
      * @returns boolean
      */
-
-    private is_proper_feed_url(data: string) {
+    public isUrlStructured(data: string): boolean {
         const PROTOCOLS = ['http://', 'https://'];
-
-        if (data.trim().length <= 0) return false;
 
         const hasProtocol = () => PROTOCOLS.some((p) => data.startsWith(p));
 
@@ -239,27 +223,6 @@ export class FeedService extends BaseService {
             return pattern.test(data);
         };
 
-        //Check number of occurence of protocols
-        // const countProtocols = () => {
-        //     let count = 0;
-        //     PROTOCOLS.forEach((p) => {
-        //         const regex = new RegExp(p, 'g');
-        //         const matches = (data.match(regex) || []).length;
-        //         count += matches;
-        //     });
-        //     return count;
-        // };
-
         return hasValidPattern() && hasProtocol();
-    }
-
-    /**
-     * Checks if the feed URL is working by sending it to the server for verification
-     * @param url: string
-     * @returns
-     */
-    private validate_feed_url(url: string) {
-        const body = { url };
-        return this.postRequest(this.getters.validate_feed_url, body);
     }
 }

@@ -15,7 +15,7 @@
     <hr class="mat-bl-em" />
 
     <div class="row cards">
-        <div class="col-lg" *ngIf="!_isDealer()">
+        <div class="col-lg" *ngIf="!isDealer()">
             <div *ngIf="!isLoadingCount; else loading">
                 <app-data-card-count [data_value]="count.dealer" [data_label]="'Dealers'"> </app-data-card-count>
             </div>

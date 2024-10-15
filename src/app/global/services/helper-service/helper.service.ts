@@ -1,6 +1,6 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 import * as moment from 'moment';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 import {
     API_ADVERTISER,
@@ -83,5 +83,17 @@ export class HelperService {
     truncateText(data: string, limit: number = 250): string {
         if (data.length > limit) return `${data.slice(0, limit)}...`;
         return data;
+    }
+
+    /**
+     * Checks if the provided string has a non-empty, non-whitespace value.
+     * This function ensures that the string is neither `undefined` nor `null`,
+     * and it contains more than just whitespace characters after trimming.
+     *
+     * @param {string} data - The string to check.
+     * @returns {boolean} - Returns `true` if the string has a valid value, otherwise `false`.
+     */
+    public stringHasValue(data: string): boolean {
+        return typeof data !== 'undefined' && data !== null && data.trim().length > 0;
     }
 }

@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { filter, map, takeUntil } from 'rxjs/operators';
+import { ActivatedRoute, Router } from '@angular/router';
+import { map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { TAG_OWNER, TAG_TYPE } from 'src/app/global/models';
@@ -39,13 +39,18 @@ export class TagsComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
-        // Initial route check and tagname availability
-        this.assignActiveTag();
+        // If accessed via child route then set the selected tag
+        // This usually happens when clicking on a tag from the user activity tab
+        if (this._route.firstChild) {
+            this._route.firstChild.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe((params) => {
+                this.tagId = params.get('data');
+                this.getTagById(this.tagId);
+            });
 
-        // Route change watcher
-        this._router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
-            this.assignActiveTag();
-        });
+            return;
+        }
+
+        this.loadInitialData();
     }
 
     ngOnDestroy() {
@@ -53,23 +58,13 @@ export class TagsComponent implements OnInit, OnDestroy {
         this._unsubscribe.complete();
     }
 
-    private assignActiveTag(): void {
-        const childRoute = this._route.firstChild;
-
-        if (childRoute) {
-            childRoute.paramMap.subscribe((params) => {
-                this.tagId = params.get('data');
-            });
-
-            this.getTagById(this.tagId);
-        } else {
-            this.tagId = null;
-            this.tagNameRoute = null;
-            this.isContentReady = false;
-            this.getAllTagTypes().add(() => (this.isContentReady = true));
-            this.getTagsCount();
-            this.subscribeToTagsCountRefresh();
-        }
+    private loadInitialData(): void {
+        this.tagId = null;
+        this.tagNameRoute = null;
+        this.isContentReady = false;
+        this.getAllTagTypes().add(() => (this.isContentReady = true));
+        this.getTagsCount();
+        this.subscribeToTagsCountRefresh();
     }
 
     clickedTagName(event: { tag: string }): void {
@@ -84,11 +79,18 @@ export class TagsComponent implements OnInit, OnDestroy {
         return this._auth.current_role;
     }
 
-    _isDealer() {
+    public isDealer(): boolean {
         const DEALER_ROLES = ['dealer', 'sub-dealer'];
         return DEALER_ROLES.includes(this._auth.current_role);
     }
 
+    /**
+     * Initializes the component's data by resetting tag-related properties,
+     * loading the available tag types, and updating the tag count.
+     *
+     *
+     * @private
+     */
     private getTagById(tagId: string): void {
         this._tag.getTag(tagId).subscribe({
             next: (response) => {
@@ -97,8 +99,8 @@ export class TagsComponent implements OnInit, OnDestroy {
                 this.getTagsCount();
                 this.subscribeToTagsCountRefresh();
             },
-            error: (error) => {
-                console.error(error);
+            error: (err) => {
+                console.error('Failed to retrieve the tag data', err);
             },
         });
     }
@@ -144,7 +146,7 @@ export class TagsComponent implements OnInit, OnDestroy {
     private getTagsCount(): void {
         this.isLoadingCount = true;
         this._tag
-            .getAllTagsCount(this._isDealer())
+            .getAllTagsCount(this.isDealer())
             .pipe(
                 takeUntil(this._unsubscribe),
                 map((response) => response.tags),

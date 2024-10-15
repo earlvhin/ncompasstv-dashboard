@@ -87,6 +87,7 @@ export * from './feed.model';
 export * from './file-converted.model';
 export * from './file-upload.model';
 export * from './form-controls.model';
+export * from './form-field.model';
 export * from './frequency.model';
 export * from './host-custom-field-group';
 export * from './host-s3-file.model';
