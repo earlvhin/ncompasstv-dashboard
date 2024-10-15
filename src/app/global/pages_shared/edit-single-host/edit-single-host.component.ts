@@ -34,6 +34,7 @@ import {
 import { BulkEditBusinessHoursComponent } from '../../components_shared/page_components/bulk-edit-business-hours/bulk-edit-business-hours.component';
 import * as moment from 'moment';
 import { HOST_ACTIVITY_LOGS } from '../../models/api_host_activity_logs.model';
+import { UI_HOST_ADDRESS } from '../../models/ui_hosts-address';
 
 @Component({
     selector: 'app-edit-single-host',
@@ -458,21 +459,19 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
             });
     }
 
-    public setCity(data): void {
-        const { city, state, region } = data || { city: '', state: '', region: '' };
-        if (data) {
-            this.city_selected = data.city;
+    public setCity(data: UI_HOST_ADDRESS | null): void {
+        const { city = '', state = '', region = '', country = '' } = data || {};
+        
+        this._formControls.city.setValue(city);
+        this._formControls.state.setValue(state);
+        this._formControls.region.setValue(region);
+        this._formControls.zip.setValue('');
 
-            this._formControls.city.setValue(city);
-            this._formControls.state.setValue(state);
-            this._formControls.region.setValue(region);
-            this._formControls.zip.setValue('');
-            this.canada_selected = data.country === 'CA';
-            this.city_selected = data.city;
+        this.city_selected = city;
+        this.canada_selected = country === 'CA';
 
-            this.setZipCodeValidation();
-            this.subscribeToZipChanges();
-        }
+        this.setZipCodeValidation();
+        this.subscribeToZipChanges();
     }
 
     public setInitialCity(): void {
