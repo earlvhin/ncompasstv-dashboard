@@ -966,8 +966,11 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         // Start a 2-minute timeout and store the timeout ID
         this.gettingPiLocalTimeTimeoutId = window.setTimeout(() => {
             this.gettingPiLocalTime = false;
-
-            this.displayPopup("Oh snap! We could not get the player's date & time!. Please try again later.", 'error');
+            if (this.compareVersions(this.apps.server, this.PLAYER_LOCAL_DATE_TIME_MIN_VERSION))
+                this.displayPopup(
+                    "Oh snap! We could not get the player's date & time!. Please try again later.",
+                    'error',
+                );
         }, 30000); // 120000 milliseconds = 2 minutes
     }
 
