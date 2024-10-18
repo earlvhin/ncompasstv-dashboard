@@ -32,6 +32,7 @@ export class PlaylistMediaComponent implements OnInit {
     isActiveTab: number = 0;
     active_filler: number;
     loadingFillers = false;
+    totalEntities: number = 0;
     // subscription: Subscription = new Subscription();
 
     current_selection: any = '';
@@ -61,10 +62,12 @@ export class PlaylistMediaComponent implements OnInit {
             this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.administrator ||
             this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.tech
         ) {
-            this.getFloatingContents();
             this.active_filler = 1;
         } else {
-            if (this._isDealer()) this.active_filler = 2;
+            if (this._isDealer()) {
+                this.getDealerContent(this._dialog_data.dealer_id);
+                this.active_filler = 2;
+            }
             else if (this._isDealerAdmin()) this.active_filler = 3;
         }
     }
@@ -89,12 +92,14 @@ export class PlaylistMediaComponent implements OnInit {
                 if (data.message) {
                     this.dealer_has_no_contents = true;
                     this.isGettingData = false;
+                    this.getFloatingContents();
                     return;
                 }
 
                 this.media_files = this.media_files.concat(data.contents);
                 this.media_files_backup = this.media_files_backup.concat(data.contents);
                 this.paging = data.paging;
+                this.totalEntities = this.paging.totalEntities;
 
                 data.contents.map((i) => {
                     if (i.dealerId !== null && i.dealerId !== '') {
@@ -115,6 +120,7 @@ export class PlaylistMediaComponent implements OnInit {
             .subscribe((response) => {
                 const contents = response.iContents;
                 this.floating_contents = [...contents];
+                this.totalEntities = this.media_files.length + response.paging.totalEntities;
                 this.paging = response.paging;
 
                 if (this.dealer_has_no_contents) {
@@ -122,16 +128,18 @@ export class PlaylistMediaComponent implements OnInit {
                     this.media_files_backup = [...contents];
                     this.show_floating = true;
                 }
+                if(this.show_floating && !this.dealer_has_no_contents) this.media_files = this.media_files.concat(this.floating_contents);
             });
     }
 
     displayFloating(e) {
         if (e.checked == true) {
             this.show_floating = e.checked;
-            this.media_files = this.media_files.concat(this.floating_contents);
+            this.getFloatingContents();
         } else {
             this.show_floating = e.checked;
             this.media_files = this.media_files.filter((i) => i.dealerId !== null && i.dealerId !== '');
+            this.totalEntities = this.media_files.length;
         }
     }
 

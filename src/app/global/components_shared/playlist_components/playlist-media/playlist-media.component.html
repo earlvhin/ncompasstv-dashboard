@@ -282,7 +282,7 @@
                     </div>
                     <div class="col-lg-6 text-center">
                         <span class="sm-text" *ngIf="paging">
-                            Loaded {{ media_files.length }} of {{ paging.totalEntities }} Assets
+                            Loaded {{ media_files.length }} of {{ totalEntities }} Assets
                         </span>
                     </div>
                     <div class="col-lg-2">
@@ -321,9 +321,9 @@
             <ng-template #swap_content_controls>
                 <div class="row" *ngIf="isActiveTab == 0">
                     <div class="col-lg-10 text-left">
-                        <span class="sm-text" *ngIf="paging"
-                            >Loaded {{ media_files.length }} of {{ paging.totalEntities }} Assets</span
-                        >
+                        <span class="sm-text" *ngIf="paging">
+                            Loaded {{ media_files.length }} of {{ totalEntities }} Assets
+                        </span>
                     </div>
                     <div class="col-lg-2 text-right">
                         <button
