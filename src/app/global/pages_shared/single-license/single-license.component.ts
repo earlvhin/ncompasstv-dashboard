@@ -227,7 +227,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     support_tab = true;
     tooltipMessage: string = 'Copy license key';
     showCopiedTooltip: boolean = false;
-    isHidden = true;
 
     paging_data_activity: any;
 
