@@ -80,7 +80,7 @@
                         </div>
                     </div>
 
-                    <div class="d-flex flex-column">
+                    <div class="d-flex flex-column w-33">
                         <!-- Timezone -->
                         <div class="d-flex timezone" *ngIf="host">
                             <span class="sm-text mr-2"> Timezone: </span>
@@ -109,6 +109,41 @@
                             <h5 (click)="onShowHours()" class="hoverable sm-text">
                                 {{ current_operation.day }}: {{ current_operation.period }}
                             </h5>
+                        </div>
+                    </div>
+
+                    <div
+                        *ngIf="apps && compareVersions(apps.server, PLAYER_LOCAL_DATE_TIME_MIN_VERSION)"
+                        class="d-flex flex-column">
+                        <!-- Pi Local Date and Time -->
+                        <div class="d-flex timezone">
+                            <span class="sm-text mr-2"> {{ pi_status ? 'RPi Time' : 'Last Saved Time' }}: </span>
+                            <h5 class="sm-text mr-2">
+                                <span [ngClass]="playerLocalTimeTemplateClass()">
+                                    {{ piLocalDateTime }}
+                                </span>
+                            </h5>
+
+                            <ng-container *ngIf="pi_status">
+                                <ng-container *ngIf="!gettingPiLocalTime; else disable_get_pi_local_date_time">
+                                    <button
+                                        class="card-button get-time-button"
+                                        (click)="getPiLocalDateTime()"
+                                        title="Get Latest Player's Date Time">
+                                        <span class="fas fa-sync md-text"></span>
+                                    </button>
+                                </ng-container>
+
+                                <ng-template #disable_get_pi_local_date_time>
+                                    <button
+                                        class="card-button get-time-button disabled rotate mr-2 d-flex align-items-center"
+                                        title="Getting Pi Local Date Time">
+                                        <span class="fas fa-sync md-text"></span>
+                                    </button>
+
+                                    <span class="sm-text text-gray"> Getting Pi Local Time </span>
+                                </ng-template>
+                            </ng-container>
                         </div>
                     </div>
                 </div>
@@ -1499,18 +1534,25 @@
                                         </ng-container>
                                     </mat-card>
 
-                                    <ng-container *ngIf="!isHidden">
-                                        <mat-card class="p-4 mb-2">
-                                            <h4 class="mb-3">Player Background Settings</h4>
+                                    <mat-card class="p-4 mb-2">
+                                        <h4 class="mb-3">Player Background Settings</h4>
 
-                                            <div class="background-settings">
-                                                <app-update-player-background
-                                                    [license_data]="license_data"
-                                                    [pi_status]="pi_status"
-                                                    (refresh_background)="ngOnInit()"></app-update-player-background>
-                                            </div>
-                                        </mat-card>
-                                    </ng-container>
+                                        <div class="disclaimer d-flex align-items-center mb-3">
+                                            <span class="fas fa-exclamation-triangle mr-2 text-warning"></span>
+                                            <p class="sm-text mb-0">
+                                                Disclaimer: The background changer requires
+                                                <span class="bold">Player Server version 2.9.3 or higher</span> and
+                                                <span class="bold">Player UI version 3.0.43 or above</span> to work.
+                                            </p>
+                                        </div>
+
+                                        <div class="background-settings">
+                                            <app-update-player-background
+                                                [license_data]="license_data"
+                                                [pi_status]="pi_status"
+                                                (refresh_background)="ngOnInit()"></app-update-player-background>
+                                        </div>
+                                    </mat-card>
                                 </div>
                             </ng-container>
                         </div>

@@ -100,6 +100,7 @@ export interface API_LICENSE_PROPS {
     fastEdgeMonitoringTool?: number;
     displayControlSettings?: number;
     enableUpdates?: boolean;
+    piLocalDateTime?: string;
 }
 
 interface screenInfo {

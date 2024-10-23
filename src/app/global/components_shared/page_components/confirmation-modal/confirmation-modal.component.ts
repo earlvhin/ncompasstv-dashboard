@@ -41,7 +41,7 @@ export class ConfirmationModalComponent implements OnInit {
             typeof this.dialogData.picture_upload !== 'undefined' ? this.dialogData.picture_upload : false;
     }
 
-    displaySuccess() {
+    public displaySuccess(data?: string): void {
         // If updating host details, bypass the second dialog
         if (this.action === 'update_host') {
             this.dialogRef.close(true);
@@ -51,7 +51,7 @@ export class ConfirmationModalComponent implements OnInit {
         this.status = 'success';
         this.title = this.dialogData.message || 'Success!';
         this.message = this.return_msg;
-        this.dialogRef.close(this.action || true);
+        if (data == 'confirm_action') this.dialogRef.close(this.action || true);
     }
 
     deletePlaylist() {

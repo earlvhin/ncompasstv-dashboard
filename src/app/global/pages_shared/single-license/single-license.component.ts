@@ -15,6 +15,14 @@ import { EditTagComponent } from '../tags/dialogs';
 import { InformationModalComponent } from '../../components_shared/page_components/information-modal/information-modal.component';
 import { MediaViewerComponent } from '../../components_shared/media_components/media-viewer/media-viewer.component';
 import { AddTagModalComponent } from './components/add-tag-modal/add-tag-modal.component';
+import {
+    DATE_TIME_UNAVAILABLE,
+    PLAYER_LOCAL_DATE_TIME_MIN_VERSION,
+    PACIFIC_TIMEZONE_LOCATION,
+    MOUNTAIN_TIMEZONE_LOCATION,
+    CENTRAL_TIMEZONE_LOCATION,
+    EASTERN_TIMEZONE_LOCATION,
+} from '../../constants/common';
 
 import {
     AuthService,
@@ -61,6 +69,7 @@ import {
 } from 'src/app/global/models';
 
 import { UpdateTvBrandDialogComponent } from './components/update-tv-brand-dialog/update-tv-brand-dialog.component';
+import { D_GET_PI_LOCAL_DATE_TIME, SS_PI_LOCAL_DATE_TIME } from '../../constants/socket-events';
 
 @Component({
     selector: 'app-single-license',
@@ -116,6 +125,20 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     };
     display_status: number;
     enable_edit_alias = false;
+
+    /**
+     * Indicator if socket for getting Pi local datetime has been emitted and responded.
+     * @type {boolean}
+     */
+    public gettingPiLocalTime: boolean = false;
+
+    /**
+     * Stores the ID of the timeout.
+     * Initially set to null, it will hold the timeout ID when `getPiLocalDateTime` is called.
+     * @type {number | null}
+     */
+    private gettingPiLocalTimeTimeoutId: number | null = null;
+
     hasAdminPrivileges = false;
     isCheckingElectronRunning = false;
 
@@ -152,6 +175,13 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     no_screen_assigned = false;
     pi_status = false;
     pi_updating: boolean;
+
+    /**
+     * Storage of Pi Local Date Time from socket or API
+     * @type {string}
+     */
+    public piLocalDateTime: string = DATE_TIME_UNAVAILABLE;
+
     player_status: boolean;
     playlist_route: string;
     popup_message = '';
@@ -197,7 +227,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     support_tab = true;
     tooltipMessage: string = 'Copy license key';
     showCopiedTooltip: boolean = false;
-    isHidden = true;
 
     paging_data_activity: any;
 
@@ -205,6 +234,54 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     easternTime: string;
     centralTime: string;
     mountainTime: string;
+
+    /**
+     * Stores the constant from constant file of DateTime unavailable label.
+     * @type {string}
+     */
+    readonly DATE_TIME_UNAVAILABLE: string = DATE_TIME_UNAVAILABLE;
+
+    /**
+     * Stores the constant from constant file of the minimum player version of local date time implementation .
+     * @type {string}
+     */
+    readonly PLAYER_LOCAL_DATE_TIME_MIN_VERSION: string = PLAYER_LOCAL_DATE_TIME_MIN_VERSION;
+
+    /**
+     * Constant of the Pacific Timezone location
+     * @type {string}
+     */
+    readonly PACIFIC_TIMEZONE_LOCATION: string = PACIFIC_TIMEZONE_LOCATION;
+
+    /**
+     * Constant of the Mountain Timezone location
+     * @type {string}
+     */
+    readonly MOUNTAIN_TIMEZONE_LOCATION: string = MOUNTAIN_TIMEZONE_LOCATION;
+
+    /**
+     * Constant of the Central Timezone location
+     * @type {string}
+     */
+    readonly CENTRAL_TIMEZONE_LOCATION: string = CENTRAL_TIMEZONE_LOCATION;
+
+    /**
+     * Constant of the Eastern Timezone location
+     * @type {string}
+     */
+    readonly EASTERN_TIMEZONE_LOCATION: string = EASTERN_TIMEZONE_LOCATION;
+
+    /**
+     * Constant of the dashboard triggered socket get pi local date time
+     * @type {string}
+     */
+    readonly D_GET_PI_LOCAL_DATE_TIME: string = D_GET_PI_LOCAL_DATE_TIME;
+
+    /**
+     * Constant of the socket server triggered pi local date time
+     * @type {string}
+     */
+    readonly SS_PI_LOCAL_DATE_TIME: string = SS_PI_LOCAL_DATE_TIME;
 
     private contents_array: any = [];
     private contents_backup: UI_CONTENT_PER_ZONE[] = [];
@@ -230,6 +307,21 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             day: '2-digit',
         };
         return date.toLocaleTimeString('en-US', options);
+    }
+    /**
+     * Formats the datetime uniformly as datetime emitted from socket (player-server) is in UTC format
+     * while datetime from DB is not
+     *
+     * @param {string} dateTime
+     * @param {boolean} utc
+     * @returns {string}
+     */
+    private formatDateTime(dateTime: string, utc: boolean = true): string {
+        if (!dateTime) return;
+
+        let formattedDateTime = utc ? moment(dateTime).utc() : moment(dateTime);
+
+        return formattedDateTime.format('MMM DD, YYYY, hh:mm:ss A');
     }
 
     activity_table = [
@@ -282,10 +374,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
         setInterval(() => {
             const now = new Date();
-            this.pacificTime = this.formatTime(now, 'America/Los_Angeles');
-            this.easternTime = this.formatTime(now, 'America/New_York');
-            this.centralTime = this.formatTime(now, 'America/Chicago');
-            this.mountainTime = this.formatTime(now, 'America/Denver');
+            this.pacificTime = this.formatTime(now, this.PACIFIC_TIMEZONE_LOCATION);
+            this.easternTime = this.formatTime(now, this.EASTERN_TIMEZONE_LOCATION);
+            this.centralTime = this.formatTime(now, this.CENTRAL_TIMEZONE_LOCATION);
+            this.mountainTime = this.formatTime(now, this.MOUNTAIN_TIMEZONE_LOCATION);
         }, 1000);
     }
 
@@ -861,6 +953,68 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         this.saveActivityLog(ACTIVITY_CODES.speedtest);
     }
 
+    /**
+     * Emits get Pi local datetime to the socket server and sets the gettingPiLocalTime indicator to true
+     *
+     * @returns {void}
+     */
+    public getPiLocalDateTime(): void {
+        this.gettingPiLocalTime = true;
+        this._socket.emit(this.D_GET_PI_LOCAL_DATE_TIME, this.license_id);
+
+        // Start a 2-minute timeout and store the timeout ID
+        this.gettingPiLocalTimeTimeoutId = window.setTimeout(() => {
+            this.gettingPiLocalTime = false;
+            if (this.compareVersions(this.apps.server, this.PLAYER_LOCAL_DATE_TIME_MIN_VERSION))
+                this.displayPopup(
+                    "Oh snap! We could not get the player's date & time!. Please try again later.",
+                    'error',
+                );
+        }, 30000); // 120000 milliseconds = 2 minutes
+    }
+
+    /**
+     * Compares two version strings to determine if the first version is greater than or equal to the target version.
+     *
+     * @param {string} version - The version string to compare (e.g., "3.0.0").
+     * @param {string} - The target version string to compare against.
+     * @returns {boolean} - Returns `true` if the `version` is greater than or equal to `targetVersion`, otherwise `false`.
+     */
+    public compareVersions(version: string, targetVersion: string) {
+        // Split version strings into arrays of numbers
+        const versionParts = version.split('.').map(Number);
+        const targetParts = targetVersion.split('.').map(Number);
+
+        // Compare each part of the version
+        for (let i = 0; i < targetParts.length; i++) {
+            if ((versionParts[i] || 0) > targetParts[i]) {
+                return true; // The version is higher
+            } else if ((versionParts[i] || 0) < targetParts[i]) {
+                return false; // The version is lower
+            }
+        }
+
+        // If we get here, the versions are equal
+        return true;
+    }
+
+    /**
+     * Returns the styling class of the Player Local Datetime label
+     *
+     */
+    public playerLocalTimeTemplateClass(): string {
+        switch (true) {
+            case this.piLocalDateTime === this.DATE_TIME_UNAVAILABLE || !this.pi_status:
+                return 'time-span-disabled';
+
+            case this.isPlayerLocalTimeIsOutOfSync(this.piLocalDateTime):
+                return 'time-span-unsynced';
+
+            default:
+                return 'time-span';
+        }
+    }
+
     pushUpdate(): void {
         this.warningModal(
             'Push Updates',
@@ -1119,6 +1273,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         this.initializeFastEdgeSettingsForm();
         this.getDealerById(licenseData.license.dealerId);
 
+        if (!this.player_status && this.license_data.piLocalDateTime)
+            this.piLocalDateTime = this.formatDateTime(this.license_data.piLocalDateTime, false);
+
         // if no host data
         if (!licenseData.host) {
             this.has_host = false;
@@ -1295,6 +1452,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         this.socketOnGetAnydeskId();
         this.socketOnPiOnline();
         this.socketOnPiOffline();
+        this.socketOnPiLocalDateTime();
         this.socketOnPlayerOffline();
         this.socketOnLicenseOffline();
         this.socketOnContentLog();
@@ -2174,6 +2332,26 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         });
     }
 
+    /**
+     * Listens from the socket server for Pi local datetime events. If the intended receiver was this license, this
+     * updates the local datetime variable and turn the gettingPiLocalTime indicator to false.
+     *
+     * @returns {void}
+     */
+    private socketOnPiLocalDateTime(): void {
+        this._socket.on(this.SS_PI_LOCAL_DATE_TIME, (data: { licenseId: string; piLocalDateTime: string }) => {
+            if (this.license_id !== data.licenseId) return;
+            this.piLocalDateTime = this.formatDateTime(data.piLocalDateTime);
+            this.gettingPiLocalTime = false;
+
+            // Cancel the 2-minutes timeout on successful get of local pi datetime
+            if (this.gettingPiLocalTimeTimeoutId !== null) {
+                window.clearTimeout(this.gettingPiLocalTimeTimeoutId); // Clear the timeout
+                this.gettingPiLocalTimeTimeoutId = null; // Reset to null after clearing the timeout
+            }
+        });
+    }
+
     private socketOnContentLog() {
         this._socket.once('SS_content_log', (licenseId) => {
             if (licenseId[0].licenseId !== this.license_id) return;
@@ -2187,6 +2365,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             this.isCheckingElectronRunning = false;
             this.pi_status = true;
             this.player_status = true;
+            this.getPiLocalDateTime();
         });
     }
 
@@ -2268,6 +2447,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             this.pi_updating = false;
             this.pi_status = true;
             this.player_status = true;
+            this.getPiLocalDateTime();
         });
     }
 
@@ -2658,6 +2838,49 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                     console.error(error);
                 },
             );
+    }
+
+    /**
+     * Compares the player local datetime with server datetime and checks if the time difference is more than 1 hour.
+     * If it is more than or equal 1 hour, then it's out of sync.
+     *
+     * @param {string} stringPiDateTime - The datetime in string format (e.g. '2023-10-08T14:00:00').
+     * @returns {boolean} Returns true if the time difference is more than 1 hour, otherwise false.
+     */
+    private isPlayerLocalTimeIsOutOfSync(stringPiDateTime: string): boolean {
+        let timeZone = null;
+
+        switch (this.timezone.name) {
+            case 'US/Pacific':
+                timeZone = this.PACIFIC_TIMEZONE_LOCATION;
+                break;
+            case 'US/Eastern':
+                timeZone = this.EASTERN_TIMEZONE_LOCATION;
+                break;
+            case 'US/Mountain':
+                timeZone = this.MOUNTAIN_TIMEZONE_LOCATION;
+                break;
+            case 'US/Central':
+                timeZone = this.CENTRAL_TIMEZONE_LOCATION;
+                break;
+        }
+        // Get the current time in the specified timezone
+        const serverDateTime = moment.tz(timeZone);
+
+        // Create a moment object (utc) and extract the original time values (keeping them as is)
+        const piDateTime = moment.utc(stringPiDateTime).format('YYYY-MM-DDTHH:mm:ss');
+
+        // Switch to the target timezone using the original time values
+        const parsedPiDateTime = moment.tz(piDateTime, timeZone);
+
+        // Calculate the absolute difference in milliseconds
+        const timeDifference = Math.abs(serverDateTime.diff(parsedPiDateTime));
+
+        // Convert time difference from milliseconds to hours
+        const timeDifferenceInHours = timeDifference / (1000 * 60 * 60);
+
+        // Return true if the time difference is more than an hour, otherwise false
+        return timeDifferenceInHours >= 1;
     }
 
     protected get _additionalLicenseSettingsFormFields() {
