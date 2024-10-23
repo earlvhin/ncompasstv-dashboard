@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { FillerService, AuthService } from 'src/app/global/services';
-import { debounceTime, map, takeUntil } from 'rxjs/operators';
+import { debounceTime, filter, map, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import {
     UI_ROLE_DEFINITION_TEXT,
@@ -154,7 +154,7 @@ export class CreateFillerFeedComponent implements OnInit {
     }
 
     //is_Dealer temporary only until has API
-    getAllFillers(key?, assignee?) {
+    public getAllFillers(key?: string, assignee?: string, changeAssignee?: boolean): void {
         this._filler
             .get_filler_group_for_feeds(assignee)
             .pipe(takeUntil(this._unsubscribe))
@@ -172,11 +172,14 @@ export class CreateFillerFeedComponent implements OnInit {
                     return;
                 }
                 this.assignee_loaded = true;
-                if (this.selectedGroup.length != 0) {
+                if (this.selectedGroup.length > 0) {
                     this.fillerName = this.selectedGroup.name;
                     this.setFillerGroup(this.selectedGroup.fillerGroupId);
                     this.addToSelectedFillerGroup();
                 }
+
+                if (this.selectedGroups.length > 0 && !changeAssignee) this.addToSelectedFillerGroup();
+                if (changeAssignee) this.checkIfFillerGroupIsAllowed(true);
                 this.setFillersAutocomplete();
             });
     }
@@ -198,6 +201,7 @@ export class CreateFillerFeedComponent implements OnInit {
             default:
         }
 
+        this.checkIfFillerGroupIsAllowed();
         this.setFillersAutocomplete();
     }
 
@@ -342,14 +346,11 @@ export class CreateFillerFeedComponent implements OnInit {
         if (data) {
             this.dealerHasValue = true;
             this.selected_dealer.push(data.id);
-            this.getAllFillers('', data.id);
-            //just incase there has been a group selected before assigning to an assignee so remove selected groups
-            this.selectedGroups = [];
-            this.countTotalQuantity();
+            this.getAllFillers('', data.id, true);
             return;
-        }
+        } else this.selected_dealer = [];
         this.dealerHasValue = false;
-        this.unselected_dealer.push(this.existing_data.assignedDealers[0].dealerId);
+        if (this.existing_data) this.unselected_dealer.push(this.existing_data.assignedDealers[0].dealerId);
     }
 
     public onIntervalChange(key: string): void {
@@ -424,6 +425,23 @@ export class CreateFillerFeedComponent implements OnInit {
             default:
                 return 'DA';
         }
+    }
+
+    /**
+     * Function to filter if selected fillergroup exist to new filler list of the new user selected
+     */
+    private checkIfFillerGroupIsAllowed(changeAssignee?: boolean): void {
+        if (changeAssignee) {
+            this.selectedGroups = this.selectedGroups.filter((group) =>
+                this.fillerGroupsOriginal.some((filler) => filler.fillerGroupId === group.fillerGroupId),
+            );
+        }
+
+        // Remove matching items from fillerGroups based on selectedGroups
+        this.fillerGroups = this.fillerGroups.filter(
+            (filler) => !this.selectedGroups.some((group) => group.fillerGroupId === filler.fillerGroupId),
+        );
+        this.countTotalQuantity();
     }
 
     protected get _isAdmin() {

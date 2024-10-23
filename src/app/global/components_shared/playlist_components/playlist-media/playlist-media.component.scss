@@ -10,3 +10,24 @@
     align-items: center;
     justify-content: center;
 }
+.add-playlist-forms {
+    display: flex;
+    gap: 30px;
+
+    p {
+        text-wrap: pretty;
+    }
+}
+
+.app-playlist-forms--content {
+    width: 100%;
+}
+
+.add-playlist-head {
+    padding-top: 1.34375em;
+}
+
+.font-semibold {
+    font-weight: 600;
+    color: #8ec641;
+}
