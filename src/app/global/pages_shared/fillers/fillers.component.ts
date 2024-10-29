@@ -155,56 +155,58 @@ export class FillersComponent implements OnInit {
         }
     }
 
-    getAllFillers(page, keyword?, sort_col?, sort_ord?) {
+    /**
+     *
+     * @param page for pagenumber
+     * @param keyword for searchkey
+     * @param sort_col for column to search
+     * @param sort_ord for column order accepts asc and desc
+     */
+    public getAllFillers(page: number, keyword?: string, sort_col?: string, sort_ord?: string): void {
         if (page == 1) this.is_loading = true;
         this._filler
             .get_filler_groups(page, keyword, 11, sort_col, sort_ord, this.is_dealer, this.notOwner)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data: any) => {
-                if (!data.message) {
-                    this.no_search_result = false;
-                    this.filler_group = data.paging;
-                    if (page > 1) {
-                        data.paging.entities.map((group) => {
-                            this.filler_group_cache.push(group);
-                        });
-                        return;
-                    } else this.filler_group_cache = data.paging.entities;
-                } else {
-                    if (keyword == '') {
-                        this.filler_group = [];
-                        this.no_search_result = false;
-                        return;
-                    } else this.no_search_result = true;
-                }
+                this.no_search_result = !!data.message && keyword !== '';
+                this.filler_group = data.paging || [];
+
+                if (!this.no_search_result && !data.message) {
+                    this.filler_group_cache =
+                        page > 1 ? this.filler_group_cache.concat(data.paging.entities) : data.paging.entities;
+                } else this.filler_group_cache = [];
             })
             .add(() => {
                 this.is_loading = false;
             });
     }
-
-    getDealerAdminsDealerFillers(page, keyword?, sort_col?, sort_ord?, user?) {
+    /**
+     *
+     * @param page for pagenumber
+     * @param keyword for searchkey
+     * @param sort_col for column to search
+     * @param sort_ord for column order accepts asc and desc
+     * @param user for userfilter accepts userid
+     */
+    public getDealerAdminsDealerFillers(
+        page: number,
+        keyword?: string,
+        sort_col?: string,
+        sort_ord?: string,
+        user?: string,
+    ): void {
         if (page == 1) this.is_loading = true;
         this._filler
             .get_filler_group_dealer_admin_view('', page, keyword, 11, sort_col, sort_ord, user, this.notOwner)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data: any) => {
-                if (!data.message) {
-                    this.no_search_result = false;
-                    this.filler_group = data.paging;
-                    if (page > 1) {
-                        data.paging.entities.map((group) => {
-                            this.filler_group_cache.push(group);
-                        });
-                        return;
-                    } else this.filler_group_cache = data.paging.entities;
-                } else {
-                    if (keyword == '') {
-                        this.filler_group = [];
-                        this.no_search_result = false;
-                        return;
-                    } else this.no_search_result = true;
-                }
+                this.no_search_result = !!data.message && keyword !== '';
+                this.filler_group = data.paging || [];
+
+                if (!this.no_search_result && !data.message) {
+                    this.filler_group_cache =
+                        page > 1 ? this.filler_group_cache.concat(data.paging.entities) : data.paging.entities;
+                } else this.filler_group_cache = [];
             })
             .add(() => {
                 this.is_loading = false;

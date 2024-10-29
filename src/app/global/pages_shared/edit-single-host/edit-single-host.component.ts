@@ -34,6 +34,7 @@ import {
 import { BulkEditBusinessHoursComponent } from '../../components_shared/page_components/bulk-edit-business-hours/bulk-edit-business-hours.component';
 import * as moment from 'moment';
 import { HOST_ACTIVITY_LOGS } from '../../models/api_host_activity_logs.model';
+import { UI_HOST_ADDRESS } from '../../models/ui_hosts-address';
 
 @Component({
     selector: 'app-edit-single-host',
@@ -104,8 +105,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
         this.checkFormValidity();
         this.getDealers();
 
-        if (this.host.postalCode.length > 5) this.getCanadaAddress({ checked: true }, false);
-        else this.getCities();
+        if (this.host.postalCode.length > 5) this.canada_selected = true;
 
         this.setZipCodeValidation();
         this.subscribeToZipChanges();
@@ -192,62 +192,6 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
         this._formControls.state.setValue('');
         this._formControls.region.setValue('');
         this._formControls.zip.setValue('');
-    }
-
-    fillCityOfHost() {
-        this._location
-            .get_states_by_abbreviation(this.host.state)
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(
-                (data: any[]) => {
-                    let city = '';
-                    city = this.host.city.split(',')[0].trim();
-
-                    this._formControls.city.setValue(city);
-                    this.city_selected = city;
-                    this.setCity(city);
-                },
-                (error) => {
-                    console.error(error);
-                },
-            );
-    }
-
-    getCanadaAddress(value: { checked: boolean }, clearAction = true) {
-        this.canada_selected = value.checked;
-        if (clearAction) this.clearAddressValue();
-        if (value.checked) this.getCanadaCities();
-        else this.getCities();
-    }
-
-    getCanadaCities() {
-        this._location
-            .get_canada_cities()
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((response: any) => {
-                this.city_state = response.map((city) => {
-                    return new City(
-                        city.city,
-                        `${city.city}, ${city.state_whole}`,
-                        city.state,
-                        city.region,
-                        city.state_whole,
-                    );
-                });
-            })
-            .add(() => (this.cities_loaded = true));
-    }
-
-    getCities() {
-        this._location
-            .get_cities()
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((response: any) => {
-                this.city_state = response.map((city) => {
-                    return new City(city.city, `${city.city}, ${city.state}`, city.state);
-                });
-            })
-            .add(() => (this.cities_loaded = true));
     }
 
     getDealers(event?: { page: number; is_search: boolean; no_keyword: boolean }): void {
@@ -515,23 +459,24 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
             });
     }
 
-    public setCity(data): void {
-        const { city, state, region } = data || { city: '', state: '', region: '' };
-        this.city_selected = data.city;
-
-        if (this.canadaSelected) {
-            this.canada_selected = data.country === 'CA';
-            return;
-        }
+    public setCity(data: UI_HOST_ADDRESS | null): void {
+        const { city = '', state = '', region = '', country = '' } = data || {};
 
         this._formControls.city.setValue(city);
         this._formControls.state.setValue(state);
         this._formControls.region.setValue(region);
-        this.city_selected = data.city;
+        this._formControls.zip.setValue('');
+
+        this.city_selected = city;
+        this.canada_selected = country === 'CA';
+
+        this.setZipCodeValidation();
+        this.subscribeToZipChanges();
     }
 
     public setInitialCity(): void {
-        this.city_selected = this.page_data.host.city;
+        const cityOnly = this.page_data.host.city.split(',');
+        this.city_selected = cityOnly[0];
 
         //Set value to initial city
         this._formControls.city.setValue(this.city_selected);
@@ -615,12 +560,6 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
         this._formControls.lat.setValue(host.latitude, { emitEvent: false });
         this._formControls.long.setValue(host.longitude, { emitEvent: false });
         this._formControls.address.setValue(host.address, { emitEvent: false });
-
-        if (host.city.indexOf(',') > -1) {
-            this._formControls.city.setValue(host.city, { emitEvent: false });
-        } else {
-            this.fillCityOfHost();
-        }
 
         this._formControls.state.setValue(host.state, { emitEvent: false });
         this._formControls.zip.setValue(host.postalCode, { emitEvent: false });
@@ -770,12 +709,10 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
     private setDialogData(): void {
         this.initializeForm();
         this.setCategory(this.host.category);
-        this.fillCityOfHost();
     }
 
     private setZipCodeValidation() {
         const control = this._formControls.zip;
-        const country = this.canada_selected ? 'CA' : 'US';
         const numbersOnly = '^[0-9]+$';
         const canadianZipCodePattern = `^[A-Za-z]\\d[A-Za-z] \\d[A-Za-z]\\d$`;
         let validators: ValidatorFn[] = [Validators.required];
@@ -785,8 +722,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
             Validators.maxLength(7),
             Validators.pattern(canadianZipCodePattern),
         ];
-        validators = country === 'CA' ? validators.concat(canadaZipValidators) : validators.concat(usZipValidators);
-
+        validators = this.canada_selected ? validators.concat(canadaZipValidators) : validators.concat(usZipValidators);
         control.clearValidators();
         control.setValidators(validators);
         control.setErrors(null);

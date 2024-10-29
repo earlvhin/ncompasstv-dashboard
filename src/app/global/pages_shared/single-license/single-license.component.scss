@@ -168,6 +168,10 @@
     width: 60%;
 }
 
+.w-33 {
+    width: 33%;
+}
+
 .w-40 {
     width: 40%;
 }
@@ -581,10 +585,32 @@
         }
     }
 }
+
 .time-span {
     background-color: #8ec641;
     color: #fff;
     padding: 1px 4px;
     border: 1px solid #999;
     text-shadow: 1px 1px 1px #555;
+}
+
+.time-span-disabled {
+    background-color: #999;
+    color: #fff;
+    padding: 1px 4px;
+    border: 1px solid #999;
+    text-shadow: 1px 1px 1px #555;
+}
+
+.time-span-unsynced {
+    background-color: #d22b2b;
+    color: #fff;
+    padding: 1px 4px;
+    border: 1px solid #999;
+    text-shadow: 1px 1px 1px #555;
+}
+
+.get-time-button {
+    display: flex;
+    align-items: center;
 }

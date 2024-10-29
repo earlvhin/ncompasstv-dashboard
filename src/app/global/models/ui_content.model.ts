@@ -173,3 +173,13 @@ export class UI_CONTENT_HISTORY {
         this.logDate = logDate;
     }
 }
+
+export interface FILE_TYPE {
+    [key: string]: string[];
+}
+
+export const FILE_TYPES: FILE_TYPE = {
+    image: ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff', 'svg', 'webp', 'ico'],
+    video: ['mp4', 'mov', 'mkv', 'webm', 'avi', 'flv', 'wmv', 'mpeg', '3gp'],
+    feed: ['feed'],
+};

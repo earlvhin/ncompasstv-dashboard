@@ -31,27 +31,48 @@
             (selectedTabChange)="onTabChanged($event.index)"
             [selectedIndex]="isActiveTab">
             <mat-tab label="Media Files">
-                <div class="row mt-3" *ngIf="media_files">
-                    <div class="col-lg-7">
-                        <mat-form-field class="full-width position-relative" appearance="fill">
-                            <mat-label>Search a Filename or a Feed Title</mat-label>
-                            <input matInput type="text" placeholder="Search a File" (keyup)="searchContent($event)" />
-                        </mat-form-field>
-                    </div>
-
-                    <div class="col-lg-5 pt-3" *ngIf="media_files && !_isDealer()">
-                        <div class="row">
-                            <div class="col-lg-2">
-                                <mat-slide-toggle
-                                    [checked]="dealer_has_no_contents && floating_contents.length > 0"
-                                    (change)="displayFloating($event)"
-                                    [disabled]="dealer_has_no_contents && floating_contents.length > 0">
-                                </mat-slide-toggle>
+                <div class="add-playlist-head" *ngIf="media_files">
+                    <div class="add-playlist-forms">
+                        <div class="app-playlist-forms--content">
+                            <mat-form-field class="full-width position-relative" appearance="fill">
+                                <mat-label>Search a Filename or a Feed Title</mat-label>
+                                <input
+                                    matInput
+                                    type="text"
+                                    placeholder="Search a File"
+                                    (keyup)="searchContent($event)" />
+                            </mat-form-field>
+                        </div>
+                        <div class="app-playlist-forms--content" *ngIf="media_files && !_isDealer()">
+                            <div class="d-flex align-items-center">
+                                <div class="col-lg-2">
+                                    <mat-slide-toggle
+                                        [checked]="dealer_has_no_contents && floating_contents.length > 0"
+                                        (change)="displayFloating($event)"
+                                        [disabled]="dealer_has_no_contents && floating_contents.length > 0">
+                                    </mat-slide-toggle>
+                                </div>
+                                <div class="col-lg-10">
+                                    <h6 class="sm-text">Display Floating Contents</h6>
+                                    <p class="xsm-text">Display all content that are not assigned to any Dealer</p>
+                                </div>
                             </div>
-                            <div class="col-lg-10">
-                                <h6 class="sm-text">Display Floating Contents</h6>
-                                <p class="xsm-text">Display all content that are not assigned to any Dealer</p>
+                        </div>
+                        <div class="app-playlist-forms--content d-flex gap-10">
+                            <div class="w-100 d-flex flex-column gap-5">
+                                <p class="sm-text">
+                                    Images Selected: <span class="font-semibold">{{ countByFileType('image') }}</span>
+                                </p>
+                                <p class="sm-text">
+                                    Videos Selected: <span class="font-semibold">{{ countByFileType('video') }}</span>
+                                </p>
+                                <p class="sm-text">
+                                    Feeds Selected: <span class="font-semibold">{{ countByFileType('feed') }}</span>
+                                </p>
                             </div>
+                            <p class="w-100 md-text">
+                                Selected Contents: <span class="font-semibold">{{ selected_contents.length }}</span>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -218,6 +239,7 @@
                                     </div>
                                 </div>
                             </ng-template>
+
                             <ng-template #savingFillers>
                                 <div class="bg-dark text-white text-center h-100 pt-5">
                                     <h4 class="mt-5">Saving Fillers</h4>
@@ -260,7 +282,7 @@
                     </div>
                     <div class="col-lg-6 text-center">
                         <span class="sm-text" *ngIf="paging">
-                            Loaded {{ media_files.length }} of {{ paging.totalEntities }} Assets
+                            Loaded {{ media_files.length }} of {{ totalEntities }} Assets
                         </span>
                     </div>
                     <div class="col-lg-2">
@@ -299,9 +321,9 @@
             <ng-template #swap_content_controls>
                 <div class="row" *ngIf="isActiveTab == 0">
                     <div class="col-lg-10 text-left">
-                        <span class="sm-text" *ngIf="paging"
-                            >Loaded {{ media_files.length }} of {{ paging.totalEntities }} Assets</span
-                        >
+                        <span class="sm-text" *ngIf="paging">
+                            Loaded {{ media_files.length }} of {{ totalEntities }} Assets
+                        </span>
                     </div>
                     <div class="col-lg-2 text-right">
                         <button
