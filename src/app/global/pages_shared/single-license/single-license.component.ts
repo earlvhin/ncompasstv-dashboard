@@ -980,22 +980,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
      * @param {string} - The target version string to compare against.
      * @returns {boolean} - Returns `true` if the `version` is greater than or equal to `targetVersion`, otherwise `false`.
      */
-    public compareVersions(version: string, targetVersion: string) {
-        // Split version strings into arrays of numbers
-        const versionParts = version.split('.').map(Number);
-        const targetParts = targetVersion.split('.').map(Number);
-
-        // Compare each part of the version
-        for (let i = 0; i < targetParts.length; i++) {
-            if ((versionParts[i] || 0) > targetParts[i]) {
-                return true; // The version is higher
-            } else if ((versionParts[i] || 0) < targetParts[i]) {
-                return false; // The version is lower
-            }
-        }
-
-        // If we get here, the versions are equal
-        return true;
+    public compareVersions(version: string, targetVersion: string): boolean {
+        return version >= targetVersion;
     }
 
     /**
